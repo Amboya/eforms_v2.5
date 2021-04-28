@@ -20,6 +20,7 @@ use App\Models\Main\StatusModel;
 use App\Models\main\TotalsModel;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -47,14 +48,14 @@ class PettyCashController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(Request $request, $value)
     {
 
         //get list of all petty cash forms for today
         if ($value == "all") {
-            $list = PettyCashModel::all();
+            $list = PettyCashModel::get();
             $category = "All";
         } else if ($value == "pending") {
             $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
@@ -74,6 +75,22 @@ class PettyCashController extends Controller
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
                 ->get();
             $category = "Rejected";
+        } else if ($value == config('constants.petty_cash_status.cancelled')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status. cancelled'))
+                ->get();
+            $category = "Cancelled";
+        } else if ($value == config('constants.petty_cash_status.void')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.void'))
+                ->get();
+            $category = "Void";
+        } else if ($value == config('constants.petty_cash_status.audited')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audited'))
+                ->get();
+            $category = "Audited";
+        } else if ($value == config('constants.petty_cash_status.queried')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.queried'))
+                ->get();
+            $category = "Queried";
         } else if ($value == "needs_me") {
             $list = $totals_needs_me = HomeController::needsMeList();
             $category = "Needs My Attention";
@@ -180,7 +197,7 @@ class PettyCashController extends Controller
     /**
      * Mark the form as void.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function void(Request $request, $id)
     {
@@ -249,7 +266,7 @@ class PettyCashController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -270,8 +287,8 @@ class PettyCashController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -366,6 +383,8 @@ class PettyCashController extends Controller
                 'expenditure_unit' => $user->user_unit->expenditure_unit,
                 'security_code' => $user->user_unit->security_code,
                 'security_unit' => $user->user_unit->security_unit,
+                'audit_code' => $user->user_unit->audit_code,
+                'audit_unit' => $user->user_unit->audit_unit,
 
                 'cost_center' => $user->user_unit->user_unit_cc_code,
                 'business_unit_code' => $user->user_unit->user_unit_bc_code,
@@ -480,6 +499,7 @@ class PettyCashController extends Controller
         }
     }
 
+
     /**
      * Fetch a list of my HODs
      * @param $user
@@ -524,6 +544,11 @@ class PettyCashController extends Controller
             $superior_user_code = $user_unit->expenditure_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
             // dd(1);
+        } elseif ($current_status == config('constants.petty_cash_status.closed')) {
+            $superior_user_unit = $user_unit->audit_unit;
+            $superior_user_code = $user_unit->audit_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
+            // dd(1);
         } else {
             //no one
             $superior_user_unit = "0";
@@ -542,8 +567,9 @@ class PettyCashController extends Controller
             //loop through assigned users
             foreach ($assigned_users as $item) {
                 if ($profile->id == config('constants.user_profiles.EZESCO_014') ||
+                    $profile->id == config('constants.user_profiles.EZESCO_011') ||
                     $profile->id == config('constants.user_profiles.EZESCO_013')) {
-                    //expenditure and security
+                    //expenditure, audit and security
                     $my_superiors = User::where('user_unit_code', $superior_user_unit)
                         ->where('id', $item->user_id)
                         ->get();
@@ -584,6 +610,7 @@ class PettyCashController extends Controller
         return $users_array;
     }
 
+
     /**
      * Generate Voucher Code
      * @param $head
@@ -619,7 +646,7 @@ class PettyCashController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -673,7 +700,7 @@ class PettyCashController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -684,9 +711,9 @@ class PettyCashController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -697,7 +724,7 @@ class PettyCashController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
@@ -711,6 +738,7 @@ class PettyCashController extends Controller
         $current_status = $form->status->id;
         $user = Auth::user();
         $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
+
 
         //HANDLE CANCELLATION
         if ($request->approval == config('constants.approval.cancelled')) {
@@ -764,9 +792,9 @@ class PettyCashController extends Controller
 
         }
 
+
         //HANDLE APPROVAL
         if ($request->approval == config('constants.approval.approve')) {
-
             if ($form->status->id == config('constants.petty_cash_status.security_approved')) {
 
                 //update the totals closed
@@ -803,6 +831,30 @@ class PettyCashController extends Controller
                 $totals->value = $totals->value - 1;
                 $totals->save();
                 $eform_pettycash->total_new = $totals->value;
+                $eform_pettycash->save();
+            } else if ($form->status->id == config('constants.petty_cash_status.closed')) {
+                //update the totals closed
+                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
+                    ->where('id', config('constants.totals.petty_cash_closed'))
+                    ->first();
+                $totals->value = $totals->value - 1;
+                $totals->save();
+                $eform_pettycash->total_closed = $totals->value;
+                $eform_pettycash->save();
+            }
+        }
+
+
+        //HANDLE AUDIT QUERY
+        if ($request->approval == config('constants.approval.queried')) {
+            if ($form->status->id == config('constants.petty_cash_status.closed')) {
+                //update the totals closed
+                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
+                    ->where('id', config('constants.totals.petty_cash_closed'))
+                    ->first();
+                $totals->value = $totals->value - 1;
+                $totals->save();
+                $eform_pettycash->total_closed = $totals->value;
                 $eform_pettycash->save();
             }
         }
@@ -888,7 +940,6 @@ class PettyCashController extends Controller
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
             && $current_status == config('constants.petty_cash_status.hr_approved')
         ) {
-
             $insert_reasons = true;
             //cancel status
             if ($request->approval == config('constants.approval.cancelled')) {
@@ -966,7 +1017,29 @@ class PettyCashController extends Controller
                         'account' => $request->credited_account[$i],
                         'debitted_account_id' => $request->debited_account[$i],
                         //'debitted_amount' => $request->debited_amount[$i],
+
                         'eform_petty_cash_id' => $form->id,
+                        'petty_cash_code' => $form->code,
+                        'cost_center' => $form->cost_center,
+                        'business_unit_code' => $form->business_unit_code,
+                        'user_unit_code' => $form->user_unit_code,
+                        'claimant_name' => $form->claimant_name,
+                        'claimant_staff_no' => $form->claimant_staff_no,
+                        'claim_date' => $form->claim_date,
+
+                        'hod_code' => $form->hod_code,
+                        'hod_unit' => $form->hod_unit,
+                        'ca_code' => $form->ca_code,
+                        'ca_unit' => $form->ca_unit,
+                        'hrm_code' => $form->hrm_code,
+                        'hrm_unit' => $form->hrm_unit,
+                        'expenditure_code' => $form->expenditure_code,
+                        'expenditure_unit' => $form->expenditure_unit,
+                        'security_code' => $form->security_code,
+                        'security_unit' => $form->security_unit,
+                        'audit_code' => $form->audit_code,
+                        'audit_unit' => $form->audit_unit,
+
                         'created_by' => $user->id,
                         'company' => '01',
                         'intra_company' => '01',
@@ -1002,7 +1075,28 @@ class PettyCashController extends Controller
                         'debitted_account_id' => $request->debited_account[$i],
                         'debitted_amount' => $request->debited_amount[$i],
                         'account' => $request->debited_account[$i],
+
                         'eform_petty_cash_id' => $form->id,
+                        'petty_cash_code' => $form->code,
+                        'cost_center' => $form->cost_center,
+                        'business_unit_code' => $form->business_unit_code,
+                        'user_unit_code' => $form->user_unit_code,
+                        'claimant_name' => $form->claimant_name,
+                        'claimant_staff_no' => $form->claimant_staff_no,
+                        'claim_date' => $form->claim_date,
+                        'hod_code' => $form->hod_code,
+                        'hod_unit' => $form->hod_unit,
+                        'ca_code' => $form->ca_code,
+                        'ca_unit' => $form->ca_unit,
+                        'hrm_code' => $form->hrm_code,
+                        'hrm_unit' => $form->hrm_unit,
+                        'expenditure_code' => $form->expenditure_code,
+                        'expenditure_unit' => $form->expenditure_unit,
+                        'security_code' => $form->security_code,
+                        'security_unit' => $form->security_unit,
+                        'audit_code' => $form->audit_code,
+                        'audit_unit' => $form->audit_unit,
+
                         'created_by' => $user->id,
                         'company' => '01',
                         'intra_company' => '01',
@@ -1120,7 +1214,28 @@ class PettyCashController extends Controller
                         'account' => $request->credited_account,
                         'debitted_account_id' => $request->debited_account,
                         //'debitted_amount' => $request->debited_amount,
+
                         'eform_petty_cash_id' => $form->id,
+                        'petty_cash_code' => $form->code,
+                        'cost_center' => $form->cost_center,
+                        'business_unit_code' => $form->business_unit_code,
+                        'user_unit_code' => $form->user_unit_code,
+                        'claimant_name' => $form->claimant_name,
+                        'claimant_staff_no' => $form->claimant_staff_no,
+                        'claim_date' => $form->claim_date,
+                        'hod_code' => $form->hod_code,
+                        'hod_unit' => $form->hod_unit,
+                        'ca_code' => $form->ca_code,
+                        'ca_unit' => $form->ca_unit,
+                        'hrm_code' => $form->hrm_code,
+                        'hrm_unit' => $form->hrm_unit,
+                        'expenditure_code' => $form->expenditure_code,
+                        'expenditure_unit' => $form->expenditure_unit,
+                        'security_code' => $form->security_code,
+                        'security_unit' => $form->security_unit,
+                        'audit_code' => $form->audit_code,
+                        'audit_unit' => $form->audit_unit,
+
                         'created_by' => $user->id,
                         'company' => '01',
                         'intra_company' => '01',
@@ -1156,7 +1271,28 @@ class PettyCashController extends Controller
                         'debitted_account_id' => $request->debited_account,
                         'debitted_amount' => $request->debited_amount,
                         'account' => $request->debited_account,
+
                         'eform_petty_cash_id' => $form->id,
+                        'petty_cash_code' => $form->code,
+                        'cost_center' => $form->cost_center,
+                        'business_unit_code' => $form->business_unit_code,
+                        'user_unit_code' => $form->user_unit_code,
+                        'claimant_name' => $form->claimant_name,
+                        'claimant_staff_no' => $form->claimant_staff_no,
+                        'claim_date' => $form->claim_date,
+                        'hod_code' => $form->hod_code,
+                        'hod_unit' => $form->hod_unit,
+                        'ca_code' => $form->ca_code,
+                        'ca_unit' => $form->ca_unit,
+                        'hrm_code' => $form->hrm_code,
+                        'hrm_unit' => $form->hrm_unit,
+                        'expenditure_code' => $form->expenditure_code,
+                        'expenditure_unit' => $form->expenditure_unit,
+                        'security_code' => $form->security_code,
+                        'security_unit' => $form->security_unit,
+                        'audit_code' => $form->audit_code,
+                        'audit_unit' => $form->audit_unit,
+
                         'created_by' => $user->id,
                         'company' => '01',
                         'intra_company' => '01',
@@ -1229,6 +1365,34 @@ class PettyCashController extends Controller
                 }
             }
 
+        }  //FOR AUDITING OFFICE
+        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
+            && $current_status == config('constants.petty_cash_status.closed')
+        ) {
+            //cancel status
+            $insert_reasons = true;
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.petty_cash_status.cancelled');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.petty_cash_status.rejected');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.petty_cash_status.audited');
+            }//audit status
+            elseif ($request->approval == config('constants.approval.queried')) {
+                $new_status = config('constants.petty_cash_status.queried');
+            } else {
+                $new_status = config('constants.petty_cash_status.closed');
+                $insert_reasons = false;
+            }
+            //update
+            $form->config_status_id = $new_status;
+            $form->audit_office_name = $user->name;
+            $form->audit_office_staff_no = $user->staff_no;
+            $form->audit_office_date = $request->sig_date;
+            $form->profile = Auth::user()->profile_id;
+            $form->save();
         } //FOR NO-ONE
         else {
             //return with an error
@@ -1348,6 +1512,7 @@ class PettyCashController extends Controller
      * @return array
      */
 
+
     public function nextUsers($new_status, $user_unit, $user)
     {
         $users_array = [];
@@ -1380,6 +1545,11 @@ class PettyCashController extends Controller
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
+        } elseif ($new_status == config('constants.petty_cash_status.closed')) {
+            $superior_user_unit = $user_unit->audit_unit;
+            $superior_user_code = $user_unit->audit_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
+            // dd(1);
         } else {
             //no one
             $superior_user_unit = "0";
@@ -1388,7 +1558,6 @@ class PettyCashController extends Controller
         }
 
         if ($not_claimant) {
-            //SELECT USERS
             //SELECT USERS
 
             $users_list[] = '';
@@ -1400,8 +1569,9 @@ class PettyCashController extends Controller
             //loop through assigned users
             foreach ($assigned_users as $item) {
                 if ($profile->id == config('constants.user_profiles.EZESCO_014') ||
-                    $profile->id == config('constants.user_profiles.EZESCO_013')) {
-                    //expenditure and security
+                    $profile->id == config('constants.user_profiles.EZESCO_013') ||
+                    $profile->id == config('constants.user_profiles.EZESCO_011')) {
+                    //expenditure, audit and security
                     $my_superiors = User::where('user_unit_code', $superior_user_unit)
                         ->where('id', $item->user_id)
                         ->get();
@@ -1434,8 +1604,7 @@ class PettyCashController extends Controller
                 $users_array[] = $user;
             }
 
-        }
-        else {
+        } else {
             $users_array[] = $user;
             // $hods_array[] = $user;
         }
@@ -1451,30 +1620,39 @@ class PettyCashController extends Controller
         $title = "";
 
         if ($value == config('constants.all')) {
-            $list = DB::select("SELECT * FROM eform_petty_cash_account  ");
-            $list = PettyCashAccountModel::hydrate($list);
-
-            //dd($list);
-            // $list = PettyCashAccountModel::all();
+            if (Auth::user()->type_id == config('constants.user_types.developer')) {
+                $list = DB::select("SELECT * FROM eform_petty_cash_account  ");
+                $list = PettyCashAccountModel::hydrate($list);
+            } else {
+                $list = PettyCashAccountModel::all();
+            }
             $title = "ALl";
         } elseif ($value == config('constants.petty_cash_status.not_exported')) {
-            // $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
-            $status = config('constants.petty_cash_status.not_exported');
-            $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
-            $list = PettyCashAccountModel::hydrate($list);
+            if (Auth::user()->type_id == config('constants.user_types.developer')) {
+                $status = config('constants.petty_cash_status.not_exported');
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = PettyCashAccountModel::hydrate($list);
+            } else {
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
+            }
             $title = "Not Exported";
         } elseif ($value == config('constants.petty_cash_status.exported')) {
-            // $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.exported'))->get();
-            $status = config('constants.petty_cash_status.exported');
-            $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
-            $list = PettyCashAccountModel::hydrate($list);
+            if (Auth::user()->type_id == config('constants.user_types.developer')) {
+                $status = config('constants.petty_cash_status.exported');
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = PettyCashAccountModel::hydrate($list);
+            } else {
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.exported'))->get();
+            }
             $title = " Exported";
         } elseif ($value == config('constants.petty_cash_status.export_failed')) {
-            // $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.export_failed'))->get();
-            $status = config('constants.petty_cash_status.export_failed');
-            $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
-            $list = PettyCashAccountModel::hydrate($list);
-
+            if (Auth::user()->type_id == config('constants.user_types.developer')) {
+                $status = config('constants.petty_cash_status.export_failed');
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = PettyCashAccountModel::hydrate($list);
+            } else {
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.export_failed'))->get();
+            }
             $title = "Failed Export";
         }
 
@@ -1494,14 +1672,17 @@ class PettyCashController extends Controller
 
     public function reportsExport(Request $request)
     {
-
         $fileName = 'PettyCash_Accounts.csv';
-        //  $tasks = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
-        $not_exported = config('constants.petty_cash_status.not_exported');
-        $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+        if (Auth::user()->type_id == config('constants.user_types.developer')) {
+            $tasks = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
+        } else {
+            $not_exported = config('constants.petty_cash_status.not_exported');
+            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                         WHERE status_id = {$not_exported}
                         ORDER BY eform_petty_cash_id ASC ");
-        $tasks = PettyCashAccountModel::hydrate($tasks);
+            $tasks = PettyCashAccountModel::hydrate($tasks);
+        }
+
 
         $headers = array(
             "Content-type" => "text/csv",
@@ -1544,12 +1725,12 @@ class PettyCashController extends Controller
                     ->where('id', $id)
                     ->update(['status_id' => $previous_status]);
 
-                $row['Code'] = $item->petty_cash->code;
-                $row['Claimant'] = $item->petty_cash->claimant_name;
-                $row['Claim Date'] = $item->petty_cash->claim_date;
+                $row['Code'] = $item->petty_cash_code;
+                $row['Claimant'] = $item->claimant_name;
+                $row['Claim Date'] = $item->claim_date;
                 $row['Company'] = $item->company;
-                $row['Business Unit'] = $item->petty_cash->business_unit_code;
-                $row['Cost Center'] = $item->petty_cash->cost_center;
+                $row['Business Unit'] = $item->business_unit_code;
+                $row['Cost Center'] = $item->cost_center;
                 $row['Account'] = $item->account;
                 $row['Project'] = $item->project;
                 $row['Intra-Company'] = $item->intra_company;

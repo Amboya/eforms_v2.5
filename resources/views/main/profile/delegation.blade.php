@@ -73,8 +73,8 @@
                                     <option disabled  value="" selected>Select User</option>
                                     @foreach($users as $user)
                                         @if($user->id  != \Auth::user()->id)
-                                        <option
-                                            value="{{$user->id}}"> {{$user->name}} : {{$user->staff_no}}</option>
+                                            <option
+                                                value="{{$user->id}}"> {{$user->name}} : {{$user->staff_no}}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -89,7 +89,7 @@
                                     <option disabled value="" selected>Select Profile to Delegate</option>
                                     @foreach($profiles as $profile)
                                         <option
-                                            value="{{$profile->profiles->id ?? ''}}"> {{$profile->profiles->code ?? ''}} : {{$profile->profiles->name ?? ''}}</option>
+                                            value="{{$profile->profiles->id ?? ''}}">   {{$profile->form->name  ?? ""}} : {{$profile->profiles->code ?? ''}} : {{$profile->profiles->name ?? ''}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -154,7 +154,7 @@
                 var profile = {!! json_encode($profiles->toArray()) !!};
                 var profile_form = profile[selected_index-1] ;
 
-                 console.log(profile_form.form );
+                console.log(profile_form.form );
                 responce =  "<option value=" + profile_form.form.id + "   > " + profile_form.form.name + "  </option> ";
 
                 $("#eform_select").html(responce);

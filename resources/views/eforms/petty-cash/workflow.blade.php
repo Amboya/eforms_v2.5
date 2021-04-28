@@ -2,9 +2,9 @@
 
 
 @push('custom-styles')
-<!-- DataTables -->
-<link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
-<link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 @endpush
 
 
@@ -51,19 +51,19 @@
     <!-- Default box -->
         <div class="card">
             <div class="card-header">
-{{--                <button class="btn btn-sm bg-gradient-orange float-left" data-toggle="modal"--}}
-{{--                        data-target="#modal-create">--}}
-{{--                    New Departmental User Unit--}}
-{{--                </button>--}}
+                {{--                <button class="btn btn-sm bg-gradient-orange float-left" data-toggle="modal"--}}
+                {{--                        data-target="#modal-create">--}}
+                {{--                    New Departmental User Unit--}}
+                {{--                </button>--}}
 
-{{--                <div class="card-tools">--}}
-{{--                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"--}}
-{{--                            title="Collapse">--}}
-{{--                        <i class="fas fa-minus"></i></button>--}}
-{{--                    <a class="btn btn-tool" href="{{route('main-workflow-sync')}}"--}}
-{{--                       title="Sync Departmental User Units">--}}
-{{--                        <i class="fas fa-sync"></i></a>--}}
-{{--                </div>--}}
+                {{--                <div class="card-tools">--}}
+                {{--                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"--}}
+                {{--                            title="Collapse">--}}
+                {{--                        <i class="fas fa-minus"></i></button>--}}
+                {{--                    <a class="btn btn-tool" href="{{route('main-workflow-sync')}}"--}}
+                {{--                       title="Sync Departmental User Units">--}}
+                {{--                        <i class="fas fa-sync"></i></a>--}}
+                {{--                </div>--}}
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -83,6 +83,7 @@
                             <th>CA</th>
                             <th>EX</th>
                             <th>SEC</th>
+                            <th>AUDIT</th>
 
                             <th>Updated At</th>
                             <th>Action</th>
@@ -104,6 +105,7 @@
                                 <td>{{ $item->ca_unit }} : {{ $item->ca_code }} </td>
                                 <td>{{ $item->expenditure_unit }} : {{ $item->expenditure_code }} </td>
                                 <td>{{ $item->security_unit }} : {{ $item->security_code }} </td>
+                                <td>{{ $item->audit_unit }} : {{ $item->audit_code }} </td>
 
                                 <td>{{ $item->updated_at }} </td>
                                 <td>
@@ -161,6 +163,8 @@
                                 <input hidden type="text" class="form-control" id="workflow_id2" name="workflow_id"
                                        required>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Unit Code</label>
@@ -172,7 +176,7 @@
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Business Unit Code</label>
                                     <input type="text" class="form-control" id="business_unit_code2" name="business_unit_code"
-                                          readonly placeholder="Enter business unit code">
+                                           readonly placeholder="Enter business unit code">
                                 </div>
                             </div>
                             <div class="col-3">
@@ -189,15 +193,16 @@
                                            readonly placeholder="Enter cost unit superior">
                                 </div>
                             </div>
-
+                        </div>
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="hod_id">HOD</label>
                                     <input list="users_list1" type="text" class="form-control" id="hod_id" name="hod_id"
-                                          value=""  placeholder="Select Hod Person">
+                                           value=""  placeholder="Select Hod Person">
                                     <datalist id="users_list1">
                                         @foreach($users as $item)
-                                        <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
+                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
                                         @endforeach
                                     </datalist>
                                 </div>
@@ -206,18 +211,18 @@
                                 <div class="form-group">
                                     <label for="hod_code">HOD Code</label>
                                     <input type="text" class="form-control" id="hod_code" name="hod_code"
-                                            placeholder="Enter cost unit superior">
+                                           placeholder="Enter cost unit superior">
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="hod_unit">HOD Unit</label>
                                     <input type="text" class="form-control" id="hod_unit" name="hod_unit"
-                                            placeholder="Enter cost unit superior">
+                                           placeholder="Enter cost unit superior">
                                 </div>
                             </div>
-
-
+                        </div>
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="hrm_id">HR</label>
@@ -244,8 +249,9 @@
                                            placeholder="Enter HRM Unit">
                                 </div>
                             </div>
+                        </div>
 
-
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="ca_id">Chief Accountant</label>
@@ -272,7 +278,9 @@
                                            placeholder="Enter CA Unit">
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="expenditure_id">Expenditure Accountant</label>
@@ -299,7 +307,9 @@
                                            placeholder="Enter Expenditure Accountant Unit">
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="security_id">Security Personal</label>
@@ -326,7 +336,34 @@
                                            placeholder="Enter Security Personal Unit">
                                 </div>
                             </div>
-
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="audit_id">Audit Personal</label>
+                                    <input list="users_list6" type="text" class="form-control" id="audit_id" name="audit_id"
+                                           placeholder="Select Audit Personal Person">
+                                    <datalist id="users_list6">
+                                        @foreach($users as $item)
+                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
+                                        @endforeach
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="audit_code">Audit Code</label>
+                                    <input type="text" class="form-control accent-green" id="audit_code" name="audit_code"
+                                           placeholder="Enter Audit Personal Code">
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="audit_unit">Personal Unit</label>
+                                    <input type="text" class="form-control accent-green" id="audit_unit" name="audit_unit"
+                                           placeholder="Enter Audit Personal Unit">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -347,206 +384,226 @@
 
 @push('custom-scripts')
 
-<!-- DataTables -->
-<script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+    <!-- DataTables -->
+    <script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
 
-<!-- page script -->
-<script>
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true,
-            "autoWidth": false,
-        });
-        $('#example2').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-        });
-    });
-</script>
-
-<script>
-
-    $('#modal-edit').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var recipient = button.data('sent_data'); // Extract info from data-* attributes
-        $('#workflow_name2').val(recipient.user_unit_description);
-        $('#workflow_id2').val(recipient.id);
-        $('#workflow_code2').val(recipient.user_unit_code);
-        $('#business_unit_code2').val(recipient.user_unit_bc_code);
-        $('#cost_center_code2').val(recipient.user_unit_cc_code);
-        $('#code_unit_superior2').val(recipient.user_unit_superior);
-        $('#hod_code').val(recipient.hod_code);
-        $('#hod_unit').val(recipient.hod_unit);
-        $('#hrm_code').val(recipient.hrm_code);
-        $('#hrm_unit').val(recipient.hrm_unit);
-        $('#ca_code').val(recipient.ca_code);
-        $('#ca_unit').val(recipient.ca_unit);
-        $('#expenditure_code').val(recipient.expenditure_code);
-        $('#expenditure_unit').val(recipient.expenditure_unit);
-        $('#security_code').val(recipient.security_code);
-        $('#security_unit').val(recipient.security_unit);
-
-    });
-
-
-    $('#modal-view').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var recipient = button.data('sent_data'); // Extract info from data-* attributes
-
-        var span_id = document.getElementById("span_id");
-        span_id.textContent = recipient.id;
-        var span_name = document.getElementById("span_name");
-        span_name.textContent = recipient.user_unit_description;
-        var span_code = document.getElementById("span_code");
-        span_code.textContent = recipient.user_unit_code;
-        var span_business_unit = document.getElementById("span_business_unit");
-        span_business_unit.textContent = recipient.user_unit_bc_code;
-        var span_cost_center = document.getElementById("span_cost_center");
-        span_cost_center.textContent = recipient.user_unit_cc_code;
-        var span_superior_code = document.getElementById("span_superior_code");
-        span_superior_code.textContent = recipient.user_unit_superior;
-        var span_created_at = document.getElementById("span_created_at");
-        span_created_at.textContent = recipient.created_at;
-        // var span_period = document.getElementById("span_period");
-        // span_period.textContent = recipient.created_at;
-
-        var hod_code = document.getElementById("hod_code");
-        hod_code.textContent = recipient.hod_code;
-        var hod_unit = document.getElementById("hod_unit");
-        hod_unit.textContent = recipient.hod_unit;
-
-        var hrm_code = document.getElementById("hrm_code");
-        hrm_code.textContent = recipient.hrm_code;
-        var hrm_unit = document.getElementById("hrm_unit");
-        hrm_unit.textContent = recipient.hrm_unit;
-
-        var ca_code = document.getElementById("ca_code");
-        ca_code.textContent = recipient.ca_code;
-        var ca_unit = document.getElementById("ca_unit");
-        ca_unit.textContent = recipient.ca_unit;
-
-        var expenditure_code = document.getElementById("expenditure_code");
-        expenditure_code.textContent = recipient.expenditure_code;
-        var expenditure_unit = document.getElementById("expenditure_unit");
-        expenditure_unit.textContent = recipient.expenditure_unit;
-
-        var security_code = document.getElementById("security_code");
-        security_code.textContent = recipient.security_code;
-        var security_unit = document.getElementById("security_unit");
-        security_unit.textContent = recipient.security_unit;
-
-    });
-
-</script>
-
-
-<script>
-    $(document).ready(function () {
-        //hod
-        $("#hod_id").change(function () {
-            var selected_value = ''; // Selected value
-            // Get selected value
-            selected_value += $(this).val();
-            //find the user from the selected array
-            var users = {!! json_encode($users->toArray()) !!};
-            unit = "";
-            code = "";
-            $.each(users, function (index, value) {
-                if (value.id == selected_value) {
-                    unit += value.user_unit_code ;
-                    code += value.job_code ;
-                }
+    <!-- page script -->
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
             });
-            $("#hod_code").val(code);
-            $("#hod_unit").val(unit);
-        });
-        //hrm
-        $("#hrm_id").change(function () {
-            var selected_value = ''; // Selected value
-            // Get selected value
-            selected_value += $(this).val();
-            //find the user from the selected array
-            var users = {!! json_encode($users->toArray()) !!};
-            unit = "";
-            code = "";
-            $.each(users, function (index, value) {
-                if (value.id == selected_value) {
-                    unit += value.user_unit_code ;
-                    code += value.job_code ;
-                }
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
             });
-            $("#hrm_code").val(code);
-            $("#hrm_unit").val(unit);
         });
-        //chief accountant
-        $("#ca_id").change(function () {
-            var selected_value = ''; // Selected value
-            // Get selected value
-            selected_value += $(this).val();
-            //find the user from the selected array
-            var users = {!! json_encode($users->toArray()) !!};
-            unit = "";
-            code = "";
-            $.each(users, function (index, value) {
-                if (value.id == selected_value) {
-                    unit += value.user_unit_code ;
-                    code += value.job_code ;
-                }
-            });
-            $("#ca_code").val(code);
-            $("#ca_unit").val(unit);
-        });
-        //expenditure
-        $("#expenditure_id").change(function () {
-            var selected_text = ''; // Selected text
-            var selected_value = ''; // Selected value
-            var selected_index = ''; // Selected index
-            // Get selected value
-            selected_value += $(this).val();
-            //find the user from the selected array
-            var users = {!! json_encode($users->toArray()) !!};
-            unit = "";
-            code = "";
-            $.each(users, function (index, value) {
-                if (value.id == selected_value) {
-                    unit += value.user_unit_code ;
-                    code += value.job_code ;
-                }
-            });
-            $("#expenditure_code").val(code);
-            $("#expenditure_unit").val(unit);
-        });
-        //security
-        $("#security_id").change(function () {
-            var selected_text = ''; // Selected text
-            var selected_value = ''; // Selected value
-            var selected_index = ''; // Selected index
-            // Get selected value
-            selected_value += $(this).val();
-            //find the user from the selected array
-            var users = {!! json_encode($users->toArray()) !!};
-            unit = "";
-            code = "";
-            $.each(users, function (index, value) {
-                if (value.id == selected_value) {
-                    unit += value.user_unit_code ;
-                    code += value.job_code ;
-                }
-            });
-            $("#security_code").val(code);
-            $("#security_unit").val(unit);
+    </script>
+
+    <script>
+
+        $('#modal-edit').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+            $('#workflow_name2').val(recipient.user_unit_description);
+            $('#workflow_id2').val(recipient.id);
+            $('#workflow_code2').val(recipient.user_unit_code);
+            $('#business_unit_code2').val(recipient.user_unit_bc_code);
+            $('#cost_center_code2').val(recipient.user_unit_cc_code);
+            $('#code_unit_superior2').val(recipient.user_unit_superior);
+            $('#hod_code').val(recipient.hod_code);
+            $('#hod_unit').val(recipient.hod_unit);
+            $('#hrm_code').val(recipient.hrm_code);
+            $('#hrm_unit').val(recipient.hrm_unit);
+            $('#ca_code').val(recipient.ca_code);
+            $('#ca_unit').val(recipient.ca_unit);
+            $('#expenditure_code').val(recipient.expenditure_code);
+            $('#expenditure_unit').val(recipient.expenditure_unit);
+            $('#security_code').val(recipient.security_code);
+            $('#security_unit').val(recipient.security_unit);
+
         });
 
 
-    });
-</script>
+        $('#modal-view').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+
+            var span_id = document.getElementById("span_id");
+            span_id.textContent = recipient.id;
+            var span_name = document.getElementById("span_name");
+            span_name.textContent = recipient.user_unit_description;
+            var span_code = document.getElementById("span_code");
+            span_code.textContent = recipient.user_unit_code;
+            var span_business_unit = document.getElementById("span_business_unit");
+            span_business_unit.textContent = recipient.user_unit_bc_code;
+            var span_cost_center = document.getElementById("span_cost_center");
+            span_cost_center.textContent = recipient.user_unit_cc_code;
+            var span_superior_code = document.getElementById("span_superior_code");
+            span_superior_code.textContent = recipient.user_unit_superior;
+            var span_created_at = document.getElementById("span_created_at");
+            span_created_at.textContent = recipient.created_at;
+            // var span_period = document.getElementById("span_period");
+            // span_period.textContent = recipient.created_at;
+
+            var hod_code = document.getElementById("hod_code");
+            hod_code.textContent = recipient.hod_code;
+            var hod_unit = document.getElementById("hod_unit");
+            hod_unit.textContent = recipient.hod_unit;
+
+            var hrm_code = document.getElementById("hrm_code");
+            hrm_code.textContent = recipient.hrm_code;
+            var hrm_unit = document.getElementById("hrm_unit");
+            hrm_unit.textContent = recipient.hrm_unit;
+
+            var ca_code = document.getElementById("ca_code");
+            ca_code.textContent = recipient.ca_code;
+            var ca_unit = document.getElementById("ca_unit");
+            ca_unit.textContent = recipient.ca_unit;
+
+            var expenditure_code = document.getElementById("expenditure_code");
+            expenditure_code.textContent = recipient.expenditure_code;
+            var expenditure_unit = document.getElementById("expenditure_unit");
+            expenditure_unit.textContent = recipient.expenditure_unit;
+
+            var security_code = document.getElementById("security_code");
+            security_code.textContent = recipient.security_code;
+            var security_unit = document.getElementById("security_unit");
+            security_unit.textContent = recipient.security_unit;
+
+        });
+
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            //hod
+            $("#hod_id").change(function () {
+                var selected_value = ''; // Selected value
+                // Get selected value
+                selected_value += $(this).val();
+                //find the user from the selected array
+                var users = {!! json_encode($users->toArray()) !!};
+                unit = "";
+                code = "";
+                $.each(users, function (index, value) {
+                    if (value.id == selected_value) {
+                        unit += value.user_unit_code ;
+                        code += value.job_code ;
+                    }
+                });
+                $("#hod_code").val(code);
+                $("#hod_unit").val(unit);
+            });
+            //hrm
+            $("#hrm_id").change(function () {
+                var selected_value = ''; // Selected value
+                // Get selected value
+                selected_value += $(this).val();
+                //find the user from the selected array
+                var users = {!! json_encode($users->toArray()) !!};
+                unit = "";
+                code = "";
+                $.each(users, function (index, value) {
+                    if (value.id == selected_value) {
+                        unit += value.user_unit_code ;
+                        code += value.job_code ;
+                    }
+                });
+                $("#hrm_code").val(code);
+                $("#hrm_unit").val(unit);
+            });
+            //chief accountant
+            $("#ca_id").change(function () {
+                var selected_value = ''; // Selected value
+                // Get selected value
+                selected_value += $(this).val();
+                //find the user from the selected array
+                var users = {!! json_encode($users->toArray()) !!};
+                unit = "";
+                code = "";
+                $.each(users, function (index, value) {
+                    if (value.id == selected_value) {
+                        unit += value.user_unit_code ;
+                        code += value.job_code ;
+                    }
+                });
+                $("#ca_code").val(code);
+                $("#ca_unit").val(unit);
+            });
+            //expenditure
+            $("#expenditure_id").change(function () {
+                var selected_text = ''; // Selected text
+                var selected_value = ''; // Selected value
+                var selected_index = ''; // Selected index
+                // Get selected value
+                selected_value += $(this).val();
+                //find the user from the selected array
+                var users = {!! json_encode($users->toArray()) !!};
+                unit = "";
+                code = "";
+                $.each(users, function (index, value) {
+                    if (value.id == selected_value) {
+                        unit += value.user_unit_code ;
+                        code += value.job_code ;
+                    }
+                });
+                $("#expenditure_code").val(code);
+                $("#expenditure_unit").val(unit);
+            });
+            //security
+            $("#security_id").change(function () {
+                var selected_text = ''; // Selected text
+                var selected_value = ''; // Selected value
+                var selected_index = ''; // Selected index
+                // Get selected value
+                selected_value += $(this).val();
+                //find the user from the selected array
+                var users = {!! json_encode($users->toArray()) !!};
+                unit = "";
+                code = "";
+                $.each(users, function (index, value) {
+                    if (value.id == selected_value) {
+                        unit += value.user_unit_code ;
+                        code += value.job_code ;
+                    }
+                });
+                $("#security_code").val(code);
+                $("#security_unit").val(unit);
+            });
+            //audit
+            $("#audit_id").change(function () {
+                var selected_text = ''; // Selected text
+                var selected_value = ''; // Selected value
+                var selected_index = ''; // Selected index
+                // Get selected value
+                selected_value += $(this).val();
+                //find the user from the selected array
+                var users = {!! json_encode($users->toArray()) !!};
+                unit = "";
+                code = "";
+                $.each(users, function (index, value) {
+                    if (value.id == selected_value) {
+                        unit += value.user_unit_code ;
+                        code += value.job_code ;
+                    }
+                });
+                $("#audit_code").val(code);
+                $("#audit_unit").val(unit);
+            });
+
+
+        });
+    </script>
 
 @endpush

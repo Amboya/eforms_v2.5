@@ -15,11 +15,11 @@ class ProfileDelegatedModel extends Model
 
     //table name
     protected $table = 'config_profile_delegated';
+
     //primary key
     protected $primaryKey = 'id';
     //fields fillable
     protected $fillable = [
-
         'eform_id',
         'eform_code',
         'delegated_to',
@@ -28,17 +28,13 @@ class ProfileDelegatedModel extends Model
         'delegated_profile',
         'config_status_id',
         'delegation_end',
-
-        'created_by',
-        'created_at',
-        'updated_at',
-        'deleted_at'
+        'created_by'
     ];
 
     protected $with = [
 
         'profile_details',
-        'form',
+        'form'
     ];
 
     //RELATIONSHIP

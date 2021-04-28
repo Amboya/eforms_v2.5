@@ -239,12 +239,13 @@
                         giving rise to the expenditure</p>
 
                 </div>
+
                 <!-- /.card-body -->
                 <div class="card-footer">
                     {{--  CLAIMANT EDIT--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')
                          &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
-                            &&  Auth::user()->id  == $form->created_by)
+                         &&  Auth::user()->id  == $form->created_by)
                         <div class="">
                             <hr>
                             <div class="row">
@@ -279,10 +280,12 @@
                         </div>
                     @endif
 
-
                     {{--  HOD APPROVAL--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')
-                     &&  $form->config_status_id == config('constants.petty_cash_status.new_application')   )
+                         &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
+                         &&  $form->user_unit->hod_code == Auth::user()->profile_job_code
+                         &&  $form->user_unit->hod_unit == Auth::user()->profile_unit_code
+                      )
                         <div class="">
                             <hr>
                             <div class="row">
@@ -318,7 +321,11 @@
                     @endif
 
                     {{--  HR APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_009')   &&  $form->config_status_id == config('constants.petty_cash_status.hod_approved')   )
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_009')
+                         &&  $form->config_status_id == config('constants.petty_cash_status.hod_approved')
+                         &&  $form->user_unit->hrm_code == Auth::user()->profile_job_code
+                         &&  $form->user_unit->hrm_unit == Auth::user()->profile_unit_code
+                     )
                         <div class="">
                             <hr>
                             <div class="row">
@@ -354,7 +361,11 @@
                     @endif
 
                     {{--  CHIEF ACCOUNTANT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')   &&  $form->config_status_id == config('constants.petty_cash_status.hr_approved')   )
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
+                         &&  $form->config_status_id == config('constants.petty_cash_status.hr_approved')
+                         &&  $form->user_unit->ca_code == Auth::user()->profile_job_code
+                         &&  $form->user_unit->ca_unit == Auth::user()->profile_unit_code
+                        )
                         <div class="">
                             <hr>
                             <div class="row">
@@ -390,7 +401,10 @@
                     @endif
 
                     {{--  FUNDS DISBURSEMNET APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')   &&  $form->config_status_id == config('constants.petty_cash_status.chief_accountant')   )
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                         &&  $form->config_status_id == config('constants.petty_cash_status.chief_accountant')
+                         &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
+                       )
                         <div class="">
                             <h6 class="text-center">Please Update the Accounts</h6>
                             <div class="col-lg-12 grid-margin stretch-card">
@@ -502,7 +516,10 @@
                     @endif
 
                     {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')   &&  $form->config_status_id == config('constants.petty_cash_status.funds_disbursement')   )
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                         &&  $form->config_status_id == config('constants.petty_cash_status.funds_disbursement')
+                         &&  $form->claimant_staff_no == Auth::user()->staff_no
+                          )
                         <div class="">
                             <hr>
                             <div class="row">
@@ -545,7 +562,10 @@
                     @endif
 
                     {{--  SECURITY APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_013')   &&  $form->config_status_id == config('constants.petty_cash_status.funds_acknowledgement')   )
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_013')
+                         &&  $form->config_status_id == config('constants.petty_cash_status.funds_acknowledgement')
+                         &&  $form->user_unit->security_unit == Auth::user()->profile_unit_code
+                        )
                         <div class="">
                             <hr>
                             <div class="row">
@@ -595,7 +615,10 @@
                     @endif
 
                     {{--  RECEIPT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')   &&  $form->config_status_id == config('constants.petty_cash_status.security_approved')   )
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                         &&  $form->config_status_id == config('constants.petty_cash_status.security_approved')
+                         &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
+                       )
                         <div class="">
                             <h6 class="text-center">The Updated Accounts</h6>
                             <div class="col-lg-12 grid-margin stretch-card">
@@ -761,6 +784,45 @@
                         </div>
                     @endif
 
+
+                    {{--  AUDIT APPROVAL--}}
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_011')   &&
+                        $form->config_status_id == config('constants.petty_cash_status.closed')   )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-9">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success p-2   "
+                                                value='Approved'>AUDITED
+                                        </button>
+                                        <button id="btnSubmit_reject" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-danger p-2   "
+                                                value='Queried'>QUERIED
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
                 <!-- /.card-footer-->
             </form>
@@ -887,8 +949,7 @@
 
 
 @push('custom-scripts')
-    <!--  -->
-
+    <!-- JQuery -->
     <script src="{{ asset('dashboard/plugins/jquery/jquery.min.js')}}"></script>
     <!-- Bootstrap 4 -->
     <script src="{{ asset('dashboard/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
@@ -1008,7 +1069,6 @@
 
     </script>
 
-
     <SCRIPT language="javascript">
         function addRow(tableID) {
 
@@ -1063,7 +1123,6 @@
         }
 
     </SCRIPT>
-
 
     <script>
         $(document).ready(function () {

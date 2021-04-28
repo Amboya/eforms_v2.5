@@ -183,6 +183,7 @@
                                     @endforeach
                                     </tbody>
                                 </table>
+{{--                                {!! $list->links() !!}--}}
                             </div>
                             <!-- /.table-responsive -->
                         </div>

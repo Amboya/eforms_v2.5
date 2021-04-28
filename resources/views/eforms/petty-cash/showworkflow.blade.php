@@ -78,44 +78,46 @@
                             <th>CA</th>
                             <th>EX</th>
                             <th>SEC</th>
+                            <th>AUDIT</th>
 
                             <th>Updated At</th>
                             <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>{{$workflow->id }}</td>
-                                <td>{{$workflow->user_unit_description}} </td>
-                                <td>{{$workflow->user_unit_code}} </td>
-                                <td>{{$workflow->user_unit_bc_code}} </td>
-                                <td>{{$workflow->user_unit_cc_code}} </td>
-                                <td>{{$workflow->user_unit_superior}} </td>
+                        <tr>
+                            <td>{{$workflow->id }}</td>
+                            <td>{{$workflow->user_unit_description}} </td>
+                            <td>{{$workflow->user_unit_code}} </td>
+                            <td>{{$workflow->user_unit_bc_code}} </td>
+                            <td>{{$workflow->user_unit_cc_code}} </td>
+                            <td>{{$workflow->user_unit_superior}} </td>
 
-                                <td>{{ $workflow->hod_unit }} : {{ $workflow->hod_code }} </td>
-                                <td>{{ $workflow->hrm_unit }} : {{ $workflow->hrm_code }} </td>
-                                <td>{{ $workflow->ca_unit }} : {{ $workflow->ca_code }} </td>
-                                <td>{{ $workflow->expenditure_unit }} : {{ $workflow->expenditure_code }} </td>
-                                <td>{{ $workflow->security_unit }} : {{ $workflow->security_code }} </td>
+                            <td>{{ $workflow->hod_unit }} : {{ $workflow->hod_code }} </td>
+                            <td>{{ $workflow->hrm_unit }} : {{ $workflow->hrm_code }} </td>
+                            <td>{{ $workflow->ca_unit }} : {{ $workflow->ca_code }} </td>
+                            <td>{{ $workflow->expenditure_unit }} : {{ $workflow->expenditure_code }} </td>
+                            <td>{{ $workflow->security_unit }} : {{ $workflow->security_code }} </td>
+                            <td>{{ $workflow->audit_unit }} : {{ $workflow->audit_code }} </td>
 
-                                <td>{{ $workflow->updated_at }} </td>
-                                <td>
-                                    <button class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
-                                            title="Edit"
-                                            data-toggle="modal"
-                                            data-sent_data="{{$workflow}}"
-                                            data-target="#modal-view">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
-                                            title="Edit"
-                                            data-toggle="modal"
-                                            data-sent_data="{{$workflow}}"
-                                            data-target="#modal-edit">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <td>{{ $workflow->updated_at }} </td>
+                            <td>
+                                <button class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
+                                        title="Edit"
+                                        data-toggle="modal"
+                                        data-sent_data="{{$workflow}}"
+                                        data-target="#modal-view">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
+                                        title="Edit"
+                                        data-toggle="modal"
+                                        data-sent_data="{{$workflow}}"
+                                        data-target="#modal-edit">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
                         </tbody>
 
                     </table>
@@ -152,6 +154,8 @@
                                 <input hidden type="text" class="form-control" id="workflow_id2" name="workflow_id"
                                        required>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Unit Code</label>
@@ -180,7 +184,8 @@
                                            readonly placeholder="Enter cost unit superior">
                                 </div>
                             </div>
-
+                        </div>
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="hod_id">HOD</label>
@@ -207,8 +212,8 @@
                                            placeholder="Enter cost unit superior">
                                 </div>
                             </div>
-
-
+                        </div>
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="hrm_id">HR</label>
@@ -235,8 +240,9 @@
                                            placeholder="Enter HRM Unit">
                                 </div>
                             </div>
+                        </div>
 
-
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="ca_id">Chief Accountant</label>
@@ -263,7 +269,9 @@
                                            placeholder="Enter CA Unit">
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="expenditure_id">Expenditure Accountant</label>
@@ -290,7 +298,9 @@
                                            placeholder="Enter Expenditure Accountant Unit">
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="security_id">Security Personal</label>
@@ -317,7 +327,34 @@
                                            placeholder="Enter Security Personal Unit">
                                 </div>
                             </div>
-
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="audit_id">Audit Personal</label>
+                                    <input list="users_list6" type="text" class="form-control" id="audit_id" name="audit_id"
+                                           placeholder="Select Audit Personal Person">
+                                    <datalist id="users_list6">
+                                        @foreach($users as $item)
+                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
+                                        @endforeach
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="audit_code">Security Audit Code</label>
+                                    <input type="text" class="form-control accent-green" id="audit_code" name="audit_code"
+                                           placeholder="Enter Audit Personal Code">
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="audit_unit">Audit Personal Unit</label>
+                                    <input type="text" class="form-control accent-green" id="audit_unit" name="audit_unit"
+                                           placeholder="Enter Audit Personal Unit">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -534,6 +571,26 @@
                 });
                 $("#security_code").val(code);
                 $("#security_unit").val(unit);
+            });
+            //audit
+            $("#audit_id").change(function () {
+                var selected_text = ''; // Selected text
+                var selected_value = ''; // Selected value
+                var selected_index = ''; // Selected index
+                // Get selected value
+                selected_value += $(this).val();
+                //find the user from the selected array
+                var users = {!! json_encode($users->toArray()) !!};
+                unit = "";
+                code = "";
+                $.each(users, function (index, value) {
+                    if (value.id == selected_value) {
+                        unit += value.user_unit_code ;
+                        code += value.job_code ;
+                    }
+                });
+                $("#audit_code").val(code);
+                $("#audit_unit").val(unit);
             });
 
 

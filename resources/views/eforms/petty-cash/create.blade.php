@@ -252,23 +252,16 @@
                             </div>
                         </div>
                         <div id="submit_possible" class="col-12 text-center">
-{{--                            <input class="btn btn-lg btn-success" type="submit"--}}
-{{--                                   value="submit" id="btnSubmit"--}}
-{{--                                   name="submit_form">--}}
-
                             <div id="divSubmit_show">
                                 <input class="btn btn-lg btn-success" type="submit"
                                        value="submit" id="btnSubmit"
                                        name="submit_form">
                             </div>
                             <div id="divSubmit_hide" >
-                                <input class="btn btn-lg btn-success" type="submit"
-                                       value="submit" disabled
+                                <input class="btn btn-lg btn-success"
+                                       value="Submitting. Please wait..." disabled
                                        name="submit_form">
                             </div>
-
-
-
                         </div>
                     </div>
                 </div>

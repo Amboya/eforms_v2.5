@@ -399,17 +399,17 @@
 {{--                                            </div>--}}
 {{--                                        </div>--}}
 
-{{--                                        <div class="form-group row">--}}
-{{--                                            <label for="inputExperience"--}}
-{{--                                                   class="col-sm-2 col-form-label">User Division</label>--}}
-{{--                                            <div class="col-sm-10">--}}
-{{--                                                <select disabled class="form-control" id="division_select"--}}
-{{--                                                        name="user_division_id">--}}
-{{--                                                    <option--}}
-{{--                                                        value="{{$user->division->id  ?? ""}}  ">{{$user->division->name  ?? ""}}  </option>--}}
-{{--                                                </select>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
+                                        <div class="form-group row">
+                                            <label for="inputExperience"
+                                                   class="col-sm-2 col-form-label">User Division</label>
+                                            <div class="col-sm-10">
+                                                <select disabled class="form-control" id="division_select"
+                                                        name="user_division_id">
+                                                    <option
+                                                        value="{{$user->division->id  ?? ""}}  ">{{$user->division->name  ?? ""}}  </option>
+                                                </select>
+                                            </div>
+                                        </div>
 
 {{--                                        <div class="form-group row">--}}
 {{--                                            <label for="inputExperience"--}}
@@ -505,23 +505,20 @@
 
 @push('custom-scripts')
     <!--  -->
-
     <script>
         $(document).ready(function () {
             $("#directorate_select").change(function () {
                 var selected_text = ''; // Selected text
                 var selected_value = ''; // Selected value
                 var selected_index = ''; // Selected index
-// Get selected value
+                // Get selected value
                 $('#directorate_select option:selected').each(function () {
                     selected_text += $(this).text();
                     selected_value += $(this).val();
                     selected_index += $(this).index();
                 });
-
+                //
                 var division = {!! json_encode($divisions->toArray()) !!};
-// console.log(division[1].directorate.user_unit);
-// console.log(selected_value);
                 responce = " <option selected disabled=\"true\"  value=\"\"> Select Division</option>";
                 user_uni = " ";
                 $.each(division, function (index, value) {
@@ -533,7 +530,6 @@
                 });
                 $("#division_select").html(responce);
                 $("#user_unit_select").html(user_uni);
-
             });
         });
     </script>
@@ -543,16 +539,13 @@
                 var selected_text = ''; // Selected text
                 var selected_value = ''; // Selected value
                 var selected_index = ''; // Selected index
-// Get selected value
+                // Get selected value
                 $('#division_select option:selected').each(function () {
                     selected_text += $(this).text();
                     selected_value += $(this).val();
                     selected_index += $(this).index();
                 });
-
                 var region = {!! json_encode($regions->toArray()) !!};
-// console.log(region);
-// console.log(selected_value);
                 responce = " <option selected disabled=\"true\"  value=\"\"> Select Region</option>";
                 $.each(region, function (index, value) {
                     if (value.division_id == selected_value) {
@@ -560,7 +553,6 @@
                     }
                 });
                 $("#regions_select").html(responce);
-
             });
         });
     </script>

@@ -142,9 +142,8 @@ class WorkFlowController extends Controller
      */
     public function update(Request $request, $form_id)
     {
-        //update the workflow
+        // [1] update the workflow
         $model = ConfigWorkFlow::find($request->workflow_id);
-
         $model->hod_code = $request->hod_code ?? "" ;
         $model->hod_unit = $request->hod_unit ??  "" ;
         $model->ca_code = $request->ca_code ??  "" ;
@@ -155,10 +154,11 @@ class WorkFlowController extends Controller
         $model->expenditure_unit = $request->expenditure_unit ??  "" ;
         $model->security_code = $request->security_code ??  "" ;
         $model->security_unit = $request->security_unit ??  "" ;
-
+        $model->audit_code = $request->audit_code ??  "" ;
+        $model->audit_unit = $request->audit_unit ??  "" ;
         $model->save();
 
-        //update the petty cash form
+        //[2] update the petty cash form
         if($form_id != config('constants.all')){
             $update_eform_petty_cash = DB::table('eform_petty_cash')
                 ->where('id', $form_id)
@@ -176,13 +176,37 @@ class WorkFlowController extends Controller
                     'expenditure_code' => $model->expenditure_code,
                     'expenditure_unit' => $model->expenditure_unit,
                     'security_code' => $model->security_code,
-                    'security_unit' => $model->security_unit
+                    'security_unit' => $model->security_unit,
+                    'audit_code' => $model->audit_code,
+                    'audit_unit' => $model->audit_unit
+                ]);
+
+            //[3] update the petty cash account lines
+            $update_eform_petty_cash_account = DB::table('eform_petty_cash_account')
+                ->where('eform_petty_cash_id', $form_id)
+                ->update([
+                    'cost_center' => $model->user_unit_cc_code,
+                    'business_unit_code' => $model->user_unit_bc_code,
+                    'user_unit_code' => $model->user_unit_code,
+
+                    'hod_code' => $model->hod_code,
+                    'hod_unit' => $model->hod_unit,
+                    'ca_code' => $model->ca_code,
+                    'ca_unit' => $model->ca_unit,
+                    'hrm_code' => $model->hrm_code,
+                    'hrm_unit' => $model->hrm_unit,
+                    'expenditure_code' => $model->expenditure_code,
+                    'expenditure_unit' => $model->expenditure_unit,
+                    'security_code' => $model->security_code,
+                    'security_unit' => $model->security_unit,
+                    'audit_code' => $model->audit_code,
+                    'audit_unit' => $model->audit_unit
                 ]);
         }
 
         //log the activity
-      //  ActivityLogsController::store($request, "Updating of Petty Cash User Unit Workflow", "update", "petty cash unit user workflow updated", $model->id);
-        return Redirect::back()->with('message', 'Work Flow for ' . $model->name . ' have been Updated successfully');
+        //  ActivityLogsController::store($request, "Updating of Petty Cash User Unit Workflow", "update", "petty cash unit user workflow updated", $model->id);
+        return Redirect::route('petty-cash-home')->with('message', 'Work Flow for ' . $model->name . ' have been Updated successfully');
 
     }
 
@@ -201,4 +225,6 @@ class WorkFlowController extends Controller
 //        return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Deleted successfully');
 
     }
+
+
 }

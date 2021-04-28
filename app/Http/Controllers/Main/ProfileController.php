@@ -168,14 +168,13 @@ class ProfileController extends Controller
         $model = ProfileAssigmentModel::updateOrCreate(
             [
                 'user_id' => $request->user_id,
-                'eform_id' => $request->eform_id,
+                'eform_id' => $request->eform_id
             ],
-
             [
                 'user_id' => $request->user_id,
                 'eform_id' => $request->eform_id,
                 'profile' => $request->profile,
-                'created_by'=> $user->id,
+                'created_by'=> $user->id
             ]);
 
         //log the activity
@@ -201,7 +200,7 @@ class ProfileController extends Controller
             'mine' => $mine,
         ];
 
-      //  dd($mine->user_profile);
+        //  dd($mine->user_profile);
 
         return view('main.profile.delegation')->with($params);
     }
@@ -216,16 +215,17 @@ class ProfileController extends Controller
         $oldDate = strtotime($request->delegation_end_date);
 
         //create model
-        $model = ProfileDelegatedModel::updateOrCreate(
+        $model = ProfileDelegatedModel::firstOrCreate(
             [
                 'eform_id' =>  $eform->id,
                 'eform_code' =>  $eform->name ,
+
                 'delegated_to' => $request->user_id ,
                 'delegated_profile' => $request->profile,
-                'delegated_user_unit' => $user->user_unit_id,
-                'delegated_job_code' => $user->position->code,
+                'delegated_user_unit' => $user->user_unit_code,
+                'delegated_job_code' => $user->job_code,
                 'delegation_end' => $request->delegation_end_date,
-                'config_status_id' => config('constants.active') ,
+                'config_status_id' => config('constants.one') ,
                 'created_by'=> $user->id
             ],
             [
@@ -233,10 +233,10 @@ class ProfileController extends Controller
                 'eform_code' =>  $eform->name ,
                 'delegated_to' => $request->user_id ,
                 'delegated_profile' => $request->profile,
-                'delegated_user_unit' => $user->user_unit_id,
-                'delegated_job_code' => $user->position->code,
+                'delegated_user_unit' => $user->user_unit_code,
+                'delegated_job_code' => $user->job_code,
                 'delegation_end' => $request->delegation_end_date,
-                'config_status_id' => config('constants.active') ,
+                'config_status_id' => config('constants.one') ,
                 'created_by'=> $user->id
             ]);
 

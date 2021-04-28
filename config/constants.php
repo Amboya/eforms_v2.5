@@ -59,6 +59,7 @@ return [
         'approve' => "Approved",
         'reject' => "Rejected",
         'cancelled' => "Cancelled",
+        'queried' => "Queried"
     ],
 
     'user_types' => [
@@ -155,6 +156,7 @@ return [
         'security_approved' => "27",
         'receipt_approved' => "28",
         'closed' => "28",
+        'audited' => "29",
         'rejected' => "30",
         'export_not_ready' => "141",
         'not_exported' => "41",
@@ -162,6 +164,7 @@ return [
         'export_failed' => "43",
         'void' => "101",
         'cancelled' => "161",
+        'queried' => "201",
     ],
     'kilometer_allowance_status' => [
         'new_application' => "61",

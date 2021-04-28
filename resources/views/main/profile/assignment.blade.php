@@ -50,7 +50,7 @@
     <!-- Default box -->
         <div class="card">
             <div class="card-header">
-              <span>Assign a user a new profile</span>
+                <span>Assign a user a new profile</span>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -67,16 +67,27 @@
                         <div class="col-6">
                             <div class="form-group">
                                 <label>Select User</label>
-                                <select class="form-control select2" id="user_select" name="user_id" required
+{{--                                <select class="form-control select2" id="user_select" name="user_id" required--}}
+{{--                                        style="width: 100%;">--}}
+{{--                                    <option value="" selected>Select User</option>--}}
+{{--                                    @foreach($users as $user)--}}
+{{--                                        @if($user->id  != \Auth::user()->id)--}}
+{{--                                            <option--}}
+{{--                                                value="{{$user->id}}"> {{$user->name}} :  {{$user->staff_no}} </option>--}}
+{{--                                        @endif--}}
+{{--                                    @endforeach--}}
+{{--                                </select>--}}
+                                <input list="user_list1" class="form-control " id="user_select" name="user_id" required
                                         style="width: 100%;">
+                                <datalist id="user_list1">
                                     <option value="" selected>Select User</option>
                                     @foreach($users as $user)
                                         @if($user->id  != \Auth::user()->id)
-                                        <option
-                                            value="{{$user->id}}"> {{$user->name}} :  {{$user->staff_no}} </option>
+                                            <option
+                                                value="{{$user->id}}"> {{$user->name}} :  {{$user->staff_no}} </option>
                                         @endif
                                     @endforeach
-                                </select>
+                                </datalist>
                             </div>
                             <!-- /.form-group -->
                         </div>
@@ -150,7 +161,7 @@
                 responce = " <option selected disabled=\"true\"  value=\"\"> Select Profile</option>";
                 $.each(profile, function (index, value) {
                     if (value.eform_id == selected_value) {
-                    //    console.log(value.profiles);
+                        //    console.log(value.profiles);
                         responce +=  "<option value=" + value.profiles.code + "    > " + value.profiles.code + " : "+ value.profiles.name + "  </option> ";
                     }
                 });

@@ -43,4 +43,6 @@ class ProfileAssigmentModel extends Model
     public function form(){
         return $this->belongsTo(EFormModel::class, 'eform_id', 'id');
     }
+
+
 }

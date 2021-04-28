@@ -53,7 +53,7 @@ class ReportsController extends Controller
             ->where('total_one', config('constants.config_totals.dir_total_closed_count'))
             ->get();
 
-      //  dd($directorates_closed_totals);
+        //  dd($directorates_closed_totals);
 
 
         //data to send to the view

@@ -91,6 +91,8 @@
                         </tbody>
 
                     </table>
+
+{{--                    {!! $list->links() !!}--}}
                 </div>
             </div>
             <!-- /.card-body -->
