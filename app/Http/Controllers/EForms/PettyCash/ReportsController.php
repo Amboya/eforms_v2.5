@@ -4,9 +4,13 @@ namespace App\Http\Controllers\EForms\PettyCash;
 
 use App\Http\Controllers\Controller;
 use App\Models\EForms\PettyCash\PettyCashModel;
-use App\Models\Main\DirectoratesModel;
+use App\Models\EForms\PettyCash\Views\DailyPettyCashTotalsView;
+use App\Models\Main\ConfigWorkFlow;
+use App\Models\Main\StatusModel;
 use App\Models\Main\Totals;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
@@ -26,29 +30,107 @@ class ReportsController extends Controller
     }
 
 
+    public function filteredReports()
+    {
+//        $user_units = DailyPettyCashTotalsView::get();
+//        dd($user_units);
+        $user = Auth::user();
+        //[1] REQUESTER
+        if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
+            $user_units = ConfigWorkFlow::where('user_unit_code', $user->user_unit_code)
+                ->get();
+        }//[2A] HOD
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
+            $user_units = ConfigWorkFlow::where('hod_unit', $user->user_unit->hod_unit)
+                ->where('hod_code', $user->user_unit->hod_code)
+                ->get();
+        } //[2B] HUMAN RESOURCE.
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+            $user_units = ConfigWorkFlow::where('hrm_code', $user->user_unit->hrm_code)
+                ->where('hrm_unit', $user->user_unit->hrm_unit)
+                ->get();
+        } //[2C] CHIEF ACCOUNTANT
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
+            $user_units = ConfigWorkFlow::where('ca_code', $user->user_unit->ca_code)
+                ->where('ca_code', $user->user_unit->ca_code)
+                ->get();
+        } //[2D] EXPENDITURE
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
+            $user_units = ConfigWorkFlow::where('expenditure_unit', $user->user_unit->expenditure_unit)
+                ->get();
+        } //[2E] SECURITY
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
+            $user_units = ConfigWorkFlow::where('security_unit', $user->user_unit->security_unit)
+                ->get();
+        } //[2F] AUDIT
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
+            $user_units = ConfigWorkFlow::where('audit_unit', $user->user_unit->audit_unit)
+                ->get();
+        } else {
+            $user_units = ConfigWorkFlow::all();
+        }
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+        $status = StatusModel::where('eform_id', config('constants.eforms_id.petty_cash'))->orderBy('name')->get();
+
+        //data to send to the view
+        $params = [
+            'category' => "Filtered List" ,
+            'status' => $status,
+            'user_units' => $user_units,
+            'totals_needs_me' => $totals_needs_me,
+        ];
+
+        //reports one page
+        return view('eforms.petty-cash.reports.filtered_reports')->with($params);
+    }
+
+    public function getFilteredReports($user_unit, $status, $start_date, $end_date){
+//        $list= PettyCashModel::where('config_status_id', $status )->get();
+//        $summary = DailyPettyCashTotalsView::where('config_status_id', $status)->get() ;
+
+        //
+        $list = DB::select("SELECT * FROM eform_petty_cash
+                    where config_status_id = {$status} ");
+        $list = PettyCashModel::hydrate($list)->get();
+        //
+        $summary = DB::select("SELECT * FROM eform_petty_cash_dashboard_daily_totals_view
+                       where config_status_id = {$status} ");
+        $summary = DailyPettyCashTotalsView::hydrate($summary)->get();
+
+
+        $params = [
+            'list' => $list,
+            'summary' => $summary
+        ];
+        return Response::json($params);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function index(Request $request)
+    public
+    function index(Request $request)
     {
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
 
-        $directorates = Totals:: select('column_one_value' )
-            ->where('eform_id', config('constants.eforms_id.petty_cash') )
+        $directorates = Totals:: select('column_one_value')
+            ->where('eform_id', config('constants.eforms_id.petty_cash'))
             ->where('column_one', config('constants.config_totals.directorate'))
             ->groupBy('column_one_value')
             ->get();
         $directs[] = '';
-        foreach ($directorates as $director){
-            $directs[] =  $director->myDirectorate->code ?? "hi" ;
+        foreach ($directorates as $director) {
+            $directs[] = $director->myDirectorate->code ?? "hi";
         }
 
         //get the totals closed
-        $directorates_closed_totals = Totals:: select('*' )
-            ->where('eform_id', config('constants.eforms_id.petty_cash') )
+        $directorates_closed_totals = Totals:: select('*')
+            ->where('eform_id', config('constants.eforms_id.petty_cash'))
             ->where('column_one', config('constants.config_totals.directorate'))
             ->where('total_one', config('constants.config_totals.dir_total_closed_count'))
             ->get();
@@ -73,8 +155,8 @@ class ReportsController extends Controller
         return view('eforms.petty-cash.reports.directorates')->with($params);
     }
 
-
-    public function syncDirectorates()
+    public
+    function syncDirectorates()
     {
         /**
          * total Closed
@@ -284,7 +366,8 @@ class ReportsController extends Controller
 
     }
 
-    public function syncUserUnits()
+    public
+    function syncUserUnits()
     {
 
         // dd(11111);

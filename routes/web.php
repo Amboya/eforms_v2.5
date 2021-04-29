@@ -282,7 +282,8 @@ Route::group([
 Route::group([
     'namespace' => 'petty_cash',
     'prefix' => 'petty_cash',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
     Route::get('/master', function () {
         return view('main.dashboard');
@@ -320,8 +321,14 @@ Route::group([
         Route::get('directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'index'])->name('petty-cash-reports-index');
         Route::get('syncDirectorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncDirectorates'])->name('petty-cash-reports-sync-directorates');
         Route::get('syncUserUnits', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncUserUnits'])->name('petty-cash-reports-sync-units');
-
     });
+    Route::group([
+        'prefix' => 'filtered/report'
+    ], function () {
+        Route::get('index', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'filteredReports'])->name('petty.cash.filtered.report');
+        Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'getFilteredReports'])->name('petty.cash.filtered.get');
+    });
+
 
 });
 

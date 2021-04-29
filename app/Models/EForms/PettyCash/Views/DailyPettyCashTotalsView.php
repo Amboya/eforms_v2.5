@@ -51,10 +51,7 @@ class DailyPettyCashTotalsView extends Model
 
     ];
     protected $with = [
-        'user',
         'status',
-        'project',
-        'item',
         // 'accounts'
     ];
 
@@ -145,7 +142,7 @@ class DailyPettyCashTotalsView extends Model
                 elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
                     static::addGlobalScope('audit', function (Builder $builder) {
                         // $builder->Where('security_code', Auth::user()->job_code);
-                        // $builder->where('audit_unit', Auth::user()->profile_unit_code);
+                         $builder->where('audit_unit', Auth::user()->profile_unit_code);
 
                     });
                 }
@@ -168,10 +165,6 @@ class DailyPettyCashTotalsView extends Model
         return $this->belongsTo(ConfigWorkFlow::class, 'user_unit_code', 'user_unit_code');
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'created_by', 'id');
-    }
     public function directorate()
     {
         return $this->belongsTo(DirectoratesModel::class, 'directorate_id', 'id');
@@ -182,14 +175,5 @@ class DailyPettyCashTotalsView extends Model
         return $this->belongsTo(StatusModel::class, 'config_status_id', 'id');
     }
 
-    public function project()
-    {
-        return $this->belongsTo(ProjectsModel::class, 'projects_id', 'id');
-    }
-
-    public function item()
-    {
-        return $this->hasMany(PettyCashItemModel::class, 'eform_petty_cash_id', 'id');
-    }
 
 }

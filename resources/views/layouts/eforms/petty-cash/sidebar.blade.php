@@ -110,10 +110,17 @@
                     </ul>
                 </li>
 
+                <li class="nav-header">REPORTS</li>
+                <li class="nav-item">
+                    <a href="{{route('petty.cash.filtered.report')}}" class="nav-link ">
+                        <i class="nav-icon fas fa-bars"></i>
+                        <p> Filtered Reports
+                        </p>
+                    </a>
+                </li>
                 @if (Auth::user()->type_id == config('constants.user_types.developer') ||
                 Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007') ||
                 Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
-                    <li class="nav-header">REPORTS</li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-file-download"></i>

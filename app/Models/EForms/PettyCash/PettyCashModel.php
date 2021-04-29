@@ -182,7 +182,6 @@ class PettyCashModel extends Model
                         $builder->where('security_unit', Auth::user()->profile_unit_code);
                     });
                 }
-
                 //[2F] AUDIT
                 //see forms for the
                 elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
@@ -191,9 +190,7 @@ class PettyCashModel extends Model
                         $builder->where('audit_unit', Auth::user()->profile_unit_code);
                     });
                 }
-
                 else{
-
 
                 }
             }
