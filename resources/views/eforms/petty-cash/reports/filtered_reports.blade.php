@@ -205,7 +205,7 @@
     </script>
 
     <script>
-        $("#search_button").onclick(function () {
+        $("#search_button").click(function () {
             var unit_selected_text = ''; // Selected text
             var unit_selected_value = ''; // Selected value
             var unit_selected_index = ''; // Selected index
@@ -226,11 +226,11 @@
                 status_selected_value += $(this).val();
                 status_selected_index += $(this).index();
             });
-            alert(status_selected_value);
+            // alert(status_selected_value);
 
-            var start_date = $("#start_date").val ;
+            var start_date = $("#start_date").val() ;
             alert(start_date);
-            var end_date = $("#end_date").val ;
+            var end_date = $("#end_date").val() ;
             alert(end_date);
 
             /* AJAX */
@@ -242,7 +242,7 @@
 
             //get the route
             var route = '{{url('petty_cash/filtered/report/get')}}' + '/' + unit_selected_value  + '/' + status_selected_value+ '/' + start_date+ '/' + end_date;
-            alert(route);
+            // alert(route);
             $.ajax({
                 url: route,
                 type: 'get',
@@ -258,7 +258,7 @@
                         var form_id  = 'show-form'+value.id ;
                         var route = '{{ url('petty-cash-show') }}' + '/'+ value.id ;
                         var View = "View";
-                        var csrf = @csrf ;
+                        var csrf = '@csrf' ;
                         //populate the table
                         list_responce +=
                             "<tr> " +
@@ -267,21 +267,21 @@
                             "<td  > " + value.code + " </td>" +
                             "<td  > " + value.claimant_name + " </td>" +
                             "<td  > " + value.total_payment + " </td>" +
-                            "<td  > " + value.status.name + " </td>" +
+                            "<td  > " + value.config_status_id + " </td>" +
                             "<td  > " + value.claim_date + " </td>" +
                             "<td  > <a href='#' class='btn btn-sm bg-orange' onclick='event.preventDefault();document.getElementById('"+form_id+"').submit(); >"+ View +"</a> <form id='"+form_id+"' action='"+route+"' method='POST' class='d-none' > "+ csrf  +"</form> </td>" +
                             "</tr>";
                     });
                     $("#table_list").html(list_responce);
 
-                    <th>Bu Code</th>
-                    <th>CC Code</th>
-                    <th>Serial</th>
-                    <th>Claimant</th>
-                    <th>Payment</th>
-                    <th>Status</th>
-                    <th>Period</th>
-                    <th>View</th>
+                    // <th>Bu Code</th>
+                    // <th>CC Code</th>
+                    // <th>Serial</th>
+                    // <th>Claimant</th>
+                    // <th>Payment</th>
+                    // <th>Status</th>
+                    // <th>Period</th>
+                    // <th>View</th>
 
                     // loop through summary array
                     $.each( response_data.summary, function (index, value) {

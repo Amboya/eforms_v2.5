@@ -38,7 +38,7 @@ class ReportsController extends Controller
         //[1] REQUESTER
         if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             $user_units = ConfigWorkFlow::where('user_unit_code', $user->user_unit_code)
-                ->get();
+                ->orderBy('user_unit_code')->get();
         }//[2A] HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
             $user_units = ConfigWorkFlow::where('hod_unit', $user->user_unit->hod_unit)
@@ -92,11 +92,11 @@ class ReportsController extends Controller
         //
         $list = DB::select("SELECT * FROM eform_petty_cash
                     where config_status_id = {$status} ");
-        $list = PettyCashModel::hydrate($list)->get();
+        $list = PettyCashModel::hydrate($list);
         //
         $summary = DB::select("SELECT * FROM eform_petty_cash_dashboard_daily_totals_view
                        where config_status_id = {$status} ");
-        $summary = DailyPettyCashTotalsView::hydrate($summary)->get();
+        $summary = DailyPettyCashTotalsView::hydrate($summary);
 
 
         $params = [
