@@ -278,12 +278,12 @@
             <div class="card-header">
                 <h4 class="card-title">Quotation Files</h4>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="width:100%; height: 900px ">
                 <div class="row">
                     @foreach($quotations as $item)
                         <div class="col-12">
                             <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_quotation/'.$item->name)}}"
-                                    style="width:100%;" title="{{$item->name}}"></iframe>
+                                     style="width:100%; height: 850px"  title="{{$item->name}}"></iframe>
                             <span>{{$item->file_size}}MB {{$item->name}} </span>
                             <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}">View</a>
                         </div>
@@ -295,17 +295,19 @@
         </div>
 
         {{--  RECEIPT FILES - ONLY WHEN FORM HAS BEEN CLOSED--}}
-        @if(  $form->config_status_id == config('constants.petty_cash_status.closed')   )
+        @if(  $form->config_status_id == config('constants.petty_cash_status.closed')
+        ||  $form->config_status_id == config('constants.petty_cash_status.audited')
+        ||  $form->config_status_id == config('constants.petty_cash_status.queried')    )
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Receipt Files</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body"  style="width:100%; height: 900px " >
                     <div class="row">
                         @foreach($receipts as $item)
                             <div class="col-12">
                                 <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_receipt/'.$item->name)}}"
-                                        style="width:100%;" title="{{$item->name}}"></iframe>
+                                        style="width:100%; height: 840px " title="{{$item->name}}"></iframe>
                                 <span>{{$item->file_size}}MB {{$item->name}} </span>
                                 <a href="{{asset('storage/petty_cash_receipt/'.$item->name)}}">View</a>
                             </div>
