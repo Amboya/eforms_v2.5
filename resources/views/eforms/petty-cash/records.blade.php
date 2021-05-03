@@ -60,14 +60,13 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="example1" class="table m-0">
+                    <table id="example3" class="table m-0">
                         <thead>
                         <tr>
                             <th>Serial</th>
                             <th>Claimant</th>
                             <th>Payment</th>
                             <th>Status</th>
-                            <th>Period</th>
                             <th>Last Update</th>
                             <th>View</th>
                             <th>Action</th>
@@ -85,9 +84,8 @@
                                 </td>
                                 <td>{{$item->claimant_name}}</td>
                                 <td>{{$item->total_payment}}</td>
-                                <td><span class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                <td><span class="badge badge-{{$item->html ?? "default"}}">{{$item->status_name  ?? "none"}}</span>
                                 </td>
-                                <td>{{$item->updated_at->diffForHumans()}}</td>
                                 <td>{{$item->updated_at}}</td>
                                 <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
                                         document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
@@ -118,6 +116,8 @@
                         </tbody>
 
                     </table>
+
+                    {!! $list->links() !!}
                 </div>
             </div>
             <!-- /.card-body -->

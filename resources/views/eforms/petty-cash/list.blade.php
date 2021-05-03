@@ -53,7 +53,7 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="example1" class="table m-0">
+                    <table id="example3" class="table m-0">
                         <thead>
                         <tr>
                             <th>Serial</th>
@@ -92,7 +92,7 @@
 
                     </table>
 
-{{--                    {!! $list->links() !!}--}}
+                    {!! $list->links() !!}
                 </div>
             </div>
             <!-- /.card-body -->

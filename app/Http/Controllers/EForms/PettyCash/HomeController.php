@@ -132,46 +132,50 @@ class HomeController extends Controller
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-            $list = PettyCashModel::whereDate('updated_at', \Carbon::today())->get();
+            $list = PettyCashModel::whereDate('updated_at', \Carbon::today())
+                ->orderBy('code')->paginate(50);
             dd(1);
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             $list = PettyCashModel::where('config_status_id', '=', config('constants.petty_cash_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.petty_cash_status.funds_disbursement'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             //   dd(2) ;
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
-                ->get();
+                ->orderBy('code')->paginate(50);
         } //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hod_approved'))->get();
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hod_approved'))
+                ->orderBy('code')->paginate(50);
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hr_approved'))->get();
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hr_approved'))
+                ->orderBy('code')->paginate(50);
             //  dd(5) ;
         }
         //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.chief_accountant'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
-                ->get();
+                ->orderBy('code')->paginate(50);
 
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
-                ->get();
+                ->orderBy('code')->paginate(50);
         }//for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
-                ->get();
+                ->orderBy('code')->paginate(50);
         }
         else {
-            $list = PettyCashModel::where('config_status_id', 0)->get();
+            $list = PettyCashModel::where('config_status_id', 0)
+                ->orderBy('code')->paginate(50);
             //  dd(8) ;
         }
         return $list;

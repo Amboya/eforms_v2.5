@@ -21,6 +21,7 @@ use App\Models\main\TotalsModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -55,48 +56,48 @@ class PettyCashController extends Controller
 
         //get list of all petty cash forms for today
         if ($value == "all") {
-            $list = PettyCashModel::get();
+            $list = PettyCashModel::orderBy('code')->paginate(50);
             $category = "All";
         } else if ($value == "pending") {
             $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
                 ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Opened";
         } else if ($value == config('constants.petty_cash_status.new_application')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "New Application";
         } else if ($value == config('constants.petty_cash_status.closed')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Closed";
             //  dd(11);
         } else if ($value == config('constants.petty_cash_status.rejected')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Rejected";
         } else if ($value == config('constants.petty_cash_status.cancelled')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status. cancelled'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Cancelled";
         } else if ($value == config('constants.petty_cash_status.void')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.void'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Void";
         } else if ($value == config('constants.petty_cash_status.audited')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audited'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Audited";
         } else if ($value == config('constants.petty_cash_status.queried')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.queried'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Queried";
         } else if ($value == "needs_me") {
             $list = $totals_needs_me = HomeController::needsMeList();
             $category = "Needs My Attention";
         } else if ($value == "admin") {
             $list = PettyCashModel::where('config_status_id', 0)
-                ->get();
+                ->orderBy('code')->paginate(50);
         }
 
         //count all
@@ -132,31 +133,38 @@ class PettyCashController extends Controller
         //get list of all petty cash forms for today
         if ($value == "all") {
 
-            $list = DB::select("SELECT * FROM eform_petty_cash ORDER BY updated_at ASC ");
-            $list = PettyCashModel::hydrate($list);
+            $list = DB::table('eform_petty_cash')
+                ->select('eform_petty_cash.*', 'config_status.name as status_name ', 'config_status.html as html ' )
+                ->join('config_status' , 'eform_petty_cash.config_status_id', '=', 'config_status.id')
+                ->paginate(50);
+
+           // dd($list);
+//            $list = DB::select("SELECT * FROM eform_petty_cash ORDER BY updated_at ASC ");
+//            $list = PettyCashModel::hydrate($list);
+//            $list = new LengthAwarePaginator($list, $list->count(), 12, 2);
 
             $category = "All Records";
         } else if ($value == "pending") {
             $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
                 ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Opened";
         } else if ($value == config('constants.petty_cash_status.new_application')) {
 
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "New Application";
 
         } else if ($value == config('constants.petty_cash_status.closed')) {
 
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
-                ->get();
+                ->orderBy('code')->paginate(50);
             $category = "Closed";
 
         } else if ($value == config('constants.petty_cash_status.rejected')) {
 
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
-                ->get();
+                ->orderBy('code')->paginate(50);
 
             $category = "Rejected";
 
