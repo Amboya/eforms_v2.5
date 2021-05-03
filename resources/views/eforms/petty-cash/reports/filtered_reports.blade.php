@@ -90,9 +90,9 @@
                                 <input  type="date" class="form-control" id="end_date" name="end_date" >
                             </div>
                         </div>
-                        <div class="col-2 mt-4">
+                        <div class="col-2 " style="margin-top: 30px">
                             <div class="form-group">
-                                <button  class="btn btn-navbar btn-success" id="search_button"><i class="far fa-search"></i>Search</button>
+                                <button  class="btn btn-success" id="search_button"><i class="far fa-search"></i>Search</button>
                             </div>
                         </div>
                     </div>
@@ -156,14 +156,14 @@
                 </div>
                 <div class="col-4">
                     <div class="form-group">
-                        <label for="audit_id">Total Amount</label>
+                        <label for="audit_id">Total Transactions</label>
                         <input  type="text" readonly class="form-control" id="summary_total" name="summary_total" >
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
                         <label for="audit_id">Total Amount</label>
-                        <input  type="text" readonly class="form-control" id="summary_amount" name="summary_amount" >
+                        <input  type="text" readonly class="form-control text-bold " id="summary_amount" name="summary_amount" >
                     </div>
                 </div>
             </div>
@@ -215,7 +215,7 @@
                 unit_selected_value += $(this).val();
                 unit_selected_index += $(this).index();
             });
-            alert(unit_selected_value);
+            // alert(unit_selected_value);
 
             var status_selected_text = ''; // Selected text
             var status_selected_value = ''; // Selected value
@@ -229,9 +229,9 @@
             // alert(status_selected_value);
 
             var start_date = $("#start_date").val() ;
-            alert(start_date);
+            // alert(start_date);
             var end_date = $("#end_date").val() ;
-            alert(end_date);
+            // alert(end_date);
 
             /* AJAX */
             $.ajaxSetup({
@@ -240,84 +240,65 @@
                 }
             });
 
-            //get the route
-            var route = '{{url('petty_cash/filtered/report/get')}}' + '/' + unit_selected_value  + '/' + status_selected_value+ '/' + start_date+ '/' + end_date;
-            // alert(route);
-            $.ajax({
-                url: route,
-                type: 'get',
-                beforeSend: function(){
-                    // Show image container
-                    $("#loader").show();
-                },
-                success: function(response_data){
-                    list_responce = "";
-                    // loop through list array
-                    $.each( response_data.list, function (index, value) {
-                        //list array
-                        var form_id  = 'show-form'+value.id ;
-                        var route = '{{ url('petty-cash-show') }}' + '/'+ value.id ;
-                        var View = "View";
-                        var csrf = '@csrf' ;
-                        //populate the table
-                        list_responce +=
-                            "<tr> " +
-                            "<td  > " + value.business_unit_code + " </td>" +
-                            "<td  > " + value.cost_center + " </td>" +
-                            "<td  > " + value.code + " </td>" +
-                            "<td  > " + value.claimant_name + " </td>" +
-                            "<td  > " + value.total_payment + " </td>" +
-                            "<td  > " + value.config_status_id + " </td>" +
-                            "<td  > " + value.claim_date + " </td>" +
-                            "<td  > <a href='#' class='btn btn-sm bg-orange' onclick='event.preventDefault();document.getElementById('"+form_id+"').submit(); >"+ View +"</a> <form id='"+form_id+"' action='"+route+"' method='POST' class='d-none' > "+ csrf  +"</form> </td>" +
-                            "</tr>";
-                    });
-                    $("#table_list").html(list_responce);
+            //make sure all fields are filled in
+            if(unit_selected_value == "" || status_selected_value == "" || start_date == "" || end_date == ""  ){
+                alert("Please fill in all the search parameters.");
+            }else{
+                //get the route
+                var route = '{{url('petty_cash/filtered/report/get')}}' + '/' + unit_selected_value  + '/' + status_selected_value+ '/' + start_date+ '/' + end_date;
+                // alert(route);
+                $.ajax({
+                    url: route,
+                    type: 'get',
+                    beforeSend: function(){
+                        // Show image container
+                        $("#loader").show();
+                    },
+                    success: function(response_data){
+                         console.log(response_data);
 
-                    // <th>Bu Code</th>
-                    // <th>CC Code</th>
-                    // <th>Serial</th>
-                    // <th>Claimant</th>
-                    // <th>Payment</th>
-                    // <th>Status</th>
-                    // <th>Period</th>
-                    // <th>View</th>
+                        list_responce = "";
+                        // loop through list array
+                        $.each( response_data.list, function (index, value) {
+                            //list array
+                            var form_id  = 'show-form'+value.id ;
+                            var route = '{{ url('petty-cash-show') }}' + '/'+ value.id ;
+                            var View = "View";
+                            var csrf = '@csrf' ;
+                            //populate the table
+                            list_responce +=
+                                "<tr> " +
+                                "<td  > " + value.business_unit_code + " </td>" +
+                                "<td  > " + value.cost_center + " </td>" +
+                                "<td  > " + value.code + " </td>" +
+                                "<td  > " + value.claimant_name + " </td>" +
+                                "<td  > " + value.total_payment + " </td>" +
+                                "<td  > " + response_data.status + " </td>" +
+                                "<td  > " + value.claim_date + " </td>" +
+                                // "<td  > <a href='#' class='btn btn-sm bg-orange' onclick='event.preventDefault();document.getElementById('"+form_id+"').submit(); >"+ View +"</a> <form id='"+form_id+"' action='"+route+"' method='POST' class='d-none' > "+ csrf  +"</form> </td>" +
+                                "</tr>";
+                        });
+                        $("#table_list").html(list_responce);
 
-                    // loop through summary array
-                    $.each( response_data.summary, function (index, value) {
-                        //list array
-
-
-                        //populate the table
-                        // responce +=
-                        //     "<tr> " +
-                        //     "<td  width='18%'> <input type='text' value='" + value.name + "'  class='form-control' id='material[]' name='material[]' required> </td>" +
-                        //     "<td  width='7%' > <input type='text' value='" + value.code + "'  class='form-control' id='code[]' name='code[]'  required> </td>" +
-                        //     "<td  width='6%' > <input type='text' value='" + value.price + "'  class='form-control' id='price[]' name='price[]'  required> </td>" +
-                        //     "<td  width='6%' > <input type='number' step='any' class='form-control' id='market_price[]' name='market_price[]' placeholder='Enter Price' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='jan[]' name='jan[]' placeholder='Enter Jan Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='feb[]' name='feb[]' placeholder='Enter Feb Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='mar[]' name='mar[]' placeholder='Enter Mar Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='apr[]' name='apr[]' placeholder='Enter Apr Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='may[]' name='may[]' placeholder='Enter May Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='jun[]' name='jun[]' placeholder='Enter Jun Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='jul[]' name='jul[]' placeholder='Enter Jul Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='aug[]' name='aug[]' placeholder='Enter Aug Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='sep[]' name='sep[]' placeholder='Enter Sep Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='oct[]' name='oct[]' placeholder='Enter Oct Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)'  class='form-control' id='nov[]' name='nov[]' placeholder='Enter Nov Amount' > </td>" +
-                        //     "<td> <input type='number' step='any' onchange='getValues(this.value)' class='form-control' id='dec[]' name='dec[]' placeholder='Enter Dec Amount' > </td>" +
-                        //     "<td> <input type='number'  step='any' class='form-control text-bold' id='total[]' name='total[]' placeholder='Enter Total Amount' > </td>" +
-                        //     "</tr>";
-                    });
+                        // loop through summary array
+                        $.each( response_data.summary, function (index, value) {
+                            //list array  summary_total
+                            $("#summary_total").value = value.total;
+                            document.getElementById('summary_total').value=value.total ;
+                            document.getElementById('summary_amount').value= 'ZMW '+  value.amount ;
+                            document.getElementById('summary_status').value= response_data.status;
+                        });
 
 
-                },
-                complete:function(data){
-                    // Hide image container
-                    $("#loader").hide();
-                }
-            });
+                    },
+                    complete:function(data){
+                        // Hide image container
+                        $("#loader").hide();
+                    }
+                });
+            }
+
+
 
 
             {{--//get the route--}}

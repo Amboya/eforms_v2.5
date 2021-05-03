@@ -51,6 +51,7 @@
     <!-- Default box -->
         <div class="card">
             <div class="card-header">
+                @if($form_id != 0 )
                 <a href="{{ route('logout') }}"
                    onclick="event.preventDefault();
                        document.getElementById('show-form'+{{$form_id}}).submit();"> View the Form</a>
@@ -59,6 +60,7 @@
                       method="POST" class="d-none">
                     @csrf
                 </form>
+                @endif
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -421,6 +423,8 @@
             $('#expenditure_unit').val(recipient.expenditure_unit);
             $('#security_code').val(recipient.security_code);
             $('#security_unit').val(recipient.security_unit);
+            $('#audit_code').val(recipient.audit_code);
+            $('#audit_unit').val(recipient.audit_unit);
 
         });
 

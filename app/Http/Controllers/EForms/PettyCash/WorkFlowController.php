@@ -226,5 +226,32 @@ class WorkFlowController extends Controller
 
     }
 
+    public function search(Request  $request){
+        //capitalise
+        $user_unit = strtoupper($request->user_unit_code);
+        $form_id = 0;
+        $workflow = ConfigWorkFlow::where('user_unit_code', $user_unit);
+        $users = User::orderBy('name')->get();
+
+        if($workflow->exists()){
+
+        }else{
+            return Redirect::back()->with('error', 'Details for ' . $user_unit. ' could not be found');
+        }
+
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+
+        //data to send to the view
+        $params = [
+            'totals_needs_me' => $totals_needs_me ,
+            'users' => $users,
+            'form_id' => $form_id,
+            'workflow' => $workflow->first(),
+        ];
+
+        return view('eforms.petty-cash.showworkflow')->with($params);
+    }
+
 
 }

@@ -183,89 +183,109 @@
                     </a>
                 </li>
 
-                {{--                @if (Auth::user()->type_id == config('constants.user_types.developer'))--}}
-                {{--                    <li class="nav-item">--}}
-                {{--                        <a href="{{route('petty.cash.workflow')}}" class="nav-link ">--}}
-                {{--                            <i class="nav-icon fas fa-file"></i>--}}
-                {{--                            <p> Petty Cash Work Flow--}}
-                {{--                            </p>--}}
-                {{--                        </a>--}}
-                {{--                    </li>--}}
-                {{--                @endif--}}
-
-                <li class="nav-header">TOTALS</li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon far fa-chart-bar"></i>
-                        <p> Personal
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link ">
-                                <i class="nav-icon far fa-circle"></i>
-                                <p> Daily
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link ">
-                                <i class="nav-icon far fa-circle"></i>
-                                <p> Monthly
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link ">
-                                <i class="nav-icon far fa-circle"></i>
-                                <p> Yearly
-                                </p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
                 @if (Auth::user()->type_id == config('constants.user_types.developer'))
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            <i class="nav-icon  far fa-chart-bar"></i>
-                            <p> Directorates
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p> System Work Flow
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link ">
-                                    <i class="nav-icon fas fa-circle"></i>
-                                    <p> Daily
+                                <a class="nav-link "
+                                   title="Search"
+                                   data-toggle="modal"
+                                   data-target="#modal-search">
+                                    <i class="nav-icon fas fa-search"></i>
+                                    <p> Search Work Flow
                                     </p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link ">
-                                    <i class="nav-icon fas fa-circle"></i>
-                                    <p> Monthly
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link ">
-                                    <i class="nav-icon fas fa-circle"></i>
-                                    <p> Yearly
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('petty-cash-reports-index')}}" class="nav-link ">
-                                    <i class="nav-icon fas fa-file"></i>
-                                    <p> All Time
+                                <a href="{{route('petty.cash.workflow')}}" class="nav-link ">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p> All Work Flows
                                     </p>
                                 </a>
                             </li>
                         </ul>
                     </li>
                 @endif
+
+{{--                                <li class="nav-header">TOTALS</li>--}}
+{{--                                <li class="nav-item">--}}
+{{--                                    <a href="#" class="nav-link">--}}
+{{--                                        <i class="nav-icon far fa-chart-bar"></i>--}}
+{{--                                        <p> Personal--}}
+{{--                                            <i class="fas fa-angle-left right"></i>--}}
+{{--                                        </p>--}}
+{{--                                    </a>--}}
+{{--                                    <ul class="nav nav-treeview">--}}
+{{--                                        <li class="nav-item">--}}
+{{--                                            <a href="#" class="nav-link ">--}}
+{{--                                                <i class="nav-icon far fa-circle"></i>--}}
+{{--                                                <p> Daily--}}
+{{--                                                </p>--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
+{{--                                        <li class="nav-item">--}}
+{{--                                            <a href="#" class="nav-link ">--}}
+{{--                                                <i class="nav-icon far fa-circle"></i>--}}
+{{--                                                <p> Monthly--}}
+{{--                                                </p>--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
+{{--                                        <li class="nav-item">--}}
+{{--                                            <a href="#" class="nav-link ">--}}
+{{--                                                <i class="nav-icon far fa-circle"></i>--}}
+{{--                                                <p> Yearly--}}
+{{--                                                </p>--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
+{{--                                    </ul>--}}
+{{--                                </li>--}}
+
+{{--                                @if (Auth::user()->type_id == config('constants.user_types.developer'))--}}
+{{--                                    <li class="nav-item">--}}
+{{--                                        <a href="#" class="nav-link">--}}
+{{--                                            <i class="nav-icon  far fa-chart-bar"></i>--}}
+{{--                                            <p> Directorates--}}
+{{--                                                <i class="fas fa-angle-left right"></i>--}}
+{{--                                            </p>--}}
+{{--                                        </a>--}}
+{{--                                        <ul class="nav nav-treeview">--}}
+{{--                                            <li class="nav-item">--}}
+{{--                                                <a href="#" class="nav-link ">--}}
+{{--                                                    <i class="nav-icon fas fa-circle"></i>--}}
+{{--                                                    <p> Daily--}}
+{{--                                                    </p>--}}
+{{--                                                </a>--}}
+{{--                                            </li>--}}
+{{--                                            <li class="nav-item">--}}
+{{--                                                <a href="#" class="nav-link ">--}}
+{{--                                                    <i class="nav-icon fas fa-circle"></i>--}}
+{{--                                                    <p> Monthly--}}
+{{--                                                    </p>--}}
+{{--                                                </a>--}}
+{{--                                            </li>--}}
+{{--                                            <li class="nav-item">--}}
+{{--                                                <a href="#" class="nav-link ">--}}
+{{--                                                    <i class="nav-icon fas fa-circle"></i>--}}
+{{--                                                    <p> Yearly--}}
+{{--                                                    </p>--}}
+{{--                                                </a>--}}
+{{--                                            </li>--}}
+{{--                                            <li class="nav-item">--}}
+{{--                                                <a href="{{route('petty-cash-reports-index')}}" class="nav-link ">--}}
+{{--                                                    <i class="nav-icon fas fa-file"></i>--}}
+{{--                                                    <p> All Time--}}
+{{--                                                    </p>--}}
+{{--                                                </a>--}}
+{{--                                            </li>--}}
+{{--                                        </ul>--}}
+{{--                                    </li>--}}
+{{--                                @endif--}}
 
             </ul>
         </nav>
@@ -274,3 +294,42 @@
     <!-- /.sidebar -->
 
 </aside>
+
+
+<!-- SEARCH MODAL-->
+<div class="modal fade" id="modal-search">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Search User Unit Work Flow</h4>
+                {{--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">--}}
+                {{--                    <span aria-hidden="true">&times;</span>--}}
+                {{--                </button>--}}
+            </div>
+            <!-- form start -->
+            <form role="form-new" method="post" action="{{route('petty.cash.workflow.search')}}">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="code">Enter User Unit Code</label>
+                                <input type="text" class="form-control " id="user_unit_code" name="user_unit_code"
+                                       placeholder="Enter user unit code e.g C1931">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.NEW modal -->
+
+

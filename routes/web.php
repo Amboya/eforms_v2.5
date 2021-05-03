@@ -727,6 +727,7 @@ Route::group([
         Route::post('store', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'store'])->name('petty.cash.workflow.store');
         Route::post('update/{code}', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'update'])->name('petty.cash.workflow.update');
         Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'destroy'])->name('petty.cash.workflow.destroy');
+        Route::post('search', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'search'])->name('petty.cash.workflow.search');
         Route::get('show/{id}/{code}', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'show'])->name('petty.cash.workflow.show');
         Route::get('sync', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'sync'])->name('petty.cash.workflow.sync');
     });
