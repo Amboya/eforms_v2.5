@@ -2017,7 +2017,20 @@ class PettyCashController extends Controller
               or claimant_staff_no LIKE '%{$request->search}%'
               or config_status_id LIKE '%{$request->search}%'
             ");
-            $list = PettyCashModel::hydrate($list)->all();
+            $list = PettyCashModel::hydrate($list);
+
+////            $list = new LengthAwarePaginator($list, $list->count(), 12, 2);
+//
+//            $list = DB::table('eform_petty_cash')
+//                ->select('*' )
+//                ->where('code', 'LIKE', '%'.$request->search. '%')
+//                ->orWhere('claimant_name', 'LIKE','%'.$request->search. '%' )
+//                ->orWhere('claimant_staff_no', 'LIKE','%'.$request->search. '%' )
+//                ->orWhere('config_status_id', 'LIKE','%'.$request->search. '%' )
+//                ->simplePaginate(5);
+////            $list = PettyCashModel::hydrate($list);
+
+
         } else {
             //find the petty cash with that id
             $list = PettyCashModel::
@@ -2025,7 +2038,7 @@ class PettyCashController extends Controller
                 ->orWhere('claimant_name', 'LIKE', "%{$request->search}%")
                 ->orWhere('claimant_staff_no', 'LIKE', "%{$request->search}%")
                 ->orWhere('config_status_id', 'LIKE', "%{$request->search}%")
-                ->get();
+                ->paginate(50);
         }
 
         //count all

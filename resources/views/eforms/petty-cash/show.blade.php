@@ -865,7 +865,7 @@
             <div class="card-body">
                 <div class="row">
                     @foreach($quotations as $item)
-                        <div class="col-3">
+                        <div class="col-12">
                             <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_quotation/'.$item->name)}}"
                                     style="width:100%;" title="{{$item->name}}"></iframe>
                             <span>{{$item->file_size}}MB {{$item->name}} </span>
@@ -887,7 +887,7 @@
                 <div class="card-body">
                     <div class="row">
                         @foreach($receipts as $item)
-                            <div class="col-3">
+                            <div class="col-12">
                                 <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_receipt/'.$item->name)}}"
                                         style="width:100%;" title="{{$item->name}}"></iframe>
                                 <span>{{$item->file_size}}MB {{$item->name}} </span>
