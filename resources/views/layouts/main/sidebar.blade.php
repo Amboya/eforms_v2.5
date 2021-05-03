@@ -23,9 +23,10 @@
                 </li>
 
 
-                <li class="nav-header">SYSTEM</li>
+
 
                 @if( Auth::user()->type_id == config('constants.user_types.developer'))
+                    <li class="nav-header">SYSTEM</li>
                     <li class="nav-item">
                         <a href="{{route('main-user')}}" class="nav-link ">
                             <i class="nav-icon fas fa-users"></i>
