@@ -240,591 +240,7 @@
 
                 </div>
 
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    {{--  CLAIMANT EDIT--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
-                         &&  Auth::user()->id  == $form->created_by)
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Cancelled'>CANCEL PETTY CASH
-                                        </button>
-                                        <button hidden id="btnSubmit_reject" type="submit" name="approval"
-                                                class="btn btn-outline-danger ml-2 p-2  "
-                                                value='Rejected'>REJECT
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
 
-                    {{--  HOD APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
-                         &&  $form->user_unit->hod_code == Auth::user()->profile_job_code
-                         &&  $form->user_unit->hod_unit == Auth::user()->profile_unit_code
-                      )
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>APPROVE
-                                        </button>
-                                        <button id="btnSubmit_reject" type="submit" name="approval"
-                                                class="btn btn-outline-danger ml-2 p-2  "
-                                                value='Rejected'>REJECT
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{--  HR APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_009')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.hod_approved')
-                         &&  $form->user_unit->hrm_code == Auth::user()->profile_job_code
-                         &&  $form->user_unit->hrm_unit == Auth::user()->profile_unit_code
-                     )
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>APPROVE
-                                        </button>
-                                        <button id="btnSubmit_reject" type="submit" name="approval"
-                                                class="btn btn-outline-danger ml-2 p-2  "
-                                                value='Rejected'>REJECT
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{--  CHIEF ACCOUNTANT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.hr_approved')
-                         &&  $form->user_unit->ca_code == Auth::user()->profile_job_code
-                         &&  $form->user_unit->ca_unit == Auth::user()->profile_unit_code
-                        )
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>APPROVE
-                                        </button>
-                                        <button id="btnSubmit_reject" type="submit" name="approval"
-                                                class="btn btn-outline-danger ml-2 p-2  "
-                                                value='Rejected'>REJECT
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{--  FUNDS DISBURSEMNET APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.chief_accountant')
-                         &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
-                       )
-                        <div class="">
-                            <h6 class="text-center">Please Update the Accounts</h6>
-                            <div class="col-lg-12 grid-margin stretch-card">
-                                <div class="table-responsive">
-                                    <div class="col-lg-12 ">
-                                        <TABLE id="dataTable" class="table">
-                                            <TR>
-                                                <TD><INPUT type="checkbox" name="chk"/></TD>
-
-                                                <TD>
-                                                    <div class="form-group">
-                                                        <input list="items_list1" type="text" name="account_items[]"
-                                                               class="form-control amount"
-                                                               placeholder="Select Item/s   " id="account_items1">
-                                                        <datalist id="items_list1">
-                                                            @foreach($form->item as $item)
-                                                                <option>{{$item->name}}</option>
-                                                            @endforeach
-                                                        </datalist>
-                                                    </div>
-                                                </TD>
-                                                <TD>
-                                                    <select name="credited_account[]" id="credited_account" required
-                                                            class="form-control amount">
-                                                        @foreach($accounts as $account)
-                                                            @if($account->id  ==  config('constants.petty_cash_account_id')  )
-                                                                <option value="{{$account->code}}">{{$account->name}}
-                                                                    :{{$account->code}}</option>
-                                                            @endif
-                                                        @endforeach
-                                                    </select>
-
-                                                </TD>
-                                                <TD><input type="number" id="credited_amount" name="credited_amount[]"
-                                                           onchange="getvalues()" class="form-control amount"
-                                                           placeholder=" Amount [ZMK]" required>
-                                                </TD>
-                                                <TD>
-                                                    <select name="debited_account[]" id="debited_account" required
-                                                            class="form-control amount">
-                                                        <option value="">Select Expense Account</option>
-                                                        @foreach($accounts as $account)
-                                                            <option
-                                                                value="{{$account->code}}">{{$account->name}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </TD>
-                                                <TD><input type="number" id="debited_amount" name="debited_amount[]"
-                                                           class="form-control amount"
-                                                           placeholder="Debited Amount [ZMK]" readonly required>
-                                                </TD>
-                                            </TR>
-                                        </TABLE>
-                                        <datalist id="accounts_list">
-                                            @foreach($accounts as $account)
-                                                <option value="{{$account->code}}">{{$account->name}}</option>
-                                            @endforeach
-                                        </datalist>
-                                    </div>
-                                    <div class="col-lg-12 ">
-                                        <INPUT type="button" value="Add Row" onclick="addRow('dataTable')"/>
-                                        <INPUT type="button" value="Delete Row" onclick="deleteRow('dataTable')"/>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr>
-                            <div class="row">
-                                <textarea hidden class="form-control" rows="2" name="reason" required> Funds Disbursement</textarea>
-                                <div id="submit_not_possible" class="col-12 text-center">
-
-                                        <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
-                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
-                                                )</strong>
-                                   </span>
-                                </div>
-                                <div id="submit_possible" class="col-12 text-center">
-                                    <div class="col-12 text-center ">
-                                        <div id="divSubmit_show">
-                                            <button id="btnSubmit_approve" type="submit" name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Approved'>FUNDS DISBURSED
-                                            </button>
-                                            <button style="display: none" id="btnSubmit_reject" type="submit"
-                                                    name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Rejected'>FUNDS DISBURSED
-                                            </button>
-                                        </div>
-                                        <div id="divSubmit_hide">
-                                            <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Approved'>Processing. Please wait...
-                                            </button>
-                                            {{--                                            <button  disabled--}}
-                                            {{--                                                     class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                     value='Approved'>FUNDS DISBURSED--}}
-                                            {{--                                            </button>--}}
-                                            {{--                                            <button style="display: none" disabled--}}
-                                            {{--                                                    class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                    value='Rejected'>FUNDS DISBURSED--}}
-                                            {{--                                            </button>--}}
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    @endif
-
-                    {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.funds_disbursement')
-                         &&  $form->claimant_staff_no == Auth::user()->staff_no
-                          )
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <textarea hidden class="form-control" rows="2" name="reason"
-                                          required> Funds Received</textarea>
-
-                                <div class="col-12 text-center ">
-                                    {{--                                    <button id="btnSubmit_approve" type="submit" name="approval"--}}
-                                    {{--                                            class="btn btn-outline-success mr-2 p-2  "--}}
-                                    {{--                                            value='Approved'>FUNDS RECEIVED--}}
-                                    {{--                                    </button>--}}
-
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>FUNDS RECEIVED
-                                        </button>
-                                        <button style="display: none" id="btnSubmit_reject" type="submit"
-                                                name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Rejected'>FUNDS RECEIVED
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                        {{--                                        <button  disabled--}}
-                                        {{--                                                 class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                 value='Approved'>FUNDS RECEIVED--}}
-                                        {{--                                        </button>--}}
-                                        {{--                                        <button style="display: none" disabled--}}
-                                        {{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                value='Rejected'>FUNDS RECEIVED--}}
-                                        {{--                                        </button>--}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{--  SECURITY APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_013')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.funds_acknowledgement')
-                         &&  $form->user_unit->security_unit == Auth::user()->profile_unit_code
-                        )
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    {{--                                    <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
-                                    {{--                                            value='Approved'>APPROVE RECEIPTS--}}
-                                    {{--                                    </button>--}}
-
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>APPROVE RECEIPTS
-                                        </button>
-                                        <button style="display: none" id="btnSubmit_reject" type="submit"
-                                                name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Rejected'>APPROVE RECEIPTS
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                        {{--                                        <button  disabled--}}
-                                        {{--                                                 class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                 value='Approved'>APPROVE RECEIPTS--}}
-                                        {{--                                        </button>--}}
-                                        {{--                                        <button style="display: none" disabled--}}
-                                        {{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                value='Rejected'>APPROVE RECEIPTS--}}
-                                        {{--                                        </button>--}}
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{--  RECEIPT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.security_approved')
-                         &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
-                       )
-                        <div class="">
-                            <h6 class="text-center">The Updated Accounts</h6>
-                            <div class="col-lg-12 grid-margin stretch-card">
-                                <div class="table-responsive">
-                                    <div class="col-lg-12 ">
-                                        <TABLE class="table">
-                                            <thead>
-                                            <TR>
-                                                <TD>Account</TD>
-                                                <TD>Credited Amount</TD>
-                                                <TD>Debited Amount</TD>
-                                            </TR>
-                                            </thead>
-
-                                            <tbody>
-                                            @foreach($form_accounts as $item)
-                                                <TR>
-                                                    <TD><input list="accounts_list" type="text"
-                                                               value="{{$item->account}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                    <TD><input type="number" id="credited_amount"
-                                                               value="{{$item->creditted_amount}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                    <TD><input type="number" value="{{$item->debitted_amount}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                </TR>
-                                            @endforeach
-                                            </tbody>
-
-                                        </TABLE>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="col-lg-10 p-2 mt-3 ">
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <label class="form-control-label">Total Change</label>
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="number" onchange="showChange()" class="form-control"
-                                                           name="change" id="change" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 grid-margin stretch-card" id="show_change">
-                                    <h6 class="text-left p-2">Select Account to Retire Change</h6>
-                                    <div class="table-responsive">
-                                        <div class="col-lg-12 ">
-                                            <TABLE class="table">
-                                                <tbody>
-                                                <TR>
-
-                                                    <TD>
-                                                        <div class="form-group">
-                                                            <input list="items_list" type="text" name="account_item"
-                                                                   class="form-control amount"
-                                                                   placeholder="Select Item/s   " id="account_item1">
-                                                            <datalist id="items_list">
-                                                                @foreach($form->item as $item)
-                                                                    <option>{{$item->name}}</option>
-                                                                @endforeach
-                                                            </datalist>
-                                                        </div>
-                                                    </TD>
-                                                    <TD>
-                                                        <select name="credited_account" id="credited_account1"
-                                                                class="form-control amount">
-                                                            <option value="">Select Account To Credit</option>
-                                                            @foreach($accounts as $account)
-                                                                <option
-                                                                    value="{{$account->code}}">{{$account->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </TD>
-                                                    <TD><input type="number" name="credited_amount"
-                                                               id="credited_amount1" class="form-control amount"
-                                                               placeholder=" Credited Amount [ZMK]" readonly>
-                                                    </TD>
-                                                    <TD>
-                                                        <select name="debited_account" id="debited_account1"
-                                                                class="form-control amount">
-                                                            @foreach($accounts as $account)
-                                                                @if($account->id  ==  config('constants.petty_cash_account_id')  )
-                                                                    <option
-                                                                        value="{{$account->code}}">{{$account->name}}
-                                                                        :{{$account->code}}</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </TD>
-                                                    <TD><input type="number" name="debited_amount"
-                                                               class="form-control amount" id="debited_amount1"
-                                                               placeholder="Amount [ZMK]" readonly>
-                                                    </TD>
-                                                </TR>
-                                                </tbody>
-                                                <datalist id="accounts_list">
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->code}}">{{$account->name}}</option>
-                                                    @endforeach
-                                                </datalist>
-
-                                            </TABLE>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row p-2">
-                                    <div class="col-10">
-                                        <div class="row">
-                                            <div class="col-2">
-                                                <label class="form-control-label">Receipt Files</label>
-                                            </div>
-                                            <div class="col-8">
-                                                <div class="input-group">
-                                                    <input type="file" class="form-control" multiple name="receipt[]"
-                                                           id="receipt" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <textarea hidden class="form-control" rows="2" name="reason" required> Closing of petty cash</textarea>
-                                    <div class="col-2 text-center ">
-                                        {{--                                        <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                value='Approved'>CLOSE PETTY-CASH--}}
-                                        {{--                                        </button>--}}
-
-                                        <div id="divSubmit_show">
-                                            <button id="btnSubmit_approve" type="submit" name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Approved'>CLOSE PETTY-CASH
-                                            </button>
-                                            <button style="display: none" id="btnSubmit_reject" type="submit"
-                                                    name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Rejected'>CLOSE PETTY-CASH
-                                            </button>
-                                        </div>
-                                        <div id="divSubmit_hide">
-                                            <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Approved'>Processing. Please wait...
-                                            </button>
-                                            {{--                                            <button  disabled--}}
-                                            {{--                                                     class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                     value='Approved'>CLOSE PETTY-CASH--}}
-                                            {{--                                            </button>--}}
-                                            {{--                                            <button style="display: none" disabled--}}
-                                            {{--                                                    class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                    value='Rejected'>CLOSE PETTY-CASH--}}
-                                            {{--                                            </button>--}}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-
-                    {{--  AUDIT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_011')   &&
-                        $form->config_status_id == config('constants.petty_cash_status.closed')   )
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <div class="col-9">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success p-2   "
-                                                value='Approved'>AUDITED
-                                        </button>
-                                        <button id="btnSubmit_reject" type="submit"
-                                                name="approval"
-                                                class="btn btn-outline-danger p-2   "
-                                                value='Queried'>QUERIED
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                </div>
-                <!-- /.card-footer-->
             </form>
         </div>
         <!-- /.card -->
@@ -939,8 +355,591 @@
 
                 </div>
             </div>
+            <!-- /.card-body -->
             <div class="card-footer">
+                {{--  CLAIMANT EDIT--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                     &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
+                     &&  Auth::user()->id  == $form->created_by)
+                    <div class="">
+                        <hr>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <label class="form-control-label">Reason</label>
+                                    </div>
+                                    <div class="col-11">
+                                        <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2 text-center ">
+                                <div id="divSubmit_show">
+                                    <button id="btnSubmit_approve" type="submit" name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Cancelled'>CANCEL PETTY CASH
+                                    </button>
+                                    <button hidden id="btnSubmit_reject" type="submit" name="approval"
+                                            class="btn btn-outline-danger ml-2 p-2  "
+                                            value='Rejected'>REJECT
+                                    </button>
+                                </div>
+                                <div id="divSubmit_hide">
+                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>Processing. Please wait...
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{--  HOD APPROVAL--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')
+                     &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
+                     &&  $form->user_unit->hod_code == Auth::user()->profile_job_code
+                     &&  $form->user_unit->hod_unit == Auth::user()->profile_unit_code
+                  )
+                    <div class="">
+                        <hr>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <label class="form-control-label">Reason</label>
+                                    </div>
+                                    <div class="col-11">
+                                        <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2 text-center ">
+                                <div id="divSubmit_show">
+                                    <button id="btnSubmit_approve" type="submit" name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>APPROVE
+                                    </button>
+                                    <button id="btnSubmit_reject" type="submit" name="approval"
+                                            class="btn btn-outline-danger ml-2 p-2  "
+                                            value='Rejected'>REJECT
+                                    </button>
+                                </div>
+                                <div id="divSubmit_hide">
+                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>Processing. Please wait...
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{--  HR APPROVAL--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_009')
+                     &&  $form->config_status_id == config('constants.petty_cash_status.hod_approved')
+                     &&  $form->user_unit->hrm_code == Auth::user()->profile_job_code
+                     &&  $form->user_unit->hrm_unit == Auth::user()->profile_unit_code
+                 )
+                    <div class="">
+                        <hr>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <label class="form-control-label">Reason</label>
+                                    </div>
+                                    <div class="col-11">
+                                        <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2 text-center ">
+                                <div id="divSubmit_show">
+                                    <button id="btnSubmit_approve" type="submit" name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>APPROVE
+                                    </button>
+                                    <button id="btnSubmit_reject" type="submit" name="approval"
+                                            class="btn btn-outline-danger ml-2 p-2  "
+                                            value='Rejected'>REJECT
+                                    </button>
+                                </div>
+                                <div id="divSubmit_hide">
+                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>Processing. Please wait...
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{--  CHIEF ACCOUNTANT APPROVAL--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
+                     &&  $form->config_status_id == config('constants.petty_cash_status.hr_approved')
+                     &&  $form->user_unit->ca_code == Auth::user()->profile_job_code
+                     &&  $form->user_unit->ca_unit == Auth::user()->profile_unit_code
+                    )
+                    <div class="">
+                        <hr>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <label class="form-control-label">Reason</label>
+                                    </div>
+                                    <div class="col-11">
+                                        <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2 text-center ">
+                                <div id="divSubmit_show">
+                                    <button id="btnSubmit_approve" type="submit" name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>APPROVE
+                                    </button>
+                                    <button id="btnSubmit_reject" type="submit" name="approval"
+                                            class="btn btn-outline-danger ml-2 p-2  "
+                                            value='Rejected'>REJECT
+                                    </button>
+                                </div>
+                                <div id="divSubmit_hide">
+                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>Processing. Please wait...
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{--  FUNDS DISBURSEMNET APPROVAL--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                     &&  $form->config_status_id == config('constants.petty_cash_status.chief_accountant')
+                     &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
+                   )
+                    <div class="">
+                        <h6 class="text-center">Please Update the Accounts</h6>
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="table-responsive">
+                                <div class="col-lg-12 ">
+                                    <TABLE id="dataTable" class="table">
+                                        <TR>
+                                            <TD><INPUT type="checkbox" name="chk"/></TD>
+
+                                            <TD>
+                                                <div class="form-group">
+                                                    <input list="items_list1" type="text" name="account_items[]"
+                                                           class="form-control amount"
+                                                           placeholder="Select Item/s   " id="account_items1">
+                                                    <datalist id="items_list1">
+                                                        @foreach($form->item as $item)
+                                                            <option>{{$item->name}}</option>
+                                                        @endforeach
+                                                    </datalist>
+                                                </div>
+                                            </TD>
+                                            <TD>
+                                                <select name="credited_account[]" id="credited_account" required
+                                                        class="form-control amount">
+                                                    @foreach($accounts as $account)
+                                                        @if($account->id  ==  config('constants.petty_cash_account_id')  )
+                                                            <option value="{{$account->code}}">{{$account->name}}
+                                                                :{{$account->code}}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+
+                                            </TD>
+                                            <TD><input type="number" id="credited_amount" name="credited_amount[]"
+                                                       onchange="getvalues()" class="form-control amount"
+                                                       placeholder=" Amount [ZMK]" required>
+                                            </TD>
+                                            <TD>
+                                                <select name="debited_account[]" id="debited_account" required
+                                                        class="form-control amount">
+                                                    <option value="">Select Expense Account</option>
+                                                    @foreach($accounts as $account)
+                                                        <option
+                                                            value="{{$account->code}}">{{$account->name}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </TD>
+                                            <TD><input type="number" id="debited_amount" name="debited_amount[]"
+                                                       class="form-control amount"
+                                                       placeholder="Debited Amount [ZMK]" readonly required>
+                                            </TD>
+                                        </TR>
+                                    </TABLE>
+                                    <datalist id="accounts_list">
+                                        @foreach($accounts as $account)
+                                            <option value="{{$account->code}}">{{$account->name}}</option>
+                                        @endforeach
+                                    </datalist>
+                                </div>
+                                <div class="col-lg-12 ">
+                                    <INPUT type="button" value="Add Row" onclick="addRow('dataTable')"/>
+                                    <INPUT type="button" value="Delete Row" onclick="deleteRow('dataTable')"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="row">
+                            <textarea hidden class="form-control" rows="2" name="reason" required> Funds Disbursement</textarea>
+                            <div id="submit_not_possible" class="col-12 text-center">
+
+                                        <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
+                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
+                                                )</strong>
+                                   </span>
+                            </div>
+                            <div id="submit_possible" class="col-12 text-center">
+                                <div class="col-12 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>FUNDS DISBURSED
+                                        </button>
+                                        <button style="display: none" id="btnSubmit_reject" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Rejected'>FUNDS DISBURSED
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                        {{--                                            <button  disabled--}}
+                                        {{--                                                     class="btn btn-outline-success mr-2 p-2  "--}}
+                                        {{--                                                     value='Approved'>FUNDS DISBURSED--}}
+                                        {{--                                            </button>--}}
+                                        {{--                                            <button style="display: none" disabled--}}
+                                        {{--                                                    class="btn btn-outline-success mr-2 p-2  "--}}
+                                        {{--                                                    value='Rejected'>FUNDS DISBURSED--}}
+                                        {{--                                            </button>--}}
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                @endif
+
+                {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                     &&  $form->config_status_id == config('constants.petty_cash_status.funds_disbursement')
+                     &&  $form->claimant_staff_no == Auth::user()->staff_no
+                      )
+                    <div class="">
+                        <hr>
+                        <div class="row">
+                                <textarea hidden class="form-control" rows="2" name="reason"
+                                          required> Funds Received</textarea>
+
+                            <div class="col-12 text-center ">
+                                {{--                                    <button id="btnSubmit_approve" type="submit" name="approval"--}}
+                                {{--                                            class="btn btn-outline-success mr-2 p-2  "--}}
+                                {{--                                            value='Approved'>FUNDS RECEIVED--}}
+                                {{--                                    </button>--}}
+
+                                <div id="divSubmit_show">
+                                    <button id="btnSubmit_approve" type="submit" name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>FUNDS RECEIVED
+                                    </button>
+                                    <button style="display: none" id="btnSubmit_reject" type="submit"
+                                            name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Rejected'>FUNDS RECEIVED
+                                    </button>
+                                </div>
+                                <div id="divSubmit_hide">
+                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>Processing. Please wait...
+                                    </button>
+                                    {{--                                        <button  disabled--}}
+                                    {{--                                                 class="btn btn-outline-success mr-2 p-2  "--}}
+                                    {{--                                                 value='Approved'>FUNDS RECEIVED--}}
+                                    {{--                                        </button>--}}
+                                    {{--                                        <button style="display: none" disabled--}}
+                                    {{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
+                                    {{--                                                value='Rejected'>FUNDS RECEIVED--}}
+                                    {{--                                        </button>--}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{--  SECURITY APPROVAL--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_013')
+                     &&  $form->config_status_id == config('constants.petty_cash_status.funds_acknowledgement')
+                     &&  $form->user_unit->security_unit == Auth::user()->profile_unit_code
+                    )
+                    <div class="">
+                        <hr>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <label class="form-control-label">Reason</label>
+                                    </div>
+                                    <div class="col-11">
+                                        <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2 text-center ">
+                                {{--                                    <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
+                                {{--                                            value='Approved'>APPROVE RECEIPTS--}}
+                                {{--                                    </button>--}}
+
+                                <div id="divSubmit_show">
+                                    <button id="btnSubmit_approve" type="submit" name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>APPROVE RECEIPTS
+                                    </button>
+                                    <button style="display: none" id="btnSubmit_reject" type="submit"
+                                            name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Rejected'>APPROVE RECEIPTS
+                                    </button>
+                                </div>
+                                <div id="divSubmit_hide">
+                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>Processing. Please wait...
+                                    </button>
+                                    {{--                                        <button  disabled--}}
+                                    {{--                                                 class="btn btn-outline-success mr-2 p-2  "--}}
+                                    {{--                                                 value='Approved'>APPROVE RECEIPTS--}}
+                                    {{--                                        </button>--}}
+                                    {{--                                        <button style="display: none" disabled--}}
+                                    {{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
+                                    {{--                                                value='Rejected'>APPROVE RECEIPTS--}}
+                                    {{--                                        </button>--}}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{--  RECEIPT APPROVAL--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                     &&  $form->config_status_id == config('constants.petty_cash_status.security_approved')
+                     &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
+                   )
+                    <div class="">
+                        <h6 class="text-center">The Updated Accounts</h6>
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="table-responsive">
+                                <div class="col-lg-12 ">
+                                    <TABLE class="table">
+                                        <thead>
+                                        <TR>
+                                            <TD>Account</TD>
+                                            <TD>Credited Amount</TD>
+                                            <TD>Debited Amount</TD>
+                                        </TR>
+                                        </thead>
+
+                                        <tbody>
+                                        @foreach($form_accounts as $item)
+                                            <TR>
+                                                <TD><input list="accounts_list" type="text"
+                                                           value="{{$item->account}}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                                <TD><input type="number" id="credited_amount"
+                                                           value="{{$item->creditted_amount}}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                                <TD><input type="number" value="{{$item->debitted_amount}}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                            </TR>
+                                        @endforeach
+                                        </tbody>
+
+                                    </TABLE>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="col-lg-10 p-2 mt-3 ">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <label class="form-control-label">Total Change</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="number" onchange="showChange()" class="form-control"
+                                                       name="change" id="change" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 grid-margin stretch-card" id="show_change">
+                                <h6 class="text-left p-2">Select Account to Retire Change</h6>
+                                <div class="table-responsive">
+                                    <div class="col-lg-12 ">
+                                        <TABLE class="table">
+                                            <tbody>
+                                            <TR>
+
+                                                <TD>
+                                                    <div class="form-group">
+                                                        <input list="items_list" type="text" name="account_item"
+                                                               class="form-control amount"
+                                                               placeholder="Select Item/s   " id="account_item1">
+                                                        <datalist id="items_list">
+                                                            @foreach($form->item as $item)
+                                                                <option>{{$item->name}}</option>
+                                                            @endforeach
+                                                        </datalist>
+                                                    </div>
+                                                </TD>
+                                                <TD>
+                                                    <select name="credited_account" id="credited_account1"
+                                                            class="form-control amount">
+                                                        <option value="">Select Account To Credit</option>
+                                                        @foreach($accounts as $account)
+                                                            <option
+                                                                value="{{$account->code}}">{{$account->name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </TD>
+                                                <TD><input type="number" name="credited_amount"
+                                                           id="credited_amount1" class="form-control amount"
+                                                           placeholder=" Credited Amount [ZMK]" readonly>
+                                                </TD>
+                                                <TD>
+                                                    <select name="debited_account" id="debited_account1"
+                                                            class="form-control amount">
+                                                        @foreach($accounts as $account)
+                                                            @if($account->id  ==  config('constants.petty_cash_account_id')  )
+                                                                <option
+                                                                    value="{{$account->code}}">{{$account->name}}
+                                                                    :{{$account->code}}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </TD>
+                                                <TD><input type="number" name="debited_amount"
+                                                           class="form-control amount" id="debited_amount1"
+                                                           placeholder="Amount [ZMK]" readonly>
+                                                </TD>
+                                            </TR>
+                                            </tbody>
+                                            <datalist id="accounts_list">
+                                                @foreach($accounts as $account)
+                                                    <option value="{{$account->code}}">{{$account->name}}</option>
+                                                @endforeach
+                                            </datalist>
+
+                                        </TABLE>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row p-2">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <label class="form-control-label">Receipt Files</label>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="input-group">
+                                                <input type="file" class="form-control" multiple name="receipt[]"
+                                                       id="receipt" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <textarea hidden class="form-control" rows="2" name="reason" required> Closing of petty cash</textarea>
+                                <div class="col-2 text-center ">
+                                    {{--                                        <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
+                                    {{--                                                value='Approved'>CLOSE PETTY-CASH--}}
+                                    {{--                                        </button>--}}
+
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>CLOSE PETTY-CASH
+                                        </button>
+                                        <button style="display: none" id="btnSubmit_reject" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Rejected'>CLOSE PETTY-CASH
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                        {{--                                            <button  disabled--}}
+                                        {{--                                                     class="btn btn-outline-success mr-2 p-2  "--}}
+                                        {{--                                                     value='Approved'>CLOSE PETTY-CASH--}}
+                                        {{--                                            </button>--}}
+                                        {{--                                            <button style="display: none" disabled--}}
+                                        {{--                                                    class="btn btn-outline-success mr-2 p-2  "--}}
+                                        {{--                                                    value='Rejected'>CLOSE PETTY-CASH--}}
+                                        {{--                                            </button>--}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+
+                {{--  AUDIT APPROVAL--}}
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_011')   &&
+                    $form->config_status_id == config('constants.petty_cash_status.closed')   )
+                    <div class="">
+                        <hr>
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <label class="form-control-label">Reason</label>
+                                    </div>
+                                    <div class="col-11">
+                                        <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 text-center ">
+                                <div id="divSubmit_show">
+                                    <button id="btnSubmit_approve" type="submit" name="approval"
+                                            class="btn btn-outline-success p-2   "
+                                            value='Approved'>AUDITED
+                                    </button>
+                                    <button id="btnSubmit_reject" type="submit"
+                                            name="approval"
+                                            class="btn btn-outline-danger p-2   "
+                                            value='Queried'>QUERIED
+                                    </button>
+                                </div>
+                                <div id="divSubmit_hide">
+                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>Processing. Please wait...
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
             </div>
+            <!-- /.card-footer-->
         </div>
 
     </section>
