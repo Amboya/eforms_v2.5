@@ -66,7 +66,7 @@
                                         <th>Payment</th>
                                         <th>Status</th>
                                         <th>Period</th>
-                                        <th>View</th>
+                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -96,7 +96,27 @@
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
+
+                                                @if(Auth::user()->type_id == config('constants.user_types.developer'))
+                                                    <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                                            title="Mark as Void."
+                                                            data-toggle="modal"
+                                                            data-target="#modal-void{{$item->id}}">
+                                                        <i class="fa fa-ban"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                                            title="Reverse Form to the previous state."
+                                                            data-toggle="modal"
+                                                            data-target="#modal-reverse{{$item->id}}">
+                                                        <i class="fa fa-redo"></i>
+                                                    </button>
+                                                    <a class="btn btn-sm bg-gradient-gray "  href="{{route('petty-cash-sync', $item->id)}}"
+                                                       title="Sync Application Forms">
+                                                        <i class="fas fa-sync"></i>
+                                                    </a>
+                                                @endif
                                             </td>
+
                                         </tr>
                                     @endforeach
                                     </tbody>

@@ -219,13 +219,8 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="hrm_id">HR</label>
-                                    <input list="users_list2" type="text" class="form-control" id="hrm_id" name="hrm_id"
+                                    <input list="users_list1" type="text" class="form-control" id="hrm_id" name="hrm_id"
                                            placeholder="Select HR Person">
-                                    <datalist id="users_list2">
-                                        @foreach($users as $item)
-                                            <option value=" {{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
                                 </div>
                             </div>
                             <div class="col-3">
@@ -248,13 +243,8 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="ca_id">Chief Accountant</label>
-                                    <input list="users_list3" type="text" class="form-control" id="ca_id" name="ca_id"
+                                    <input list="users_list1" type="text" class="form-control" id="ca_id" name="ca_id"
                                            placeholder="Select Chief Accountant Person">
-                                    <datalist id="users_list3">
-                                        @foreach($users as $item)
-                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
                                 </div>
                             </div>
                             <div class="col-3">
@@ -277,13 +267,8 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="expenditure_id">Expenditure Accountant</label>
-                                    <input list="users_list4" type="text" class="form-control" id="expenditure_id" name="expenditure_id"
+                                    <input list="users_list1" type="text" class="form-control" id="expenditure_id" name="expenditure_id"
                                            placeholder="Select Expenditure Accountant Person">
-                                    <datalist id="users_list4">
-                                        @foreach($users as $item)
-                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
                                 </div>
                             </div>
                             <div class="col-3">
@@ -306,14 +291,9 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="security_id">Security Personal</label>
-                                    <input list="users_list5" type="text" class="form-control" id="security_id" name="security_id"
+                                    <input list="users_list1" type="text" class="form-control" id="security_id" name="security_id"
                                            placeholder="Select Security Personal Person">
-                                    <datalist id="users_list5">
-                                        @foreach($users as $item)
-                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
-                                </div>
+                                    </div>
                             </div>
                             <div class="col-3">
                                 <div class="form-group">
@@ -334,14 +314,9 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="audit_id">Audit Personal</label>
-                                    <input list="users_list6" type="text" class="form-control" id="audit_id" name="audit_id"
+                                    <input list="users_list1" type="text" class="form-control" id="audit_id" name="audit_id"
                                            placeholder="Select Audit Personal Person">
-                                    <datalist id="users_list6">
-                                        @foreach($users as $item)
-                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
-                                </div>
+                                    </div>
                             </div>
                             <div class="col-3">
                                 <div class="form-group">

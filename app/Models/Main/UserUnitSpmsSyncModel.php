@@ -16,7 +16,6 @@ class UserUnitSpmsSyncModel extends Model
     protected $primaryKey = 'id';
     //fields fillable
     protected $fillable = [
-
         'user_unit_id',
         'user_unit_code',
         'user_unit_description',
@@ -77,6 +76,8 @@ class UserUnitSpmsSyncModel extends Model
         'updated_at',
 
     ];
+
+
 //    use HasFactory;
 //
 //    //table name

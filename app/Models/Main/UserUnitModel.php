@@ -10,23 +10,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class UserUnitModel extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     //table name
-    protected $table  = 'config_user_unit';
+    protected $table  = 'organizational_units';
     //primary key
     protected $primaryKey = 'id';
     //fields fillable
     protected $fillable = [
         'name',
-        'code',
-        'business_unit_code',
-        'cost_center_code',
+        'code_unit',
+        'bu_code',
+        'cc_code',
         'code_unit_superior',
-        'created_by',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+
+        'user_act',
+        'date_act',
+        'level',
+        'post_level',
+
         'status'
 
     ] ;

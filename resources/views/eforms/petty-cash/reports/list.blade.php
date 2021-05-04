@@ -61,7 +61,7 @@
                             <th>Payment</th>
                             <th>Status</th>
                             <th>Period</th>
-                            <th>View</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -79,12 +79,31 @@
                                 <td><span class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                 </td>
                                 <td>{{$item->updated_at->diffForHumans()}}</td>
-                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
+                                <td>
+                                    <a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
                                         document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
                                     <form id="show-form{{$item->id}}" action="{{ route('petty-cash-show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
+                                    @if(Auth::user()->type_id == config('constants.user_types.developer'))
+                                        <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                                title="Mark as Void."
+                                                data-toggle="modal"
+                                                data-target="#modal-void{{$item->id}}">
+                                            <i class="fa fa-ban"></i>
+                                        </button>
+                                        <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                                title="Reverse Form to the previous state."
+                                                data-toggle="modal"
+                                                data-target="#modal-reverse{{$item->id}}">
+                                            <i class="fa fa-redo"></i>
+                                        </button>
+                                        <a class="btn btn-sm bg-gradient-gray "  href="{{route('petty-cash-sync', $item->id)}}"
+                                           title="Sync Application Forms">
+                                            <i class="fas fa-sync"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

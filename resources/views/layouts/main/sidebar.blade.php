@@ -83,7 +83,7 @@
                     <li class="nav-item">
                         <a href="{{route('main-user_unit')}}" class="nav-link ">
                             <i class="nav-icon fas fa-calendar-alt"></i>
-                            <p> User Unit </p>
+                            <p> User-Units Workflow </p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -165,18 +165,18 @@
                             <p> Totals </p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{route('main-divisional-user-unit')}}" class="nav-link ">
-                            <i class="nav-icon fas fa-calendar-alt"></i>
-                            <p> Divisional User Units </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{route('main-department')}}" class="nav-link ">
-                            <i class="nav-icon fas fa-calendar-alt"></i>
-                            <p> Departments </p>
-                        </a>
-                    </li>
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="{{route('main-divisional-user-unit')}}" class="nav-link ">--}}
+{{--                            <i class="nav-icon fas fa-calendar-alt"></i>--}}
+{{--                            <p> Divisional User Units </p>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="{{route('main-department')}}" class="nav-link ">--}}
+{{--                            <i class="nav-icon fas fa-calendar-alt"></i>--}}
+{{--                            <p> Departments </p>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
                 @endif
             </ul>
         </nav>

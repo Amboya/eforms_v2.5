@@ -126,7 +126,9 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
-        $user_unit = ConfigWorkFlow::select('*')->orderBy('user_unit_code')->get();
+        $user_unit = ConfigWorkFlow::orderBy('user_unit_code')
+            ->where('user_unit_status', config('constants.user_unit_active') )
+            ->get();
         $params = [
             'user_unit' => $user_unit
         ];

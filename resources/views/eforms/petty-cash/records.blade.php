@@ -4,7 +4,8 @@
 @push('custom-styles')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
-    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 @endpush
 
 
@@ -19,7 +20,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Petty-Cash  : {{$category}}</li>
+                        <li class="breadcrumb-item active">Petty-Cash : {{$category}}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -60,7 +61,9 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="example3" class="table m-0">
+                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+
+                    <table id="myTable" class="table m-0">
                         <thead>
                         <tr>
                             <th>Serial</th>
@@ -75,8 +78,9 @@
                         <tbody>
                         @foreach( $list as $item )
                             <tr>
-                                <td><a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
+                                <td><a href="{{ route('logout') }}" class="dropdown-item"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                     <form id="show-form{{$item->id}}" action="{{ route('petty-cash-show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
@@ -84,11 +88,13 @@
                                 </td>
                                 <td>{{$item->claimant_name}}</td>
                                 <td>{{$item->total_payment}}</td>
-                                <td><span class="badge badge-{{$item->html ?? "default"}}">{{$item->status_name  ?? "none"}}</span>
+                                <td><span
+                                        class="badge badge-{{$item->html ?? "default"}}">{{$item->status_name  ?? "none"}}</span>
                                 </td>
                                 <td>{{$item->updated_at}}</td>
-                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
-                                        document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
+                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
                                     <form id="show-form{{$item->id}}" action="{{ route('petty-cash-show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
@@ -188,7 +194,8 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <p class="text-center">Are you sure you want to reverse this application to the previous stage? </p>
+                                    <p class="text-center">Are you sure you want to reverse this application to the
+                                        previous stage? </p>
                                     <p class="text-center">Note that you can not undo this action. </p>
                                 </div>
 
@@ -247,6 +254,33 @@
                 "responsive": true,
             });
         });
+    </script>
+
+    <script>
+        function myFunction() {
+            // Declare variables
+
+            var input, filter, table, tr, td, th, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr"),
+                th = table.getElementsByTagName("th");
+
+            // Loop through all table rows, and hide those who don't match the        search query
+            for (i = 1; i < tr.length; i++) {
+                tr[i].style.display = "none";
+                for (var j = 0; j < th.length; j++) {
+                    td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        if (td.innerHTML.toUpperCase().indexOf(filter.toUpperCase()) > -1) {
+                            tr[i].style.display = "";
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     </script>
 
 

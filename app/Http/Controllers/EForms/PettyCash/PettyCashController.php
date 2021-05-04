@@ -423,7 +423,7 @@ class PettyCashController extends Controller
         $files = $request->file('quotation');
         if ($request->hasFile('quotation')) {
             foreach ($files as $file) {
-                $filenameWithExt = $file->getClientOriginalName();
+                $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
                 // Get just filename
                 $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                 //get size
@@ -1337,11 +1337,11 @@ class PettyCashController extends Controller
             $files = $request->file('receipt');
             if ($request->hasFile('receipt')) {
                 foreach ($files as $file) {
-                    $filenameWithExt = $file->getClientOriginalName();
+                    $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
                     // Get just filename
                     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                     //get size
-                    $size = number_format($file->getSize() * 0.000001, 2);
+                    $size = number_format($file->getSize() * 0.0000001, 2);
                     // Get just ext
                     $extension = $file->getClientOriginalExtension();
                     // Filename to store
@@ -2010,12 +2010,13 @@ class PettyCashController extends Controller
 
     public function search(Request $request)
     {
+        $search = strtoupper($request->search);
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
             $list = DB::select("SELECT * FROM eform_petty_cash
-              where code LIKE '%{$request->search}%'
-              or claimant_name LIKE '%{$request->search}%'
-              or claimant_staff_no LIKE '%{$request->search}%'
-              or config_status_id LIKE '%{$request->search}%'
+              where code LIKE '%{$search}%'
+              or claimant_name LIKE '%{$search}%'
+              or claimant_staff_no LIKE '%{$search}%'
+              or config_status_id LIKE '%{$search}%'
             ");
             $list = PettyCashModel::hydrate($list);
 
@@ -2034,10 +2035,10 @@ class PettyCashController extends Controller
         } else {
             //find the petty cash with that id
             $list = PettyCashModel::
-            where('code', 'LIKE', "%{$request->search}%")
-                ->orWhere('claimant_name', 'LIKE', "%{$request->search}%")
-                ->orWhere('claimant_staff_no', 'LIKE', "%{$request->search}%")
-                ->orWhere('config_status_id', 'LIKE', "%{$request->search}%")
+            where('code', 'LIKE', "%{$search}%")
+                ->orWhere('claimant_name', 'LIKE', "%{$search}%")
+                ->orWhere('claimant_staff_no', 'LIKE', "%{$search}%")
+                ->orWhere('config_status_id', 'LIKE', "%{$search}%")
                 ->paginate(50);
         }
 

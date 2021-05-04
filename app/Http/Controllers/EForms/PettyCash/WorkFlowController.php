@@ -40,7 +40,9 @@ class WorkFlowController extends Controller
     public function index()
     {
         //get all the categories
-        $list = ConfigWorkFlow::all();
+        $list = ConfigWorkFlow::orderBy('user_unit_code')
+            ->where('user_unit_status', config('constants.user_unit_active') )->get();
+
         $users = User::orderBy('name')->get();
 
         //count all that needs me
@@ -230,7 +232,9 @@ class WorkFlowController extends Controller
         //capitalise
         $user_unit = strtoupper($request->user_unit_code);
         $form_id = 0;
-        $workflow = ConfigWorkFlow::where('user_unit_code', $user_unit);
+        $workflow = ConfigWorkFlow::where('user_unit_code', $user_unit)
+             ->where('user_unit_status', config('constants.user_unit_active') );
+
         $users = User::orderBy('name')->get();
 
         if($workflow->exists()){

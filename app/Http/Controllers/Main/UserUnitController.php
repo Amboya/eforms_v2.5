@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUnitRequest;
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\UserUnitModel;
 use App\Models\Main\UserUnitSpmsSyncModel;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
@@ -32,40 +36,30 @@ class UserUnitController extends Controller
      */
     public static function sync()
     {
-        $user = Auth::user();
-        $id = $user->id ?? 1;
         //get positions from phris
-        $user_units_from_spms = UserUnitSpmsSyncModel::select('*')
+        $user_units_from_spms = UserUnitModel::select('*')
             ->where('status', config('constants.user_unit_active'))
             ->get();
 
         foreach ($user_units_from_spms as $key => $item) {
 
-            $find_model = UserUnitModel::where('code', $item->code_unit)
-                ->where('business_unit_code', $item->bu_code)
-                ->where('cost_center_code', $item->cc_code)
-                ->where('code_unit_superior', $item->code_unit_superior);
+            $model = ConfigWorkFlow::updateOrCreate(
+                [
+                    'user_unit_description' => $item->description,
+                    'user_unit_code' => $item->code_unit ?? '0',
+                    'user_unit_bc_code' => $item->bu_code ?? '0',
+                    'user_unit_cc_code' => $item->cc_code ?? '0',
+                ],
+                [
+                    'user_unit_description' => $item->description ?? '0',
+                    'user_unit_code' => $item->code_unit ?? '0',
+                    'user_unit_bc_code' => $item->bu_code ?? '0',
+                    'user_unit_cc_code' => $item->cc_code ?? '0',
+                    'user_unit_status' => $item->status ?? '0',
+                    'user_unit_superior' => $item->code_unit_superior ?? '0',
+                ]);
 
-            //check if the model exits
-            if ($find_model->exists()) {
-
-            } else {
-                try{
-                    //create the user unit
-                    $model = UserUnitModel::create(
-                        [
-                            'name' => $item->description ?? "null",
-                            'code' => $item->code_unit ?? "0",
-                            'business_unit_code' => $item->bu_code ?? "0",
-                            'cost_center_code' => $item->cc_code ?? "0",
-                            'code_unit_superior' => $item->code_unit_superior ?? "0",
-                            'status' => $item->status ?? "0",
-                            'created_by' => $id
-                        ]);
-                }catch (\Exception $exception){
-
-                }
-            }
+           // dd($model);
 
         }
         //return back
@@ -75,16 +69,21 @@ class UserUnitController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
+
         //get all the categories
-        $list = UserUnitModel::all();
+        $list = ConfigWorkFlow::orderBy('user_unit_code')
+            ->where('user_unit_status', config('constants.user_unit_active'))->get();
+
+        $users = User::orderBy('name')->get();
 
         //data to send to the view
         $params = [
             'list' => $list,
+            'users' => $users,
         ];
 
         return view('main.user_unit.index')->with($params);
@@ -93,7 +92,7 @@ class UserUnitController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -103,8 +102,8 @@ class UserUnitController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(UserUnitRequest $request)
     {
@@ -135,7 +134,7 @@ class UserUnitController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -146,7 +145,7 @@ class UserUnitController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -156,23 +155,50 @@ class UserUnitController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request)
     {
+        $model = ConfigWorkFlow::find($request->workflow_id);
 
-        $model = UserUnitModel::find($request->user_unit_id);
-        $model->name = $request->name;
-        $model->code = $request->code;
-        $model->business_unit_code = $request->business_unit_code;
-        $model->cost_center_code = $request->cost_center_code;
-        $model->code_unit_superior = $request->code_unit_superior;
+        $model->dr_code = $request->dr_code ?? $model->dr_code;
+        $model->dr_unit = $request->dr_unit ?? $model->dr_unit;
+        $model->dm_code = $request->dm_code ?? $model->dm_code;
+        $model->dm_unit = $request->dm_unit ?? $model->dm_unit;
+        $model->hod_code = $request->hod_code ?? $model->hod_code;
+        $model->hod_unit = $request->hod_unit ?? $model->hod_unit;
+        $model->arm_code = $request->arm_code ?? $model->arm_code;
+        $model->arm_unit = $request->arm_unit ?? $model->arm_unit;
+        $model->bm_code = $request->bm_code ?? $model->bm_code;
+        $model->bm_unit = $request->bm_unit ?? $model->bm_unit;
+        $model->ca_code = $request->ca_code ?? $model->ca_code;
+        $model->ca_unit = $request->ca_unit ?? $model->ca_unit;
+        $model->ma_code = $request->ma_code ?? $model->ma_code;
+        $model->ma_unit = $request->ma_unit ?? $model->ma_unit;
+        $model->psa_code = $request->psa_code ?? $model->psa_code;
+        $model->psa_unit = $request->psa_unit ?? $model->psa_unit;
+        $model->hrm_code = $request->hrm_code ?? $model->hrm_code;
+        $model->hrm_unit = $request->hrm_unit ?? $model->hrm_unit;
+        $model->phro_code = $request->phro_code ?? $model->phro_code;
+        $model->phro_unit = $request->phro_unit ?? $model->phro_unit;
+        $model->shro_code = $request->shro_code ?? $model->shro_code;
+        $model->shro_unit = $request->shro_unit ?? $model->shro_unit;
+        $model->audit_code = $request->audit_code ?? $model->audit_code;
+        $model->audit_unit = $request->audit_unit ?? $model->audit_unit;
+        $model->expenditure_code = $request->expenditure_code ?? $model->expenditure_code;
+        $model->expenditure_unit = $request->expenditure_unit ?? $model->expenditure_unit;
+        $model->payroll_code = $request->payroll_code ?? $model->payroll_code;
+        $model->payroll_unit = $request->payroll_unit ?? $model->payroll_unit;
+        $model->security_code = $request->security_code ?? $model->security_code;
+        $model->security_unit = $request->security_unit ?? $model->security_unit;
+        $model->transport_code = $request->transport_code ?? $model->transport_code;
+        $model->transport_unit = $request->transport_unit ?? $model->transport_unit;
         $model->save();
 
         //log the activity
-        ActivityLogsController::store($request, "Updating of User Unit", "update", " unit user updated", $model->id);
+       // ActivityLogsController::store($request, "Updating of User Unit", "update", " unit user updated", $model->id);
         return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Created successfully');
 
     }
@@ -181,15 +207,10 @@ class UserUnitController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Request $request, $id)
     {
-        $model = UserUnitModel::find($id);
-        UserUnitModel::destroy($id);
-        //log the activity
-        ActivityLogsController::store($request, "Deleting of User Unit ", "delete", " user unit deleted", json_encode($model));
-        return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Deleted successfully');
 
     }
 
