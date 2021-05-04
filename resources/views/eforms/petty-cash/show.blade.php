@@ -320,17 +320,17 @@
         @endif
 
         {{--  FORM PPROVALS--}}
-        <div class="card collapsed-card">
+        <div class="card ">
             <div class="card-header">
                 <h4 class="card-title">Approvals</h4>  <span
                     class="badge badge-secondary right ml-2">{{$approvals->count()}}</span>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fas fa-plus"></i>
+                        <i class="fas fa-minus"></i>
                     </button>
                 </div>
             </div>
-            <div style="display: none;" class="card-body">
+            <div  class="card-body">
                 <div class="col-lg-12 ">
                     <TABLE id="dataTable" class="table">
                         <TR bgcolor="#f5f5f5">
