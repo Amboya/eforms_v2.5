@@ -5,6 +5,7 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
 @endpush
 
 
@@ -117,20 +118,6 @@
                 </div>
                 <div class="table-responsive">
                     <table id="example1" class="table m-0">
-                        <thead>
-                        <tr>
-                            <th>Bu Code</th>
-                            <th>CC Code</th>
-                            <th>Serial</th>
-                            <th>Claimant</th>
-                            <th>Payment</th>
-                            <th>Status</th>
-                            <th>Claim Date</th>
-                        </tr>
-                        </thead>
-                        <tbody id="table_list">
-
-                        </tbody>
 
                     </table>
 
@@ -179,19 +166,30 @@
 
 @push('custom-scripts')
 
-    <!-- DataTables -->
+
+    <!-- DataTables  & Plugins -->
     <script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
     <script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/jszip/jszip.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/pdfmake/pdfmake.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/pdfmake/vfs_fonts.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
 
     <!-- page script -->
     <script>
         $(function () {
+
             $("#example1").DataTable({
-                "responsive": true,
-                "autoWidth": false,
-            });
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
             $('#example2').DataTable({
                 "paging": true,
                 "lengthChange": false,
@@ -203,6 +201,7 @@
             });
         });
     </script>
+
 
     <script>
         $("#search_button").click(function () {
@@ -256,38 +255,92 @@
                     },
                     success: function(response_data){
                          console.log(response_data);
-
                         list_responce = "";
-                        // loop through list array
-                        $.each( response_data.list, function (index, value) {
-                            //list array
-                            var form_id  = 'show-form'+value.id ;
-                            var route = '{{ url('petty-cash-show') }}' + '/'+ value.id ;
-                            var View = "View";
-                            var csrf = '@csrf' ;
-                            //populate the table
-                            list_responce +=
-                                "<tr> " +
-                                "<td  > " + value.business_unit_code + " </td>" +
-                                "<td  > " + value.cost_center + " </td>" +
-                                "<td  > " + value.code + " </td>" +
-                                "<td  > " + value.claimant_name + " </td>" +
-                                "<td  > " + value.total_payment + " </td>" +
-                                "<td  > " + response_data.status + " </td>" +
-                                "<td  > " + value.claim_date + " </td>" +
-                                // "<td  > <a href='#' class='btn btn-sm bg-orange' onclick='event.preventDefault();document.getElementById('"+form_id+"').submit(); >"+ View +"</a> <form id='"+form_id+"' action='"+route+"' method='POST' class='d-none' > "+ csrf  +"</form> </td>" +
-                                "</tr>";
-                        });
-                        $("#table_list").html(list_responce);
+                         if(response_data.superior){
+                             var list = response_data.list ;
+                             var total = 0 ;
+                             var amount = 0 ;
+                             for(var i = 0; i < list.length; i++){
+                                 // loop through list array
+                                 $.each( list[i], function (index, value) {
 
-                        // loop through summary array
-                        $.each( response_data.summary, function (index, value) {
-                            //list array  summary_total
-                            $("#summary_total").value = value.total;
-                            document.getElementById('summary_total').value=value.total ;
-                            document.getElementById('summary_amount').value= 'ZMW '+  value.amount ;
-                            document.getElementById('summary_status').value= response_data.status;
-                        });
+                                     //list array
+                                     var route = '{{ url('petty_cash/showForm') }}' + '/'+ value.id ;
+                                     var View = "View";
+                                     //populate the table
+                                     list_responce +=
+                                         "<tr> " +
+                                         "<td  > " + value.user_unit_code + " </td>" +
+                                         "<td  > " + value.business_unit_code + " </td>" +
+                                         "<td  > " + value.cost_center + " </td>" +
+                                         "<td  > " + value.code + " </td>" +
+                                         "<td  > " + value.claimant_name + " </td>" +
+                                         "<td  > " + value.total_payment + " </td>" +
+                                         "<td  > " + response_data.status + " </td>" +
+                                         "<td  > " + value.claim_date + " </td>" +
+                                         "<td  > <a href='"+route+"' class='btn btn-sm bg-orange' >"+ View +"</a>  </td>" +
+                                         "</tr>";
+
+                                     total++ ;
+                                     amount = amount += parseFloat(value.total_payment );
+                                 });
+
+                             }
+
+                             //list array  summary_total
+                             document.getElementById('summary_total').value= total ;
+                             document.getElementById('summary_amount').value= 'ZMW '+  amount ;
+                             document.getElementById('summary_status').value= response_data.status;
+
+                         }else{
+                             $.each( response_data.list, function (index, value) {
+                                 //list array
+                                 var form_id  = 'show-form'+value.id ;
+                                 var route = '{{ url('petty_cash/showForm') }}' + '/'+ value.id ;
+                                 var View = "View";
+                                 var csrf = '@csrf' ;
+                                 //populate the table
+                                 list_responce +=
+                                     "<tr> " +
+                                     "<td  > " + value.user_unit_code + " </td>" +
+                                     "<td  > " + value.business_unit_code + " </td>" +
+                                     "<td  > " + value.cost_center + " </td>" +
+                                     "<td  > " + value.code + " </td>" +
+                                     "<td  > " + value.claimant_name + " </td>" +
+                                     "<td  > " + value.total_payment + " </td>" +
+                                     "<td  > " + response_data.status + " </td>" +
+                                     "<td  > " + value.claim_date + " </td>" +
+                                     "<td  > <a href='"+route+"' class='btn btn-sm bg-orange' >"+ View +"</a>  </td>" +
+                                     "</tr>";
+                             });
+                             // loop through summary array
+                             $.each( response_data.summary, function (index, value) {
+                                 //list array  summary_total
+                                 $("#summary_total").value = value.total;
+                                 document.getElementById('summary_total').value=value.total ;
+                                 document.getElementById('summary_amount').value= 'ZMW '+  value.amount ;
+                                 document.getElementById('summary_status').value= response_data.status;
+                             });
+                         }
+
+                         var head = "  <thead> " +
+                             "<tr> " +
+                             "<th>UserUnit</th> " +
+                             "<th>Bu Code</th> " +
+                             "<th>CC Code</th> " +
+                             "<th>Serial</th> " +
+                             "<th>Claimant</th> " +
+                             "<th>Payment</th> " +
+                             "<th>Status</th> " +
+                             "<th>Claim Date</th> " +
+                             "<th>Action</th> " +
+                             "</tr> " +
+                             "</thead> " +
+                             "<tbody > " +
+                        list_responce +
+                        "</tbody>" ;
+
+                        $("#example1").html(head);
 
 
                     },

@@ -43,7 +43,8 @@ Route::get('/', function () {
 Route::group([
     'namespace' => 'Main',
     'prefix' => 'main',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
     Route::get('/master', function () {
         return view('main.dashboard');
@@ -313,6 +314,7 @@ Route::group([
 
     Route::get('charts', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'charts'])->name('petty-cash-charts');
     Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'markAccountLinesAsDuplicates'])->name('petty-cash-accounts-duplicate-remove');
+    Route::get('showForm/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'showForm'])->name('petty-cash-reports-show');
 
     //REPORTS
     Route::group([
@@ -321,6 +323,7 @@ Route::group([
         Route::get('directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'index'])->name('petty-cash-reports-index');
         Route::get('syncDirectorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncDirectorates'])->name('petty-cash-reports-sync-directorates');
         Route::get('syncUserUnits', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncUserUnits'])->name('petty-cash-reports-sync-units');
+
     });
     Route::group([
         'prefix' => 'filtered/report'

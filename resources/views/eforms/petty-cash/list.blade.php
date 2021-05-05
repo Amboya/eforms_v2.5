@@ -54,8 +54,14 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="table-responsive">
-                    @if(Auth::user()->type_id != config('constants.user_types.developer'))
-                        <table id="example3" class="table m-0">
+                    <div class="row">
+                        <div class="col-6 offset-6">
+                        <input type="text" class="form-control m-2" id="myInput" onkeyup="myFunction()" placeholder="Search ..">
+                    </div>
+                    </div>
+
+                @if(Auth::user()->type_id != config('constants.user_types.developer'))
+                        <table id="myTable" class="table m-0">
                             @else
                                 <table id="example1" class="table m-0">
                                     @endif
@@ -176,6 +182,36 @@
             });
         });
     </script>
+
+
+    <script>
+        function myFunction() {
+            // Declare variables
+
+            var input, filter, table, tr, td, th, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr"),
+                th = table.getElementsByTagName("th");
+
+            // Loop through all table rows, and hide those who don't match the        search query
+            for (i = 1; i < tr.length; i++) {
+                tr[i].style.display = "none";
+                for (var j = 0; j < th.length; j++) {
+                    td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        if (td.innerHTML.toUpperCase().indexOf(filter.toUpperCase()) > -1) {
+                            tr[i].style.display = "";
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+
 
 
 @endpush

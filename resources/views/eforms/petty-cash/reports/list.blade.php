@@ -110,7 +110,7 @@
                         </tbody>
 
                     </table>
-                    {!! $list->links() !!}
+
                 </div>
             </div>
             <!-- /.card-body -->
@@ -124,6 +124,7 @@
                         <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
                     @endif
                 @endif
+                    {!! $list->links() !!}
             </div>
         </div>
         <!-- /.card -->

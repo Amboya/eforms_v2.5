@@ -114,7 +114,7 @@
                 <li class="nav-item">
                     <a href="{{route('petty.cash.filtered.report')}}" class="nav-link ">
                         <i class="nav-icon fas fa-bars"></i>
-                        <p> Filtered Reports
+                        <p> Transactions Summary
                         </p>
                     </a>
                 </li>

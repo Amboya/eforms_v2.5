@@ -1,8 +1,10 @@
 @extends('layouts.eforms.petty-cash.master')
 
-
 @push('custom-styles')
-    <!-- -->
+  <!-- DataTables -->
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
 @endpush
 
 
@@ -139,12 +141,13 @@
                             </div>
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body p-0">
+                        <div class="card-body p-2">
                             <div class="table-responsive">
-                                <table class="table m-0">
+                                <table id="example1" class="table ">
                                     <thead>
                                     <tr>
                                         <th>Serial</th>
+                                        <th>UserUnit</th>
                                         <th>Claimant</th>
                                         <th>Payment</th>
                                         <th>Status</th>
@@ -164,6 +167,7 @@
                                                     @csrf
                                                 </form>
                                             </td>
+                                            <td>{{$item->user_unit_code}} : {{$item->user_unit->user_unit_description}}</td>
                                             <td>{{$item->claimant_name}}</td>
                                             <td>{{$item->total_payment}}</td>
                                             <td><span
@@ -183,7 +187,7 @@
                                     @endforeach
                                     </tbody>
                                 </table>
-{{--                                {!! $list->links() !!}--}}
+
                             </div>
                             <!-- /.table-responsive -->
                         </div>
@@ -198,6 +202,7 @@
                                     <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
                                 @endif
                             @endif
+                                {!! $list->links() !!}
                         </div>
                         <!-- /.card-footer -->
                     </div>
@@ -213,5 +218,41 @@
 
 
 @push('custom-scripts')
-    <!--  -->
+
+    <!-- DataTables  & Plugins -->
+    <script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/jszip/jszip.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/pdfmake/pdfmake.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/pdfmake/vfs_fonts.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+
+    <!-- page script -->
+    <script>
+        $(function () {
+
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+
+
 @endpush

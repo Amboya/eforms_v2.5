@@ -43,31 +43,31 @@ class ReportsController extends Controller
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
             $user_units = ConfigWorkFlow::where('hod_unit', $user->profile_unit_code)
                 ->where('hod_code', $user->profile_job_code)
-                ->get();
+                ->orderBy('user_unit_code')->get();
         } //[2B] HUMAN RESOURCE.
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
             $user_units = ConfigWorkFlow::where('hrm_code', $user->profile_job_code)
                 ->where('hrm_unit', $user->profile_unit_code)
-                ->get();
+                ->orderBy('user_unit_code')->get();
         } //[2C] CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
             $user_units = ConfigWorkFlow::where('ca_code', $user->profile_job_code)
                 ->where('ca_unit', $user->profile_unit_code)
-                ->get();
+                ->orderBy('user_unit_code')->get();
         } //[2D] EXPENDITURE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
             $user_units = ConfigWorkFlow::where('expenditure_unit', $user->profile_unit_code  ?? "0")
-                ->get();
+                ->orderBy('user_unit_code')->get();
         } //[2E] SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
             $user_units = ConfigWorkFlow::where('security_unit', $user->profile_unit_code  ?? "0" )
-                ->get();
+                ->orderBy('user_unit_code')->get();
         } //[2F] AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
             $user_units = ConfigWorkFlow::where('audit_unit', $user->profile_unit_code ?? "0")
-                ->get();
+                ->orderBy('user_unit_code')->get();
         } else {
-            $user_units = ConfigWorkFlow::all();
+            $user_units = ConfigWorkFlow::orderBy('user_unit_code')->get();
         }
 
 
@@ -89,25 +89,75 @@ class ReportsController extends Controller
 
     public function getFilteredReports($user_unit, $status, $start_date, $end_date){
 
-        //get the list of transactions
-        $list = DB::select("SELECT * FROM eform_petty_cash
+        //first check if you have something in the
+        $belongs_to_superior = ConfigWorkFlow::where('user_unit_superior',$user_unit ) ;
+        $superior = false ;
+
+      //  dd($belongs_to_superior->get());
+        if($belongs_to_superior->exists()){
+            $belongs_to_superior =  $belongs_to_superior->get();
+            $superior = true ;
+            $list = [] ;
+            $summary = [] ;
+            //select
+            foreach ($belongs_to_superior as $item){
+
+                $user_unit_new = $item->user_unit_code ;
+                //get the list of transactions
+                $list_one = DB::select("SELECT * FROM eform_petty_cash
+                    where config_status_id = '{$status}'
+                      and user_unit_code = '{$user_unit_new}'
+                      and  created_at <= '{$end_date}'
+                      and  created_at >= '{$start_date}'
+                     ");
+                $my_list = PettyCashModel::hydrate($list_one);
+                if(sizeof($my_list) < 1){
+                    //dd($my_list);
+                }else{
+                    $list[] = PettyCashModel::hydrate($list_one);
+                }
+
+
+
+                //get the summary
+                $summary_one = DB::select("SELECT sum(amount) as amount , sum(total)as total
+                    FROM eform_petty_cash_dashboard_daily_totals_view
+                      where config_status_id = '{$status}'
+                      and  user_unit_code = '{$user_unit_new}'
+                      and  claim_date <= '{$end_date}'
+                      and  claim_date >= '{$start_date}'
+                       ");
+                $my_summary = DailyPettyCashTotalsView::hydrate($summary_one);
+                if(sizeof($my_summary) < 1){
+                   // dd($my_summary);
+                }else{
+                    $summary[] = DailyPettyCashTotalsView::hydrate($summary_one);
+                }
+
+
+            }
+        }else{
+            //get the list of transactions
+            $list = DB::select("SELECT * FROM eform_petty_cash
                     where config_status_id = '{$status}'
                       and user_unit_code = '{$user_unit}'
                       and  created_at <= '{$end_date}'
                       and  created_at >= '{$start_date}'
                      ");
-        $list = PettyCashModel::hydrate($list);
+            $list = PettyCashModel::hydrate($list);
 
 
-        //get the summary
-        $summary = DB::select("SELECT sum(amount) as amount , sum(total)as total
+            //get the summary
+            $summary = DB::select("SELECT sum(amount) as amount , sum(total)as total
                     FROM eform_petty_cash_dashboard_daily_totals_view
                       where config_status_id = '{$status}'
                       and  user_unit_code = '{$user_unit}'
                       and  claim_date <= '{$end_date}'
                       and  claim_date >= '{$start_date}'
                        ");
-        $summary = DailyPettyCashTotalsView::hydrate($summary);
+            $summary = DailyPettyCashTotalsView::hydrate($summary);
+        }
+
 
         //get the status
         $status = StatusModel::find($status);
@@ -116,6 +166,7 @@ class ReportsController extends Controller
         $params = [
             'status' => $status->name ,
             'list' => $list,
+            'superior' => $superior,
             'summary' => $summary
         ];
         //response

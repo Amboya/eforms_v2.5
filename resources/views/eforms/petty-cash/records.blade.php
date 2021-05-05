@@ -61,8 +61,11 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="table-responsive">
-                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
-
+                    <div class="row">
+                        <div class="col-6 offset-6">
+                            <input type="text" class="form-control m-2" id="myInput" onkeyup="myFunction()" placeholder="Search ..">
+                        </div>
+                    </div>
                     <table id="myTable" class="table m-0">
                         <thead>
                         <tr>
@@ -123,12 +126,12 @@
 
                     </table>
 
-                    {!! $list->links() !!}
+
                 </div>
             </div>
             <!-- /.card-body -->
             <div class="card-footer clearfix">
-
+                {!! $list->links() !!}
             </div>
         </div>
         <!-- /.card -->

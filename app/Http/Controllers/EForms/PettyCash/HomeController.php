@@ -65,6 +65,8 @@ class HomeController extends Controller
         //pending forms for me before i apply again
         $pending = self::pendingForMe();
 
+       // dd($list);
+
         //data to send to the view
         $params = [
             'totals_needs_me' => $totals_needs_me,

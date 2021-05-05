@@ -138,11 +138,6 @@ class PettyCashController extends Controller
                 ->join('config_status' , 'eform_petty_cash.config_status_id', '=', 'config_status.id')
                 ->paginate(50);
 
-           // dd($list);
-//            $list = DB::select("SELECT * FROM eform_petty_cash ORDER BY updated_at ASC ");
-//            $list = PettyCashModel::hydrate($list);
-//            $list = new LengthAwarePaginator($list, $list->count(), 12, 2);
-
             $category = "All Records";
         } else if ($value == "pending") {
             $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
@@ -322,9 +317,9 @@ class PettyCashController extends Controller
                 'subject' => "Petty-Cash-Voucher Path Configuration Needs Your Attention",
                 'title' => "Path Configuration Not Defined For {$user->name}",
                 'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} and Phone/Extension {$user->phone}, managed to submit or raise new petty-cash voucher.
-                      <br>But the voucher path is not completely configured. Please confirm that this is so and take action to correct this as soon as possible.
+                     <br>But the voucher path is not completely configured. Please confirm that this is so and take action to correct this as soon as possible.
                      <br><br>
-                     <b>Path for {$user->user_unit->user_unit_code} user-unit </b><br>
+                     <b> Path for {$user->user_unit->user_unit_code} user-unit </b><br>
                    1: HOD -> {$user->user_unit->hod_code} : {$user->user_unit->hod_unit}  <br>
                    2: HR/Station Manager ->  {$user->user_unit->hrm_code} : {$user->user_unit->hrm_unit} <br>
                    3: Account -> {$user->user_unit->ca_code} : {$user->user_unit->ca_unit}  <br>
@@ -334,7 +329,6 @@ class PettyCashController extends Controller
                 <br>You can update the details by clicking on 'Petty Cash Work Flow' menu, then search for {$user->user_unit->user_unit_code}
                  and 'Edit' to update the correct details . <br> <br>
                  Else the HOD has not registered or assigned the correct profile yet.
-
                  "
             ];
 
@@ -344,10 +338,8 @@ class PettyCashController extends Controller
 
             $error = true;
             //return with error msg
-//            return Redirect::route('petty-cash-home')->with('error', 'Sorry!, The superior who is supposed to approve your petty cash,
-//                       <br> has not registered or not fully configured yet, Please, <b>try first contacting your superior</b> so as to make sure he/she has registered in the system,
-//                       then you can contact eZESCO Admins (1142,1126,2350,2345,3309,3306 or 3319) isd@zesco.co.zm to configure your superior. Your petty-cash voucher has not been saved.');
-        }
+
+             }
 
         //generate the petty cash unique code
         $code = self::randGenerator("PT", 1);
@@ -379,7 +371,7 @@ class PettyCashController extends Controller
 
                 'created_by' => $user->id,
                 'profile' => $user->profile_id,
-                'code_superior' => $user->position->superior_code ?? "",
+                'code_superior' => $user->user_unit->user_unit_superior,
 
                 'hod_code' => $user->user_unit->hod_code,
                 'hod_unit' => $user->user_unit->hod_unit,
@@ -471,7 +463,7 @@ class PettyCashController extends Controller
 
         /** send email to supervisor */
         //get team email addresses
-//        $to = config('constants.team_email_list');
+
         $names = "";
         $to = [];
         //add hods email addresses
@@ -487,22 +479,22 @@ class PettyCashController extends Controller
             'subject' => "New Petty-Cash Voucher Needs Your Attention",
             'title' => "New Petty-Cash Voucher Needs Your Attention {$user->name}",
             'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} has successfully raised a petty-cash voucher with
-                   <br> serial: {$formModel->code}  <br> reference: {$formModel->ref_no} <br> Status: {$formModel->status->name}  and <br> <b>Amount: ZMW {$request->total_payment}</b></br>. <br>
+                   <br> Serial: {$formModel->code}  <br> Reference: {$formModel->ref_no} <br> Status: {$formModel->status->name}  and <br> <b>Amount: ZMW {$request->total_payment}</b></br>. <br>
             This voucher now needs your approval, kindly click on the button below to login to E-ZESCO and take action on the voucher.<br> regards. "
         ];
-        //send mail
+        // send mail
         $mail_to_is = Mail::to($to)->send(new SendMail($details));
 
-        //log the activity
+        // log the activity
         ActivityLogsController::store($request, "Creating of Petty Cash", "update", " pay point created", $formModel->id);
 
         if ($error) {
-            //return with error msg
+            // return with error msg
             return Redirect::route('petty-cash-home')->with('error', 'Sorry!, The superior who is supposed to approve your petty cash,
                        <br> has not registered or not fully configured yet, Please, <b>try first contacting your superior</b> so as to make sure he/she has registered in the system,
                        then you can contact eZESCO Admins (1142,1126,2350,2345,3309,3306 or 3319) isd@zesco.co.zm to configure your petty cash voucher path. Your petty-cash voucher has been saved.');
         } else {
-            //return the view
+            // return the view
             return Redirect::route('petty-cash-home')->with('message', 'Petty Cash Details for ' . $formModel->code . ' have been Created successfully');
         }
     }
@@ -703,6 +695,51 @@ class PettyCashController extends Controller
         return view('eforms.petty-cash.show')->with($params);
 
     }
+
+
+    public function showForm($id)
+    {
+        //GET THE PETTY CASH MODEL if you are an admin
+        $list = DB::select("SELECT * FROM eform_petty_cash where id = {$id} ");
+        $form = PettyCashModel::hydrate($list)->first();
+
+        $receipts = AttachedFileModel::where('form_id', $form->code)
+            ->where('form_type', config('constants.eforms_id.petty_cash'))
+            ->where('file_type', config('constants.file_type.receipt'))
+            ->get();
+        $quotations = AttachedFileModel::where('form_id', $form->code)
+            ->where('form_type', config('constants.eforms_id.petty_cash'))
+            ->where('file_type', config('constants.file_type.quotation'))
+            ->get();
+        $form_accounts = PettyCashAccountModel::where('eform_petty_cash_id', $id)->get();
+        $projects = ProjectsModel::all();
+        $accounts = AccountsChartModel::all();
+        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.petty_cash'))
+            ->orderBy('created_at', 'asc')->get();
+
+        $user = User::find($form->created_by);
+        $user_array = self::findMyNextPerson($form->config_status_id, $user->user_unit, $user);
+
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+
+        //data to send to the view
+        $params = [
+            'receipts' => $receipts,
+            'quotations' => $quotations,
+            'form_accounts' => $form_accounts,
+            'totals_needs_me' => $totals_needs_me,
+            'form' => $form,
+            'projects' => $projects,
+            'user_array' => $user_array,
+            'approvals' => $approvals,
+            'accounts' => $accounts
+        ];
+        //return view
+        return view('eforms.petty-cash.show')->with($params);
+
+    }
+
 
     /**
      * Show the form for editing the specified resource.
