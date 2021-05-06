@@ -173,10 +173,10 @@
                                                 </p>
                                                 <p class="text-muted"><b>Delegated
                                                         Profiles:</b>
-                                                    @foreach($user->user_profile as $item)
+                                                    @foreach($delegated_profiles as $item)
                                                         {{$item->form->name  ?? ""}}
-                                                        :  {{$item->profiles->code  ?? ""}}
-                                                        : {{$item->profiles->name  ?? ""}} <br>
+                                                        :  {{$item->profile->name}}
+                                                        : for {{$item->me->name}} <br>
                                                     @endforeach
                                                 </p>
                                             </div>

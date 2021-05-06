@@ -119,7 +119,9 @@ Route::group([
         Route::get('assignment', [App\Http\Controllers\Main\ProfileController::class, 'assignmentCreate'])->name('main-profile-assignment');
         Route::post('assignment/store', [App\Http\Controllers\Main\ProfileController::class, 'assignmentStore'])->name('main-profile-assignment-store');
         Route::get('delegation', [App\Http\Controllers\Main\ProfileController::class, 'delegationCreate'])->name('main-profile-delegation');
+        Route::get('delegation/list', [App\Http\Controllers\Main\ProfileController::class, 'delegationList'])->name('main-profile-delegation-list');
         Route::post('delegation/store', [App\Http\Controllers\Main\ProfileController::class, 'delegationStore'])->name('main-profile-delegation-store');
+        Route::post('delegation/end/{id}', [App\Http\Controllers\Main\ProfileController::class, 'delegationEnd'])->name('main-profile-delegation-end');
 
     });
     //profile Permissions
@@ -304,6 +306,7 @@ Route::group([
     Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'destroy'])->name('petty-cash-destroy');
     Route::get('reports/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reports'])->name('petty-cash-report');
     Route::get('reportExport', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExport'])->name('petty-cash-report-export');
+    Route::get('reportSync', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsSync'])->name('petty-cash-report-sync');
     Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExported'])->name('petty-cash-report-export-unmark-exported');
     Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExportedAll'])->name('petty-cash-report-export-unmark-exported-all');
     Route::get('sync/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'sync'])->name('petty-cash-sync');

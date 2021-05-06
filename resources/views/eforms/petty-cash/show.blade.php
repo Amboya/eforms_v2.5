@@ -340,6 +340,7 @@
                                 <TD>Status To</TD>
                                 <TD>Reason</TD>
                                 <TD>Date</TD>
+                                <TD>From Form <br>Submission </TD>
                             </TR>
                             @foreach($approvals as $item)
                                 <TR>
@@ -350,6 +351,7 @@
                                     <TD>{{$item->to_status->name ?? ""}}</TD>
                                     <TD>{{$item->reason}}</TD>
                                     <TD>{{$item->created_at}}</TD>
+                                    <TD>{{$form->created_at->diffAsCarbonInterval($item->created_at)}}</TD>
                                 </TR>
                             @endforeach
                         </TABLE>
@@ -522,55 +524,79 @@
                          &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
                        )
                         <div class="">
-                            <h6 class="text-center">Please Update the Accounts</h6>
+                            <h5 class="text-center">Please Update the Accounts </h5>
+                            <h6 class="text-center">(Total Amount : ZMW {{$form->total_payment}}) </h6>
                             <div class="col-lg-12 grid-margin stretch-card">
                                 <div class="table-responsive">
                                     <div class="col-lg-12 ">
-                                        <TABLE id="dataTable" class="table">
+                                        <TABLE id="dataTable2" class="table">
                                             <TR>
                                                 <TD><INPUT type="checkbox" name="chk"/></TD>
 
                                                 <TD>
-                                                    <div class="form-group">
-                                                        <input list="items_list1" type="text" name="account_items[]"
-                                                               class="form-control amount"
-                                                               placeholder="Select Item/s   " id="account_items1">
-                                                        <datalist id="items_list1">
-                                                            @foreach($form->item as $item)
-                                                                <option>{{$item->name}}</option>
-                                                            @endforeach
-                                                        </datalist>
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <input list="items_list1" type="text"
+                                                                       name="account_items[]"
+                                                                       class="form-control amount"
+                                                                       placeholder="Select Item/s   "
+                                                                       id="account_items1">
+                                                                <datalist id="items_list1">
+                                                                    @foreach($form->item as $item)
+                                                                        <option  >{{$item->name}} : (ZMK {{$item->amount}})</option>
+                                                                    @endforeach
+                                                                </datalist>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </TD>
-                                                <TD>
-                                                    <select name="credited_account[]" id="credited_account" required
-                                                            class="form-control amount">
-                                                        @foreach($accounts as $account)
-                                                            @if($account->id  ==  config('constants.petty_cash_account_id')  )
-                                                                <option value="{{$account->code}}">{{$account->name}}
-                                                                    :{{$account->code}}</option>
-                                                            @endif
-                                                        @endforeach
-                                                    </select>
 
-                                                </TD>
-                                                <TD><input type="number" id="credited_amount" name="credited_amount[]"
-                                                           onchange="getvalues()" class="form-control amount"
-                                                           placeholder=" Amount [ZMK]" required>
-                                                </TD>
-                                                <TD>
-                                                    <select name="debited_account[]" id="debited_account" required
-                                                            class="form-control amount">
-                                                        <option value="">Select Expense Account</option>
-                                                        @foreach($accounts as $account)
-                                                            <option
-                                                                value="{{$account->code}}">{{$account->name}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </TD>
-                                                <TD><input type="number" id="debited_amount" name="debited_amount[]"
-                                                           class="form-control amount"
-                                                           placeholder="Debited Amount [ZMK]" readonly required>
+                                                    {{--                                                </TD>--}}
+                                                    {{--                                                <TD>--}}
+                                                    <div class="row">
+                                                        <div class="col-3">
+                                                            <select name="credited_account[]" id="credited_account"
+                                                                    required
+                                                                    class="form-control amount">
+                                                                @foreach($accounts as $account)
+                                                                    @if($account->id  ==  config('constants.petty_cash_account_id')  )
+                                                                        <option
+                                                                            value="{{$account->code}}">{{$account->name}}
+                                                                            :{{$account->code}}</option>
+                                                                    @endif
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        {{--                                                </TD>--}}
+                                                        {{--                                                <TD>--}}
+                                                        <div class="col-3">
+                                                            <input type="number" id="credited_amount"
+                                                                   name="credited_amount[]"
+                                                                   onchange="getvalues()" class="form-control amount"
+                                                                   placeholder=" Amount [ZMK]" required>
+                                                        </div>
+                                                        {{--                                                </TD>--}}
+                                                        {{--                                                <TD>--}}
+                                                        <div class="col-3">
+                                                            <select name="debited_account[]" id="debited_account"
+                                                                    required
+                                                                    class="form-control amount">
+                                                                <option value="">Select Expense Account</option>
+                                                                @foreach($accounts as $account)
+                                                                    <option
+                                                                        value="{{$account->code}}">{{$account->name}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        {{--                                                </TD>--}}
+                                                        {{--                                                <TD>--}}
+                                                        <div class="col-3">
+                                                            <input type="number" id="debited_amount"
+                                                                   name="debited_amount[]"
+                                                                   class="form-control amount"
+                                                                   placeholder="Debited Amount [ZMK]" readonly required>
+                                                        </div>
+                                                    </div>
                                                 </TD>
                                             </TR>
                                         </TABLE>
@@ -581,8 +607,8 @@
                                         </datalist>
                                     </div>
                                     <div class="col-lg-12 ">
-                                        <INPUT type="button" value="Add Row" onclick="addRow('dataTable')"/>
-                                        <INPUT type="button" value="Delete Row" onclick="deleteRow('dataTable')"/>
+                                        <INPUT type="button" value="Add Row" onclick="addRow('dataTable2')"/>
+                                        <INPUT type="button" value="Delete Row" onclick="deleteRow('dataTable2')"/>
                                     </div>
                                 </div>
                             </div>

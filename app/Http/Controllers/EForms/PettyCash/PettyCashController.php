@@ -358,7 +358,7 @@ class PettyCashController extends Controller
                 'division_id' => $user->user_division_id,
                 'region_id' => $user->user_region_id,
                 'directorate_id' => $user->user_directorate_id,
-                'projects_id' => $request->projects_id,
+                'projects_id' => $request->projects_id ,
 
                 'total_payment' => $request->total_payment,
                 'code' => $code,
@@ -594,7 +594,7 @@ class PettyCashController extends Controller
                 ->where('delegated_profile', $profile->code)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
-                ->where('config_status_id', config('constants.active'))
+                ->where('config_status_id', config('constants.active_state'))
                 ->get();
             //loop through delegated users
             foreach ($delegated_users as $item) {
@@ -1641,7 +1641,7 @@ class PettyCashController extends Controller
                 ->where('delegated_profile', $profile->code)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
-                ->where('config_status_id', config('constants.active'))
+                ->where('config_status_id',  config('constants.active_state'))
                 ->get();
             //loop through delegated users
             foreach ($delegated_users as $item) {
@@ -1944,7 +1944,7 @@ class PettyCashController extends Controller
 //            ]);
 
         //redirect home
-        return Redirect::back()->with('message', 'Petty Cash Voucher have been synced successfully');
+        return Redirect::route('petty-cash-home')->with('message', 'Petty Cash Voucher have been synced successfully');
 
         dd($claimant->position->superior_code ?? "");
     }
@@ -2044,6 +2044,63 @@ class PettyCashController extends Controller
         }
     }
 
+    public function reportsSync()
+    {
+        try {
+
+//            /*
+//             * NEEDED AS A FUNCTION SOMEWHERE IN PETTY CASH CONTROLLER
+
+            //UPDATE ONE  - Update all petty cash accounts with the user unit and work-flow details
+            //get a list of all the petty cash account models
+            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+                            ORDER BY eform_petty_cash_id ASC ");
+            $tasks = PettyCashAccountModel::hydrate($tasks);
+
+            foreach ($tasks as $account){
+                //get associated petty cash
+                $petty_cash_id = $account->eform_petty_cash_id ;
+                $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
+                            WHERE id = {$petty_cash_id}  ");
+                $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
+
+                //update account with the petty cash details
+                $eform_petty_cash_account = DB::table('eform_petty_cash_account')
+                    ->where('id', $account->id)
+                    ->update([
+                        'cost_center' => $tasks_pt->cost_center,
+                        'business_unit_code' => $tasks_pt->business_unit_code,
+                        'user_unit_code' => $tasks_pt->user_unit_code,
+
+                        'claimant_name'=> $tasks_pt->claimant_name,
+                        'claimant_staff_no'=> $tasks_pt->claimant_staff_no,
+                        'claim_date'=> $tasks_pt->claim_date,
+                        'petty_cash_code'=> $tasks_pt->code,
+
+                        'hod_code' => $tasks_pt->hod_code,
+                        'hod_unit' => $tasks_pt->hod_unit,
+                        'ca_code' => $tasks_pt->ca_code,
+                        'ca_unit' => $tasks_pt->ca_unit,
+                        'hrm_code' => $tasks_pt->hrm_code,
+                        'hrm_unit' => $tasks_pt->hrm_unit,
+                        'expenditure_code' => $tasks_pt->expenditure_code,
+                        'expenditure_unit' => $tasks_pt->expenditure_unit,
+                        'security_code' => $tasks_pt->security_code,
+                        'security_unit' => $tasks_pt->security_unit,
+                    ]);
+            }
+//           */
+
+
+            return Redirect::back()->with('message', 'Petty Cash Account Line have been dropped to the previous stage successfully');
+        } catch (Exception $exception) {
+            return Redirect::back()->with('error', 'Sorry an error happened');
+        }
+    }
+
+
+
+
 
     public function search(Request $request)
     {
@@ -2056,19 +2113,6 @@ class PettyCashController extends Controller
               or config_status_id LIKE '%{$search}%'
             ");
             $list = PettyCashModel::hydrate($list);
-
-////            $list = new LengthAwarePaginator($list, $list->count(), 12, 2);
-//
-//            $list = DB::table('eform_petty_cash')
-//                ->select('*' )
-//                ->where('code', 'LIKE', '%'.$request->search. '%')
-//                ->orWhere('claimant_name', 'LIKE','%'.$request->search. '%' )
-//                ->orWhere('claimant_staff_no', 'LIKE','%'.$request->search. '%' )
-//                ->orWhere('config_status_id', 'LIKE','%'.$request->search. '%' )
-//                ->simplePaginate(5);
-////            $list = PettyCashModel::hydrate($list);
-
-
         } else {
             //find the petty cash with that id
             $list = PettyCashModel::

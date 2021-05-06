@@ -11,6 +11,7 @@ use App\Models\Main\GradesModel;
 use App\Models\main\LocationModel;
 use App\Models\main\PaypointModel;
 use App\Models\Main\PositionModel;
+use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\ProfileModel;
 use App\Models\Main\RegionsModel;
 use App\Models\Main\UserTypeModel;
@@ -88,14 +89,15 @@ class UserController extends Controller
         //get the user based on id
         $user = User::find($id);
         $user_types = UserTypeModel::all();
-        $positions = PositionModel::all();
-        $profiles = ProfileModel::all();
-        $user_unit = UserUnitModel::all();
+       // $positions = PositionModel::all();
+        $delegated_profiles = ProfileDelegatedModel::where('delegated_to', $user->id)
+            ->where('config_status_id',  config('constants.active_state') )->get();
+       // $user_unit = UserUnitModel::all();
         $regions = RegionsModel::all();
         $divisions = DivisionsModel::all();
-        $directorates = DirectoratesModel::all();
-        $positions_with_code_positions = PositionModel::whereNotNull('superior_code' )->
-            orderBy('code' )->get();
+       // $directorates = DirectoratesModel::all();
+      //  $positions_with_code_positions = PositionModel::whereNotNull('superior_code' )->
+       //     orderBy('code' )->get();
         $user_unit_new = ConfigWorkFlow::select('*')->orderBy('user_unit_code')->get();
 
         //prepare data to send to the view
@@ -103,11 +105,11 @@ class UserController extends Controller
             'user' => $user,
             'user_unit_new' => $user_unit_new,
             'user_types' => $user_types,
-            'user_unit' => $user_unit,
-            'profiles' => $profiles,
-            'positions' => $positions,
-            'positions_with_code_positions' =>  $positions_with_code_positions ,
-            'directorates' => $directorates,
+            //'user_unit' => $user_unit,
+            'delegated_profiles' => $delegated_profiles,
+           // 'positions' => $positions,
+           // 'positions_with_code_positions' =>  $positions_with_code_positions ,
+           // 'directorates' => $directorates,
             'divisions' => $divisions,
             'regions' => $regions,
         ];
@@ -236,6 +238,7 @@ class UserController extends Controller
             //get the user model
             $model = User::find($id);
 
+
             //get the phirs details for this user
             $phirs_user_details = PhrisUserDetailsModel::where('con_per_no', $model->staff_no)
                 ->where('con_st_code', config('constants.phris_user_active'))
@@ -257,7 +260,7 @@ class UserController extends Controller
 
             //update the model with the details from phris
             $model->name = $phirs_user_details->name;
-            $model->email = $phirs_user_details->staff_email ?? $model->email;
+          //  $model->email = $phirs_user_details->staff_email ?? $model->email;
             $model->nrc = $phirs_user_details->nrc;
             $model->contract_type = $phirs_user_details->contract_type;
             $model->con_st_code = $phirs_user_details->con_st_code;

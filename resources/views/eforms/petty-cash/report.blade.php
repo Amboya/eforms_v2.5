@@ -71,6 +71,9 @@
 {{--                       title="Only Chief Account and Expenditure Officers can Export">--}}
 {{--                        Remove Duplicates<i class="fa fa-rev"></i>--}}
 {{--                    </a>--}}
+                        <a  class="btn btn-tool" href="{{route('petty-cash-report-sync')}}"
+                            title="Sync Accounts">
+                            <i class="fas fa-sync"></i></a>
 
                 @endif
             </div>
@@ -105,12 +108,12 @@
                             <tr>
                                 <td>{{$item->status->name ?? ""}}</td>
 {{--                                <td>{{$item->petty_cash->id ?? ""}}</td>--}}
-                                <td>{{$item->petty_cash->code ?? ""}}</td>
-                                <td>{{$item->petty_cash->claimant_name ?? ""}}</td>
-                                <td>{{$item->petty_cash->claim_date ?? ""}}</td>
+                                <td>{{$item->petty_cash_code ?? ""}}</td>
+                                <td>{{$item->claimant_name ?? ""}}</td>
+                                <td>{{$item->claim_date ?? ""}}</td>
                                 <td>{{$item->company ?? ""}}</td>
-                                <td>{{$item->petty_cash->business_unit_code ?? ""}}</td>
-                                <td>{{$item->petty_cash->cost_center ?? ""}}</td>
+                                <td>{{$item->business_unit_code ?? ""}}</td>
+                                <td>{{$item->cost_center ?? ""}}</td>
                                 <td>{{$item->account  ?? $item->account  ?? ""}}</td>
                                 <td>{{$item->project ?? ""}}</td>
                                 <td>{{$item->intra_company ?? ""}}</td>

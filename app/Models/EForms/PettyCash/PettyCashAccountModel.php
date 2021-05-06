@@ -30,6 +30,8 @@ class PettyCashAccountModel extends Model
         'debitted_amount',
         'eform_petty_cash_id',
 
+        'petty_cash_code',
+
         'status_id',
         'account',
         'company',
@@ -93,7 +95,7 @@ class PettyCashAccountModel extends Model
             //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
             $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('delegated_to', $user->id)
-                ->where('config_status_id', config('constants.one'));
+                ->where('config_status_id',  config('constants.active_state'));
             if ($profile_delegated->exists()) {
                 //
                 $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');

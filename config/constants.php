@@ -15,6 +15,8 @@ return [
     'password_changed' => 1 ,
     'all' => "all",
     'none' => 0,
+    'active_state' => 221,
+    'non_active_state' => 222,
 
     'file_type' => [
         'quotation' => "1",

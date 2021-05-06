@@ -122,7 +122,7 @@ class PettyCashModel extends Model
             //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
             $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('delegated_to', $user->id)
-                ->where('config_status_id', config('constants.one'));
+                ->where('config_status_id',  config('constants.active_state') );
             if ($profile_delegated->exists()) {
                 //
                 $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');

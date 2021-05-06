@@ -47,81 +47,82 @@
             </div>
     @endif
 
-    <!-- Default box -->
-        <div class="card">
-            <div class="card-header">
-                <span>Select User to delegate your profile</span>
+        <!-- Default box -->
+            <div class="card">
+                <div class="card-header">
+                    <span>Select User to delegate your profile</span>
 
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                            title="Collapse">
-                        <i class="fas fa-minus"></i></button>
-                </div>
-            </div>
-            <!-- /.card-header -->
-            <!-- form start -->
-            <form role="form-new" method="post" action="{{route('main-profile-delegation-store')}}">
-                @csrf
-                <div class="modal-body">
-
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label>Select User</label>
-                                <select class="form-control select2" name="user_id" required
-                                        style="width: 100%;">
-                                    <option disabled  value="" selected>Select User</option>
-                                    @foreach($users as $user)
-                                        @if($user->id  != \Auth::user()->id)
-                                            <option
-                                                value="{{$user->id}}"> {{$user->name}} : {{$user->staff_no}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label>Select Profile</label>
-                                <select class="form-control select2" id="profile_select" name="profile" required
-                                        style="width: 100%;">
-                                    <option disabled value="" selected>Select Profile to Delegate</option>
-                                    @foreach($profiles as $profile)
-                                        <option
-                                            value="{{$profile->profiles->id ?? ''}}">   {{$profile->form->name  ?? ""}} : {{$profile->profiles->code ?? ''}} : {{$profile->profiles->name ?? ''}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                        </div>
-                        <div class="col-6 ">
-                            <div class="form-group">
-                                <label>Select E-Form</label>
-                                <select class="form-control select2" id="eform_select" name="eform_id" required
-                                        style="width: 100%;">
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                        </div>
-                        <div class="col-6 ">
-                            <div class="form-group">
-                                <label>Delegation End-Date</label>
-                                <input type="date" class="form-control" name="delegation_end_date" id="delegation_end_date">
-                            </div>
-                            <!-- /.form-group -->
-                        </div>
-
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                            <i class="fas fa-minus"></i></button>
                     </div>
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <!-- form start -->
+                    <form role="form-new" method="post" action="{{route('main-profile-delegation-store')}}">
+                        @csrf
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Select User</label>
+                                        <select class="form-control select2" name="user_id" required
+                                                style="width: 100%;">
+                                            <option disabled  value="" selected>Select User</option>
+                                            @foreach($users as $user)
+                                                @if($user->id  != \Auth::user()->id)
+                                                    <option
+                                                        value="{{$user->id}}"> {{$user->name}} : {{$user->staff_no}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <!-- /.form-group -->
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Select Profile</label>
+                                        <select class="form-control select2" id="profile_select" name="profile" required
+                                                style="width: 100%;">
+                                            <option disabled value="" selected>Select Profile to Delegate</option>
+                                            @foreach($profiles as $profile)
+                                                <option
+                                                    value="{{$profile->profiles->id ?? ''}}">   {{$profile->form->name  ?? ""}} : {{$profile->profiles->code ?? ''}} : {{$profile->profiles->name ?? ''}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <!-- /.form-group -->
+                                </div>
+                                <div class="col-6 ">
+                                    <div class="form-group">
+                                        <label>Select E-Form</label>
+                                        <select class="form-control select2" id="eform_select" name="eform_id" required
+                                                style="width: 100%;">
+                                        </select>
+                                    </div>
+                                    <!-- /.form-group -->
+                                </div>
+                                <div class="col-6 ">
+                                    <div class="form-group">
+                                        <label>Delegation End-Date</label>
+                                        <input type="date" class="form-control" name="delegation_end_date" id="delegation_end_date">
+                                    </div>
+                                    <!-- /.form-group -->
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-            <!-- /.card-body -->
-        </div>
-        <!-- /.card -->
+                <!-- /.card-body -->
+            </div>
     </section>
     <!-- /.content -->
 

@@ -116,10 +116,8 @@
                         <!-- Image loader -->
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table id="example1" class="table m-0">
+                <div class="table-responsive" id="my_table">
 
-                    </table>
 
 {{--                    {!! $list->links() !!}--}}
                 </div>
@@ -183,23 +181,23 @@
 
     <!-- page script -->
     <script>
-        $(function () {
-
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-            });
-        });
+        // $(function () {
+        //
+        //     $("#example1").DataTable({
+        //         "responsive": true, "lengthChange": false, "autoWidth": false,
+        //         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        //     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        //
+        //     $('#example2').DataTable({
+        //         "paging": true,
+        //         "lengthChange": false,
+        //         "searching": false,
+        //         "ordering": true,
+        //         "info": true,
+        //         "autoWidth": false,
+        //         "responsive": true,
+        //     });
+        // });
     </script>
 
 
@@ -323,7 +321,8 @@
                              });
                          }
 
-                         var head = "  <thead> " +
+                         var head = "  <table id='example1' class='table m-0'> " +
+                             "<thead> " +
                              "<tr> " +
                              "<th>UserUnit</th> " +
                              "<th>Bu Code</th> " +
@@ -338,9 +337,28 @@
                              "</thead> " +
                              "<tbody > " +
                         list_responce +
-                        "</tbody>" ;
+                        "</tbody>  </table>" ;
 
-                        $("#example1").html(head);
+                        $("#my_table").html(head);
+
+
+                        $(function () {
+
+                            $("#example1").DataTable({
+                                "responsive": true, "lengthChange": false, "autoWidth": false,
+                                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+                            $('#example2').DataTable({
+                                "paging": true,
+                                "lengthChange": false,
+                                "searching": false,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": false,
+                                "responsive": true,
+                            });
+                        });
 
 
                     },

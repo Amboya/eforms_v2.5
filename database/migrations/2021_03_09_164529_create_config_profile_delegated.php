@@ -23,6 +23,7 @@ class CreateConfigProfileDelegated extends Migration
             $table->string('delegated_job_code')->nullable();
             $table->string('delegated_profile')->nullable();
             $table->integer('config_status_id')->nullable();
+            $table->string('reason');
             $table->string('created_by');
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();

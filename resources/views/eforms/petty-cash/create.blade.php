@@ -103,15 +103,13 @@
                             <div class="col-3">
                                 <div class="row">
                                     <div class="col-12"><label>Project Number:</label></div>
-                                    <div class="col-12"><input list="project_list" type="text" name="projects_id"
-                                                               class="form-control"
-                                                               placeholder="(Optional)"
-                                        >
-                                        <datalist id="project_list">
+                                    <div class="col-12">
+                                        <select name="projects_id"  class="form-control">
+                                            <option disabled >Select Project (Optional)</option>
                                             @foreach($projects as $item)
                                                 <option value="{{$item->id}}">{{$item->name}}</option>
                                             @endforeach
-                                        </datalist>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

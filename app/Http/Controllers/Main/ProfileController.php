@@ -10,6 +10,8 @@ use App\Models\Main\ProfileModel;
 use App\Models\Main\ProfilePermissionsModel;
 use App\Models\Main\ProfileAssigmentModel ;
 use App\Models\User;
+use Carbon\Carbon;
+use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -38,9 +40,11 @@ class ProfileController extends Controller
     {
         //get all the categories
         $list = ProfileModel::all();
+        $delegation = ProfileDelegatedModel::orderBy('created_at')->get();
 
         //data to send to the view
         $params = [
+            'delegation' => $delegation,
             'list' => $list,
         ];
 
@@ -185,6 +189,28 @@ class ProfileController extends Controller
     }
 
 
+    public function delegationList(){
+        if (Auth::user()->type_id == config('constants.user_types.developer')) {
+            $delegation = ProfileDelegatedModel::orderBy('created_at')->get();
+        }else{
+            $id = Auth::user()->id ;
+            $delegation = ProfileDelegatedModel::where('created_by',$id)->orderBy('created_at')->get();
+        }
+        $params = [
+            'delegation' => $delegation,
+        ];
+        return view('main.profile.list_delegation')->with($params);
+    }
+
+    public function delegationEnd(Request $request, $id){
+        $model = ProfileDelegatedModel::find($id);
+        $model->config_status_id =  config('constants.non_active_state') ;
+        $model->reason =  $request->reason ;
+        $model->delegation_end =  Carbon::now();
+        $model->save();
+        return Redirect::back()->with('message', 'Profile Delegation  has been ended successfully');
+    }
+
     public function delegationCreate(){
 
         //get all the categories
@@ -225,18 +251,18 @@ class ProfileController extends Controller
                 'delegated_user_unit' => $user->user_unit_code,
                 'delegated_job_code' => $user->job_code,
                 'delegation_end' => $request->delegation_end_date,
-                'config_status_id' => config('constants.one') ,
+                'config_status_id' =>  config('constants.active_state') ,
                 'created_by'=> $user->id
             ],
             [
                 'eform_id' =>  $eform->id,
                 'eform_code' =>  $eform->name ,
-                'delegated_to' => $request->user_id ,
+                'delegated_to' => $request->user_6id ,
                 'delegated_profile' => $request->profile,
                 'delegated_user_unit' => $user->user_unit_code,
                 'delegated_job_code' => $user->job_code,
                 'delegation_end' => $request->delegation_end_date,
-                'config_status_id' => config('constants.one') ,
+                'config_status_id' =>  config('constants.active_state') ,
                 'created_by'=> $user->id
             ]);
 
