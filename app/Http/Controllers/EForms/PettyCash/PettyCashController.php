@@ -1700,37 +1700,41 @@ class PettyCashController extends Controller
 
         if ($value == config('constants.all')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $list = DB::select("SELECT * FROM eform_petty_cash_account  ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account order by created_at desc  ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::all();
+                $list = PettyCashAccountModel::orderBy('created_at')->get();
             }
             $title = "ALl";
         } elseif ($value == config('constants.petty_cash_status.not_exported')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
                 $status = config('constants.petty_cash_status.not_exported');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))
+                    ->orderBy('created_at')->get();
             }
             $title = "Not Exported";
         } elseif ($value == config('constants.petty_cash_status.exported')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
                 $status = config('constants.petty_cash_status.exported');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.exported'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.exported'))
+                    ->orderBy('created_at')->get();
             }
             $title = " Exported";
         } elseif ($value == config('constants.petty_cash_status.export_failed')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
                 $status = config('constants.petty_cash_status.export_failed');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.export_failed'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.export_failed'))
+                    ->orderBy('created_at')
+                    ->get();
             }
             $title = "Failed Export";
         }
@@ -1757,20 +1761,25 @@ class PettyCashController extends Controller
         $date_to = $request->date_to  ;
 
         $fileName = 'PettyCash_Accounts.csv';
+
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
             $not_exported = config('constants.petty_cash_status.not_exported');
             $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                         WHERE status_id = {$not_exported}
-                        and created_at >= '{}'
+                        and created_at >= '{$date_from}'
+                        and created_at <= '{$date_to}'
                         ORDER BY eform_petty_cash_id ASC ");
             $tasks = PettyCashAccountModel::hydrate($tasks);
         } else {
+
             $tasks = PettyCashAccountModel::
             where('status_id', config('constants.petty_cash_status.not_exported'))
                 ->whereDate('created_at' , '>=', $date_from )
                 ->whereDate('created_at' , '<=', $date_to )
                 ->get();
         }
+
+      //  dd($tasks);
 
         $headers = array(
             "Content-type" => "text/csv",
@@ -2096,26 +2105,35 @@ class PettyCashController extends Controller
 
 //            $tasks = DB::select("SELECT * FROM eform_petty_cash_account where business_unit_code LIKE '%13231%'
 
-//            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
-//                            where status_id = '41'
-//                            ORDER BY eform_petty_cash_id ASC ");
-//            $tasks = PettyCashAccountModel::hydrate($tasks);
-//          //  dd($tasks);
-//            foreach ($tasks as $account) {
-//                //get associated petty cash
-//                $petty_cash_id = $account->eform_petty_cash_id;
-//                $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
-//                            WHERE id = {$petty_cash_id}  ");
-//                $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
-//
-//                //update account with the petty cash details
-//                $eform_petty_cash_account = DB::table('eform_petty_cash_account')
-//                    ->where('id', $account->id)
-//                    ->update([
-//                        'status_id' => '41',
-//                    ]);
-//
-//            }
+            $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
+                            WHERE config_status_id = 28 ");
+            $tasks_pt = PettyCashModel::hydrate($tasks_pt)->all();
+            foreach ($tasks_pt as $account) {
+                dd($account);
+            }
+
+
+
+            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+                            where status_id = '41'
+                            ORDER BY eform_petty_cash_id ASC ");
+            $tasks = PettyCashAccountModel::hydrate($tasks);
+          //  dd($tasks);
+            foreach ($tasks as $account) {
+                //get associated petty cash
+                $petty_cash_id = $account->eform_petty_cash_id;
+                $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
+                            WHERE id = {$petty_cash_id}  ");
+                $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
+
+                //update account with the petty cash details
+                $eform_petty_cash_account = DB::table('eform_petty_cash_account')
+                    ->where('id', $account->id)
+                    ->update([
+                        'status_id' => '41',
+                    ]);
+
+            }
 
 
             //UPDATE ONE  - Update all petty cash accounts with the user unit and work-flow details
