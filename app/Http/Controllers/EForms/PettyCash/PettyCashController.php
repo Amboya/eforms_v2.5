@@ -1718,14 +1718,24 @@ class PettyCashController extends Controller
     public function reportsExport(Request $request)
     {
         $fileName = 'PettyCash_Accounts.csv';
+//        if (Auth::user()->type_id == config('constants.user_types.developer')) {
+//            $tasks = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
+//        } else {
+//            $not_exported = config('constants.petty_cash_status.not_exported');
+//            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+//                        WHERE status_id = {$not_exported}
+//                        ORDER BY eform_petty_cash_id ASC ");
+//            $tasks = PettyCashAccountModel::hydrate($tasks);
+//        }
+
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
-            $tasks = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
-        } else {
             $not_exported = config('constants.petty_cash_status.not_exported');
             $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                         WHERE status_id = {$not_exported}
                         ORDER BY eform_petty_cash_id ASC ");
             $tasks = PettyCashAccountModel::hydrate($tasks);
+        } else {
+            $tasks = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
         }
 
 

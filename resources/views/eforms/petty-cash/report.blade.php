@@ -83,7 +83,7 @@
                     <table id="example1" class="table m-0">
                         <thead>
                         <tr>
-                            <th>Status</th>
+                            <th>Month</th>
                             <th>Code</th>
                             <th>Claimant</th>
                             <th>Claim Date</th>
@@ -106,7 +106,7 @@
                         <tbody>
                         @foreach( $list as $key=>$item )
                             <tr>
-                                <td>{{$item->status->name ?? ""}}</td>
+                                <td>{{$item->created_at->format('F')  ?? ""}}</td>
 {{--                                <td>{{$item->petty_cash->id ?? ""}}</td>--}}
                                 <td>{{$item->petty_cash_code ?? ""}}</td>
                                 <td>{{$item->claimant_name ?? ""}}</td>
