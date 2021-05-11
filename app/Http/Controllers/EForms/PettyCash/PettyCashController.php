@@ -591,7 +591,7 @@ class PettyCashController extends Controller
             //[B]check if one the users with the profile have this delegated profile
             $delegated_users = ProfileDelegatedModel::
             where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('delegated_profile', $profile->code)
+                ->where('delegated_profile', $profile->id)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
                 ->where('config_status_id', config('constants.active_state'))
@@ -1638,7 +1638,7 @@ class PettyCashController extends Controller
             //[B]check if one the users with the profile have this delegated profile
             $delegated_users = ProfileDelegatedModel::
             where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('delegated_profile', $profile->code)
+                ->where('delegated_profile', $profile->id)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
                 ->where('config_status_id',  config('constants.active_state'))
