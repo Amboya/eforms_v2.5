@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\EForms\PettyCash;
+namespace App\Http\Controllers\EForms\Subsistence;
 
 use App\Http\Controllers\Controller;
 use App\Models\EForms\PettyCash\PettyCashModel;
@@ -24,7 +24,7 @@ class ReportsController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        // Store a piece of data in the session...
+        // Store a piece of data in the session.
         session(['eform_id' => config('constants.eforms_id.petty_cash')]);
         session(['eform_code' => config('constants.eforms_name.petty_cash')]);
     }

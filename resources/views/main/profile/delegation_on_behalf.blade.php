@@ -13,12 +13,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Profile Delegation</h1>
+                    <h1 class="m-0 text-dark">Profile Delegation On Behalf</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Profile Delegation</li>
+                        <li class="breadcrumb-item active">Profile Delegation On Behalf</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -61,17 +61,33 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <!-- form start -->
-                    <form role="form-new" method="post" action="{{route('main-profile-delegation-store')}}">
+                    <form role="form-new" method="post" action="{{route('main-profile-delegation-store-on-behalf')}}">
                         @csrf
                         <div class="modal-body">
 
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label>Select User</label>
+                                        <label>Select Profile Owner</label>
+                                        <select class="form-control select2" id="owner_id" name="owner_id" required
+                                                style="width: 100%;">
+                                            <option disabled  value="" selected>Select Profile Owner</option>
+                                            @foreach($users as $user)
+                                                @if($user->id  != \Auth::user()->id)
+                                                    <option
+                                                        value="{{$user->id}}"> {{$user->name}} : {{$user->staff_no}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <!-- /.form-group -->
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Select Delegated User</label>
                                         <select class="form-control select2" name="user_id" required
                                                 style="width: 100%;">
-                                            <option disabled  value="" selected>Select User</option>
+                                            <option disabled  value="" selected>Select Delegated User</option>
                                             @foreach($users as $user)
                                                 @if($user->id  != \Auth::user()->id)
                                                     <option
@@ -88,10 +104,10 @@
                                         <select class="form-control select2" id="profile_select" name="profile" required
                                                 style="width: 100%;">
                                             <option disabled value="" selected>Select Profile to Delegate</option>
-                                            @foreach($profiles as $profile)
-                                                <option
-                                                    value="{{$profile->profiles->id ?? ''}}">   {{$profile->form->name  ?? ""}} : {{$profile->profiles->code ?? ''}} : {{$profile->profiles->name ?? ''}}</option>
-                                            @endforeach
+{{--                                            @foreach($profiles as $profile)--}}
+{{--                                                <option--}}
+{{--                                                    value="{{$profile->profiles->id ?? ''}}">   {{$profile->form->name  ?? ""}} : {{$profile->profiles->code ?? ''}} : {{$profile->profiles->name ?? ''}}</option>--}}
+{{--                                            @endforeach--}}
                                         </select>
                                     </div>
                                     <!-- /.form-group -->
@@ -141,6 +157,34 @@
 
     <script>
         $(document).ready(function () {
+            $("#owner_id").change(function () {
+                var selected_text = ''; // Selected text
+                var selected_value = ''; // Selected value
+                var selected_index = ''; // Selected index
+                // Get selected value
+                $('#owner_id option:selected').each(function () {
+                    selected_text += $(this).text();
+                    selected_value += $(this).val();
+                    selected_index += $(this).index();
+                });
+
+                var profile = {!! json_encode($profiles->toArray()) !!};
+                // console.log(profile );
+                responce = " <option selected disabled=\"true\"  value=\"\"> Select Profile</option>";
+                $.each(profile, function (index, value) {
+                    if (value.user_id == selected_value) {
+                        responce += "<option value=" + value.profiles.id + "    > " + value.profiles.name + "  </option> ";
+                    }
+                });
+
+                // console.log(profile_form.form );
+                // responce =  "<option value=" + profile_form.form.id + "   > " + profile_form.form.name + "  </option> ";
+
+                $("#profile_select").html(responce);
+
+            });
+
+
             $("#profile_select").change(function () {
                 var selected_text = ''; // Selected text
                 var selected_value = ''; // Selected value

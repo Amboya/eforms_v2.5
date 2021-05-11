@@ -120,6 +120,8 @@ Route::group([
         Route::post('assignment/store', [App\Http\Controllers\Main\ProfileController::class, 'assignmentStore'])->name('main-profile-assignment-store');
         Route::get('delegation', [App\Http\Controllers\Main\ProfileController::class, 'delegationCreate'])->name('main-profile-delegation');
         Route::get('delegation/list', [App\Http\Controllers\Main\ProfileController::class, 'delegationList'])->name('main-profile-delegation-list');
+        Route::get('delegation/show/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationShowOnBehalf'])->name('main-profile-delegation-show-on-behalf');
+        Route::post('delegation/store/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationStoreOnBehalf'])->name('main-profile-delegation-store-on-behalf');
         Route::post('delegation/store', [App\Http\Controllers\Main\ProfileController::class, 'delegationStore'])->name('main-profile-delegation-store');
         Route::post('delegation/end/{id}', [App\Http\Controllers\Main\ProfileController::class, 'delegationEnd'])->name('main-profile-delegation-end');
 
@@ -422,12 +424,13 @@ Route::group([
 //    Route::get('reportExport', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'reportsExport'])->name('gifts-declaration-report-export');
 
 });
+
 Route::group([
     'namespace' => 'hotel_accommodation_home',
-    'prefix' => 'hotel_accommodation_home',
+    'prefix' => 'hotel/accommodation/home',
     'middleware' => 'auth'], function () {
 
-    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('hotel-accommodation-home');
+    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('hotel.accommodation.home');
 //    Route::get('list/{value}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'index'])->name('gifts-declaration-list');
 //    Route::get('create', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'create'])->name('gifts-declaration-create');
 //    Route::post('show/{id}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'show'])->name('gifts-declaration-show');
@@ -439,6 +442,26 @@ Route::group([
 //    Route::get('reportExport', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'reportsExport'])->name('gifts-declaration-report-export');
 
 });
+
+
+Route::group([
+    'namespace' => 'salary',
+    'prefix' => 'salary/advance',
+    'middleware' => 'auth'], function () {
+
+    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('salary-advance-home');
+//    Route::get('list/{value}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'index'])->name('gifts-declaration-list');
+//    Route::get('create', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'create'])->name('gifts-declaration-create');
+//    Route::post('show/{id}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'show'])->name('gifts-declaration-show');
+//    Route::post('store', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'store'])->name('gifts-declaration-store');
+//    Route::post('approve', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'approve'])->name('gifts-declaration-approve');
+//    Route::post('update', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'update'])->name('gifts-declaration-update');
+//    Route::post('destroy/{id}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'destroy'])->name('gifts-declaration-destroy');
+//    Route::get('reports', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'reports'])->name('gifts-declaration-report');
+//    Route::get('reportExport', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'reportsExport'])->name('gifts-declaration-report-export');
+
+});
+
 
 
 
@@ -462,20 +485,20 @@ Route::group([
     'prefix' => 'subsistence',
     'middleware' => 'auth'],
     function () {
-    Route::get('home', [App\Http\Controllers\EForms\Subsistence\HomeController::class, 'index'])->name('subsistence-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'index'])->name('subsistence-list');
-    Route::get('create', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'create'])->name('subsistence-create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'show'])->name('subsistence-show');
-    Route::post('store', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'store'])->name('subsistence-store');
-    Route::post('approve', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'approve'])->name('subsistence-approve');
-    Route::post('update', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'update'])->name('subsistence-update');
-    Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'destroy'])->name('subsistence-destroy');
-    Route::get('reports', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reports'])->name('subsistence-report');
-    Route::get('reportExport', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reportsExport'])->name('subsistence-report-export');
-    Route::get('records/{value}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'records'])->name('subsistence-record');
-    Route::post('void/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'void'])->name('subsistence-void');
+    Route::get('home', [App\Http\Controllers\EForms\Subsistence1\HomeController::class, 'index'])->name('subsistence-home');
+    Route::get('list/{value}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'index'])->name('subsistence-list');
+    Route::get('create', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'create'])->name('subsistence-create');
+    Route::post('show/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'show'])->name('subsistence-show');
+    Route::post('store', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'store'])->name('subsistence-store');
+    Route::post('approve', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'approve'])->name('subsistence-approve');
+    Route::post('update', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'update'])->name('subsistence-update');
+    Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'destroy'])->name('subsistence-destroy');
+    Route::get('reports', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'reports'])->name('subsistence-report');
+    Route::get('reportExport', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'reportsExport'])->name('subsistence-report-export');
+    Route::get('records/{value}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'records'])->name('subsistence-record');
+    Route::post('void/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'void'])->name('subsistence-void');
 
-    Route::get('charts', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'charts'])->name('subsistence-charts');
+    Route::get('charts', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'charts'])->name('subsistence-charts');
 
 });
 
@@ -743,12 +766,12 @@ Route::group([
     //config_work_flow for subsistence
     Route::group([
         'prefix' => 'subsistence'], function () {
-        Route::get('list', [App\Http\Controllers\EForms\Subsistence\WorkflowController::class, 'index'])->name('subsistence.workflow');
-        Route::post('store', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'store'])->name('subsistence.workflow.store');
-        Route::post('update/{code}', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'update'])->name('subsistence.workflow.update');
-        Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'destroy'])->name('subsistence.workflow.destroy');
-        Route::get('sync', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'sync'])->name('subsistence.workflow.sync');
-        Route::get('show/{id}/{code}',  [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'show'])->name('subsistence.workflow.show');
+        Route::get('list', [App\Http\Controllers\EForms\Subsistence1\WorkflowController::class, 'index'])->name('subsistence.workflow');
+        Route::post('store', [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'store'])->name('subsistence.workflow.store');
+        Route::post('update/{code}', [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'update'])->name('subsistence.workflow.update');
+        Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'destroy'])->name('subsistence.workflow.destroy');
+        Route::get('sync', [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'sync'])->name('subsistence.workflow.sync');
+        Route::get('show/{id}/{code}',  [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'show'])->name('subsistence.workflow.show');
     });
 
 

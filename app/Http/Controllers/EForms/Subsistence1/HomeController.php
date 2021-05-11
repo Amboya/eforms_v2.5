@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\EForms\Subsistence;
+namespace App\Http\Controllers\EForms\Subsistence1;
 
 use App\Http\Controllers\Controller;
 //use App\Models\EForms\PettyCash\SubsistenceModel;

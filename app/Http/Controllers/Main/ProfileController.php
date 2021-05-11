@@ -231,6 +231,26 @@ class ProfileController extends Controller
         return view('main.profile.delegation')->with($params);
     }
 
+    public function delegationShowOnBehalf(){
+
+        //get all the categories
+        $eforms = EFormModel::all();
+        $users = User::orderBy('name')->get();
+        $mine = Auth::user();
+
+        //data to send to the view
+        $params = [
+            'profiles' => ProfileAssigmentModel::all(),
+            'eforms' => $eforms,
+            'users' => $users,
+            'mine' => $mine,
+        ];
+
+        //  dd($mine->user_profile);
+
+        return view('main.profile.delegation_on_behalf')->with($params);
+    }
+
     public function delegationStore(Request $request)
     {
         //get logged in user
@@ -238,7 +258,6 @@ class ProfileController extends Controller
         //get eform
         $eform = EFormModel::find($request->eform_id);
 
-        $oldDate = strtotime($request->delegation_end_date);
 
         //create model
         $model = ProfileDelegatedModel::firstOrCreate(
@@ -264,6 +283,46 @@ class ProfileController extends Controller
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' =>  config('constants.active_state') ,
                 'created_by'=> $user->id
+            ]);
+
+        //log the activity
+        ActivityLogsController::store($request,"Creating of Profile Delegation","update", " system profile delegation created", json_encode( $model));
+
+        return Redirect::back()->with('message', 'Profile has been Delegated successfully');
+
+    }
+
+    public function delegationStoreOnBehalf(Request $request)
+    {
+        //get logged in user
+        $owner = User::find($request->owner_id);
+        //get eform
+        $eform = EFormModel::find($request->eform_id);
+
+        //create model
+        $model = ProfileDelegatedModel::firstOrCreate(
+            [
+                'eform_id' =>  $eform->id,
+                'eform_code' =>  $eform->name ,
+
+                'delegated_to' => $request->user_id ,
+                'delegated_profile' => $request->profile,
+                'delegated_user_unit' => $owner->user_unit_code,
+                'delegated_job_code' => $owner->job_code,
+                'delegation_end' => $request->delegation_end_date,
+                'config_status_id' =>  config('constants.active_state') ,
+                'created_by'=> $owner->id
+            ],
+            [
+                'eform_id' =>  $eform->id,
+                'eform_code' =>  $eform->name ,
+                'delegated_to' => $request->user_6id ,
+                'delegated_profile' => $request->profile,
+                'delegated_user_unit' => $owner->user_unit_code,
+                'delegated_job_code' => $owner->job_code,
+                'delegation_end' => $request->delegation_end_date,
+                'config_status_id' =>  config('constants.active_state') ,
+                'created_by'=> $owner->id
             ]);
 
         //log the activity

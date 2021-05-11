@@ -37,6 +37,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{route('main-profile-delegation-show-on-behalf')}}" class="nav-link ">
+                                <i class="nav-icon far fa-circle"></i>
+                                <p> Delegate on Behalf
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{route('main-profile-delegation-list')}}" class="nav-link ">
                                 <i class="nav-icon far fa-circle"></i>
                                 <p> List

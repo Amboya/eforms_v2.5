@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\EForms\PettyCash;
+namespace App\Http\Controllers\EForms\Subsistence;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Main\ActivityLogsController;

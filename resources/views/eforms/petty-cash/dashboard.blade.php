@@ -143,6 +143,12 @@
                         <!-- /.card-header -->
                         <div class="card-body p-2">
                             <div class="table-responsive">
+                                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')   )
+                                    @if($auditor < 1)
+                                    @else
+                                        <span class="text-danger text-center m-3 p-2"> Sorry, Auditors needs to Audit <b>{{$auditor}} files for last month</b>, before you can proceed to close (attach receipts) files for this month.</span>
+                                    @endif
+                                @endif
                                 <table id="example1" class="table ">
                                     <thead>
                                     <tr>

@@ -235,10 +235,10 @@ class WorkFlowController extends Controller
         $workflow = ConfigWorkFlow::where('user_unit_code', $user_unit)
              ->where('user_unit_status', config('constants.user_unit_active') );
 
-        $users = User::orderBy('name')->get();
+
 
         if($workflow->exists()){
-
+            $users = User::orderBy('name')->get();
         }else{
             return Redirect::back()->with('error', 'Details for ' . $user_unit. ' could not be found');
         }
