@@ -313,10 +313,11 @@
                              });
                              // loop through summary array
                              $.each( response_data.summary, function (index, value) {
+                                 amount =    value.amount  ;
                                  //list array  summary_total
                                  $("#summary_total").value = value.total;
                                  document.getElementById('summary_total').value=value.total ;
-                                 document.getElementById('summary_amount').value= 'ZMW '+  value.amount ;
+                                 document.getElementById('summary_amount').value= 'ZMW '+ amount  ;
                                  document.getElementById('summary_status').value= response_data.status;
                              });
                          }

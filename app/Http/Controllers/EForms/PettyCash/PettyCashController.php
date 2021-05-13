@@ -723,6 +723,7 @@ class PettyCashController extends Controller
             'projects' => $projects,
             'user_array' => $user_array,
             'approvals' => $approvals,
+            'user' => Auth::user(),
             'accounts' => $accounts
         ];
         //return view
@@ -1412,7 +1413,7 @@ class PettyCashController extends Controller
                     // Get just filename
                     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                     //get size
-                    $size = number_format($file->getSize() * 0.0000001, 2);
+                    $size =   $file->getSize() * 0.000001 ;
                     // Get just ext
                     $extension = $file->getClientOriginalExtension();
                     // Filename to store
@@ -2105,19 +2106,33 @@ class PettyCashController extends Controller
 
 //            $tasks = DB::select("SELECT * FROM eform_petty_cash_account where business_unit_code LIKE '%13231%'
 
-            $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
+            $form = DB::select("SELECT * FROM eform_petty_cash
                             WHERE config_status_id = 28 ");
-            $tasks_pt = PettyCashModel::hydrate($tasks_pt)->all();
-            foreach ($tasks_pt as $account) {
-                dd($account);
+            $form = PettyCashModel::hydrate($form)->all();
+
+            foreach ($form as $form_item) {
+                $form_id = $form_item->id ;
+                $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+                            where status_id != '41'  and status_id != '41' and eform_petty_cash_id  = '{$form_id}'
+                             ");
+                $tasks = PettyCashAccountModel::hydrate($tasks);
+
+                if(sizeof($tasks) > 0){
+                    dd($tasks);
+                }
+
+
             }
 
 
+
+            dd(122112212 );
 
             $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                             where status_id = '41'
                             ORDER BY eform_petty_cash_id ASC ");
             $tasks = PettyCashAccountModel::hydrate($tasks);
+
           //  dd($tasks);
             foreach ($tasks as $account) {
                 //get associated petty cash
@@ -2193,6 +2208,7 @@ class PettyCashController extends Controller
               or claimant_name LIKE '%{$search}%'
               or claimant_staff_no LIKE '%{$search}%'
               or config_status_id LIKE '%{$search}%'
+              or user_unit_code LIKE '%{$search}%'
             ");
             $list = PettyCashModel::hydrate($list);
         } else {
@@ -2202,6 +2218,7 @@ class PettyCashController extends Controller
                 ->orWhere('claimant_name', 'LIKE', "%{$search}%")
                 ->orWhere('claimant_staff_no', 'LIKE', "%{$search}%")
                 ->orWhere('config_status_id', 'LIKE', "%{$search}%")
+                ->orWhere('user_unit_code', 'LIKE', "%{$search}%")
                 ->paginate(50);
         }
 
@@ -2226,72 +2243,6 @@ class PettyCashController extends Controller
         return view('eforms.petty-cash.list')->with($params);
     }
 
-    public function search1(Request $request)
-    {
-        if (Auth::user()->type_id == config('constants.user_types.developer')) {
-
-            // dd(222);
-            $list = DB::select("SELECT * FROM eform_petty_cash
-              where code LIKE '%{$request->search}%'
-              or claimant_name LIKE '%{$request->search}%'
-              or claimant_staff_no LIKE '%{$request->search}%'
-              or claim_date LIKE '%{$request->search}%'
-              or AUTHORISED_BY LIKE '%{$request->search}%'
-              or AUTHORISED_STAFF_NO LIKE '%{$request->search}%'
-              or STATION_MANAGER LIKE '%{$request->search}%'
-              or STATION_MANAGER LIKE '%{$request->search}%'
-              or ACCOUNTANT LIKE '%{$request->search}%'
-              or ACCOUNTANT_STAFF_NO LIKE '%{$request->search}%'
-              or EXPENDITURE_OFFICE LIKE '%{$request->search}%'
-              or EXPENDITURE_OFFICE_STAFF_NO LIKE '%{$request->search}%'
-              or SECURITY_NAME LIKE '%{$request->search}%'
-              or SECURITY_STAFF_NO LIKE '%{$request->search}%'
-              or total_payment LIKE '%{$request->search}%'
-              or config_status_id LIKE '%{$request->search}%'
-            ");
-            $list = PettyCashModel::hydrate($list)->all();
-        } else {
-            //find the petty cash with that id
-            $list = PettyCashModel::
-            where('code', 'LIKE', "%{$request->search}%")
-                ->orWhere('claimant_name', 'LIKE', "%{$request->search}%")
-                ->orWhere('claimant_staff_no', 'LIKE', "%{$request->search}%")
-                ->orWhere('claim_date', 'LIKE', "%{$request->search}%")
-                ->orWhere('AUTHORISED_BY', 'LIKE', "%{$request->search}%")
-                ->orWhere('AUTHORISED_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('STATION_MANAGER', 'LIKE', "%{$request->search}%")
-                ->orWhere('STATION_MANAGER_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('ACCOUNTANT', 'LIKE', "%{$request->search}%")
-                ->orWhere('ACCOUNTANT_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('EXPENDITURE_OFFICE', 'LIKE', "%{$request->search}%")
-                ->orWhere('EXPENDITURE_OFFICE_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('SECURITY_NAME', 'LIKE', "%{$request->search}%")
-                ->orWhere('SECURITY_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('total_payment', 'LIKE', "%{$request->search}%")
-                ->orWhere('config_status_id', 'LIKE', "%{$request->search}%")
-                ->get();
-        }
-
-        //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
-        //count all that needs me
-        $totals_needs_me = HomeController::needsMeCount();
-        //pending forms for me before i apply again
-        $pending = HomeController::pendingForMe();
-        $category = "Search Results";
-
-        //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'list' => $list,
-            'totals' => $totals,
-            'pending' => $pending,
-            'category' => $category,
-        ];
-
-        //return view
-        return view('eforms.petty-cash.list')->with($params);
-    }
 
 
 }

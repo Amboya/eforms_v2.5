@@ -38,37 +38,49 @@ class ReportsController extends Controller
         //[1] REQUESTER
         if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             $user_units = ConfigWorkFlow::where('user_unit_code', $user->user_unit_code)
+                ->where('user_unit_status', config('constants.user_unit_active') )
                 ->orderBy('user_unit_code')->get();
         }//[2A] HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
             $user_units = ConfigWorkFlow::where('hod_unit', $user->profile_unit_code)
                 ->where('hod_code', $user->profile_job_code)
+                ->where('user_unit_status', config('constants.user_unit_active') )
                 ->orderBy('user_unit_code')->get();
         } //[2B] HUMAN RESOURCE.
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
             $user_units = ConfigWorkFlow::where('hrm_code', $user->profile_job_code)
+                ->where('user_unit_status', config('constants.user_unit_active') )
                 ->where('hrm_unit', $user->profile_unit_code)
                 ->orderBy('user_unit_code')->get();
         } //[2C] CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
             $user_units = ConfigWorkFlow::where('ca_code', $user->profile_job_code)
+                ->where('user_unit_status', config('constants.user_unit_active') )
                 ->where('ca_unit', $user->profile_unit_code)
                 ->orderBy('user_unit_code')->get();
         } //[2D] EXPENDITURE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
             $user_units = ConfigWorkFlow::where('expenditure_unit', $user->profile_unit_code  ?? "0")
+                ->where('user_unit_status', config('constants.user_unit_active') )
                 ->orderBy('user_unit_code')->get();
         } //[2E] SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
             $user_units = ConfigWorkFlow::where('security_unit', $user->profile_unit_code  ?? "0" )
+                ->where('user_unit_status', config('constants.user_unit_active') )
                 ->orderBy('user_unit_code')->get();
         } //[2F] AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
             $user_units = ConfigWorkFlow::where('audit_unit', $user->profile_unit_code ?? "0")
+                ->where('user_unit_status', config('constants.user_unit_active') )
                 ->orderBy('user_unit_code')->get();
         } else {
             $user_units = ConfigWorkFlow::orderBy('user_unit_code')->get();
         }
+
+    if ($user->type_id == config('constants.user_types.developer')) {
+        $user_units = ConfigWorkFlow::where('user_unit_status', config('constants.user_unit_active') )
+            ->orderBy('user_unit_code')->get();
+    }
 
 
         //count all that needs me

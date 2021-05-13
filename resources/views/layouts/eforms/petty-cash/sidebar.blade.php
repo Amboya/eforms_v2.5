@@ -125,7 +125,7 @@
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-file-download"></i>
                             <p>
-                                Closed Petty Cash
+                                Export Transactions
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>

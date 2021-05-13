@@ -260,18 +260,28 @@ Route::group([
         Route::get('sync', [App\Http\Controllers\Main\LocationController::class, 'sync'])->name('main-location-sync');
     });
 
-    //totals
-    Route::group([
-        'prefix' => 'totals'], function () {
-        Route::get('list', [App\Http\Controllers\Main\TotalsController::class, 'index'])->name('main-totals');
-        Route::post('store', [App\Http\Controllers\Main\TotalsController::class, 'store'])->name('main-totals-store');
-        Route::post('update', [App\Http\Controllers\Main\TotalsController::class, 'update'])->name('main-totals-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\TotalsController::class, 'destroy'])->name('main-totals-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\TotalsController::class, 'sync'])->name('main-totals-sync');
+        //totals
+        Route::group([
+            'prefix' => 'totals'], function () {
+            Route::get('list', [App\Http\Controllers\Main\TotalsController::class, 'index'])->name('main-totals');
+            Route::post('store', [App\Http\Controllers\Main\TotalsController::class, 'store'])->name('main-totals-store');
+            Route::post('update', [App\Http\Controllers\Main\TotalsController::class, 'update'])->name('main-totals-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\TotalsController::class, 'destroy'])->name('main-totals-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\TotalsController::class, 'sync'])->name('main-totals-sync');
+        });
+
+
+        //Files
+        Route::group([
+            'prefix' => 'files'], function () {
+            Route::post('change', [App\Http\Controllers\HomeController::class, 'changeFile'])->name('attached-file-change');
+            Route::post('add', [App\Http\Controllers\HomeController::class, 'addFile'])->name('attached-file-add');
+        });
+
+
+
+
     });
-
-
-});
 
 
 /*
@@ -320,6 +330,7 @@ Route::group([
     Route::get('charts', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'charts'])->name('petty-cash-charts');
     Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'markAccountLinesAsDuplicates'])->name('petty-cash-accounts-duplicate-remove');
     Route::get('showForm/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'showForm'])->name('petty-cash-reports-show');
+
 
     //REPORTS
     Route::group([

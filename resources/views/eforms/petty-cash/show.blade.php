@@ -93,7 +93,7 @@
                             <div class="col-3">
                                 <div class="row">
                                     <div class="col-12 "><label>Cost Center:</label>
-                                        @if( Auth::user()->type_id ==  config('constants.user_types.developer')  )
+                                        @if( $user->type_id ==  config('constants.user_types.developer')  )
                                             <a href="{{route('petty.cash.workflow.show',['id'=> $form->user_unit->id ?? "code", 'code' => $form->id ?? "code" ] )}}">
                                                 Check Workflow
                                             </a>
@@ -275,6 +275,15 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Quotation Files</h4>
+                    @if( ($user->type_id == config('constants.user_types.developer')  || (
+                                 $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                               &&  $user->id  == $form->created_by )
+                                 &&  ($form->config_status_id == config('constants.petty_cash_status.new_application'))
+                             )
+                               )
+                        <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
+                           data-target="#modal-add-quotation">Add File</a>
+                    @endif
                 </div>
                 <div class="card-body" style="width:100%; height: 900px ">
                     <div class="row">
@@ -282,8 +291,18 @@
                             <div class="col-12">
                                 <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_quotation/'.$item->name)}}"
                                         style="width:100%; height: 850px" title="{{$item->name}}"></iframe>
-                                <span>{{$item->file_size}}MB {{$item->name}} </span>
+                                <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
+                                <span> | </span>
                                 <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}">View</a>
+                                @if( ($user->type_id == config('constants.user_types.developer')  || (
+                                  $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                                &&  $user->id  == $form->created_by ))
+                                &&  ($form->config_status_id == config('constants.petty_cash_status.new_application'))
+                                )
+                                    <span> | </span>
+                                    <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
+                                       data-target="#modal-change">Edit</a>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -299,6 +318,14 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Receipt Files</h4>
+                        @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
+              || ($user->type_id == config('constants.user_types.developer'))
+            &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
+            ($form->config_status_id == config('constants.petty_cash_status.closed')) ) )    )
+                            <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$item}}"
+                               data-target="#modal-add-receipt">Add File</a>
+                        @endif
                     </div>
                     <div class="card-body" style="width:100%; height: 900px ">
                         <div class="row">
@@ -307,8 +334,19 @@
                                     <iframe id="{{$item->id}}"
                                             src="{{asset('storage/petty_cash_receipt/'.$item->name)}}"
                                             style="width:100%; height: 840px " title="{{$item->name}}"></iframe>
-                                    <span>{{$item->file_size}}MB {{$item->name}} </span>
+                                    <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
+                                    <span> | </span>
                                     <a href="{{asset('storage/petty_cash_receipt/'.$item->name)}}">View</a>
+
+                                    @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                             &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
+                           || ($user->type_id == config('constants.user_types.developer'))  )
+                         &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
+                         ($form->config_status_id == config('constants.petty_cash_status.closed'))  )    )
+                                        <span> | </span>
+                                        <a href="#" data-toggle="modal" data-sent_data="{{$form}}"
+                                           data-target="#modal-change">Edit</a>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
@@ -340,7 +378,7 @@
                                 <TD>Status To</TD>
                                 <TD>Reason</TD>
                                 <TD>Date</TD>
-                                <TD>From Form <br>Submission </TD>
+                                <TD>From Form <br>Submission</TD>
                             </TR>
                             @foreach($approvals as $item)
                                 <TR>
@@ -361,9 +399,9 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                     {{--  CLAIMANT EDIT--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                          &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
-                         &&  Auth::user()->id  == $form->created_by)
+                         &&  $user->id  == $form->created_by)
                         <div class="">
                             <hr>
                             <div class="row">
@@ -399,10 +437,10 @@
                     @endif
 
                     {{--  HOD APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
                          &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
-                         &&  $form->user_unit->hod_code == Auth::user()->profile_job_code
-                         &&  $form->user_unit->hod_unit == Auth::user()->profile_unit_code
+                         &&  $form->user_unit->hod_code == $user->profile_job_code
+                         &&  $form->user_unit->hod_unit == $user->profile_unit_code
                       )
                         <div class="">
                             <hr>
@@ -439,10 +477,10 @@
                     @endif
 
                     {{--  HR APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_009')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
                          &&  $form->config_status_id == config('constants.petty_cash_status.hod_approved')
-                         &&  $form->user_unit->hrm_code == Auth::user()->profile_job_code
-                         &&  $form->user_unit->hrm_unit == Auth::user()->profile_unit_code
+                         &&  $form->user_unit->hrm_code == $user->profile_job_code
+                         &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                      )
                         <div class="">
                             <hr>
@@ -479,10 +517,10 @@
                     @endif
 
                     {{--  CHIEF ACCOUNTANT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')
                          &&  $form->config_status_id == config('constants.petty_cash_status.hr_approved')
-                         &&  $form->user_unit->ca_code == Auth::user()->profile_job_code
-                         &&  $form->user_unit->ca_unit == Auth::user()->profile_unit_code
+                         &&  $form->user_unit->ca_code == $user->profile_job_code
+                         &&  $form->user_unit->ca_unit == $user->profile_unit_code
                         )
                         <div class="">
                             <hr>
@@ -519,9 +557,9 @@
                     @endif
 
                     {{--  FUNDS DISBURSEMNET APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                          &&  $form->config_status_id == config('constants.petty_cash_status.chief_accountant')
-                         &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
+                         &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
                             <h5 class="text-center">Please Update the Accounts </h5>
@@ -544,7 +582,9 @@
                                                                        id="account_items1">
                                                                 <datalist id="items_list1">
                                                                     @foreach($form->item as $item)
-                                                                        <option  >{{$item->name}} : (ZMK {{$item->amount}})</option>
+                                                                        <option>{{$item->name}} : (ZMK {{$item->amount}}
+                                                                            )
+                                                                        </option>
                                                                     @endforeach
                                                                 </datalist>
                                                             </div>
@@ -658,9 +698,9 @@
                     @endif
 
                     {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                          &&  $form->config_status_id == config('constants.petty_cash_status.funds_disbursement')
-                         &&  $form->claimant_staff_no == Auth::user()->staff_no
+                         &&  $form->claimant_staff_no == $user->staff_no
                           )
                         <div class="">
                             <hr>
@@ -704,9 +744,9 @@
                     @endif
 
                     {{--  SECURITY APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_013')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_013')
                          &&  $form->config_status_id == config('constants.petty_cash_status.funds_acknowledgement')
-                         &&  $form->user_unit->security_unit == Auth::user()->profile_unit_code
+                         &&  $form->user_unit->security_unit == $user->profile_unit_code
                         )
                         <div class="">
                             <hr>
@@ -757,9 +797,9 @@
                     @endif
 
                     {{--  RECEIPT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                          &&  $form->config_status_id == config('constants.petty_cash_status.security_approved')
-                         &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
+                         &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
                             <h6 class="text-center">The Updated Accounts</h6>
@@ -926,10 +966,11 @@
                         </div>
                     @endif
 
-
                     {{--  AUDIT APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_011')   &&
-                        $form->config_status_id == config('constants.petty_cash_status.closed')   )
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
+                        &&  $form->config_status_id == config('constants.petty_cash_status.closed')
+                        &&  $form->user_unit->audit_unit == $user->profile_unit_code
+                          )
                         <div class="">
                             <hr>
                             <div class="row">
@@ -965,6 +1006,47 @@
                         </div>
                     @endif
 
+                    {{--  QUERIED RESOLUTION--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                         &&  $form->config_status_id == config('constants.petty_cash_status.queried')
+                         &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
+                        )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Resolve'>RESOLVE QUERY
+                                        </button>
+                                        <button style="display: none" id="btnSubmit_reject" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Rejected'>RESOLVE QUERY
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
                 <!-- /.card-footer-->
             </div>
@@ -973,6 +1055,148 @@
 
     </section>
     <!-- /.content -->
+
+
+    <!-- CHANGE MODAL-->
+    <div class="modal fade" id="modal-change">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Change File</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- form start -->
+                <form role="form-new" enctype="multipart/form-data" method="post"
+                      action="{{route('attached-file-change')}} ">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="name2">
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Change File</label>
+                                    <input type="file" class="form-control" id="change_file" name="change_file"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="item_id2" name="id"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="form_id" name="form_id"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="path" name="path"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.CHANGE modal -->
+
+    <!-- ADD MODAL-->
+    <div class="modal fade" id="modal-add-quotation">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Add Quotation File</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- form start -->
+                <form role="form-new" enctype="multipart/form-data" method="post"
+                      action="{{route('attached-file-add')}} ">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Add File</label>
+                                    <input type="file" class="form-control" id="add_file1" name="add_file"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="item_type1" name="file_type"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="form_type1" name="form_type"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="form_code1" name="form_id"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="path1" name="path"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="modal-add-receipt">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Add Receipt File</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- form start -->
+                <form role="form-new" enctype="multipart/form-data" method="post"
+                      action="{{route('attached-file-add')}} ">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Add File</label>
+                                    <input type="file" class="form-control" id="add_file2" name="add_file"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="item_type2" name="file_type"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="form_type2" name="form_type"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="form_code2" name="form_id"
+                                           placeholder="Enter profile name" required>
+                                    <input hidden class="form-control" id="path2" name="path"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.ADD modal -->
+
+
 @endsection
 
 
@@ -1166,6 +1390,70 @@
                     e.currentTarget.submit();
                 });
             });
+        });
+    </script>
+
+    <script>
+
+        $('#modal-change').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+
+            var url_start = '{{asset('storage/petty_cash_quotation')}}';
+            var path = "public/petty_cash_quotation";
+            var dds = recipient.file_type;
+            if (dds == 0) {
+                url_start = '{{asset('storage/petty_cash_receipt')}}';
+                path = "public/petty_cash_receipt";
+            }
+            var url = url_start + "/" + recipient.name;
+
+            console.log(url);
+
+            var sdfdfds = " <iframe  style='width:100%; height: 550px ' src='" + url + "'  ></iframe>"
+
+            $('#name2').html(sdfdfds);
+            $('#item_id2').val(recipient.id);
+            $('#form_id').val(recipient.form_id);
+            $('#path').val(path);
+
+
+        });
+    </script>
+
+    <script>
+
+        $('#modal-add-quotation').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+
+            var path = "public/petty_cash_quotation";
+            var type = {!! config('constants.file_type.quotation') !!};
+            var form_id = {!! config('constants.eforms_id.petty_cash') !!};
+            var form_code = recipient.code;
+
+            $('#item_type1').val(type);
+            $('#form_type1').val(form_id);
+            $('#form_code1').val(form_code);
+            $('#path1').val(path);
+
+
+        });
+
+        $('#modal-add-receipt').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+
+            var path = "public/petty_cash_receipt";
+            var type = {!! config('constants.file_type.receipt') !!};
+            var form_id = {!! config('constants.eforms_id.petty_cash') !!};
+            var form_code = recipient.code;
+
+            $('#item_type1').val(type);
+            $('#form_type1').val(form_id);
+            $('#form_code1').val(form_code);
+            $('#path1').val(path);
+
         });
     </script>
 
