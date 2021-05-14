@@ -45,6 +45,7 @@ return [
         'datacenter_ca' => "23",
         'subsistence' => "41",
         'trip' => "42",
+        'hotel_accommodation' => "62",
     ],
 
     'eforms_name' => [
@@ -55,6 +56,7 @@ return [
         'datacenter_ca'=>"Datacenter Critical Asset Registry",
         'subsistence'=>"Subsistence",
         'trip'=>"Trip Form",
+        'hotel_accommodation'=>"Hotel Accommodation Form",
     ],
 
     'approval' => [
@@ -226,6 +228,21 @@ return [
         'exported' => "42",
         'export_failed' => "43",
         'void' => "101",
+    ],
+
+    'hotel_accommodation_status' => [
+        'new_application' => "181",
+        'hod_approved' => "182",
+        'chief_accountant_approved' => "183",
+        'director_approved' => "184",
+        'closed' => "185",
+        'rejected' => "186",
+
+        'not_exported' => "41",
+        'exported' => "42",
+        'export_failed' => "43",
+        'void' => "101",
+
     ],
 
 ];
