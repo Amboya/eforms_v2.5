@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>AdminLTE 3 | Dashboard 2</title>
+    <title>eZesco | Hotel Accomodation</title>
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/fontawesome-free/css/all.min.css')}}">
@@ -19,38 +19,23 @@
     @stack('custom-styles')
 
 </head>
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<body class="hold-transition sidebar-dark-secondary sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
+
     <!-- Navbar -->
-@include('layouts.eforms.hotel-allowance.navbar')
-    <!-- /.navbar -->
+@include('layouts.eforms.hotel-accommodation.navbar')
+<!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-@include('layouts.eforms.hotel-allowance.sidebar')
+@include('layouts.eforms.hotel-accommodation.sidebar')
 
-    <!-- Content Wrapper. Contains page content -->
+<!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Dashboard v2</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard v2</li>
-                        </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
+
 
         <!-- Main content -->
     @yield('content')
-        <!-- /.content -->
+    <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
 
@@ -61,7 +46,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    @include('layouts.eforms.hotel-allowance.footer')
+    @include('layouts.eforms.hotel-accommodation.footer')
 
 </div>
 <!-- ./wrapper -->
