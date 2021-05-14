@@ -4,6 +4,7 @@ namespace App\Http\Controllers\EForms\PettyCash;
 
 use App\Http\Controllers\Controller;
 use App\Models\EForms\PettyCash\PettyCashModel;
+use App\Models\EForms\PettyCash\Views\AllPettyCashTotalsView;
 use App\Models\EForms\PettyCash\Views\DailyPettyCashTotalsView;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\StatusModel;
@@ -197,41 +198,23 @@ class ReportsController extends Controller
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
 
-        $directorates = Totals:: select('column_one_value')
-            ->where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('column_one', config('constants.config_totals.directorate'))
-            ->groupBy('column_one_value')
-            ->get();
-        $directs[] = '';
-        foreach ($directorates as $director) {
-            $directs[] = $director->myDirectorate->code ?? "hi";
-        }
-
-        //get the totals closed
-        $directorates_closed_totals = Totals:: select('*')
-            ->where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('column_one', config('constants.config_totals.directorate'))
-            ->where('total_one', config('constants.config_totals.dir_total_closed_count'))
-            ->get();
-
-        //  dd($directorates_closed_totals);
-
+        $directorate = DailyPettyCashTotalsView::select('directorate_id', 'total', 'amount', 'config_status_id')
+            ->groupBy('directorate_id' )
+            ->where('config_status_id',  config('constants.petty_cash_status.closed') )
+            ->get() ;
+        $units = DailyPettyCashTotalsView::select('user_unit_code', 'directorate_id', 'total', 'amount', 'config_status_id')
+            ->groupBy('user_unit_code'  )
+            ->where('config_status_id',  config('constants.petty_cash_status.closed') )
+            ->get() ;
 
         //data to send to the view
         $params = [
-            'directorates' => $directorates,
+            'directorates' => $directorate,
             'totals_needs_me' => $totals_needs_me,
-            'directorates_closed_totals' => $directorates_closed_totals,
-//            'total_approved' => $total_approved,
-//            'total_new' => $total_new,
-//            'total_rejected' => $total_rejected,
-//            'total_cancelled' => $total_cancelled,
-//            'total_open' => $total_open,
-//            'total_void' => $total_void,
-            'directs' => $directs,
+            'units' => $units,
         ];
         //reports one page
-        return view('eforms.petty-cash.reports.directorates')->with($params);
+        return view('eforms.petty-cash.reports.index')->with($params);
     }
 
     public

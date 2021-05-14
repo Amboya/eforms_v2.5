@@ -52,7 +52,7 @@ class DailyPettyCashTotalsView extends Model
     ];
     protected $with = [
         'status',
-        // 'accounts'
+         'directorate'
     ];
 
     protected static function booted()

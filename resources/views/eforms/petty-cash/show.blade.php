@@ -323,17 +323,17 @@
               || ($user->type_id == config('constants.user_types.developer'))
             &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
             ($form->config_status_id == config('constants.petty_cash_status.closed')) ) )    )
-                            <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$item}}"
+                            <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
                                data-target="#modal-add-receipt">Add File</a>
                         @endif
                     </div>
-                    <div class="card-body" style="width:100%; height: 900px ">
+                    <div class="card-body" style="width:100%;  ">
                         <div class="row">
                             @foreach($receipts as $item)
                                 <div class="col-12">
                                     <iframe id="{{$item->id}}"
                                             src="{{asset('storage/petty_cash_receipt/'.$item->name)}}"
-                                            style="width:100%; height: 840px " title="{{$item->name}}"></iframe>
+                                            style="width:100%; " title="{{$item->name}}"></iframe>
                                     <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                     <span> | </span>
                                     <a href="{{asset('storage/petty_cash_receipt/'.$item->name)}}">View</a>
@@ -344,7 +344,7 @@
                          &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
                          ($form->config_status_id == config('constants.petty_cash_status.closed'))  )    )
                                         <span> | </span>
-                                        <a href="#" data-toggle="modal" data-sent_data="{{$form}}"
+                                        <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
                                            data-target="#modal-change">Edit</a>
                                     @endif
                                 </div>
@@ -1062,7 +1062,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title text-center">Change File</h4>
+                    <h4 class="modal-title text-center">You want to change this file</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -1083,7 +1083,7 @@
                                     <label>Change File</label>
                                     <input type="file" class="form-control" id="change_file" name="change_file"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="item_id2" name="id"
+                                    <input hidden class="form-control" id="item_id" name="id"
                                            placeholder="Enter profile name" required>
                                     <input hidden class="form-control" id="form_id" name="form_id"
                                            placeholder="Enter profile name" required>
@@ -1172,7 +1172,7 @@
                                     <label>Add File</label>
                                     <input type="file" class="form-control" id="add_file2" name="add_file"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="item_type2" name="file_type"
+                                    <input hidden  class="form-control" id="item_type2" name="file_type"
                                            placeholder="Enter profile name" required>
                                     <input hidden class="form-control" id="form_type2" name="form_type"
                                            placeholder="Enter profile name" required>
@@ -1394,7 +1394,6 @@
     </script>
 
     <script>
-
         $('#modal-change').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
@@ -1413,7 +1412,7 @@
             var sdfdfds = " <iframe  style='width:100%; height: 550px ' src='" + url + "'  ></iframe>"
 
             $('#name2').html(sdfdfds);
-            $('#item_id2').val(recipient.id);
+            $('#item_id').val(recipient.id);
             $('#form_id').val(recipient.form_id);
             $('#path').val(path);
 
@@ -1449,10 +1448,10 @@
             var form_id = {!! config('constants.eforms_id.petty_cash') !!};
             var form_code = recipient.code;
 
-            $('#item_type1').val(type);
-            $('#form_type1').val(form_id);
-            $('#form_code1').val(form_code);
-            $('#path1').val(path);
+            $('#item_type2').val(type);
+            $('#form_type2').val(form_id);
+            $('#form_code2').val(form_code);
+            $('#path2').val(path);
 
         });
     </script>
