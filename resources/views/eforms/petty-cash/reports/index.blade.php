@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet"
           href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+
+
 @endpush
 
 
@@ -53,7 +55,7 @@
             <h5>All Forms</h5>
             <!-- Info boxes -->
             <div class="row">
-                @foreach($directorates as $directorate)
+                @foreach($directorates_closed as $directorate)
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="info-box mb-3">
                             <a class="info-box-icon bg-gray elevation-1"
@@ -61,49 +63,38 @@
                                 <span><i class="fa fa-file"></i></span>
                             </a>
                             <div class="info-box-content">
-                                <span class="info-box-text"> {{$directorate->myDirectorate->name}}</span>
-                                @foreach( $directorates_closed_totals as $key=>$item )
-                                    @if($item->column_one_value == $directorate->column_one_value )
-                                        <p>Total : <b>{{ $item->total_one_value ?? '0' }}</b> <br>
-                                        Amount : <b>{{ $item->total_two_value ?? '0' }}</b> </p>
-                                    @endif
-                                @endforeach
-{{--                                @foreach( $total_approved as $key=>$item )--}}
-{{--                                    @if($item->directorate_id == $directorate->id )--}}
-{{--                                        <p>Approved : <b>{{ $item->total ?? '0' }}</b> </p>--}}
-{{--                                    @endif--}}
-{{--                                @endforeach--}}
-{{--                                @foreach( $total_new as $key=>$item )--}}
-{{--                                    @if($item->directorate_id == $directorate->id )--}}
-{{--                                        <p>New : <b>{{ $item->total ?? '0' }}</b> </p>--}}
-{{--                                    @endif--}}
-{{--                                @endforeach--}}
-{{--                                @foreach( $total_open as $key=>$item )--}}
-{{--                                    @if($item->directorate_id == $directorate->id )--}}
-{{--                                        <p>Opened : <b>{{ $item->total ?? '0' }}</b> </p>--}}
-{{--                                    @endif--}}
-{{--                                @endforeach--}}
-{{--                                @foreach( $total_rejected as $key=>$item )--}}
-{{--                                    @if($item->directorate_id == $directorate->id )--}}
-{{--                                        <p>Rejected : <b>{{ $item->total ?? '0' }}</b> </p>--}}
-{{--                                    @endif--}}
-{{--                                @endforeach--}}
-{{--                                @foreach( $total_cancelled as $key=>$item )--}}
-{{--                                    @if($item->directorate_id == $directorate->id )--}}
-{{--                                        <p>Cancelled : <b>{{ $item->total ?? '0' }}</b> </p>--}}
-{{--                                    @endif--}}
-{{--                                @endforeach--}}
-{{--                                @foreach( $total_void as $key=>$item )--}}
-{{--                                    @if($item->directorate_id == $directorate->id )--}}
-{{--                                        <p>Void : <b>{{ $item->total ?? '0' }}</b> </p>--}}
-{{--                                    @endif--}}
-{{--                                @endforeach--}}
+                                <span class="info-box-text"> {{$directorate->directorate->name ?? ""}}</span>
+                                <span class="info-box-text"> ({{$directorate->status->name ?? ""}})</span>
+                                <p>Total : <b>{{ $directorate->total ?? '0' }}</b> <br>
+                                    Amount : <b>ZMW {{ $directorate->amount ?? '0' }}</b></p>
+
                             </div>
                             <!-- /.info-box-content -->
                         </div>
                         <!-- /.info-box -->
                     </div>
             @endforeach
+
+
+            {{--                @foreach($directorates as $directorate)--}}
+            {{--                    <div class="col-12 col-sm-6 col-md-3">--}}
+            {{--                        <div class="info-box mb-3">--}}
+            {{--                            <a class="info-box-icon bg-gray elevation-1"--}}
+            {{--                               href="{{route( 'petty-cash-list', config('constants.petty_cash_status.rejected'))}}">--}}
+            {{--                                <span><i class="fa fa-file"></i></span>--}}
+            {{--                            </a>--}}
+            {{--                            <div class="info-box-content">--}}
+            {{--                                <span class="info-box-text"> {{$directorate->directorate->name ?? ""}}</span>--}}
+            {{--                                <span class="info-box-text"> ({{$directorate->status->name ?? ""}})</span>--}}
+            {{--                                <p>Total : <b>{{ $directorate->total ?? '0' }}</b> <br>--}}
+            {{--                                        Amount : <b>ZMW {{ $directorate->amount ?? '0' }}</b> </p>--}}
+
+            {{--                            </div>--}}
+            {{--                            <!-- /.info-box-content -->--}}
+            {{--                        </div>--}}
+            {{--                        <!-- /.info-box -->--}}
+            {{--                    </div>--}}
+            {{--            @endforeach--}}
 
             <!-- /.col -->
             </div>
@@ -123,14 +114,16 @@
                                 <a href="{{route('petty-cash-reports-sync-units')}}" class="btn btn-tool">
                                     <i class="fas fa-sync">Units</i>
                                 </a>
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                        class="fas fa-minus"></i>
                                 </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                                        class="fas fa-times"></i></button>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="chart">
-                                <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                <canvas id="myChart" width="400" height="400"></canvas>
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -155,6 +148,8 @@
             <script
                 src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
 
+            <script src=" {{ asset('chart_js_package/dist/chart.js')}}"></script>
+
             <!-- page script -->
             <script>
                 $(function () {
@@ -175,89 +170,143 @@
             </script>
 
             <script>
-                $(function () {
-                    /* ChartJS
-                     * -------
-                     * Here we will create a few charts using ChartJS
-                     */
+                {{--$(function () {--}}
+                {{--    /* ChartJS--}}
+                {{--     * ---------}}
+                {{--     * Here we will create a few charts using ChartJS--}}
+                {{--     */--}}
 
-                    directs  =   {!! json_encode($directs) !!};
+                {{--    directs  =   {!! json_encode($units) !!};--}}
+                {{--    amounts  =   {!! json_encode($status_amount) !!};--}}
+                {{--    totals  =   {!! json_encode($status_total) !!};--}}
 
-                    var areaChartData = {
-                        labels  : directs,
-                        datasets: [
-                            {
-                                label               : 'Closed',
-                                backgroundColor     : 'rgba(60,141,188,0.9)',
-                                borderColor         : 'rgba(60,141,188,0.8)',
-                                pointRadius          : false,
-                                pointColor          : '#3b8bba',
-                                pointStrokeColor    : 'rgba(60,141,188,1)',
-                                pointHighlightFill  : '#fff',
-                                pointHighlightStroke: 'rgba(60,141,188,1)',
-                                data                : [28, 48, 40, 19, 86, 27, 90]
-                            },
-                            {
-                                label               : 'Opened',
-                                backgroundColor     : 'rgba(210, 214, 222, 1)',
-                                borderColor         : 'rgba(210, 214, 222, 1)',
-                                pointRadius         : false,
-                                pointColor          : 'rgba(210, 214, 222, 1)',
-                                pointStrokeColor    : '#c1c7d1',
-                                pointHighlightFill  : '#fff',
-                                pointHighlightStroke: 'rgba(220,220,220,1)',
-                                data                : [65, 59, 80, 81, 56, 55, 40]
-                            },
-                            {
-                                label               : 'New',
-                                backgroundColor     : 'rgba(210, 214, 222, 1)',
-                                borderColor         : 'rgba(210, 214, 222, 1)',
-                                pointRadius         : false,
-                                pointColor          : 'rgba(210, 214, 222, 1)',
-                                pointStrokeColor    : '#c1c7d1',
-                                pointHighlightFill  : '#fff',
-                                pointHighlightStroke: 'rgba(220,220,220,1)',
-                                data                : [65, 59, 80, 81, 56, 55, 40]
-                            },
-                            {
-                                label               : 'Rejected',
-                                backgroundColor     : 'rgba(210, 214, 222, 1)',
-                                borderColor         : 'rgba(210, 214, 222, 1)',
-                                pointRadius         : false,
-                                pointColor          : 'rgba(210, 214, 222, 1)',
-                                pointStrokeColor    : '#c1c7d1',
-                                pointHighlightFill  : '#fff',
-                                pointHighlightStroke: 'rgba(220,220,220,1)',
-                                data                : [65, 59, 80, 81, 56, 55, 40]
-                            },
-                        ]
+                {{--    console.log(directs);--}}
+
+                {{--   // alert(12313);--}}
+
+                {{--    var areaChartData = {--}}
+                {{--        labels  : directs,--}}
+                {{--        datasets: [--}}
+                {{--            {--}}
+                {{--                label               : 'Closed',--}}
+                {{--                backgroundColor     : 'rgba(60,141,188,0.9)',--}}
+                {{--                borderColor         : 'rgba(60,141,188,0.8)',--}}
+                {{--                pointRadius          : false,--}}
+                {{--                pointColor          : '#3b8bba',--}}
+                {{--                pointStrokeColor    : 'rgba(60,141,188,1)',--}}
+                {{--                pointHighlightFill  : '#fff',--}}
+                {{--                pointHighlightStroke: 'rgba(60,141,188,1)',--}}
+                {{--                data                : amounts--}}
+                {{--            },--}}
+                {{--            {--}}
+                {{--                label               : 'Opened',--}}
+                {{--                backgroundColor     : 'rgba(210, 214, 222, 1)',--}}
+                {{--                borderColor         : 'rgba(210, 214, 222, 1)',--}}
+                {{--                pointRadius         : false,--}}
+                {{--                pointColor          : 'rgba(210, 214, 222, 1)',--}}
+                {{--                pointStrokeColor    : '#c1c7d1',--}}
+                {{--                pointHighlightFill  : '#fff',--}}
+                {{--                pointHighlightStroke: 'rgba(220,220,220,1)',--}}
+                {{--                data                : amounts--}}
+                {{--            },--}}
+                {{--            {--}}
+                {{--                label               : 'New',--}}
+                {{--                backgroundColor     : 'rgba(210, 214, 222, 1)',--}}
+                {{--                borderColor         : 'rgba(210, 214, 222, 1)',--}}
+                {{--                pointRadius         : false,--}}
+                {{--                pointColor          : 'rgba(210, 214, 222, 1)',--}}
+                {{--                pointStrokeColor    : '#c1c7d1',--}}
+                {{--                pointHighlightFill  : '#fff',--}}
+                {{--                pointHighlightStroke: 'rgba(220,220,220,1)',--}}
+                {{--                data                : amounts--}}
+                {{--            },--}}
+                {{--            {--}}
+                {{--                label               : 'Rejected',--}}
+                {{--                backgroundColor     : 'rgba(210, 214, 222, 1)',--}}
+                {{--                borderColor         : 'rgba(210, 214, 222, 1)',--}}
+                {{--                pointRadius         : false,--}}
+                {{--                pointColor          : 'rgba(210, 214, 222, 1)',--}}
+                {{--                pointStrokeColor    : '#c1c7d1',--}}
+                {{--                pointHighlightFill  : '#fff',--}}
+                {{--                pointHighlightStroke: 'rgba(220,220,220,1)',--}}
+                {{--                data                : amounts--}}
+                {{--            },--}}
+                {{--        ]--}}
+                {{--    }--}}
+
+
+                {{--    //---------------}}
+                {{--    //- BAR CHART ---}}
+                {{--    //---------------}}
+                {{--    var barChartCanvas = $('#barChart').get(0).getContext('2d')--}}
+                {{--    var barChartData = jQuery.extend(true, {}, areaChartData)--}}
+                {{--    var temp0 = areaChartData.datasets[0]--}}
+                {{--    var temp1 = areaChartData.datasets[1]--}}
+                {{--    barChartData.datasets[0] = temp1--}}
+                {{--    barChartData.datasets[1] = temp0--}}
+
+                {{--    var barChartOptions = {--}}
+                {{--        responsive              : true,--}}
+                {{--        maintainAspectRatio     : false,--}}
+                {{--        datasetFill             : false--}}
+                {{--    }--}}
+
+                {{--    var barChart = new Chart(barChartCanvas, {--}}
+                {{--        type: 'bar',--}}
+                {{--        data: barChartData,--}}
+                {{--        options: barChartOptions--}}
+                {{--    })--}}
+
+
+                {{--})--}}
+
+
+            </script>
+
+            <script>
+                var ctx = document.getElementById('myChart').getContext('2d');
+
+                directs = {!! json_encode($units) !!};
+                amounts = {!! json_encode($status_amount) !!};
+                totals = {!! json_encode($status_total) !!};
+                status = {!! json_encode($status) !!};
+
+                console.log(status);
+
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: status,
+                        datasets: [{
+                            label: '# of Votes',
+                            data: totals ,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
                     }
-
-
-                    //-------------
-                    //- BAR CHART -
-                    //-------------
-                    var barChartCanvas = $('#barChart').get(0).getContext('2d')
-                    var barChartData = jQuery.extend(true, {}, areaChartData)
-                    var temp0 = areaChartData.datasets[0]
-                    var temp1 = areaChartData.datasets[1]
-                    barChartData.datasets[0] = temp1
-                    barChartData.datasets[1] = temp0
-
-                    var barChartOptions = {
-                        responsive              : true,
-                        maintainAspectRatio     : false,
-                        datasetFill             : false
-                    }
-
-                    var barChart = new Chart(barChartCanvas, {
-                        type: 'bar',
-                        data: barChartData,
-                        options: barChartOptions
-                    })
-
-
-                })
+                });
             </script>
 
 

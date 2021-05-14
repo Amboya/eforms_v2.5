@@ -198,20 +198,44 @@ class ReportsController extends Controller
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
 
-        $directorate = DailyPettyCashTotalsView::select('directorate_id', 'total', 'amount', 'config_status_id')
-            ->groupBy('directorate_id' )
-            ->where('config_status_id',  config('constants.petty_cash_status.closed') )
-            ->get() ;
-        $units = DailyPettyCashTotalsView::select('user_unit_code', 'directorate_id', 'total', 'amount', 'config_status_id')
-            ->groupBy('user_unit_code'  )
-            ->where('config_status_id',  config('constants.petty_cash_status.closed') )
-            ->get() ;
+        $directorate = DailyPettyCashTotalsView::select('directorate_id', 'config_status_id',
+            DB::raw('sum(total) as total, sum(amount) as amount') )
+            ->groupBy('directorate_id', 'config_status_id',  'total', 'amount' );
+        $dir2 =  $directorate ->get() ;
+        $dir =  $directorate ->where('config_status_id',  config('constants.petty_cash_status.closed') )->get() ;
+
+        $unitss = DailyPettyCashTotalsView::select('directorate_id','user_unit_code' )
+            ->groupBy('user_unit_code','directorate_id' )->get();
+
+        $unit22 = DailyPettyCashTotalsView::select('directorate_id','user_unit_code', 'config_status_id',
+            DB::raw('sum(total) as total, sum(amount) as amount') )
+            ->groupBy('user_unit_code','directorate_id','config_status_id' )->get();
+
+       // dd($unit22);
+
+
+
+        foreach ($unitss as $iiii){
+            $units[] =  $iiii->user_unit->user_unit_code ?? "hi" ;
+        }
+
+        foreach ($unit22 as $director){
+            $status[] =  strtolower($director->status->name ?? "hi" ) ;
+            $status_total[] =  $director->total ?? "hi" ;
+            $status_amount[] =  $director->amount ?? "hi" ;
+        }
+
+        //dd($status);
+
 
         //data to send to the view
         $params = [
-            'directorates' => $directorate,
+            'directorates_closed' =>$dir,
+            'units' => $units ,
+            'status' => $status ,
+            'status_total' => $status_total ,
+            'status_amount' => $status_amount ,
             'totals_needs_me' => $totals_needs_me,
-            'units' => $units,
         ];
         //reports one page
         return view('eforms.petty-cash.reports.index')->with($params);

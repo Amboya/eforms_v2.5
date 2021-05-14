@@ -63,7 +63,8 @@ return [
         'approve' => "Approved",
         'reject' => "Rejected",
         'cancelled' => "Cancelled",
-        'queried' => "Queried"
+        'queried' => "Queried",
+        'resolve' => "Resolve"
     ],
 
     'user_types' => [

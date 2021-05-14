@@ -927,20 +927,20 @@ class PettyCashController extends Controller
 
         //HANDLE AUDIT QUERY
         if ($request->approval == config('constants.approval.queried')) {
-            if ($form->status->id == config('constants.petty_cash_status.closed')) {
-                //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_closed'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_closed = $totals->value;
-                $eform_pettycash->save();
-            }
+//            if ($form->status->id == config('constants.petty_cash_status.closed')) {
+//                //update the totals closed
+//                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
+//                    ->where('id', config('constants.totals.petty_cash_closed'))
+//                    ->first();
+//                $totals->value = $totals->value - 1;
+//                $totals->save();
+//                $eform_pettycash->total_closed = $totals->value;
+//                $eform_pettycash->save();
+//            }
         }
 
 
-        //FOR FOR CLAIMANT CANCELLATION
+        //FOR CLAIMANT CANCELLATION
         if (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_002')
             && $current_status == config('constants.petty_cash_status.new_application')
@@ -1237,7 +1237,8 @@ class PettyCashController extends Controller
             $form->security_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR FOR EXPENDITURE OFFICE - RECEIPT
+        }
+        //FOR FOR EXPENDITURE OFFICE - RECEIPT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
             && $current_status == config('constants.petty_cash_status.security_approved')
         ) {
@@ -1445,7 +1446,8 @@ class PettyCashController extends Controller
                 }
             }
 
-        }  //FOR AUDITING OFFICE
+        }
+        //FOR AUDITING OFFICE
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.petty_cash_status.closed')
         ) {
@@ -1473,7 +1475,35 @@ class PettyCashController extends Controller
             $form->audit_office_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR NO-ONE
+        }
+        //FOR QUERIED RESOLVING
+        elseif( Auth::user()->profile_id  ==  config('constants.user_profiles.EZESCO_014')
+        &&  $form->config_status_id == config('constants.petty_cash_status.queried')
+        ) {
+            //cancel status
+            $insert_reasons = true;
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.petty_cash_status.cancelled');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.petty_cash_status.rejected');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.petty_cash_status.audited');
+            }//audit status
+            elseif ($request->approval == config('constants.approval.resolve')) {
+                $new_status = config('constants.petty_cash_status.closed');
+            } else {
+                $new_status = config('constants.petty_cash_status.queried');
+                $insert_reasons = false;
+            }
+          //  dd($new_status);
+            //update
+            $form->config_status_id = $new_status;
+            $form->profile = Auth::user()->profile_id;
+            $form->save();
+        }
+        //FOR NO-ONE
         else {
             //return with an error
             return Redirect::route('petty-cash-home')->with('message', 'Petty Cash ' . $form->code . ' for has been ' . $request->approval . ' successfully');

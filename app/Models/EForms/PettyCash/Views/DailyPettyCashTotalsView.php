@@ -52,6 +52,7 @@ class DailyPettyCashTotalsView extends Model
     ];
     protected $with = [
         'status',
+        'user_unit',
          'directorate'
     ];
 
