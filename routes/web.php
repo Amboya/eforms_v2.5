@@ -309,27 +309,27 @@ Route::group([
 
     //petty cah routes
     Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty-cash-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'index'])->name('petty-cash-list');
-    Route::get('create', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'create'])->name('petty-cash-create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'show'])->name('petty-cash-show');
-    Route::post('store', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'store'])->name('petty-cash-store');
-    Route::post('approve', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'approve'])->name('petty-cash-approve');
-    Route::post('update', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'update'])->name('petty-cash-update');
-    Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'destroy'])->name('petty-cash-destroy');
-    Route::get('reports/{value}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reports'])->name('petty-cash-report');
-    Route::get('reportExport', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reportsExport'])->name('petty-cash-report-export');
-    Route::get('reportSync', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reportsSync'])->name('petty-cash-report-sync');
-    Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reportsExportUnmarkExported'])->name('petty-cash-report-export-unmark-exported');
-    Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reportsExportUnmarkExportedAll'])->name('petty-cash-report-export-unmark-exported-all');
-    Route::get('sync/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'sync'])->name('petty-cash-sync');
-    Route::get('records/{value}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'records'])->name('petty-cash-record');
-    Route::post('void/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'void'])->name('petty-cash-void');
-    Route::post('reverse/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reverse'])->name('petty-cash-reverse');
-    Route::post('search', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'search'])->name('petty-cash-search');
+    Route::get('list/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'index'])->name('petty-cash-list');
+    Route::get('create', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'create'])->name('petty-cash-create');
+    Route::post('show/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'show'])->name('petty-cash-show');
+    Route::post('store', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'store'])->name('petty-cash-store');
+    Route::post('approve', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'approve'])->name('petty-cash-approve');
+    Route::post('update', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'update'])->name('petty-cash-update');
+    Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'destroy'])->name('petty-cash-destroy');
+    Route::get('reports/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reports'])->name('petty-cash-report');
+    Route::get('reportExport', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExport'])->name('petty-cash-report-export');
+    Route::get('reportSync', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsSync'])->name('petty-cash-report-sync');
+    Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExported'])->name('petty-cash-report-export-unmark-exported');
+    Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExportedAll'])->name('petty-cash-report-export-unmark-exported-all');
+    Route::get('sync/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'sync'])->name('petty-cash-sync');
+    Route::get('records/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'records'])->name('petty-cash-record');
+    Route::post('void/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'void'])->name('petty-cash-void');
+    Route::post('reverse/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reverse'])->name('petty-cash-reverse');
+    Route::post('search', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'search'])->name('petty-cash-search');
 
-    Route::get('charts', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'charts'])->name('petty-cash-charts');
-    Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'markAccountLinesAsDuplicates'])->name('petty-cash-accounts-duplicate-remove');
-    Route::get('showForm/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'showForm'])->name('petty-cash-reports-show');
+    Route::get('charts', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'charts'])->name('petty-cash-charts');
+    Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'markAccountLinesAsDuplicates'])->name('petty-cash-accounts-duplicate-remove');
+    Route::get('showForm/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'showForm'])->name('petty-cash-reports-show');
 
 
     //REPORTS
