@@ -37,6 +37,11 @@
                 <p class="lead"> {{session()->get('message')}}</p>
             </div>
         @endif
+        @if(session()->has('error'))
+            <div class="alert alert-danger alert-dismissible">
+                <p class="lead"> {{session()->get('error')}}</p>
+            </div>
+        @endif
 
         @if ($errors->any())
             <div class="alert alert-danger">

@@ -173,7 +173,6 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-
     <!-- /.NEW modal -->
 
 

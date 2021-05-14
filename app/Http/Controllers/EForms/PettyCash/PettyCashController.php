@@ -19,9 +19,9 @@ use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
 use App\Models\main\TotalsModel;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -54,14 +54,46 @@ class PettyCashController extends Controller
     public function index(Request $request, $value)
     {
 
+        $list_for_auditors_action = 0;
+        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')) {
+            /** check if auditor created last months files */
+            $last_month = Carbon::now()->subDays(30)->toDateTimeString();
+            $list_for_auditors_action = PettyCashModel::
+            where('config_status_id', config('constants.petty_cash_status.closed'))
+                ->where('created_at', '>=', $last_month)
+                ->count();
+        }
+
         //get list of all petty cash forms for today
         if ($value == "all") {
-            $list = PettyCashModel::orderBy('code')->paginate(50);
+            if ($list_for_auditors_action > 1) {
+                // not cleared
+                $list = PettyCashModel::where('config_status_id', '!=', config('constants.petty_cash_status.chief_accountant'))
+                    ->orderBy('code')->paginate(50);
+            } else {
+                //cleared
+                $list = PettyCashModel::orderBy('code')->paginate(50);
+            }
             $category = "All";
-        } else if ($value == "pending") {
-            $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
-                ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
-                ->orderBy('code')->paginate(50);
+        }
+        else if ($value == "pending") {
+            if ($list_for_auditors_action > 1) {
+                // not cleared
+                $list = PettyCashModel::
+                where('config_status_id', config('constants.petty_cash_status.hod_approved'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.hr_approved'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.chief_accountant'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.funds_disbursement'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.new_application'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
+                    ->where('config_status_id', '!=', config('constants.petty_cash_status.security_approved'))
+                    ->orderBy('code')->paginate(50);
+            } else {
+                //cleared
+                $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
+                    ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
+                    ->orderBy('code')->paginate(50);
+            }
             $category = "Opened";
         } else if ($value == config('constants.petty_cash_status.new_application')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
@@ -134,8 +166,8 @@ class PettyCashController extends Controller
         if ($value == "all") {
 
             $list = DB::table('eform_petty_cash')
-                ->select('eform_petty_cash.*', 'config_status.name as status_name ', 'config_status.html as html ' )
-                ->join('config_status' , 'eform_petty_cash.config_status_id', '=', 'config_status.id')
+                ->select('eform_petty_cash.*', 'config_status.name as status_name ', 'config_status.html as html ')
+                ->join('config_status', 'eform_petty_cash.config_status_id', '=', 'config_status.id')
                 ->paginate(50);
 
             $category = "All Records";
@@ -339,7 +371,7 @@ class PettyCashController extends Controller
             $error = true;
             //return with error msg
 
-             }
+        }
 
         //generate the petty cash unique code
         $code = self::randGenerator("PT", 1);
@@ -358,7 +390,7 @@ class PettyCashController extends Controller
                 'division_id' => $user->user_division_id,
                 'region_id' => $user->user_region_id,
                 'directorate_id' => $user->user_directorate_id,
-                'projects_id' => $request->projects_id ,
+                'projects_id' => $request->projects_id,
 
                 'total_payment' => $request->total_payment,
                 'code' => $code,
@@ -415,7 +447,7 @@ class PettyCashController extends Controller
         $files = $request->file('quotation');
         if ($request->hasFile('quotation')) {
             foreach ($files as $file) {
-                $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
+                $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
                 // Get just filename
                 $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                 //get size
@@ -591,11 +623,13 @@ class PettyCashController extends Controller
             //[B]check if one the users with the profile have this delegated profile
             $delegated_users = ProfileDelegatedModel::
             where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('delegated_profile', $profile->code)
+                ->where('delegated_profile', $profile->id)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
                 ->where('config_status_id', config('constants.active_state'))
                 ->get();
+
+//            dd( $profile->code  );
             //loop through delegated users
             foreach ($delegated_users as $item) {
                 $user = User::find($item->delegated_to);
@@ -689,6 +723,7 @@ class PettyCashController extends Controller
             'projects' => $projects,
             'user_array' => $user_array,
             'approvals' => $approvals,
+            'user' => Auth::user(),
             'accounts' => $accounts
         ];
         //return view
@@ -1374,11 +1409,11 @@ class PettyCashController extends Controller
             $files = $request->file('receipt');
             if ($request->hasFile('receipt')) {
                 foreach ($files as $file) {
-                    $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
+                    $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
                     // Get just filename
                     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                     //get size
-                    $size = number_format($file->getSize() * 0.0000001, 2);
+                    $size =   $file->getSize() * 0.000001 ;
                     // Get just ext
                     $extension = $file->getClientOriginalExtension();
                     // Filename to store
@@ -1511,7 +1546,7 @@ class PettyCashController extends Controller
             //message details
             $subject = 'Petty-Cash Voucher Closed Successfully';
             $title = 'Petty-Cash Voucher Closed Successfully';
-            $message = ' Congratulation! This is to notify you that petty-cash voucher ' . $form->code . ' has been closed successfully .
+            $message = 'This is to notify you that petty-cash voucher ' . $form->code . ' has been closed successfully .
             <br>Please login to e-ZESCO by clicking on the button below to view the voucher. <br>The petty cash voucher has now been closed.';
         } // other wise get the users
         else {
@@ -1638,10 +1673,10 @@ class PettyCashController extends Controller
             //[B]check if one the users with the profile have this delegated profile
             $delegated_users = ProfileDelegatedModel::
             where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('delegated_profile', $profile->code)
+                ->where('delegated_profile', $profile->id)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
-                ->where('config_status_id',  config('constants.active_state'))
+                ->where('config_status_id', config('constants.active_state'))
                 ->get();
             //loop through delegated users
             foreach ($delegated_users as $item) {
@@ -1666,37 +1701,41 @@ class PettyCashController extends Controller
 
         if ($value == config('constants.all')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $list = DB::select("SELECT * FROM eform_petty_cash_account  ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account order by created_at desc  ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::all();
+                $list = PettyCashAccountModel::orderBy('created_at')->get();
             }
             $title = "ALl";
         } elseif ($value == config('constants.petty_cash_status.not_exported')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
                 $status = config('constants.petty_cash_status.not_exported');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))
+                    ->orderBy('created_at')->get();
             }
             $title = "Not Exported";
         } elseif ($value == config('constants.petty_cash_status.exported')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
                 $status = config('constants.petty_cash_status.exported');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.exported'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.exported'))
+                    ->orderBy('created_at')->get();
             }
             $title = " Exported";
         } elseif ($value == config('constants.petty_cash_status.export_failed')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
                 $status = config('constants.petty_cash_status.export_failed');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.export_failed'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.export_failed'))
+                    ->orderBy('created_at')
+                    ->get();
             }
             $title = "Failed Export";
         }
@@ -1709,7 +1748,7 @@ class PettyCashController extends Controller
         $params = [
             'title' => $title,
             'totals_needs_me' => $totals_needs_me,
-            'list' => $list
+            'list' => $list,
         ];
         //  dd($list);
         return view('eforms.petty-cash.report')->with($params);
@@ -1717,17 +1756,31 @@ class PettyCashController extends Controller
 
     public function reportsExport(Request $request)
     {
+
+       // dd($request->all());
+        $date_from = $request->date_from  ;
+        $date_to = $request->date_to  ;
+
         $fileName = 'PettyCash_Accounts.csv';
+
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
-            $tasks = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
-        } else {
             $not_exported = config('constants.petty_cash_status.not_exported');
             $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                         WHERE status_id = {$not_exported}
+                        and created_at >= '{$date_from}'
+                        and created_at <= '{$date_to}'
                         ORDER BY eform_petty_cash_id ASC ");
             $tasks = PettyCashAccountModel::hydrate($tasks);
+        } else {
+
+            $tasks = PettyCashAccountModel::
+            where('status_id', config('constants.petty_cash_status.not_exported'))
+                ->whereDate('created_at' , '>=', $date_from )
+                ->whereDate('created_at' , '<=', $date_to )
+                ->get();
         }
 
+      //  dd($tasks);
 
         $headers = array(
             "Content-type" => "text/csv",
@@ -1758,6 +1811,8 @@ class PettyCashController extends Controller
             fputcsv($file, $columns);
 
             foreach ($tasks as $item) {
+
+               // dd($item);
 
                 //mark the item as exported
 //                $item->status_id = config('constants.petty_cash_status.exported');
@@ -1836,13 +1891,11 @@ class PettyCashController extends Controller
 
     public function sync($id)
     {
-
         //SYNC ONE
         //get the form
         $form = DB::table('eform_petty_cash')
             ->where('id', $id)
             ->get()->first();
-
 
         //get the claimant with the user unit which has the workflow details
 //        $user_unit = ConfigWorkFlow::where('user_unit_code',$form->user_unit_code )
@@ -2051,15 +2104,62 @@ class PettyCashController extends Controller
 //            /*
 //             * NEEDED AS A FUNCTION SOMEWHERE IN PETTY CASH CONTROLLER
 
+//            $tasks = DB::select("SELECT * FROM eform_petty_cash_account where business_unit_code LIKE '%13231%'
+
+            $form = DB::select("SELECT * FROM eform_petty_cash
+                            WHERE config_status_id = 28 ");
+            $form = PettyCashModel::hydrate($form)->all();
+
+            foreach ($form as $form_item) {
+                $form_id = $form_item->id ;
+                $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+                            where status_id != '41'  and status_id != '41' and eform_petty_cash_id  = '{$form_id}'
+                             ");
+                $tasks = PettyCashAccountModel::hydrate($tasks);
+
+                if(sizeof($tasks) > 0){
+                    dd($tasks);
+                }
+
+
+            }
+
+
+
+            dd(122112212 );
+
+            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+                            where status_id = '41'
+                            ORDER BY eform_petty_cash_id ASC ");
+            $tasks = PettyCashAccountModel::hydrate($tasks);
+
+          //  dd($tasks);
+            foreach ($tasks as $account) {
+                //get associated petty cash
+                $petty_cash_id = $account->eform_petty_cash_id;
+                $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
+                            WHERE id = {$petty_cash_id}  ");
+                $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
+
+                //update account with the petty cash details
+                $eform_petty_cash_account = DB::table('eform_petty_cash_account')
+                    ->where('id', $account->id)
+                    ->update([
+                        'status_id' => '41',
+                    ]);
+
+            }
+
+
             //UPDATE ONE  - Update all petty cash accounts with the user unit and work-flow details
             //get a list of all the petty cash account models
             $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                             ORDER BY eform_petty_cash_id ASC ");
             $tasks = PettyCashAccountModel::hydrate($tasks);
 
-            foreach ($tasks as $account){
+            foreach ($tasks as $account) {
                 //get associated petty cash
-                $petty_cash_id = $account->eform_petty_cash_id ;
+                $petty_cash_id = $account->eform_petty_cash_id;
                 $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
                             WHERE id = {$petty_cash_id}  ");
                 $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
@@ -2072,10 +2172,10 @@ class PettyCashController extends Controller
                         'business_unit_code' => $tasks_pt->business_unit_code,
                         'user_unit_code' => $tasks_pt->user_unit_code,
 
-                        'claimant_name'=> $tasks_pt->claimant_name,
-                        'claimant_staff_no'=> $tasks_pt->claimant_staff_no,
-                        'claim_date'=> $tasks_pt->claim_date,
-                        'petty_cash_code'=> $tasks_pt->code,
+                        'claimant_name' => $tasks_pt->claimant_name,
+                        'claimant_staff_no' => $tasks_pt->claimant_staff_no,
+                        'claim_date' => $tasks_pt->claim_date,
+                        'petty_cash_code' => $tasks_pt->code,
 
                         'hod_code' => $tasks_pt->hod_code,
                         'hod_unit' => $tasks_pt->hod_unit,
@@ -2099,9 +2199,6 @@ class PettyCashController extends Controller
     }
 
 
-
-
-
     public function search(Request $request)
     {
         $search = strtoupper($request->search);
@@ -2111,6 +2208,7 @@ class PettyCashController extends Controller
               or claimant_name LIKE '%{$search}%'
               or claimant_staff_no LIKE '%{$search}%'
               or config_status_id LIKE '%{$search}%'
+              or user_unit_code LIKE '%{$search}%'
             ");
             $list = PettyCashModel::hydrate($list);
         } else {
@@ -2120,6 +2218,7 @@ class PettyCashController extends Controller
                 ->orWhere('claimant_name', 'LIKE', "%{$search}%")
                 ->orWhere('claimant_staff_no', 'LIKE', "%{$search}%")
                 ->orWhere('config_status_id', 'LIKE', "%{$search}%")
+                ->orWhere('user_unit_code', 'LIKE', "%{$search}%")
                 ->paginate(50);
         }
 
@@ -2144,72 +2243,6 @@ class PettyCashController extends Controller
         return view('eforms.petty-cash.list')->with($params);
     }
 
-    public function search1(Request $request)
-    {
-        if (Auth::user()->type_id == config('constants.user_types.developer')) {
-
-            // dd(222);
-            $list = DB::select("SELECT * FROM eform_petty_cash
-              where code LIKE '%{$request->search}%'
-              or claimant_name LIKE '%{$request->search}%'
-              or claimant_staff_no LIKE '%{$request->search}%'
-              or claim_date LIKE '%{$request->search}%'
-              or AUTHORISED_BY LIKE '%{$request->search}%'
-              or AUTHORISED_STAFF_NO LIKE '%{$request->search}%'
-              or STATION_MANAGER LIKE '%{$request->search}%'
-              or STATION_MANAGER LIKE '%{$request->search}%'
-              or ACCOUNTANT LIKE '%{$request->search}%'
-              or ACCOUNTANT_STAFF_NO LIKE '%{$request->search}%'
-              or EXPENDITURE_OFFICE LIKE '%{$request->search}%'
-              or EXPENDITURE_OFFICE_STAFF_NO LIKE '%{$request->search}%'
-              or SECURITY_NAME LIKE '%{$request->search}%'
-              or SECURITY_STAFF_NO LIKE '%{$request->search}%'
-              or total_payment LIKE '%{$request->search}%'
-              or config_status_id LIKE '%{$request->search}%'
-            ");
-            $list = PettyCashModel::hydrate($list)->all();
-        } else {
-            //find the petty cash with that id
-            $list = PettyCashModel::
-            where('code', 'LIKE', "%{$request->search}%")
-                ->orWhere('claimant_name', 'LIKE', "%{$request->search}%")
-                ->orWhere('claimant_staff_no', 'LIKE', "%{$request->search}%")
-                ->orWhere('claim_date', 'LIKE', "%{$request->search}%")
-                ->orWhere('AUTHORISED_BY', 'LIKE', "%{$request->search}%")
-                ->orWhere('AUTHORISED_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('STATION_MANAGER', 'LIKE', "%{$request->search}%")
-                ->orWhere('STATION_MANAGER_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('ACCOUNTANT', 'LIKE', "%{$request->search}%")
-                ->orWhere('ACCOUNTANT_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('EXPENDITURE_OFFICE', 'LIKE', "%{$request->search}%")
-                ->orWhere('EXPENDITURE_OFFICE_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('SECURITY_NAME', 'LIKE', "%{$request->search}%")
-                ->orWhere('SECURITY_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('total_payment', 'LIKE', "%{$request->search}%")
-                ->orWhere('config_status_id', 'LIKE', "%{$request->search}%")
-                ->get();
-        }
-
-        //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
-        //count all that needs me
-        $totals_needs_me = HomeController::needsMeCount();
-        //pending forms for me before i apply again
-        $pending = HomeController::pendingForMe();
-        $category = "Search Results";
-
-        //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'list' => $list,
-            'totals' => $totals,
-            'pending' => $pending,
-            'category' => $category,
-        ];
-
-        //return view
-        return view('eforms.petty-cash.list')->with($params);
-    }
 
 
 }

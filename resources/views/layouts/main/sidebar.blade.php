@@ -36,6 +36,15 @@
                                 </p>
                             </a>
                         </li>
+                        @if( Auth::user()->type_id == config('constants.user_types.developer'))
+                        <li class="nav-item">
+                            <a href="{{route('main-profile-delegation-show-on-behalf')}}" class="nav-link ">
+                                <i class="nav-icon far fa-circle"></i>
+                                <p> Delegate on Behalf
+                                </p>
+                            </a>
+                        </li>
+                        @endif
                         <li class="nav-item">
                             <a href="{{route('main-profile-delegation-list')}}" class="nav-link ">
                                 <i class="nav-icon far fa-circle"></i>

@@ -54,9 +54,11 @@
             <!-- /.card-header -->
             <div class="card-header text-right  ">
                 @if ( Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007') || Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
-                    <a class="btn btn-sm btn-success " href="{{route('petty-cash-report-export')}}">
+                    <button class="btn btn-sm btn-success "
+                       data-toggle="modal"
+                       data-target="#modal-export">
                         Export {{sizeof($list)}} Records <i class="fa fa-download"></i>
-                    </a>
+                    </button>
                 @endif
                 @if (Auth::user()->type_id == config('constants.user_types.developer') )
                     <a class="btn btn-sm btn-default " href="{{route('petty-cash-report-export-unmark-exported-all')}}"
@@ -83,7 +85,9 @@
                     <table id="example1" class="table m-0">
                         <thead>
                         <tr>
-                            <th>Status</th>
+                            <th>
+                                Month
+                            </th>
                             <th>Code</th>
                             <th>Claimant</th>
                             <th>Claim Date</th>
@@ -106,7 +110,7 @@
                         <tbody>
                         @foreach( $list as $key=>$item )
                             <tr>
-                                <td>{{$item->status->name ?? ""}}</td>
+                                <td>{{$item->created_at->format('F')  ?? ""}}</td>
 {{--                                <td>{{$item->petty_cash->id ?? ""}}</td>--}}
                                 <td>{{$item->petty_cash_code ?? ""}}</td>
                                 <td>{{$item->claimant_name ?? ""}}</td>
@@ -149,6 +153,53 @@
         <!-- /.card -->
     </section>
     <!-- /.content -->
+
+
+    <!-- NEW MODAL-->
+    <div class="modal fade" id="modal-export">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">Select Period To Export</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- form start -->
+                <form role="form-new" method="get" action="{{route('petty-cash-report-export')}} ">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Date From</label>
+                                    <input type="date" class="form-control" id="date_from" name="date_from"
+                                           placeholder="Enter profile name" required>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="code">Date To</label>
+                                    <input type="date" class="form-control" id="date_to" name="date_to"
+                                           placeholder="Enter profile code">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.NEW modal -->
+
+
 
 
 @endsection

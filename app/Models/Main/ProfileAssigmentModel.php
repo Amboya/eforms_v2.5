@@ -32,7 +32,7 @@ class ProfileAssigmentModel extends Model
     ] ;
 
     protected $with = [
-
+        'profiles',
         'form',
     ];
 

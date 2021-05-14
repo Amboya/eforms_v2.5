@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\EForms\Subsistence;
 
 use App\Http\Controllers\Controller;
-//use App\Models\EForms\PettyCash\SubsistenceModel;
-use App\Models\EForms\Subsistence\SubsistenceModel;
+use App\Models\EForms\PettyCash\PettyCashModel;
 use App\Models\Main\ProfileAssigmentModel;
-//use App\Models\Subsistence\SubsistenceModel;
-use Illuminate\Http\Request;
+use App\Models\Main\ProfileDelegatedModel;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -22,8 +22,8 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.subsistence')]);
-        session(['eform_code' => config('constants.eforms_name.subsistence')]);
+        session(['eform_id' => config('constants.eforms_id.main_dashboard')]);
+        session(['eform_code' => config('constants.eforms_name.main_dashboard')]);
 
     }
 
@@ -36,17 +36,17 @@ class HomeController extends Controller
     public function index()
     {
         //count new forms
-        $new_forms  = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
+        $new_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
             ->count();
         //count pending forms
-        $pending_forms  = SubsistenceModel::where('config_status_id', '>', config('constants.subsistence_status.new_application'))
-            ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
+        $pending_forms = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
+            ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
             ->count();
         //count closed forms
-        $closed_forms  = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
+        $closed_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
             ->count();
         //count rejected forms
-        $rejected_forms  = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.rejected'))
+        $rejected_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
             ->count();
 
         //add to totals
@@ -55,12 +55,17 @@ class HomeController extends Controller
         $totals['closed_forms'] = $closed_forms;
         $totals['rejected_forms'] = $rejected_forms;
 
+        //list all that needs me
+        $get_profile = self::getMyProfile();
+
         //count all that needs me
         $totals_needs_me = self::needsMeCount();
         //list all that needs me
         $list = self::needsMeList();
         //pending forms for me before i apply again
         $pending = self::pendingForMe();
+
+       // dd($list);
 
         //data to send to the view
         $params = [
@@ -70,161 +75,110 @@ class HomeController extends Controller
             'pending' => $pending,
         ];
         //return view
-
-        //  "id" => "2"
-        //        "cost_center" => "14450"
-        //        "business_unit_code" => "15110"
-        //        "user_unit_code" => "C1904"
-        //        "pay_point_id" => "7"
-        //        "location_id" => "133"
-        //        "division_id" => "23"
-        //        "region_id" => null
-        //        "directorate_id" => "722"
-        //        "config_status_id" => "21"
-        //        "profile" => "1"
-        //        "code_superior" => "MGRNET&O"
-        //        "grade" => "M7"
-        //        "ext_no" => "1142"
-        //        "code" => "1"
-        //        "ref_no" => "INFORMATION AND CYBER SECURITY SYSTEMS"
-        //        "claim_date" => "2021-03-06 16:39:35"
-        //        "claimant_name" => "GILBERT  SIBAJENE"
-        //        "claimant_staff_no" => "20309"
-        //        "station" => null
-        //        "section" => "INFORMATION & CYBER SECURITY SYSTEM SUPORT SERVICE"
-        //        "absc_absent_from" => "2021-03-28 00:00:00"
-        //        "absc_absent_to" => "2021-03-14 00:00:00"
-        //        "absc_visited_place_reason" => "Lusaka"
-        //        "absc_allowance_per_night" => "650"
-        //        "absc_amount" => null
-        //        "trex_total_attached_claim" => null
-        //        "trex_total_claim_amount" => null
-        //        "trex_deduct_advance" => null
-        //        "trex_net_amount_paid" => null
-        //        "allocation_code" => null
-        //        "total_amount" => null
-        //        "authorised_by" => null
-        //        "authorised_staff_no" => null
-        //        "authorised_date" => null
-        //        "station_manager" => null
-        //        "station_manager_staff_no" => null
-        //        "station_manager_date" => null
-        //        "chief_accountant" => null
-        //        "chief_accountant_staff_no" => null
-        //        "chief_accountant_date" => null
-        //        "hr_office" => null
-        //        "hr_office_staff_no" => null
-        //        "hr_date" => null
-        //        "audit_name" => null
-        //        "audit_staff_no" => null
-        //        "audit_date" => null
-        //        "created_by" => "116"
-        //        "created_at" => "2021-03-06 16:39:35"
-        //        "updated_at" => "2021-03-06 16:39:35"
-        //        "deleted_at" => null
-        //        "absc_visited_place" => null
-
-        return view('eforms.subsistence.dashboard')->with($params);
-
+        return view('eforms.petty-cash.dashboard')->with($params);
     }
 
 
-    public static function needsMeCount(){
-        //get the profile associated with petty cash, for this user
+    public static function needsMeCount()
+    {
         $user = Auth::user();
-        $profile_assignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.subsistence'))
-            ->where('user_id', $user->id)->first();
-
-        $default_profile =  $profile_assignement->profiles->id  ?? config('constants.user_profiles.EZESCO_002') ;
-        $user->profile_id = $default_profile ;
-        $user->save();
 
         $pending = 0;
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-            $list = SubsistenceModel::whereDate('updated_at', \Carbon::today())->count();
+            $list = PettyCashModel::whereDate('updated_at', \Carbon::today())->count();
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-            $list = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
-                ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
+            $list = PettyCashModel::where('config_status_id', '=', config('constants.petty_cash_status.new_application'))
+                ->orWhere('config_status_id', '=', config('constants.petty_cash_status.funds_disbursement'))
                 ->count();
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))->count();
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
+                // ->where('code_superior', Auth::user()->position->code )
+                ->count();
 
         } //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hod_approved'))->count();
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hod_approved'))->count();
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hr_approved'))->count();
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hr_approved'))->count();
 
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.chief_accountant'))
-                ->orWhere('config_status_id', config('constants.subsistence_status.security_approved'))
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.chief_accountant'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
                 ->count();
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.funds_acknowledgement'))->count();
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))->count();
             //
-        }
-        else{
-            $list = SubsistenceModel::where('config_status_id', 0 )->get();
+        } //for the AUDIT
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
+                ->count();
+        } else {
+            $list = PettyCashModel::where('config_status_id', 0)->count();
         }
         return $list;
     }
 
 
-    public static function needsMeList(){
-        //get the profile associated with subsistence, for this user
+    public static function needsMeList()
+    {
         $user = Auth::user();
-        $profile_assignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.subsistence'))
-            ->where('user_id', $user->id)->first();
-
-        $default_profile =  $profile_assignement->profiles->id  ?? config('constants.user_profiles.EZESCO_002') ;
-        $user->profile_id = $default_profile ;
-        $user->save();
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-            $list = SubsistenceModel::whereDate('updated_at', \Carbon::today())->get();
-            //  dd(1) ;
+            $list = PettyCashModel::whereDate('updated_at', \Carbon::today())
+                ->orderBy('code')->paginate(50);
+            dd(1);
+
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-            $list = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
-                ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
-                ->get();
-            //  dd(2) ;
+            $list = PettyCashModel::where('config_status_id', '=', config('constants.petty_cash_status.new_application'))
+                ->orWhere('config_status_id', '=', config('constants.petty_cash_status.funds_disbursement'))
+                ->orderBy('code')->paginate(50);
+            //   dd(2) ;
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))->get();
-            //  dd(3) ;
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
+                // ->where('code_superior', Auth::user()->position->code )
+                ->orderBy('code')->paginate(50);
         } //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hod_approved'))->get();
-            //   dd(4) ;
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hod_approved'))
+                ->orderBy('code')->paginate(50);
+
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hr_approved'))->get();
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hr_approved'))
+                ->orderBy('code')->paginate(50);
             //  dd(5) ;
-        } //for the EXPENDITURE OFFICE
+        }
+        //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.chief_accountant'))
-                ->orWhere('config_status_id', config('constants.subsistence_status.security_approved'))
-                ->get();
-            //  dd(6) ;
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.chief_accountant'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
+                ->orderBy('code')->paginate(50);
+
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.funds_acknowledgement'))->get();
-            //   dd(7) ;
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
+                ->orderBy('code')->paginate(50);
+        }//for the AUDIT
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
+                ->orderBy('code')->paginate(50);
         }
-        else{
-            $list = SubsistenceModel::where('config_status_id', 0 )->get();
-           // dd(8) ;
+        else {
+            $list = PettyCashModel::where('config_status_id', 0)
+                ->orderBy('code')->paginate(50);
+            //  dd(8) ;
         }
         return $list;
     }
@@ -232,26 +186,50 @@ class HomeController extends Controller
 
     public static function pendingForMe()
     {
-        //get the profile associated with petty cash, for this user
         $user = Auth::user();
-        $profile_assignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.subsistence'))
-            ->where('user_id', $user->id)->first();
-
-        $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
-        $user->profile_id = $default_profile;
-        $user->save();
-
         $pending = 0;
 
         //for the REQUESTER
         if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             //count pending applications
-            $pending = SubsistenceModel::where('config_status_id', '>=', config('constants.subsistence_status.new_application'))
-                ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
+            $pending = PettyCashModel::where('config_status_id', '>=', config('constants.petty_cash_status.new_application'))
+                ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
                 ->count();
         }
 
-        return $pending ;
+        return $pending;
     }
+
+
+
+    public static function getMyProfile()
+    {
+        //get the profile associated with petty cash, for this user
+        $user = Auth::user();
+        //[1]  GET YOUR PROFILE
+        $profile_assignement = ProfileAssigmentModel::
+        where('eform_id', config('constants.eforms_id.petty_cash'))
+            ->where('user_id', $user->id)->first();
+        //  use my profile - if i dont have one - give me the default
+        $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
+        $user->profile_id = $default_profile;
+        $user->profile_unit_code = $user->user_unit_code;
+        $user->profile_job_code = $user->job_code;
+        $user->save();
+
+        //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
+        $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.petty_cash'))
+            ->where('delegated_to', $user->id)
+            ->where('config_status_id',  config('constants.active_state') );
+        if ($profile_delegated->exists()) {
+            //
+            $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
+            $user->profile_id = $default_profile;
+            $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
+            $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
+            $user->save();
+        }
+    }
+
 
 }

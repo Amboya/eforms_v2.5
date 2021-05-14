@@ -142,7 +142,15 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body p-2">
-                            <div class="table-responsive">
+                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')   )
+                                @if($auditor < 1)
+                                @else
+                                    <p class="text-danger  mb-10">
+                                           Please note that the transactions for the current period cannot be closed because the transactions for the previous period
+                                            have not been cleared by Audit. ({{$auditor}} transactions pending).</p>
+                                @endif
+                            @endif
+                            <div class="table-responsive mt-10 ">
                                 <table id="example1" class="table ">
                                     <thead>
                                     <tr>
