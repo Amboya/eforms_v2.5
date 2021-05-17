@@ -122,6 +122,52 @@
                             </div>
                         </div>
                         <div class="card-body">
+
+                            <table class="graph">
+                                <caption>Bar Chart HTML From HTML Table</caption>
+                                <thead>
+                                <tr>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Percent</th>
+                                </tr>
+                                </thead><tbody>
+                                <tr style="height:845%">
+                                    <th scope="row">Your Blog</th>
+                                    <td><span>85%</span></td>
+                                </tr>
+                                <tr style="height:223%">
+                                    <th scope="row">Medium</th>
+                                    <td><span>23%</span></td>
+                                </tr>
+                                <tr style="height:7%">
+                                    <th scope="row">Tumblr</th>
+                                    <td><span>7%</span></td>
+                                </tr>
+                                <tr style="height:38%">
+                                    <th scope="row">Facebook</th>
+                                    <td><span>38%</span></td>
+                                </tr>
+                                <tr style="height:35%">
+                                    <th scope="row">Youtube</th>
+                                    <td><span>35%</span></td>
+                                </tr>
+                                <tr style="height:30%">
+                                    <th scope="row">LinkedIn</th>
+                                    <td><span>30%</span></td>
+                                </tr>
+                                <tr style="height:5%">
+                                    <th scope="row">Twitter</th>
+                                    <td><span>5%</span></td>
+                                </tr>
+                                <tr style="height:20%">
+                                    <th scope="row">Other</th>
+                                    <td><span>20%</span></td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+
+
                             <div class="chart">
                                 <canvas id="myChart" width="400" height="400"></canvas>
                             </div>

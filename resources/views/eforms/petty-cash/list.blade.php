@@ -153,6 +153,98 @@
     <!-- /.content -->
 
 
+
+    @foreach($list as $item)
+        <!-- VOID MODAL-->
+        <div class="modal fade" id="modal-void{{$item->id}}">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content bg-defualt">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">Mark Voucher as Void</h4>
+                    </div>
+                    <!-- form start -->
+                    <form role="form" method="post"
+                          action="{{route('petty-cash-void', ['id' => $item->id])}}">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="text-center">Are you sure you want to mark this form as void? </p>
+                                    <p class="text-center">Note that you can not undo this action. </p>
+                                </div>
+
+                                <div class="col-2">
+                                    <label>Reason</label>
+                                </div>
+                                <div class="col-10">
+                                    <div class="input-group">
+                                        <textarea class="form-control" rows="2" name="reason"
+                                                  placeholder="Enter reason why" required>
+                                        </textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Mark</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.VOID modal -->
+
+        <!-- REVERSE MODAL-->
+        <div class="modal fade" id="modal-reverse{{$item->id}}">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content bg-defualt">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">Reverse this petty cash one step backwards</h4>
+                    </div>
+                    <!-- form start -->
+                    <form role="form" method="post"
+                          action="{{route('petty-cash-reverse', ['id' => $item->id])}}">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="text-center">Are you sure you want to reverse this application to the
+                                        previous stage? </p>
+                                    <p class="text-center">Note that you can not undo this action. </p>
+                                </div>
+
+                                <div class="col-2">
+                                    <label>Reason</label>
+                                </div>
+                                <div class="col-10">
+                                    <div class="input-group">
+                                        <textarea class="form-control" rows="2" name="reason"
+                                                  placeholder="Enter reason why" required>
+                                        </textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Mark</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.REVERSE modal -->
+    @endforeach
+
+
+
 @endsection
 
 

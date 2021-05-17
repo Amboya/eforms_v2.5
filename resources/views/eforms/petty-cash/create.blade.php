@@ -142,7 +142,7 @@
                                                       placeholder="Item Details / Description" id="name"
                                                       required></textarea>
                                         </TD>
-                                        <TD><input type="number" id="amount" name="amount[]" onchange="getvalues()"
+                                        <TD><input type="number" step="any" id="amount" name="amount[]" onchange="getvalues()"
                                                    class="form-control amount" placeholder="Amount [ZMW]">
                                         </TD>
                                     </TR>

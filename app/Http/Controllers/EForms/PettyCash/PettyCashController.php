@@ -293,7 +293,7 @@ class PettyCashController extends Controller
             ]);
 
         //redirect home
-        return Redirect::back()->with('message', 'Petty Cash ' . $form->code . ' for has been marked as Void successfully');
+        return Redirect::route('petty-cash-home')->with('message', 'Petty Cash ' . $form->code . ' for has been marked as Void successfully');
 
     }
 
@@ -1599,9 +1599,9 @@ class PettyCashController extends Controller
         }
 
         //  dd($user_array);
-        $to[] = ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'];
-        $to[] = ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapuka Sikazwe'];
-        $to[] = ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'];
+//        $to[] = ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'];
+//        $to[] = ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapuka Sikazwe'];
+//        $to[] = ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'];
         //prepare details
         $details = [
             'name' => $names,
@@ -1723,7 +1723,6 @@ class PettyCashController extends Controller
         //[3] return the list of users
         return $users_array;
     }
-
 
     public function reports(Request $request, $value)
     {
@@ -2097,6 +2096,8 @@ class PettyCashController extends Controller
 
             //new status
             $new_status_id = $current_status - 1;
+
+
             $status_model = StatusModel::where('id', $new_status_id)
                 ->where('eform_id', config('constants.eforms_id.petty_cash'))->first();
             $previous_status = $status_model->id;
@@ -2228,7 +2229,6 @@ class PettyCashController extends Controller
             return Redirect::back()->with('error', 'Sorry an error happened');
         }
     }
-
 
     public function search(Request $request)
     {

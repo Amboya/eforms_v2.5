@@ -290,7 +290,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <span class="font-weight-light">Change was: ZMW {{$form->change ?? 0}}</span>
+                        <span class="font-weight-normal">Change was: ZMW {{$form->change ?? 0}}</span>
                     </div>
                 </div>
             @endif
