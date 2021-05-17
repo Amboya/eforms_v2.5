@@ -765,6 +765,7 @@ class PettyCashController extends Controller
             'form_accounts' => $form_accounts,
             'totals_needs_me' => $totals_needs_me,
             'form' => $form,
+            'user' => Auth::user(),
             'projects' => $projects,
             'user_array' => $user_array,
             'approvals' => $approvals,
