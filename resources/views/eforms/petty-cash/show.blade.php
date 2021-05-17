@@ -243,6 +243,57 @@
             </div>
             <!-- /.card -->
 
+            {{-- FINANCIAL POSTINGS  --}}
+            @if(  ($form->config_status_id >= config('constants.petty_cash_status.closed') )
+               && ( ($user->profile_id ==  config('constants.user_profiles.EZESCO_007'))
+               || ($user->profile_id ==  config('constants.user_profiles.EZESCO_014'))
+               || ($user->profile_id ==  config('constants.user_profiles.EZESCO_011'))
+               ) )
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-center">Financial Accounts Postings</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="table-responsive">
+                                <div class="col-lg-12 ">
+                                    <TABLE class="table">
+                                        <thead>
+                                        <TR>
+                                            <TD>Account</TD>
+                                            <TD>Debited Amount</TD>
+                                            <TD>Credited Amount</TD>
+                                        </TR>
+                                        </thead>
+
+                                        <tbody>
+                                        @foreach($form_accounts as $item)
+                                            <TR>
+                                                <TD><input list="accounts_list" type="text"
+                                                           value="{{$item->account}}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                                <TD><input type="number" id="credited_amount"
+                                                           value="{{ number_format($item->creditted_amount ?? 0,2) }}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                                <TD><input type="number" value="{{ number_format($item->debitted_amount ?? 0, 2) }}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                            </TR>
+                                        @endforeach
+                                        </tbody>
+
+                                    </TABLE>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="font-weight-light">Change was: ZMW {{$form->change ?? 0}}</span>
+                    </div>
+                </div>
+            @endif
             {{-- NEXT PERSONS TO ACT --}}
             @if(  $form->config_status_id != config('constants.petty_cash_status.closed')   )
                 <div class="card">
@@ -570,7 +621,6 @@
                                         <TABLE id="dataTable2" class="table">
                                             <TR>
                                                 <TD><INPUT type="checkbox" name="chk"/></TD>
-
                                                 <TD>
                                                     <div class="row">
                                                         <div class="col-12">
@@ -652,12 +702,10 @@
                                     </div>
                                 </div>
                             </div>
-
                             <hr>
                             <div class="row">
                                 <textarea hidden class="form-control" rows="2" name="reason" required> Funds Disbursement</textarea>
                                 <div id="submit_not_possible" class="col-12 text-center">
-
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
                                         Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
                                                 )</strong>
@@ -802,41 +850,6 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
-                            <h6 class="text-center">The Updated Accounts</h6>
-                            <div class="col-lg-12 grid-margin stretch-card">
-                                <div class="table-responsive">
-                                    <div class="col-lg-12 ">
-                                        <TABLE class="table">
-                                            <thead>
-                                            <TR>
-                                                <TD>Account</TD>
-                                                <TD>Credited Amount</TD>
-                                                <TD>Debited Amount</TD>
-                                            </TR>
-                                            </thead>
-
-                                            <tbody>
-                                            @foreach($form_accounts as $item)
-                                                <TR>
-                                                    <TD><input list="accounts_list" type="text"
-                                                               value="{{$item->account}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                    <TD><input type="number" id="credited_amount"
-                                                               value="{{$item->creditted_amount}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                    <TD><input type="number" value="{{$item->debitted_amount}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                </TR>
-                                            @endforeach
-                                            </tbody>
-
-                                        </TABLE>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="card">
                                 <div class="col-lg-10 p-2 mt-3 ">
                                     <div class="row">
