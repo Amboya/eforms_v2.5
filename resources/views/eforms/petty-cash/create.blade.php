@@ -170,15 +170,13 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="input-group">
-                                            <input type="file" class="form-control" multiple name="quotation[]"
-                                                   id="receipt" title="Upload Quotation Files (Optional)" >
+                                            <input type="file" class="form-control" multiple name="quotation[]" id="receipt" title="Upload Quotation Files (Optional)" >
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <hr>
                         </div>
-
                     </div>
 
 

@@ -859,7 +859,7 @@
                                         <div class="col-8">
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="number" onchange="showChange()" class="form-control"
+                                                    <input type="number" step="any" onchange="showChange()" class="form-control"
                                                            name="change" id="change" required>
                                                 </div>
                                             </div>
