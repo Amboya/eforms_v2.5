@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\EForms\Subsistence;
+namespace App\Http\Controllers\EForms\PettyCash;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Main\ActivityLogsController;
 use App\Mail\SendMail;
 use App\Models\EForms\PettyCash\PettyCashAccountModel;
 use App\Models\EForms\PettyCash\PettyCashItemModel;
-use App\Models\EForms\PettyCash\SubsistenceModel;
+use App\Models\EForms\PettyCash\PettyCashModel;
 use App\Models\Main\AccountsChartModel;
 use App\Models\Main\AttachedFileModel;
 use App\Models\Main\EformApprovalsModel;
@@ -19,9 +19,9 @@ use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
 use App\Models\main\TotalsModel;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Redirect;
 use Mockery\CountValidator\Exception;
 
 
-class SubsistenceController extends Controller
+class PettyCashController extends Controller
 {
 
     /**
@@ -41,8 +41,8 @@ class SubsistenceController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.subsistence')]);
-        session(['eform_code' => config('constants.eforms_name.subsistence')]);
+        session(['eform_id' => config('constants.eforms_id.petty_cash')]);
+        session(['eform_code' => config('constants.eforms_name.petty_cash')]);
     }
 
 
@@ -54,54 +54,86 @@ class SubsistenceController extends Controller
     public function index(Request $request, $value)
     {
 
-        //get list of all Subsistence forms for today
+        $list_for_auditors_action = 0;
+        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')) {
+            /** check if auditor created last months files */
+            $last_month = Carbon::now()->subDays(30)->toDateTimeString();
+            $list_for_auditors_action = PettyCashModel::
+            where('config_status_id', config('constants.petty_cash_status.closed'))
+                ->where('created_at', '>=', $last_month)
+                ->count();
+        }
+
+        //get list of all petty cash forms for today
         if ($value == "all") {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::orderBy('code')->paginate(50);
+            if ($list_for_auditors_action > 1) {
+                // not cleared
+                $list = PettyCashModel::where('config_status_id', '!=', config('constants.petty_cash_status.chief_accountant'))
+                    ->orderBy('code')->paginate(50);
+            } else {
+                //cleared
+                $list = PettyCashModel::orderBy('code')->paginate(50);
+            }
             $category = "All";
-        } else if ($value == "pending") {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', '>', config('constants.subsistence_status.new_application'))
-                ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
-                ->orderBy('code')->paginate(50);
+        }
+        else if ($value == "pending") {
+            if ($list_for_auditors_action > 1) {
+                // not cleared
+                $list = PettyCashModel::
+                where('config_status_id', config('constants.petty_cash_status.hod_approved'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.hr_approved'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.chief_accountant'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.funds_disbursement'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.new_application'))
+                    ->orwhere('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
+                    ->where('config_status_id', '!=', config('constants.petty_cash_status.security_approved'))
+                    ->orderBy('code')->paginate(50);
+            } else {
+                //cleared
+                $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
+                    ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
+                    ->orderBy('code')->paginate(50);
+            }
             $category = "Opened";
-        } else if ($value == config('constants.subsistence_status.new_application')) {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
+        } else if ($value == config('constants.petty_cash_status.new_application')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
                 ->orderBy('code')->paginate(50);
             $category = "New Application";
-        } else if ($value == config('constants.subsistence_status.closed')) {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
+        } else if ($value == config('constants.petty_cash_status.closed')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
             //  dd(11);
-        } else if ($value == config('constants.subsistence_status.rejected')) {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.rejected'))
+        } else if ($value == config('constants.petty_cash_status.rejected')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
                 ->orderBy('code')->paginate(50);
             $category = "Rejected";
-        } else if ($value == config('constants.subsistence_status.cancelled')) {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status. cancelled'))
+        } else if ($value == config('constants.petty_cash_status.cancelled')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status. cancelled'))
                 ->orderBy('code')->paginate(50);
             $category = "Cancelled";
-        } else if ($value == config('constants.subsistence_status.void')) {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.void'))
+        } else if ($value == config('constants.petty_cash_status.void')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.void'))
                 ->orderBy('code')->paginate(50);
             $category = "Void";
-        } else if ($value == config('constants.subsistence_status.audited')) {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.audited'))
+        } else if ($value == config('constants.petty_cash_status.audited')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audited'))
                 ->orderBy('code')->paginate(50);
             $category = "Audited";
-        } else if ($value == config('constants.subsistence_status.queried')) {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.queried'))
+        } else if ($value == config('constants.petty_cash_status.queried')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.queried'))
                 ->orderBy('code')->paginate(50);
             $category = "Queried";
         } else if ($value == "needs_me") {
             $list = $totals_needs_me = HomeController::needsMeList();
             $category = "Needs My Attention";
         } else if ($value == "admin") {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', 0)
+            $list = PettyCashModel::where('config_status_id', 0)
                 ->orderBy('code')->paginate(50);
         }
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -118,7 +150,7 @@ class SubsistenceController extends Controller
         ];
 
         //return view
-        return view('eforms.subsistence.list')->with($params);
+        return view('eforms.petty-cash.list')->with($params);
 
     }
 
@@ -130,35 +162,35 @@ class SubsistenceController extends Controller
      */
     public function records(Request $request, $value)
     {
-        //get list of all Subsistence forms for today
+        //get list of all petty cash forms for today
         if ($value == "all") {
 
-            $list = DB::table('eform_subsistence')
-                ->select('eform_subsistence.*', 'config_status.name as status_name ', 'config_status.html as html ' )
-                ->join('config_status' , 'eform_subsistence.config_status_id', '=', 'config_status.id')
+            $list = DB::table('eform_petty_cash')
+                ->select('eform_petty_cash.*', 'config_status.name as status_name ', 'config_status.html as html ')
+                ->join('config_status', 'eform_petty_cash.config_status_id', '=', 'config_status.id')
                 ->paginate(50);
 
             $category = "All Records";
         } else if ($value == "pending") {
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', '>', config('constants.subsistence_status.new_application'))
-                ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
+            $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
+                ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
                 ->orderBy('code')->paginate(50);
             $category = "Opened";
-        } else if ($value == config('constants.subsistence_status.new_application')) {
+        } else if ($value == config('constants.petty_cash_status.new_application')) {
 
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
                 ->orderBy('code')->paginate(50);
             $category = "New Application";
 
-        } else if ($value == config('constants.subsistence_status.closed')) {
+        } else if ($value == config('constants.petty_cash_status.closed')) {
 
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
 
-        } else if ($value == config('constants.subsistence_status.rejected')) {
+        } else if ($value == config('constants.petty_cash_status.rejected')) {
 
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::where('config_status_id', config('constants.subsistence_status.rejected'))
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
                 ->orderBy('code')->paginate(50);
 
             $category = "Rejected";
@@ -175,7 +207,7 @@ class SubsistenceController extends Controller
 
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -193,7 +225,7 @@ class SubsistenceController extends Controller
         ];
 
         //return view
-        return view('eforms.subsistence.records')->with($params);
+        return view('eforms.petty-cash.records')->with($params);
 
     }
 
@@ -204,21 +236,21 @@ class SubsistenceController extends Controller
      */
     public function void(Request $request, $id)
     {
-        //GET THE Subsistence MODEL
-        $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} ");
-        $form = \App\Models\EForms\Subsistence\SubsistenceModel::hydrate($list)->first();
+        //GET THE PETTY CASH MODEL
+        $list = DB::select("SELECT * FROM eform_petty_cash where id = {$id} ");
+        $form = PettyCashModel::hydrate($list)->first();
         //get the status
         $current_status = $form->status->id;
         $new_status = 0;
         $user = Auth::user();
         //get the form type
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.subsistence'));
+        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
 
         //HANDLE VOID REQUEST
-        $new_status = config('constants.subsistence_status.void');
+        $new_status = config('constants.petty_cash_status.void');
 
         //update the totals rejected
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
             ->where('id', config('constants.totals.petty_cash_reject'))
             ->first();
         $totals->value = $totals->value + 1;
@@ -227,7 +259,7 @@ class SubsistenceController extends Controller
         $eform_pettycash->save();
 
         //update the totals open
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
             ->where('id', config('constants.totals.petty_cash_open'))
             ->first();
         $totals->value = $totals->value - 1;
@@ -237,7 +269,7 @@ class SubsistenceController extends Controller
 
         //get status id
         $status_model = StatusModel::where('id', $new_status)
-            ->where('eform_id', config('constants.eforms_id.subsistence'))->first();
+            ->where('eform_id', config('constants.eforms_id.petty_cash'))->first();
         $new_status = $status_model->id;
 
         //update the form status
@@ -255,13 +287,13 @@ class SubsistenceController extends Controller
                 'action' => $request->approval,
                 'current_status_id' => $current_status,
                 'action_status_id' => $new_status,
-                'config_eform_id' => config('constants.eforms_id.subsistence'),
+                'config_eform_id' => config('constants.eforms_id.petty_cash'),
                 'eform_id' => $form->id,
                 'created_by' => $user->id,
             ]);
 
         //redirect home
-        return Redirect::back()->with('message', 'Subsistence ' . $form->code . ' for has been marked as Void successfully');
+        return Redirect::route('petty-cash-home')->with('message', 'Petty Cash ' . $form->code . ' for has been marked as Void successfully');
 
     }
 
@@ -284,7 +316,7 @@ class SubsistenceController extends Controller
             'user' => $user
         ];
         //show the create form
-        return view('eforms.subsistence.create')->with($params);
+        return view('eforms.petty-cash.create')->with($params);
     }
 
     /**
@@ -303,18 +335,18 @@ class SubsistenceController extends Controller
         $pending = HomeController::pendingForMe();
         if ($pending >= 1) {
             //return with error msg
-            return Redirect::route('subsistence.home')->with('error', 'Sorry, You can not raise a new Subsistence because you already have an open Subsistence. Please allow the opened one to be closed or cancelled');
+            return Redirect::route('petty-cash-home')->with('error', 'Sorry, You can not raise a new petty cash because you already have an open petty cash. Please allow the opened one to be closed or cancelled');
         }
 
         //[2A] find my code superior
-        $my_hods = self::findMyNextPerson(config('constants.subsistence_status.new_application'), $user->user_unit, $user);
+        $my_hods = self::findMyNextPerson(config('constants.petty_cash_status.new_application'), $user->user_unit, $user);
 
         if (empty($my_hods)) {
             //prepare details
             $details = [
                 'name' => "Team",
-                'url' => 'subsistence.home',
-                'subject' => "subsistence.Voucher Path Configuration Needs Your Attention",
+                'url' => 'petty-cash-home',
+                'subject' => "Petty-Cash-Voucher Path Configuration Needs Your Attention",
                 'title' => "Path Configuration Not Defined For {$user->name}",
                 'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} and Phone/Extension {$user->phone}, managed to submit or raise new petty-cash voucher.
                      <br>But the voucher path is not completely configured. Please confirm that this is so and take action to correct this as soon as possible.
@@ -326,7 +358,7 @@ class SubsistenceController extends Controller
                    4: Expenditure -> {$user->user_unit->expenditure_code} : {$user->user_unit->expenditure_unit}  <br>
                    5: Security -> {$user->user_unit->security_code} : {$user->user_unit->security_unit}  <br>
                    Please assign the correct position code and position user-unit for {$user->user_unit->user_unit_code}. <br>
-                <br>You can update the details by clicking on 'Subsistence Work Flow' menu, then search for {$user->user_unit->user_unit_code}
+                <br>You can update the details by clicking on 'Petty Cash Work Flow' menu, then search for {$user->user_unit->user_unit_code}
                  and 'Edit' to update the correct details . <br> <br>
                  Else the HOD has not registered or assigned the correct profile yet.
                  "
@@ -339,13 +371,13 @@ class SubsistenceController extends Controller
             $error = true;
             //return with error msg
 
-             }
+        }
 
-        //generate the Subsistence unique code
+        //generate the petty cash unique code
         $code = self::randGenerator("PT", 1);
 
         //raise the voucher
-        $formModel = \App\Models\EForms\Subsistence\SubsistenceModel::firstOrCreate(
+        $formModel = PettyCashModel::firstOrCreate(
             [
                 'total_payment' => $request->total_payment,
                 'claim_date' => $request->date,
@@ -358,12 +390,12 @@ class SubsistenceController extends Controller
                 'division_id' => $user->user_division_id,
                 'region_id' => $user->user_region_id,
                 'directorate_id' => $user->user_directorate_id,
-                'projects_id' => $request->projects_id ,
+                'projects_id' => $request->projects_id,
 
                 'total_payment' => $request->total_payment,
                 'code' => $code,
                 'ref_no' => $request->ref_no,
-                'config_status_id' => config('constants.subsistence_status.new_application'),
+                'config_status_id' => config('constants.petty_cash_status.new_application'),
 
                 'claimant_name' => $request->claimant_name,
                 'claimant_staff_no' => $request->sig_of_claimant,
@@ -415,7 +447,7 @@ class SubsistenceController extends Controller
         $files = $request->file('quotation');
         if ($request->hasFile('quotation')) {
             foreach ($files as $file) {
-                $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
+                $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
                 // Get just filename
                 $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                 //get size
@@ -435,7 +467,7 @@ class SubsistenceController extends Controller
                         'extension' => $extension,
                         'file_size' => $size,
                         'form_id' => $formModel->code,
-                        'form_type' => config('constants.eforms_id.subsistence'),
+                        'form_type' => config('constants.eforms_id.petty_cash'),
                         'file_type' => config('constants.file_type.quotation')
                     ],
                     [
@@ -444,7 +476,7 @@ class SubsistenceController extends Controller
                         'extension' => $extension,
                         'file_size' => $size,
                         'form_id' => $formModel->code,
-                        'form_type' => config('constants.eforms_id.subsistence'),
+                        'form_type' => config('constants.eforms_id.petty_cash'),
                         'file_type' => config('constants.file_type.quotation')
                     ]
                 );
@@ -452,12 +484,12 @@ class SubsistenceController extends Controller
         }
 
         /** update the totals */
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
             ->where('id', config('constants.totals.petty_cash_new'))
             ->first();
         $totals->value = $totals->value + 1;
         $totals->save();
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.subsistence'));
+        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
         $eform_pettycash->total_new = $totals->value;
         $eform_pettycash->save();
 
@@ -475,7 +507,7 @@ class SubsistenceController extends Controller
         //prepare details
         $details = [
             'name' => $names,
-            'url' => 'subsistence.home',
+            'url' => 'petty-cash-home',
             'subject' => "New Petty-Cash Voucher Needs Your Attention",
             'title' => "New Petty-Cash Voucher Needs Your Attention {$user->name}",
             'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} has successfully raised a petty-cash voucher with
@@ -486,16 +518,16 @@ class SubsistenceController extends Controller
         $mail_to_is = Mail::to($to)->send(new SendMail($details));
 
         // log the activity
-        ActivityLogsController::store($request, "Creating of Subsistence", "update", " pay point created", $formModel->id);
+        ActivityLogsController::store($request, "Creating of Petty Cash", "update", " pay point created", $formModel->id);
 
         if ($error) {
             // return with error msg
-            return Redirect::route('subsistence.home')->with('error', 'Sorry!, The superior who is supposed to approve your Subsistence,
+            return Redirect::route('petty-cash-home')->with('error', 'Sorry!, The superior who is supposed to approve your petty cash,
                        <br> has not registered or not fully configured yet, Please, <b>try first contacting your superior</b> so as to make sure he/she has registered in the system,
-                       then you can contact eZESCO Admins (1142,1126,2350,2345,3309,3306 or 3319) isd@zesco.co.zm to configure your Subsistence voucher path. Your petty-cash voucher has been saved.');
+                       then you can contact eZESCO Admins (1142,1126,2350,2345,3309,3306 or 3319) isd@zesco.co.zm to configure your petty cash voucher path. Your petty-cash voucher has been saved.');
         } else {
             // return the view
-            return Redirect::route('subsistence.home')->with('message', 'Subsistence Details for ' . $formModel->code . ' have been Created successfully');
+            return Redirect::route('petty-cash-home')->with('message', 'Petty Cash Details for ' . $formModel->code . ' have been Created successfully');
         }
     }
 
@@ -511,40 +543,40 @@ class SubsistenceController extends Controller
         $not_claimant = true;
 
         //FOR MY HOD USERS
-        if ($current_status == config('constants.subsistence_status.new_application')) {
+        if ($current_status == config('constants.petty_cash_status.new_application')) {
             $superior_user_unit = $user_unit->hod_unit;
             $superior_user_code = $user_unit->hod_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
 
-        } elseif ($current_status == config('constants.subsistence_status.hod_approved')) {
+        } elseif ($current_status == config('constants.petty_cash_status.hod_approved')) {
             $superior_user_code = $user_unit->hrm_code;
             $superior_user_unit = $user_unit->hrm_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
 
-        } elseif ($current_status == config('constants.subsistence_status.hr_approved')) {
+        } elseif ($current_status == config('constants.petty_cash_status.hr_approved')) {
             $superior_user_code = $user_unit->ca_code;
             $superior_user_unit = $user_unit->ca_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
 
-        } elseif ($current_status == config('constants.subsistence_status.chief_accountant')) {
+        } elseif ($current_status == config('constants.petty_cash_status.chief_accountant')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
 
-        } elseif ($current_status == config('constants.subsistence_status.funds_disbursement')) {
+        } elseif ($current_status == config('constants.petty_cash_status.funds_disbursement')) {
             $not_claimant = false;
 
-        } elseif ($current_status == config('constants.subsistence_status.funds_acknowledgement')) {
+        } elseif ($current_status == config('constants.petty_cash_status.funds_acknowledgement')) {
             $superior_user_unit = $user_unit->security_unit;
             $superior_user_code = $user_unit->security_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_013'));
 
-        } elseif ($current_status == config('constants.subsistence_status.security_approved')) {
+        } elseif ($current_status == config('constants.petty_cash_status.security_approved')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
             // dd(1);
-        } elseif ($current_status == config('constants.subsistence_status.closed')) {
+        } elseif ($current_status == config('constants.petty_cash_status.closed')) {
             $superior_user_unit = $user_unit->audit_unit;
             $superior_user_code = $user_unit->audit_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
@@ -561,7 +593,7 @@ class SubsistenceController extends Controller
             $users_list[] = '';
             //[A]check for any users who have this assigned profile
             $assigned_users = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.subsistence'))
+            where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('profile', $profile->code)
                 ->get();
             //loop through assigned users
@@ -590,12 +622,14 @@ class SubsistenceController extends Controller
             }
             //[B]check if one the users with the profile have this delegated profile
             $delegated_users = ProfileDelegatedModel::
-            where('eform_id', config('constants.eforms_id.subsistence'))
-                ->where('delegated_profile', $profile->code)
+            where('eform_id', config('constants.eforms_id.petty_cash'))
+                ->where('delegated_profile', $profile->id)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
                 ->where('config_status_id', config('constants.active_state'))
                 ->get();
+
+//            dd( $profile->code  );
             //loop through delegated users
             foreach ($delegated_users as $item) {
                 $user = User::find($item->delegated_to);
@@ -618,8 +652,8 @@ class SubsistenceController extends Controller
      */
     public function randGenerator($head, $value)
     {
-        // use the total number of Subsistence in the system
-        $count = DB::select("SELECT count(id) as total FROM eform_subsistence ");
+        // use the total number of petty cash in the system
+        $count = DB::select("SELECT count(id) as total FROM eform_petty_cash ");
 
         //random number
         // $random = rand(1, 9999999);
@@ -628,7 +662,7 @@ class SubsistenceController extends Controller
         $random = sprintf("%07d", ($random + $value));
         $random = $head . $random;
 
-        $count_existing_forms = DB::select("SELECT count(id) as total FROM eform_subsistence WHERE code = '{$random}'");
+        $count_existing_forms = DB::select("SELECT count(id) as total FROM eform_petty_cash WHERE code = '{$random}'");
         try {
             $total = $count_existing_forms[0]->total;
         } catch (\Exception $exception) {
@@ -650,27 +684,27 @@ class SubsistenceController extends Controller
      */
     public function show($id)
     {
-        //GET THE Subsistence MODEL if you are an admin
+        //GET THE PETTY CASH MODEL if you are an admin
         //  if (Auth::user()->type_id == config('constants.user_types.developer')) {
-        $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} ");
-        $form = \App\Models\EForms\Subsistence\SubsistenceModel::hydrate($list)->first();
+        $list = DB::select("SELECT * FROM eform_petty_cash where id = {$id} ");
+        $form = PettyCashModel::hydrate($list)->first();
 //        } else {
-//            //find the Subsistence with that id
-//            $form = \App\Models\EForms\Subsistence\SubsistenceModel::find($id);
+//            //find the petty cash with that id
+//            $form = PettyCashModel::find($id);
 //        }
 
         $receipts = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.subsistence'))
+            ->where('form_type', config('constants.eforms_id.petty_cash'))
             ->where('file_type', config('constants.file_type.receipt'))
             ->get();
         $quotations = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.subsistence'))
+            ->where('form_type', config('constants.eforms_id.petty_cash'))
             ->where('file_type', config('constants.file_type.quotation'))
             ->get();
         $form_accounts = PettyCashAccountModel::where('eform_petty_cash_id', $id)->get();
         $projects = ProjectsModel::all();
         $accounts = AccountsChartModel::all();
-        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.subsistence'))
+        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.petty_cash'))
             ->orderBy('created_at', 'asc')->get();
 
         $user = User::find($form->created_by);
@@ -689,32 +723,33 @@ class SubsistenceController extends Controller
             'projects' => $projects,
             'user_array' => $user_array,
             'approvals' => $approvals,
+            'user' => Auth::user(),
             'accounts' => $accounts
         ];
         //return view
-        return view('eforms.subsistence.show')->with($params);
+        return view('eforms.petty-cash.show')->with($params);
 
     }
 
 
     public function showForm($id)
     {
-        //GET THE Subsistence MODEL if you are an admin
-        $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} ");
-        $form = \App\Models\EForms\Subsistence\SubsistenceModel::hydrate($list)->first();
+        //GET THE PETTY CASH MODEL if you are an admin
+        $list = DB::select("SELECT * FROM eform_petty_cash where id = {$id} ");
+        $form = PettyCashModel::hydrate($list)->first();
 
         $receipts = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.subsistence'))
+            ->where('form_type', config('constants.eforms_id.petty_cash'))
             ->where('file_type', config('constants.file_type.receipt'))
             ->get();
         $quotations = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.subsistence'))
+            ->where('form_type', config('constants.eforms_id.petty_cash'))
             ->where('file_type', config('constants.file_type.quotation'))
             ->get();
         $form_accounts = PettyCashAccountModel::where('eform_petty_cash_id', $id)->get();
         $projects = ProjectsModel::all();
         $accounts = AccountsChartModel::all();
-        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.subsistence'))
+        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.petty_cash'))
             ->orderBy('created_at', 'asc')->get();
 
         $user = User::find($form->created_by);
@@ -730,13 +765,14 @@ class SubsistenceController extends Controller
             'form_accounts' => $form_accounts,
             'totals_needs_me' => $totals_needs_me,
             'form' => $form,
+            'user' => Auth::user(),
             'projects' => $projects,
             'user_array' => $user_array,
             'approvals' => $approvals,
             'accounts' => $accounts
         ];
         //return view
-        return view('eforms.subsistence.show')->with($params);
+        return view('eforms.petty-cash.show')->with($params);
 
     }
 
@@ -778,24 +814,24 @@ class SubsistenceController extends Controller
 
     public function approve(Request $request)
     {
-        //GET THE Subsistence MODEL
-        $form = \App\Models\EForms\Subsistence\SubsistenceModel::find($request->id);
+        //GET THE PETTY CASH MODEL
+        $form = PettyCashModel::find($request->id);
         $current_status = $form->status->id;
         $user = Auth::user();
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.subsistence'));
+        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
 
 
         //HANDLE CANCELLATION
         if ($request->approval == config('constants.approval.cancelled')) {
 
-            if ($current_status = config('constants.subsistence_status.new_application')) {
+            if ($current_status = config('constants.petty_cash_status.new_application')) {
                 $total_to_subtract_from = config('constants.totals.petty_cash_new');
             } else {
                 $total_to_subtract_from = config('constants.totals.petty_cash_open');
             }
 
             //update the totals rejected
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('id', config('constants.totals.petty_cash_reject'))
                 ->first();
             $totals->value = $totals->value + 1;
@@ -804,7 +840,7 @@ class SubsistenceController extends Controller
             $eform_pettycash->save();
 
             //update the totals open
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('id', $total_to_subtract_from)
                 ->first();
             $totals->value = $totals->value - 1;
@@ -818,7 +854,7 @@ class SubsistenceController extends Controller
         if ($request->approval == config('constants.approval.reject')) {
 
             //update the totals rejected
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('id', config('constants.totals.petty_cash_reject'))
                 ->first();
             $totals->value = $totals->value + 1;
@@ -827,7 +863,7 @@ class SubsistenceController extends Controller
             $eform_pettycash->save();
 
             //update the totals open
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('id', config('constants.totals.petty_cash_open'))
                 ->first();
             $totals->value = $totals->value - 1;
@@ -840,10 +876,10 @@ class SubsistenceController extends Controller
 
         //HANDLE APPROVAL
         if ($request->approval == config('constants.approval.approve')) {
-            if ($form->status->id == config('constants.subsistence_status.security_approved')) {
+            if ($form->status->id == config('constants.petty_cash_status.security_approved')) {
 
                 //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                     ->where('id', config('constants.totals.petty_cash_closed'))
                     ->first();
                 $totals->value = $totals->value + 1;
@@ -852,7 +888,7 @@ class SubsistenceController extends Controller
                 $eform_pettycash->save();
 
                 //update the totals open
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                     ->where('id', config('constants.totals.petty_cash_open'))
                     ->first();
                 $totals->value = $totals->value - 1;
@@ -860,8 +896,8 @@ class SubsistenceController extends Controller
                 $eform_pettycash->total_pending = $totals->value;
                 $eform_pettycash->save();
 
-            } else if ($form->status->id == config('constants.subsistence_status.new_application')) {
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+            } else if ($form->status->id == config('constants.petty_cash_status.new_application')) {
+                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                     ->where('id', config('constants.totals.petty_cash_open'))
                     ->first();
                 $totals->value = $totals->value + 1;
@@ -870,16 +906,16 @@ class SubsistenceController extends Controller
                 $eform_pettycash->save();
 
                 //update the totals new
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                     ->where('id', config('constants.totals.petty_cash_new'))
                     ->first();
                 $totals->value = $totals->value - 1;
                 $totals->save();
                 $eform_pettycash->total_new = $totals->value;
                 $eform_pettycash->save();
-            } else if ($form->status->id == config('constants.subsistence_status.closed')) {
+            } else if ($form->status->id == config('constants.petty_cash_status.closed')) {
                 //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                     ->where('id', config('constants.totals.petty_cash_closed'))
                     ->first();
                 $totals->value = $totals->value - 1;
@@ -892,36 +928,36 @@ class SubsistenceController extends Controller
 
         //HANDLE AUDIT QUERY
         if ($request->approval == config('constants.approval.queried')) {
-            if ($form->status->id == config('constants.subsistence_status.closed')) {
-                //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.petty_cash_closed'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_closed = $totals->value;
-                $eform_pettycash->save();
-            }
+//            if ($form->status->id == config('constants.petty_cash_status.closed')) {
+//                //update the totals closed
+//                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
+//                    ->where('id', config('constants.totals.petty_cash_closed'))
+//                    ->first();
+//                $totals->value = $totals->value - 1;
+//                $totals->save();
+//                $eform_pettycash->total_closed = $totals->value;
+//                $eform_pettycash->save();
+//            }
         }
 
 
-        //FOR FOR CLAIMANT CANCELLATION
+        //FOR CLAIMANT CANCELLATION
         if (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_002')
-            && $current_status == config('constants.subsistence_status.new_application')
+            && $current_status == config('constants.petty_cash_status.new_application')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } else {
-                $new_status = config('constants.subsistence_status.new_application');
+                $new_status = config('constants.petty_cash_status.new_application');
                 $insert_reasons = false;
             }
             $form->config_status_id = $new_status;
@@ -930,20 +966,20 @@ class SubsistenceController extends Controller
         } //FOR HOD
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')
-            && $current_status == config('constants.subsistence_status.new_application')
+            && $current_status == config('constants.petty_cash_status.new_application')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
+                $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.hod_approved');
+                $new_status = config('constants.petty_cash_status.hod_approved');
             } else {
-                $new_status = config('constants.subsistence_status.new_application');
+                $new_status = config('constants.petty_cash_status.new_application');
                 $insert_reasons = false;
             }
             //update
@@ -956,20 +992,20 @@ class SubsistenceController extends Controller
         } //FOR CHIEF HR
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_009')
-            && $current_status == config('constants.subsistence_status.hod_approved')
+            && $current_status == config('constants.petty_cash_status.hod_approved')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
+                $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.hr_approved');
+                $new_status = config('constants.petty_cash_status.hr_approved');
             } else {
-                $new_status = config('constants.subsistence_status.hod_approved');
+                $new_status = config('constants.petty_cash_status.hod_approved');
                 $insert_reasons = false;
             }
 
@@ -983,20 +1019,20 @@ class SubsistenceController extends Controller
 
         } //FOR FOR CHIEF ACCOUNTANT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
-            && $current_status == config('constants.subsistence_status.hr_approved')
+            && $current_status == config('constants.petty_cash_status.hr_approved')
         ) {
             $insert_reasons = true;
             //cancel status
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
+                $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.chief_accountant');
+                $new_status = config('constants.petty_cash_status.chief_accountant');
             } else {
-                $new_status = config('constants.subsistence_status.hr_approved');
+                $new_status = config('constants.petty_cash_status.hr_approved');
                 $insert_reasons = false;
             }
             //update
@@ -1008,20 +1044,20 @@ class SubsistenceController extends Controller
             $form->save();
         } //FOR FOR EXPENDITURE OFFICE FUNDS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
-            && $current_status == config('constants.subsistence_status.chief_accountant')
+            && $current_status == config('constants.petty_cash_status.chief_accountant')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
+                $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.funds_disbursement');
+                $new_status = config('constants.petty_cash_status.funds_disbursement');
             } else {
-                $new_status = config('constants.subsistence_status.chief_accountant');
+                $new_status = config('constants.petty_cash_status.chief_accountant');
                 $insert_reasons = false;
             }
             //update
@@ -1032,7 +1068,7 @@ class SubsistenceController extends Controller
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
-            //create records for the accounts associated with this Subsistence transaction
+            //create records for the accounts associated with this petty cash transaction
             for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
                 $des = "";
                 $des = $des . " " . $request->account_items[$i] . ",";
@@ -1054,7 +1090,7 @@ class SubsistenceController extends Controller
                         'project' => $form->project->code ?? "",
                         'pems_project' => 'N',
                         'spare' => '0000',
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
+                        'status_id' => config('constants.petty_cash_status.export_not_ready')
                     ],
                     [
                         'creditted_account_id' => $request->credited_account[$i],
@@ -1092,7 +1128,7 @@ class SubsistenceController extends Controller
                         'pems_project' => 'N',
                         'spare' => '0000',
                         'description' => $des,
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
+                        'status_id' => config('constants.petty_cash_status.export_not_ready')
                     ]
                 );
 
@@ -1112,7 +1148,7 @@ class SubsistenceController extends Controller
                         'project' => $form->project->code ?? "",
                         'pems_project' => 'N',
                         'spare' => '0000',
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
+                        'status_id' => config('constants.petty_cash_status.export_not_ready')
                     ],
                     [
                         'creditted_account_id' => $request->credited_account[$i],
@@ -1149,27 +1185,27 @@ class SubsistenceController extends Controller
                         'pems_project' => 'N',
                         'spare' => '0000',
                         'description' => $des,
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
+                        'status_id' => config('constants.petty_cash_status.export_not_ready')
                     ]
                 );
             }
 
         } //FOR CLAIMANT - ACKNOWLEDGEMENT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_002')
-            && $current_status == config('constants.subsistence_status.funds_disbursement')
+            && $current_status == config('constants.petty_cash_status.funds_disbursement')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
+                $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.funds_acknowledgement');
+                $new_status = config('constants.petty_cash_status.funds_acknowledgement');
             } else {
-                $new_status = config('constants.subsistence_status.funds_disbursement');
+                $new_status = config('constants.petty_cash_status.funds_disbursement');
                 $insert_reasons = false;
             }
             //update
@@ -1179,20 +1215,20 @@ class SubsistenceController extends Controller
             $form->save();
         } //FOR FOR SECURITY
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_013')
-            && $current_status == config('constants.subsistence_status.funds_acknowledgement')
+            && $current_status == config('constants.petty_cash_status.funds_acknowledgement')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
+                $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.security_approved');
+                $new_status = config('constants.petty_cash_status.security_approved');
             } else {
-                $new_status = config('constants.subsistence_status.funds_acknowledgement');
+                $new_status = config('constants.petty_cash_status.funds_acknowledgement');
                 $insert_reasons = false;
             }
             //update
@@ -1202,22 +1238,23 @@ class SubsistenceController extends Controller
             $form->security_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR FOR EXPENDITURE OFFICE - RECEIPT
+        }
+        //FOR FOR EXPENDITURE OFFICE - RECEIPT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
-            && $current_status == config('constants.subsistence_status.security_approved')
+            && $current_status == config('constants.petty_cash_status.security_approved')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
+                $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.receipt_approved');
+                $new_status = config('constants.petty_cash_status.receipt_approved');
             } else {
-                $new_status = config('constants.subsistence_status.security_approved');
+                $new_status = config('constants.petty_cash_status.security_approved');
                 $insert_reasons = false;
             }
             //update the form
@@ -1251,7 +1288,7 @@ class SubsistenceController extends Controller
                         'project' => $form->project->code ?? "",
                         'pems_project' => 'N',
                         'spare' => '0000',
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
+                        'status_id' => config('constants.petty_cash_status.export_not_ready')
                     ],
                     [
                         'creditted_account_id' => $request->credited_account,
@@ -1288,7 +1325,7 @@ class SubsistenceController extends Controller
                         'pems_project' => 'N',
                         'spare' => '0000',
                         'description' => $des,
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
+                        'status_id' => config('constants.petty_cash_status.export_not_ready')
                     ]
                 );
 
@@ -1308,7 +1345,7 @@ class SubsistenceController extends Controller
                         'project' => $form->project->code ?? "",
                         'pems_project' => 'N',
                         'spare' => '0000',
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
+                        'status_id' => config('constants.petty_cash_status.export_not_ready')
                     ],
                     [
                         'creditted_account_id' => $request->credited_account,
@@ -1345,23 +1382,23 @@ class SubsistenceController extends Controller
                         'pems_project' => 'N',
                         'spare' => '0000',
                         'description' => $des,
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
+                        'status_id' => config('constants.petty_cash_status.export_not_ready')
                     ]
                 );
             }
 
 //            //update all accounts associated to this pettycash
 //            $formAccountModelList = PettyCashAccountModel::where('eform_petty_cash_id', $form->id)
-//                ->where('status_id', config('constants.subsistence_status.export_not_ready'))
+//                ->where('status_id', config('constants.petty_cash_status.export_not_ready'))
 //                ->get();
 //            foreach ($formAccountModelList as $item) {
-//                $item->status_id = config('constants.subsistence_status.not_exported');
+//                $item->status_id = config('constants.petty_cash_status.not_exported');
 //                $item->save();
 //            }
 
-            //Make the update on the Subsistence account
-            $export_not_ready = config('constants.subsistence_status.export_not_ready');
-            $not_exported = config('constants.subsistence_status.not_exported');
+            //Make the update on the petty cash account
+            $export_not_ready = config('constants.petty_cash_status.export_not_ready');
+            $not_exported = config('constants.petty_cash_status.not_exported');
             $id = $form->id;
             $formAccountModelList = DB::table('eform_petty_cash_account')
                 ->where('eform_petty_cash_id', $id)
@@ -1374,11 +1411,11 @@ class SubsistenceController extends Controller
             $files = $request->file('receipt');
             if ($request->hasFile('receipt')) {
                 foreach ($files as $file) {
-                    $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
+                    $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
                     // Get just filename
                     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                     //get size
-                    $size = number_format($file->getSize() * 0.0000001, 2);
+                    $size =   $file->getSize() * 0.000001 ;
                     // Get just ext
                     $extension = $file->getClientOriginalExtension();
                     // Filename to store
@@ -1394,7 +1431,7 @@ class SubsistenceController extends Controller
                             'extension' => $extension,
                             'file_size' => $size,
                             'form_id' => $form->code,
-                            'form_type' => config('constants.eforms_id.subsistence'),
+                            'form_type' => config('constants.eforms_id.petty_cash'),
                             'file_type' => config('constants.file_type.receipt')
                         ],
                         [
@@ -1403,32 +1440,33 @@ class SubsistenceController extends Controller
                             'extension' => $extension,
                             'file_size' => $size,
                             'form_id' => $form->code,
-                            'form_type' => config('constants.eforms_id.subsistence'),
+                            'form_type' => config('constants.eforms_id.petty_cash'),
                             'file_type' => config('constants.file_type.receipt')
                         ]
                     );
                 }
             }
 
-        }  //FOR AUDITING OFFICE
+        }
+        //FOR AUDITING OFFICE
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
-            && $current_status == config('constants.subsistence_status.closed')
+            && $current_status == config('constants.petty_cash_status.closed')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
+                $new_status = config('constants.petty_cash_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
+                $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.audited');
+                $new_status = config('constants.petty_cash_status.audited');
             }//audit status
             elseif ($request->approval == config('constants.approval.queried')) {
-                $new_status = config('constants.subsistence_status.queried');
+                $new_status = config('constants.petty_cash_status.queried');
             } else {
-                $new_status = config('constants.subsistence_status.closed');
+                $new_status = config('constants.petty_cash_status.closed');
                 $insert_reasons = false;
             }
             //update
@@ -1438,10 +1476,38 @@ class SubsistenceController extends Controller
             $form->audit_office_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR NO-ONE
+        }
+        //FOR QUERIED RESOLVING
+        elseif( Auth::user()->profile_id  ==  config('constants.user_profiles.EZESCO_014')
+        &&  $form->config_status_id == config('constants.petty_cash_status.queried')
+        ) {
+            //cancel status
+            $insert_reasons = true;
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.petty_cash_status.cancelled');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.petty_cash_status.rejected');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.petty_cash_status.audited');
+            }//audit status
+            elseif ($request->approval == config('constants.approval.resolve')) {
+                $new_status = config('constants.petty_cash_status.closed');
+            } else {
+                $new_status = config('constants.petty_cash_status.queried');
+                $insert_reasons = false;
+            }
+          //  dd($new_status);
+            //update
+            $form->config_status_id = $new_status;
+            $form->profile = Auth::user()->profile_id;
+            $form->save();
+        }
+        //FOR NO-ONE
         else {
             //return with an error
-            return Redirect::route('subsistence.home')->with('message', 'Subsistence ' . $form->code . ' for has been ' . $request->approval . ' successfully');
+            return Redirect::route('petty-cash-home')->with('message', 'Petty Cash ' . $form->code . ' for has been ' . $request->approval . ' successfully');
         }
 
         //reason
@@ -1455,7 +1521,7 @@ class SubsistenceController extends Controller
                     'staff_no' => $user->staff_no,
                     'reason' => $request->reason,
                     'action' => $request->approval,
-                    'config_eform_id' => config('constants.eforms_id.subsistence'),
+                    'config_eform_id' => config('constants.eforms_id.petty_cash'),
                     'eform_id' => $form->id,
                     'created_by' => $user->id,
                 ],
@@ -1468,7 +1534,7 @@ class SubsistenceController extends Controller
                     'action' => $request->approval,
                     'current_status_id' => $current_status,
                     'action_status_id' => $new_status,
-                    'config_eform_id' => config('constants.eforms_id.subsistence'),
+                    'config_eform_id' => config('constants.eforms_id.petty_cash'),
                     'eform_id' => $form->id,
                     'created_by' => $user->id,
                 ]
@@ -1480,7 +1546,7 @@ class SubsistenceController extends Controller
         }
 
         //redirect home
-        return Redirect::route('subsistence.home')->with('message', $form->total_payment . ' petty-cash ' . $form->code . ' for ' . $form->claimant_name . ' has been ' . $request->approval . ' successfully');
+        return Redirect::route('petty-cash-home')->with('message', $form->total_payment . ' petty-cash ' . $form->code . ' for ' . $form->claimant_name . ' has been ' . $request->approval . ' successfully');
 
     }
 
@@ -1499,20 +1565,20 @@ class SubsistenceController extends Controller
         $claimant_details = User::find($form->created_by);
 
         //check if this next profile is for a claimant and if the Petty-Cash needs Acknowledgement
-        if ($new_status == config('constants.subsistence_status.security_approved')) {
+        if ($new_status == config('constants.petty_cash_status.security_approved')) {
             //message details
             $subject = 'Petty-Cash Voucher Needs Your Attention';
             $title = 'Petty-Cash Voucher Needs Your Attention';
             $message = 'This is to notify you that there is a <b>ZMW ' . $form->total_payment . '</b>  Petty-Cash Voucher (' . $form->code . ') raised by ' . $form->claimant_name . ', that needs your attention.
             <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at ' . $form->status->name . ' stage';
         } //check if this next profile is for a claimant and if the Petty-Cash is closed
-        else if ($new_status == config('constants.subsistence_status.closed')) {
+        else if ($new_status == config('constants.petty_cash_status.closed')) {
             $names = $names . '<br>' . $claimant_details->namee;
             //message details
             $subject = 'Petty-Cash Voucher Closed Successfully';
             $title = 'Petty-Cash Voucher Closed Successfully';
             $message = 'This is to notify you that petty-cash voucher ' . $form->code . ' has been closed successfully .
-            <br>Please login to e-ZESCO by clicking on the button below to view the voucher. <br>The Subsistence voucher has now been closed.';
+            <br>Please login to e-ZESCO by clicking on the button below to view the voucher. <br>The petty cash voucher has now been closed.';
         } // other wise get the users
         else {
             //message details
@@ -1533,13 +1599,13 @@ class SubsistenceController extends Controller
         }
 
         //  dd($user_array);
-        $to[] = ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'];
-        $to[] = ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapuka Sikazwe'];
-        $to[] = ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'];
+//        $to[] = ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'];
+//        $to[] = ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapuka Sikazwe'];
+//        $to[] = ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'];
         //prepare details
         $details = [
             'name' => $names,
-            'url' => 'subsistence.home',
+            'url' => 'petty-cash-home',
             'subject' => $subject,
             'title' => $title,
             'body' => $message
@@ -1564,33 +1630,33 @@ class SubsistenceController extends Controller
         $not_claimant = true;
 
         //FOR MY HOD USERS
-        if ($new_status == config('constants.subsistence_status.new_application')) {
+        if ($new_status == config('constants.petty_cash_status.new_application')) {
             $superior_user_unit = $user_unit->hod_unit;
             $superior_user_code = $user_unit->hod_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
-        } elseif ($new_status == config('constants.subsistence_status.hod_approved')) {
+        } elseif ($new_status == config('constants.petty_cash_status.hod_approved')) {
             $superior_user_code = $user_unit->hrm_code;
             $superior_user_unit = $user_unit->hrm_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
-        } elseif ($new_status == config('constants.subsistence_status.hr_approved')) {
+        } elseif ($new_status == config('constants.petty_cash_status.hr_approved')) {
             $superior_user_code = $user_unit->ca_code;
             $superior_user_unit = $user_unit->ca_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
-        } elseif ($new_status == config('constants.subsistence_status.chief_accountant')) {
+        } elseif ($new_status == config('constants.petty_cash_status.chief_accountant')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
-        } elseif ($new_status == config('constants.subsistence_status.funds_disbursement')) {
+        } elseif ($new_status == config('constants.petty_cash_status.funds_disbursement')) {
             $not_claimant = false;
-        } elseif ($new_status == config('constants.subsistence_status.funds_acknowledgement')) {
+        } elseif ($new_status == config('constants.petty_cash_status.funds_acknowledgement')) {
             $superior_user_unit = $user_unit->security_unit;
             $superior_user_code = $user_unit->security_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_013'));
-        } elseif ($new_status == config('constants.subsistence_status.security_approved')) {
+        } elseif ($new_status == config('constants.petty_cash_status.security_approved')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
-        } elseif ($new_status == config('constants.subsistence_status.closed')) {
+        } elseif ($new_status == config('constants.petty_cash_status.closed')) {
             $superior_user_unit = $user_unit->audit_unit;
             $superior_user_code = $user_unit->audit_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
@@ -1608,7 +1674,7 @@ class SubsistenceController extends Controller
             $users_list[] = '';
             //[A]check if the users in my user unit have this assigned profile
             $assigned_users = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.subsistence'))
+            where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('profile', $profile->code)
                 ->get();
             //loop through assigned users
@@ -1637,11 +1703,11 @@ class SubsistenceController extends Controller
             }
             //[B]check if one the users with the profile have this delegated profile
             $delegated_users = ProfileDelegatedModel::
-            where('eform_id', config('constants.eforms_id.subsistence'))
-                ->where('delegated_profile', $profile->code)
+            where('eform_id', config('constants.eforms_id.petty_cash'))
+                ->where('delegated_profile', $profile->id)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
-                ->where('config_status_id',  config('constants.active_state'))
+                ->where('config_status_id', config('constants.active_state'))
                 ->get();
             //loop through delegated users
             foreach ($delegated_users as $item) {
@@ -1658,7 +1724,6 @@ class SubsistenceController extends Controller
         return $users_array;
     }
 
-
     public function reports(Request $request, $value)
     {
         //get the accounts
@@ -1666,37 +1731,41 @@ class SubsistenceController extends Controller
 
         if ($value == config('constants.all')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $list = DB::select("SELECT * FROM eform_petty_cash_account  ");
+                $list = DB::select("SELECT * FROM eform_petty_cash_account order by created_at desc  ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::all();
+                $list = PettyCashAccountModel::orderBy('created_at')->get();
             }
             $title = "ALl";
-        } elseif ($value == config('constants.subsistence_status.not_exported')) {
+        } elseif ($value == config('constants.petty_cash_status.not_exported')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $status = config('constants.subsistence_status.not_exported');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $status = config('constants.petty_cash_status.not_exported');
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.subsistence_status.not_exported'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))
+                    ->orderBy('created_at')->get();
             }
             $title = "Not Exported";
-        } elseif ($value == config('constants.subsistence_status.exported')) {
+        } elseif ($value == config('constants.petty_cash_status.exported')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $status = config('constants.subsistence_status.exported');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $status = config('constants.petty_cash_status.exported');
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.subsistence_status.exported'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.exported'))
+                    ->orderBy('created_at')->get();
             }
             $title = " Exported";
-        } elseif ($value == config('constants.subsistence_status.export_failed')) {
+        } elseif ($value == config('constants.petty_cash_status.export_failed')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $status = config('constants.subsistence_status.export_failed');
-                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
+                $status = config('constants.petty_cash_status.export_failed');
+                $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status}  order by created_at desc   ");
                 $list = PettyCashAccountModel::hydrate($list);
             } else {
-                $list = PettyCashAccountModel::where('status_id', config('constants.subsistence_status.export_failed'))->get();
+                $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.export_failed'))
+                    ->orderBy('created_at')
+                    ->get();
             }
             $title = "Failed Export";
         }
@@ -1709,25 +1778,39 @@ class SubsistenceController extends Controller
         $params = [
             'title' => $title,
             'totals_needs_me' => $totals_needs_me,
-            'list' => $list
+            'list' => $list,
         ];
         //  dd($list);
-        return view('eforms.subsistence.report')->with($params);
+        return view('eforms.petty-cash.report')->with($params);
     }
 
     public function reportsExport(Request $request)
     {
+
+       // dd($request->all());
+        $date_from = $request->date_from  ;
+        $date_to = $request->date_to  ;
+
         $fileName = 'PettyCash_Accounts.csv';
+
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
-            $tasks = PettyCashAccountModel::where('status_id', config('constants.subsistence_status.not_exported'))->get();
-        } else {
-            $not_exported = config('constants.subsistence_status.not_exported');
+            $not_exported = config('constants.petty_cash_status.not_exported');
             $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                         WHERE status_id = {$not_exported}
+                        and created_at >= '{$date_from}'
+                        and created_at <= '{$date_to}'
                         ORDER BY eform_petty_cash_id ASC ");
             $tasks = PettyCashAccountModel::hydrate($tasks);
+        } else {
+
+            $tasks = PettyCashAccountModel::
+            where('status_id', config('constants.petty_cash_status.not_exported'))
+                ->whereDate('created_at' , '>=', $date_from )
+                ->whereDate('created_at' , '<=', $date_to )
+                ->get();
         }
 
+      //  dd($tasks);
 
         $headers = array(
             "Content-type" => "text/csv",
@@ -1759,12 +1842,14 @@ class SubsistenceController extends Controller
 
             foreach ($tasks as $item) {
 
+               // dd($item);
+
                 //mark the item as exported
-//                $item->status_id = config('constants.subsistence_status.exported');
+//                $item->status_id = config('constants.petty_cash_status.exported');
 //                $item->save();
 
-                //Make the update on the Subsistence account
-                $previous_status = config('constants.subsistence_status.exported');
+                //Make the update on the petty cash account
+                $previous_status = config('constants.petty_cash_status.exported');
                 $id = $item->id;
                 $eform_petty_cash_item = DB::table('eform_petty_cash_account')
                     ->where('id', $id)
@@ -1815,7 +1900,7 @@ class SubsistenceController extends Controller
     public function charts(Request $request)
     {
         //get the accounts
-        $list = \App\Models\EForms\Subsistence\SubsistenceModel:: select(DB::raw('cost_centre, name_of_claimant, count(id) as total_forms , sum(total_payment) as forms_sum '))
+        $list = PettyCashModel:: select(DB::raw('cost_centre, name_of_claimant, count(id) as total_forms , sum(total_payment) as forms_sum '))
             //->where('status', '<>', 1)
             ->groupBy('sig_of_claimant', 'name_of_claimant', 'cost_centre')
             ->get();
@@ -1830,19 +1915,17 @@ class SubsistenceController extends Controller
             'totals_needs_me' => $totals_needs_me,
             'list' => $list
         ];
-        return view('eforms.subsistence.chart')->with($params);
+        return view('eforms.petty-cash.chart')->with($params);
         //  dd($request);
     }
 
     public function sync($id)
     {
-
         //SYNC ONE
         //get the form
-        $form = DB::table('eform_subsistence')
+        $form = DB::table('eform_petty_cash')
             ->where('id', $id)
             ->get()->first();
-
 
         //get the claimant with the user unit which has the workflow details
 //        $user_unit = ConfigWorkFlow::where('user_unit_code',$form->user_unit_code )
@@ -1857,11 +1940,11 @@ class SubsistenceController extends Controller
 //            $user = User::find($form->created_by);
 //            $user_unit = $user->user_unit;
             //redirect home
-            return Redirect::back()->with('error', 'Subsistence Voucher did not sync, because of the user-unit problem.');
+            return Redirect::back()->with('error', 'Petty Cash Voucher did not sync, because of the user-unit problem.');
         }
 
         //make the update
-        $update_eform_petty_cash = DB::table('eform_subsistence')
+        $update_eform_petty_cash = DB::table('eform_petty_cash')
             ->where('id', $form->id)
             ->update([
 
@@ -1883,12 +1966,12 @@ class SubsistenceController extends Controller
 
 
         // SYNC ALL
-//        $eform_petty_cash_all = DB::select("SELECT * FROM eform_subsistence  ");
+//        $eform_petty_cash_all = DB::select("SELECT * FROM eform_petty_cash  ");
 
 //        foreach ($eform_petty_cash_all as $form) {
 //
 //            //get the form
-//            $eform_petty_cash = DB::table('eform_subsistence')
+//            $eform_petty_cash = DB::table('eform_petty_cash')
 //                ->where('id', $form->id)
 //                ->get()->first();
 //
@@ -1905,7 +1988,7 @@ class SubsistenceController extends Controller
 //            }
 //
 //            //make the update
-//            $update_eform_petty_cash = DB::table('eform_subsistence')
+//            $update_eform_petty_cash = DB::table('eform_petty_cash')
 //                ->where('id', $form->id )
 //                ->update([
 //
@@ -1931,20 +2014,20 @@ class SubsistenceController extends Controller
         //  dd($eform_petty_cash_all);
 
 
-//        $eform_petty_cash = DB::select("SELECT * FROM eform_subsistence where id =  {$id} ");
+//        $eform_petty_cash = DB::select("SELECT * FROM eform_petty_cash where id =  {$id} ");
 //        $eform_petty_cash = PettyCashAccountModel::hydrate($eform_petty_cash);
 //
 //        $claimant = User::find($eform_petty_cash[0]->created_by);
 //        $user_unit_code = $claimant->user_unit->code;
 //        $superior_code = $claimant->position->superior_code;
-//        $eform_petty_cash = DB::table('eform_subsistence')
+//        $eform_petty_cash = DB::table('eform_petty_cash')
 //            ->where('id', $id)
 //            ->update(['code_superior' => $superior_code,
 //                'user_unit_code' => $user_unit_code,
 //            ]);
 
         //redirect home
-        return Redirect::route('subsistence.home')->with('message', 'Subsistence Voucher have been synced successfully');
+        return Redirect::route('petty-cash-home')->with('message', 'Petty Cash Voucher have been synced successfully');
 
         dd($claimant->position->superior_code ?? "");
     }
@@ -1960,18 +2043,18 @@ class SubsistenceController extends Controller
     public function reportsExportUnmarkExportedAll()
     {
         //get a list of forms with the above status
-        // $tasks = PettyCashAccountModel::where('status_id', config('constants.subsistence_status.exported'))->get();
-        $exported = config('constants.subsistence_status.exported');
+        // $tasks = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.exported'))->get();
+        $exported = config('constants.petty_cash_status.exported');
         $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                         WHERE status_id = {$exported}
                         ORDER BY eform_petty_cash_id ASC ");
         $tasks = PettyCashAccountModel::hydrate($tasks);
 
         foreach ($tasks as $item) {
-//            $item->status_id = config('constants.subsistence_status.not_exported');
+//            $item->status_id = config('constants.petty_cash_status.not_exported');
 //            $item->save();
 
-            $previous_status = config('constants.subsistence_status.not_exported');
+            $previous_status = config('constants.petty_cash_status.not_exported');
             $id = $item->id;
             $eform_petty_cash_item = DB::table('eform_petty_cash_account')
                 ->where('id', $id)
@@ -1979,7 +2062,7 @@ class SubsistenceController extends Controller
 
         }
         //redirect home
-        return Redirect::back()->with('message', 'Subsistence Exported Accounts have been reversed successfully');
+        return Redirect::back()->with('message', 'Petty Cash Exported Accounts have been reversed successfully');
     }
 
     public function markAccountLinesAsDuplicates($id)
@@ -1990,11 +2073,11 @@ class SubsistenceController extends Controller
         $size = sizeof($account_line);
         if ($size > 0) {
             $item = $account_line[$size - 1];
-            $item->status_id = config('constants.subsistence_status.void');
+            $item->status_id = config('constants.petty_cash_status.void');
             $item->save();
         }
         //redirect home
-        return Redirect::back()->with('message', 'Subsistence Account Line have been Marked as Duplicate successfully');
+        return Redirect::back()->with('message', 'Petty Cash Account Line have been Marked as Duplicate successfully');
 
     }
 
@@ -2003,22 +2086,24 @@ class SubsistenceController extends Controller
 
         try {
             // get the form using its id
-            $eform_petty_cash = DB::select("SELECT * FROM eform_subsistence where id =  {$id} ");
+            $eform_petty_cash = DB::select("SELECT * FROM eform_petty_cash where id =  {$id} ");
             $eform_petty_cash = PettyCashAccountModel::hydrate($eform_petty_cash);
 
             //get current status id
             $status_model = StatusModel::where('id', $eform_petty_cash[0]->config_status_id)
-                ->where('eform_id', config('constants.eforms_id.subsistence'))->first();
+                ->where('eform_id', config('constants.eforms_id.petty_cash'))->first();
             $current_status = $status_model->id;
 
             //new status
             $new_status_id = $current_status - 1;
+
+
             $status_model = StatusModel::where('id', $new_status_id)
-                ->where('eform_id', config('constants.eforms_id.subsistence'))->first();
+                ->where('eform_id', config('constants.eforms_id.petty_cash'))->first();
             $previous_status = $status_model->id;
 
-            //  $eform_petty_cash = DB::select("UPDATE eform_subsistence SET config_status_id = {$previous_status} where id =  {$id} ");
-            $eform_petty_cash = DB::table('eform_subsistence')
+            //  $eform_petty_cash = DB::select("UPDATE eform_petty_cash SET config_status_id = {$previous_status} where id =  {$id} ");
+            $eform_petty_cash = DB::table('eform_petty_cash')
                 ->where('id', $id)
                 ->update(['config_status_id' => $previous_status]);
 
@@ -2034,11 +2119,11 @@ class SubsistenceController extends Controller
 //                    'action' => $request->approval,
 //                    'current_status_id' => $current_status,
 //                    'action_status_id' => $previous_status,
-//                    'config_eform_id' => config('constants.eforms_id.subsistence'),
+//                    'config_eform_id' => config('constants.eforms_id.petty_cash'),
 //                    'eform_id' => $eform_petty_cash[0]->id,
 //                    'created_by' => $user->id,
 //                ]);
-            return Redirect::back()->with('message', 'Subsistence Account Line have been dropped to the previous stage successfully');
+            return Redirect::back()->with('message', 'Petty Cash Account Line have been dropped to the previous stage successfully');
         } catch (Exception $exception) {
             return Redirect::back()->with('error', 'Sorry an error happened');
         }
@@ -2049,22 +2134,69 @@ class SubsistenceController extends Controller
         try {
 
 //            /*
-//             * NEEDED AS A FUNCTION SOMEWHERE IN Subsistence CONTROLLER
+//             * NEEDED AS A FUNCTION SOMEWHERE IN PETTY CASH CONTROLLER
 
-            //UPDATE ONE  - Update all Subsistence accounts with the user unit and work-flow details
-            //get a list of all the Subsistence account models
+//            $tasks = DB::select("SELECT * FROM eform_petty_cash_account where business_unit_code LIKE '%13231%'
+
+            $form = DB::select("SELECT * FROM eform_petty_cash
+                            WHERE config_status_id = 28 ");
+            $form = PettyCashModel::hydrate($form)->all();
+
+            foreach ($form as $form_item) {
+                $form_id = $form_item->id ;
+                $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+                            where status_id != '41'  and status_id != '41' and eform_petty_cash_id  = '{$form_id}'
+                             ");
+                $tasks = PettyCashAccountModel::hydrate($tasks);
+
+                if(sizeof($tasks) > 0){
+                    dd($tasks);
+                }
+
+
+            }
+
+
+
+            dd(122112212 );
+
+            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+                            where status_id = '41'
+                            ORDER BY eform_petty_cash_id ASC ");
+            $tasks = PettyCashAccountModel::hydrate($tasks);
+
+          //  dd($tasks);
+            foreach ($tasks as $account) {
+                //get associated petty cash
+                $petty_cash_id = $account->eform_petty_cash_id;
+                $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
+                            WHERE id = {$petty_cash_id}  ");
+                $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
+
+                //update account with the petty cash details
+                $eform_petty_cash_account = DB::table('eform_petty_cash_account')
+                    ->where('id', $account->id)
+                    ->update([
+                        'status_id' => '41',
+                    ]);
+
+            }
+
+
+            //UPDATE ONE  - Update all petty cash accounts with the user unit and work-flow details
+            //get a list of all the petty cash account models
             $tasks = DB::select("SELECT * FROM eform_petty_cash_account
                             ORDER BY eform_petty_cash_id ASC ");
             $tasks = PettyCashAccountModel::hydrate($tasks);
 
-            foreach ($tasks as $account){
-                //get associated Subsistence
-                $petty_cash_id = $account->eform_petty_cash_id ;
-                $tasks_pt = DB::select("SELECT * FROM eform_subsistence
+            foreach ($tasks as $account) {
+                //get associated petty cash
+                $petty_cash_id = $account->eform_petty_cash_id;
+                $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
                             WHERE id = {$petty_cash_id}  ");
-                $tasks_pt = \App\Models\EForms\Subsistence\SubsistenceModel::hydrate($tasks_pt)->first();
+                $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
 
-                //update account with the Subsistence details
+                //update account with the petty cash details
                 $eform_petty_cash_account = DB::table('eform_petty_cash_account')
                     ->where('id', $account->id)
                     ->update([
@@ -2072,10 +2204,10 @@ class SubsistenceController extends Controller
                         'business_unit_code' => $tasks_pt->business_unit_code,
                         'user_unit_code' => $tasks_pt->user_unit_code,
 
-                        'claimant_name'=> $tasks_pt->claimant_name,
-                        'claimant_staff_no'=> $tasks_pt->claimant_staff_no,
-                        'claim_date'=> $tasks_pt->claim_date,
-                        'petty_cash_code'=> $tasks_pt->code,
+                        'claimant_name' => $tasks_pt->claimant_name,
+                        'claimant_staff_no' => $tasks_pt->claimant_staff_no,
+                        'claim_date' => $tasks_pt->claim_date,
+                        'petty_cash_code' => $tasks_pt->code,
 
                         'hod_code' => $tasks_pt->hod_code,
                         'hod_unit' => $tasks_pt->hod_unit,
@@ -2092,39 +2224,37 @@ class SubsistenceController extends Controller
 //           */
 
 
-            return Redirect::back()->with('message', 'Subsistence Account Line have been dropped to the previous stage successfully');
+            return Redirect::back()->with('message', 'Petty Cash Account Line have been dropped to the previous stage successfully');
         } catch (Exception $exception) {
             return Redirect::back()->with('error', 'Sorry an error happened');
         }
     }
 
-
-
-
-
     public function search(Request $request)
     {
         $search = strtoupper($request->search);
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
-            $list = DB::select("SELECT * FROM eform_subsistence
+            $list = DB::select("SELECT * FROM eform_petty_cash
               where code LIKE '%{$search}%'
               or claimant_name LIKE '%{$search}%'
               or claimant_staff_no LIKE '%{$search}%'
               or config_status_id LIKE '%{$search}%'
+              or user_unit_code LIKE '%{$search}%'
             ");
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::hydrate($list);
+            $list = PettyCashModel::hydrate($list);
         } else {
-            //find the Subsistence with that id
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::
+            //find the petty cash with that id
+            $list = PettyCashModel::
             where('code', 'LIKE', "%{$search}%")
                 ->orWhere('claimant_name', 'LIKE', "%{$search}%")
                 ->orWhere('claimant_staff_no', 'LIKE', "%{$search}%")
                 ->orWhere('config_status_id', 'LIKE', "%{$search}%")
+                ->orWhere('user_unit_code', 'LIKE', "%{$search}%")
                 ->paginate(50);
         }
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
         //pending forms for me before i apply again
@@ -2141,75 +2271,9 @@ class SubsistenceController extends Controller
         ];
 
         //return view
-        return view('eforms.subsistence.list')->with($params);
+        return view('eforms.petty-cash.list')->with($params);
     }
 
-    public function search1(Request $request)
-    {
-        if (Auth::user()->type_id == config('constants.user_types.developer')) {
-
-            // dd(222);
-            $list = DB::select("SELECT * FROM eform_subsistence
-              where code LIKE '%{$request->search}%'
-              or claimant_name LIKE '%{$request->search}%'
-              or claimant_staff_no LIKE '%{$request->search}%'
-              or claim_date LIKE '%{$request->search}%'
-              or AUTHORISED_BY LIKE '%{$request->search}%'
-              or AUTHORISED_STAFF_NO LIKE '%{$request->search}%'
-              or STATION_MANAGER LIKE '%{$request->search}%'
-              or STATION_MANAGER LIKE '%{$request->search}%'
-              or ACCOUNTANT LIKE '%{$request->search}%'
-              or ACCOUNTANT_STAFF_NO LIKE '%{$request->search}%'
-              or EXPENDITURE_OFFICE LIKE '%{$request->search}%'
-              or EXPENDITURE_OFFICE_STAFF_NO LIKE '%{$request->search}%'
-              or SECURITY_NAME LIKE '%{$request->search}%'
-              or SECURITY_STAFF_NO LIKE '%{$request->search}%'
-              or total_payment LIKE '%{$request->search}%'
-              or config_status_id LIKE '%{$request->search}%'
-            ");
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::hydrate($list)->all();
-        } else {
-            //find the Subsistence with that id
-            $list = \App\Models\EForms\Subsistence\SubsistenceModel::
-            where('code', 'LIKE', "%{$request->search}%")
-                ->orWhere('claimant_name', 'LIKE', "%{$request->search}%")
-                ->orWhere('claimant_staff_no', 'LIKE', "%{$request->search}%")
-                ->orWhere('claim_date', 'LIKE', "%{$request->search}%")
-                ->orWhere('AUTHORISED_BY', 'LIKE', "%{$request->search}%")
-                ->orWhere('AUTHORISED_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('STATION_MANAGER', 'LIKE', "%{$request->search}%")
-                ->orWhere('STATION_MANAGER_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('ACCOUNTANT', 'LIKE', "%{$request->search}%")
-                ->orWhere('ACCOUNTANT_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('EXPENDITURE_OFFICE', 'LIKE', "%{$request->search}%")
-                ->orWhere('EXPENDITURE_OFFICE_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('SECURITY_NAME', 'LIKE', "%{$request->search}%")
-                ->orWhere('SECURITY_STAFF_NO', 'LIKE', "%{$request->search}%")
-                ->orWhere('total_payment', 'LIKE', "%{$request->search}%")
-                ->orWhere('config_status_id', 'LIKE', "%{$request->search}%")
-                ->get();
-        }
-
-        //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
-        //count all that needs me
-        $totals_needs_me = HomeController::needsMeCount();
-        //pending forms for me before i apply again
-        $pending = HomeController::pendingForMe();
-        $category = "Search Results";
-
-        //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'list' => $list,
-            'totals' => $totals,
-            'pending' => $pending,
-            'category' => $category,
-        ];
-
-        //return view
-        return view('eforms.subsistence.list')->with($params);
-    }
 
 
 }

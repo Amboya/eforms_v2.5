@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('subsistence-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('subsistence.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Subsistence Claim  : {{$category}}</li>
                     </ol>
                 </div><!-- /.col -->
@@ -73,7 +73,7 @@
                                        onclick="event.preventDefault();
                                            document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                     <form id="show-form{{$item->id}}"
-                                          action="{{ route('subsistence-show', $item->id) }}"
+                                          action="{{ route('subsistence.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
@@ -91,7 +91,7 @@
                                        onclick="event.preventDefault();
                                            document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
                                     <form id="show-form{{$item->id}}"
-                                          action="{{ route('subsistence-show', $item->id) }}"
+                                          action="{{ route('subsistence.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
@@ -106,7 +106,7 @@
             <div class="card-footer clearfix">
                 @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
                     @if($pending < 1)
-                        <a href="{{route('subsistence-create')}}"
+                        <a href="{{route('subsistence.create')}}"
                            class="btn btn-sm bg-gradient-green float-left">New Subsistence Claim</a>
                     @else
                         <a href="#" class="btn btn-sm btn-default float-left">New Kilometer Allowance Claim</a>

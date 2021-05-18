@@ -72,6 +72,10 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('audit_name')->nullable();
             $table->string('audit_staff_no')->nullable();
             $table->string('audit_date')->nullable();
+
+            $table->string('expenditure_office')->nullable();
+            $table->string('expenditure_office_staff_no')->nullable();
+            $table->string('expenditure_date')->nullable();
             //
             $table->integer('created_by');
             $table->timestamps();

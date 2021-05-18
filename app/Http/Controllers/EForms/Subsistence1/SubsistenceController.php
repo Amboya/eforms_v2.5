@@ -296,16 +296,16 @@ class SubsistenceController extends Controller
             ]);
 
 
-        /** update the totals */
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-            ->where('id', config('constants.totals.subsistence_new'))
-            ->first();
-        $totals->value = $totals->value + 1;
-        $totals->save();
-
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.subsistence'));
-        $eform_pettycash->total_new = $totals->value;
-        $eform_pettycash->save();
+//        /** update the totals */
+//        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
+//            ->where('id', config('constants.totals.subsistence_new'))
+//            ->first();
+//        $totals->value = $totals->value + 1;
+//        $totals->save();
+//
+//        $eform_pettycash = EFormModel::find(config('constants.eforms_id.subsistence'));
+//        $eform_pettycash->total_new = $totals->value;
+//        $eform_pettycash->save();
 
         /** send email to supervisor */
         //get team email addresses
@@ -330,7 +330,7 @@ class SubsistenceController extends Controller
         //send mail
         $mail_to_is = Mail::to($to)->send(new SendMail($details));
         //log the activity
-        ActivityLogsController::store($request, "Creating of Subsistence Form", "create", " subsistence form {$formModel->code} created", $formModel->id);
+      //  ActivityLogsController::store($request, "Creating of Subsistence Form", "create", " subsistence form {$formModel->code} created", $formModel->id);
         //return the view
         return Redirect::route('subsistence-home')->with('message', 'Subsistence ' . $formModel->code . ' Submitted Successfully');
     }

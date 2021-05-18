@@ -1,4 +1,4 @@
-@extends('layouts.eforms.subsistence.master')
+@extends('layouts.eforms.Subsistence.master')
 
 
 @push('custom-styles')
@@ -53,7 +53,7 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="example1" class="table m-0">
+                    <table id="example3" class="table m-0">
                         <thead>
                         <tr>
                             <th>Serial</th>
@@ -61,8 +61,7 @@
                             <th>Payment</th>
                             <th>Status</th>
                             <th>Period</th>
-                            <th>View</th>
-                            <th>Mark Void</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -80,82 +79,57 @@
                                 <td><span class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                 </td>
                                 <td>{{$item->updated_at->diffForHumans()}}</td>
-                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
+                                <td>
+                                    <a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
                                         document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
                                     <form id="show-form{{$item->id}}" action="{{ route('subsistence.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
-                                </td>
-                                <td>
-                                <button class="btn btn-sm bg-gradient-gray float-left" style="margin: 1px"
-                                        title="Mark as Void."
-                                        data-toggle="modal"
-                                        data-target="#modal-delete{{$item->id}}">
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                                    @if(Auth::user()->type_id == config('constants.user_types.developer'))
+                                        <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                                title="Mark as Void."
+                                                data-toggle="modal"
+                                                data-target="#modal-void{{$item->id}}">
+                                            <i class="fa fa-ban"></i>
+                                        </button>
+                                        <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                                title="Reverse Form to the previous state."
+                                                data-toggle="modal"
+                                                data-target="#modal-reverse{{$item->id}}">
+                                            <i class="fa fa-redo"></i>
+                                        </button>
+                                        <a class="btn btn-sm bg-gradient-gray "  href="{{route('subsistence.sync', $item->id)}}"
+                                           title="Sync Application Forms">
+                                            <i class="fas fa-sync"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
                         </tbody>
 
                     </table>
+
                 </div>
             </div>
             <!-- /.card-body -->
             <div class="card-footer clearfix">
-
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
+                    @if($pending < 1)
+                        <a href="{{route('subsistence.create')}}"
+                           class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
+                    @else
+                        <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
+                        <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
+                    @endif
+                @endif
+                    {!! $list->links() !!}
             </div>
         </div>
         <!-- /.card -->
     </section>
     <!-- /.content -->
-
-
-    @foreach($list as $item)
-        <!-- DELETE MODAL-->
-        <div class="modal fade" id="modal-delete{{$item->id}}">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content bg-defualt">
-                    <div class="modal-header">
-                        <h4 class="modal-title text-center">Mark Voucher as Void</h4>
-                    </div>
-                    <!-- form start -->
-                    <form role="form" method="post"
-                          action="{{route('petty-cash-void', ['id' => $item->id])}}">
-                        @csrf
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <p class="text-center">Are you sure you want to mark this form as void? </p>
-                                    <p class="text-center">Note that you can not undo this action. </p>
-                                      </div>
-
-                                <div class="col-2">
-                                    <label>Reason</label>
-                                </div>
-                                <div class="col-10">
-                                    <div class="input-group">
-                                        <textarea class="form-control" rows="2" name="reason"
-                                                  placeholder="Enter reason why" required>
-                                        </textarea>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-danger">Mark</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <!-- /.DELETE modal -->
-    @endforeach
 
 
 @endsection

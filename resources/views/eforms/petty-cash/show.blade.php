@@ -662,7 +662,7 @@
                                                         <div class="col-3">
                                                             <input type="number" id="credited_amount"
                                                                    name="credited_amount[]"
-                                                                   onchange="getvalues()" class="form-control amount"
+                                                                   onchange="getvalues()" step="any" class="form-control amount"
                                                                    placeholder=" Amount [ZMK]" required>
                                                         </div>
                                                         {{--                                                </TD>--}}
