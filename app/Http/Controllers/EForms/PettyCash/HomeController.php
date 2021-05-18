@@ -202,10 +202,13 @@ class HomeController extends Controller
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
 
             /** check if auditor created last months files */
-            $last_month = Carbon::now()->subDays(30)->toDateTimeString();
+            $fromDate = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+            $tillDate = Carbon::now()->subMonth()->endOfMonth()->toDateString();
+
             $list_for_auditors_action = PettyCashModel::
             where('config_status_id', config('constants.petty_cash_status.closed'))
-                ->where('created_at', '>=', $last_month)
+                ->where('created_at', '>=', $fromDate)
+                ->orWhere('created_at', '<=', $tillDate)
                 ->count();
 
             if ($list_for_auditors_action > 1) {
