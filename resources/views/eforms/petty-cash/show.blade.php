@@ -330,20 +330,20 @@
                            data-target="#modal-add-quotation">Add File</a>
                     @endif
                 </div>
-                <div class="card-body" style="width:100%; height: 900px ">
+                <div class="card-body" style="width:100%;  ">
                     <div class="row">
                         @foreach($quotations as $item)
                             <div class="col-12">
                                 <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_quotation/'.$item->name)}}"
-                                        style="width:100%; height: 850px" title="{{$item->name}}"></iframe>
+                                        style="width:100%; " title="{{$item->name}}"></iframe>
                                 <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                 <span> | </span>
                                 <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}">View</a>
                                 @if( ($user->type_id == config('constants.user_types.developer')  || (
-                                  $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                                &&  $user->id  == $form->created_by ))
-                                &&  ($form->config_status_id == config('constants.petty_cash_status.new_application'))
+                                    $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                                  &&  $user->id  == $form->created_by )
                                 )
+                                  )
                                     <span> | </span>
                                     <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
                                        data-target="#modal-change">Edit</a>
