@@ -35,12 +35,12 @@
 
         @if(session()->has('message'))
             <div class="alert alert-success alert-dismissible">
-                <p class="lead"> {{session()->get('message')}}</p>
+                <p class="lead"> {!! session()->get('message') !!}</p>
             </div>
         @endif
         @if(session()->has('error'))
             <div class="alert alert-danger alert-dismissible">
-                <p class="lead"> {{session()->get('message')}}</p>
+                <p class="lead"> {!! session()->get('message') !!}</p>
             </div>
         @endif
 
@@ -125,8 +125,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
 
@@ -245,9 +243,6 @@
 
             {{-- FINANCIAL POSTINGS  --}}
             @if(  ($form->config_status_id >= config('constants.petty_cash_status.closed') )
-               && ( ($user->profile_id ==  config('constants.user_profiles.EZESCO_007'))
-               || ($user->profile_id ==  config('constants.user_profiles.EZESCO_014'))
-               || ($user->profile_id ==  config('constants.user_profiles.EZESCO_011'))
                ) )
                 <div class="card">
                     <div class="card-header">
@@ -329,7 +324,6 @@
                     @if( ($user->type_id == config('constants.user_types.developer')  || (
                                  $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                                &&  $user->id  == $form->created_by )
-                                 &&  ($form->config_status_id == config('constants.petty_cash_status.new_application'))
                              )
                                )
                         <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
@@ -1081,8 +1075,8 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" enctype="multipart/form-data" method="post"
-                      action="{{route('attached-file-change')}} ">
+                <form id="change_form" method="post"
+                      action="{{route('attached-file-change')}}"   enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1130,8 +1124,8 @@
                 </div>
 
                 <!-- form start -->
-                <form role="form-new" enctype="multipart/form-data" method="post"
-                      action="{{route('attached-file-add')}} ">
+                <form id="qoutation_form" method="post"
+                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1174,8 +1168,8 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" enctype="multipart/form-data" method="post"
-                      action="{{route('attached-file-add')}} ">
+                <form id="receipt_form"  method="post"
+                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1434,7 +1428,6 @@
     </script>
 
     <script>
-
         $('#modal-add-quotation').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes

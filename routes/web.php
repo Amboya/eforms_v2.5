@@ -948,3 +948,19 @@ Route::group([
 
 
 
+Route::group([
+    'namespace' => 'system_clients',
+    'prefix' => 'system/clients'
+], function () {
+
+    //system
+    Route::get('list', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'index'])->name('system.index');
+    Route::post('store', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'store'])->name('system.store');
+    Route::post('update', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'update'])->name('system.update');
+    Route::post('update/key', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'updateKey'])->name('system.update.key');
+//    Route::post('destroy/{id}', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'destroy'])->name('system.destroy');
+//    Route::get('sync', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'sync'])->name('system.sync');
+
+});
+
+

@@ -39,7 +39,7 @@
         @endif
         @if(session()->has('error'))
             <div class="alert alert-info alert-dismissible">
-                <p class="lead"> {!!  session()->get('error') !!}}</p>
+                <p class="lead"> {!!  session()->get('error') !!}</p>
             </div>
         @endif
 

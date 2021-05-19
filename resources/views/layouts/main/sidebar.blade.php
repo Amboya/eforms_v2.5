@@ -37,13 +37,13 @@
                             </a>
                         </li>
                         @if( Auth::user()->type_id == config('constants.user_types.developer'))
-                        <li class="nav-item">
-                            <a href="{{route('main-profile-delegation-show-on-behalf')}}" class="nav-link ">
-                                <i class="nav-icon far fa-circle"></i>
-                                <p> Delegate on Behalf
-                                </p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="{{route('main-profile-delegation-show-on-behalf')}}" class="nav-link ">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p> Delegate on Behalf
+                                    </p>
+                                </a>
+                            </li>
                         @endif
                         <li class="nav-item">
                             <a href="{{route('main-profile-delegation-list')}}" class="nav-link ">
@@ -57,6 +57,32 @@
 
 
                 @if( Auth::user()->type_id == config('constants.user_types.developer'))
+                    <li class="nav-header">CLIENT SYSTEM</li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p> Client Systems
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('system.index')}}" class="nav-link ">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p> List
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('main-profile-delegation-list')}}" class="nav-link ">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p> 11111
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-header">SYSTEM</li>
                     <li class="nav-item">
                         <a href="{{route('main-user')}}" class="nav-link ">
@@ -196,19 +222,20 @@
                             <p> Totals </p>
                         </a>
                     </li>
-{{--                    <li class="nav-item">--}}
-{{--                        <a href="{{route('main-divisional-user-unit')}}" class="nav-link ">--}}
-{{--                            <i class="nav-icon fas fa-calendar-alt"></i>--}}
-{{--                            <p> Divisional User Units </p>--}}
-{{--                        </a>--}}
-{{--                    </li>--}}
-{{--                    <li class="nav-item">--}}
-{{--                        <a href="{{route('main-department')}}" class="nav-link ">--}}
-{{--                            <i class="nav-icon fas fa-calendar-alt"></i>--}}
-{{--                            <p> Departments </p>--}}
-{{--                        </a>--}}
-{{--                    </li>--}}
+                    {{--                    <li class="nav-item">--}}
+                    {{--                        <a href="{{route('main-divisional-user-unit')}}" class="nav-link ">--}}
+                    {{--                            <i class="nav-icon fas fa-calendar-alt"></i>--}}
+                    {{--                            <p> Divisional User Units </p>--}}
+                    {{--                        </a>--}}
+                    {{--                    </li>--}}
+                    {{--                    <li class="nav-item">--}}
+                    {{--                        <a href="{{route('main-department')}}" class="nav-link ">--}}
+                    {{--                            <i class="nav-icon fas fa-calendar-alt"></i>--}}
+                    {{--                            <p> Departments </p>--}}
+                    {{--                        </a>--}}
+                    {{--                    </li>--}}
                 @endif
+
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
