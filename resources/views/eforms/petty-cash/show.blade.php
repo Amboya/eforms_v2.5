@@ -243,7 +243,7 @@
 
             {{-- FINANCIAL POSTINGS  --}}
             @if(  ($form->config_status_id >= config('constants.petty_cash_status.closed') )
-               ) )
+               )
                 <div class="card">
                     <div class="card-header">
                         <h4 class="text-center">Financial Accounts Postings</h4>
