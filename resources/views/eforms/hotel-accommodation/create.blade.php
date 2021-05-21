@@ -61,7 +61,8 @@
                   action="{{route('hotel.accommodation.store')}}">
                 @csrf
                 <div class="card-body">
-                    <table border="2" width="100%" cellspacing="0" cellpadding="0" align="Centre"
+
+                    <table border="1" width="100%" cellspacing="0" cellpadding="0" align="Centre"
                            class="mt-2 mb-4">
                         <thead>
                         <tr style="border: 1px">
@@ -72,132 +73,233 @@
                             <th colspan="1">Doc Number:<br>CO.14900.FORM.0003<br>Version: 3</th>
                         </tr>
                         </thead>
+
                     </table>
+
+                    <div class="row mt-2 mb-2">
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Name:</label></div>
+                                <div class="col-12"><input type="text" name="staff_name" value="{{Auth::user()->name}}"
+                                                           readonly class="form-control"></div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12 "><label>Man No:</label></div>
+                                <div class="col-12"><input type="text" name="staff_no" class="form-control"
+                                                           value="{{Auth::user()->staff_no}}" readonly
+                                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Grade:</label></div>
+                                <div class="col-12"><input type="text" name="grade" class="form-control"
+                                                           value="{{Auth::user()->grade->name}}" readonly
+                                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Directorate:</label></div>
+                                <div class="col-12"><input type="text" name="directorate" class="form-control"
+                                                           value="{{Auth::user()->directorate->name}}" readonly
+                                                           required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2 mb-4">
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Cost Centre:</label></div>
+                                <div class="col-12"><input type="text" name="ref_no" class="form-control"
+                                                           value="{{ $user->user_unit->user_unit_code}}" readonly
+                                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+{{--                            <div class="row">--}}
+{{--                                <div class="col-12"><label>Hotel Name</label></div>--}}
+{{--                                <div class="col-12"><input type="text" name="hotel" class="form-control"--}}
+{{--                                                           placeholder="Select a Hotel" required>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+                            <select id="hotel" class="form-control select2 " name="hotel"  >
+                                <option value="" selected disabled >Select Hotel</option>
+                                @foreach($hotel as $item)
+                                    <option value="{{$item->code_supplier}}" >{{$item->code_supplier}}: {{$item->name_supplier}} </option>
+                                @endforeach
+                            </select>
+
+                            @error('hotel')
+                            <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                            @enderror
+
+                        </div>
+
+
+
+
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Sys RefNo:</label></div>
+                                <div class="col-12"><input type="text" name="ref_no"
+                                                           placeholder="Enter System RefNo (optional)"
+                                                           class="form-control"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="table-responsive">
+                            <div class="col-lg-12 ">
+                                <table class="table bg-green">
+                                    <thead>
+                                    <tr>
+                                        <th>PURPOSE OF JOURNEY</th>
+                                        <th>AMOUNT CLAIMED</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="col-lg-12 ">
+                                <TABLE class="table">
+                                    <TR>
+                                        <TD>
+                                            <textarea rows="4" type="text" name="purpose_of_journey"
+                                                      class="form-control amount"
+                                                      placeholder="Enter Purpose of Journey" id="name"
+                                                      required></textarea>
+                                        </TD>
+                                        <TD><input type="number" id="amount1" name="amount" onchange="getvalues()"
+                                                   class="form-control amount" placeholder="Amount [ZMW]">
+                                        </TD>
+                                    </TR>
+                                </TABLE>
+                            </div>
+
+                            <div class="row mt-2 mb-4">
+                                <div class="col-3">
+                                    <div class="row">
+                                        <div class="col-12"><label>Estimated Period of Stay (Days):</label></div>
+                                        <div class="col-12"><input type="number" name="estimated_period_of_stay" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="row">
+                                        <div class="col-12"><label>Estimated Cost:</label></div>
+                                        <div class="col-12"><input type="number" id="estimated_cost" name="estimated_cost" class="form-control"
+                                            value="" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="row">
+                                        <div class="col-12"><label>BEING PAYMENT:</label></div>
+                                        <div class="col-12"><input type="text" class="form-control text-bold" readonly id="total-payment"
+                                                                   name="total_payment" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="col-lg-12 mb-4">
+                                <div class="row">
+                                    <div class="col-2 offset-4">
+                                        <label class="form-control-label">Attach Quotation Files (optional)</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" multiple name="quotation[]"
+                                                   id="receipt" title="Upload Quotation Files (Optional)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+
+                        <div class="row mb-1 mt-4">
+                            <div class="col-2">
+                                <label>Employee Name:</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" name="employee_name" class="form-control"
+                                       value="{{Auth::user()->name}}" readonly required></div>
+
+                            <div class="col-2 text-center"><label>Signature:</label></div>
+                            <div class="col-2"><input type="text" name="employee_staff_no" class="form-control"
+                                                      value="{{Auth::user()->staff_no}}" readonly required></div>
+                            <div class="col-1 text-center"><label>Date:</label></div>
+
+                            <div class="col-2"><input type="Date" name="claim_date" class="form-control"
+                                                      value="{{date('Y-m-d')}}" readonly required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-1">
+                            <div class="col-2"><label>Name of HOD:</label></div>
+                            <div class="col-3"><input type="text" name="hod_name" readonly class="form-control">
+                            </div>
+                            <div class="col-2 text-center"><label>Signature:</label></div>
+                            <div class="col-2"><input type="text" name="hod_staff_no" readonly class="form-control">
+                            </div>
+                            <div class="col-1  text-center"><label>Date:</label></div>
+                            <div class="col-2"><input type="text" name="hod_authorised_date" readonly
+                                                      class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col-2"><label>Approved by Director:</label></div>
+                            <div class="col-3"><input type="text" name="director_name" readonly class="form-control">
+                            </div>
+                            <div class="col-2 text-center"><label>Signature:</label></div>
+                            <div class="col-2"><input type="text" name="director_staff_no" readonly
+                                                      class="form-control"></div>
+                            <div class="col-1 text-center"><label>Date:</label></div>
+                            <div class="col-2"><input type="text" name="director_authorised_date" readonly
+                                                      class="form-control"></div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-2"><label>Name of Chief Accountant:</label></div>
+                            <div class="col-3"><input type="text" name="chief_accountant_name" readonly
+                                                      class="form-control"></div>
+                            <div class="col-2 text-center"><label>Signature:</label></div>
+                            <div class="col-2"><input type="text" name="chief_staff_no" readonly class="form-control">
+                            </div>
+                            <div class="col-1 text-center"><label>Date:</label></div>
+                            <div class="col-2"><input type="text" name="chief_accountant_authorised_date" readonly
+                                                      class="form-control">
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
 
                     <table border="0" width="100%" cellspacing="0" cellpadding="0" align="Centre">
                         <tr>
                             <td height="5" colspan="6"></td>
                         </tr>
 
-                        <tr>
-                            <td><label>Name:</label></td>
-                            <td><input type="text" name="staff_name" class="form-control" value="{{Auth::user()->name}}"
-                                       readonly></td>
-                            <td class="text-center"><label>Man No:</label></td>
-                            <td><input type="text" name="staff_no"
-                                       class="form-control" value="{{Auth::user()->staff_no}}"
-                                       readonly></td>
-                            <td class="text-center"><label>Grade:</label></td>
-                            <td><input type="text" name="grade" class="form-control"
-                                       value="{{Auth::user()->grade->name}}" readonly></td>
+                        <td colspan="6"><p><b>Imprest Upon Being Accomodated in a Hotel:</b></p></td>
 
-                        </tr>
-                        <tr>
-                            <td><label>Directorate:</label></td>
-                            <td><input type="text" name="directorate"
-                                       class="form-control" value="{{Auth::user()->directorate->name}}"
-                                       readonly></td>
-                            <td class="text-center"><label>Hotel:</label></td>
-                            <td><input type="text" required name="hotel" class="form-control"
-                                       placeholder="Enter Hotel Name"></td>
-                        </tr>
-                        <tr>
-                            <td class="text-"><label>Cost Centre:</label></td>
-                            <td><input type="text" name=""
-                                       class="form-control" value="{{Auth::user()->user_unit->cost_center_code}}"
-                                       readonly></td>
-                            <td><label>SYS Ref No.</label></td>
-                            <td><input type="text" required name="ref_no" class="form-control" value=""></td>
-
-                        </tr>
-                        <tr>
-                            <td height="10" colspan="6"></td>
-                        </tr>
-                        <tr>
-                            <td height="15"></td>
-                        </tr>
-                        <tr>
-                        <tr>
-                            <td><label>Purpose of Journey</label></td>
-                            <td><input type="text" required name="purpose_of_journey" class="form-control"
-                                       placeholder="Enter Purpose of Journey"></td>
-                        </tr>
 
                         <tr>
-                            <td><label>Estimated Period of Stay</label></td>
-                            <td><input type="text" required name="estimated_period_of_stay" class="form-control"
-                                       placeholder="Enter Estimated Period of Stay"></td>
-                            <td class="text-center"><label>Estimated Cost:</label></td>
-                            <td><input type="text" required name="estimated_cost" class="form-control"
-                                       placeholder="Enter Estimated Cost"></td>
-                        </tr>
-                        <tr>
-                            <td><label>Employee Name:</label></td>
-                            <td><input type="text" name="employee_name" class="form-control"
-                                       value="{{Auth::user()->name}}" readonly></td>
-                            <td class="text-center"><label>Signature:</label></td>
-                            <td><input type="text" name="employee_staff_no"
-                                       class="form-control" value="{{Auth::user()->staff_no}}"
-                                       readonly></td>
-                            <td class="text-center"><label>Date:</label></td>
-                            <td><input type="date" required name="claim_date" class="form-control"
-                                       value="{{date('Y-m-d')}}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td height="20"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="6"><p><b>Imprest Upon Being Accomodated in a Hotel:</b></p></td>
-                        </tr>
-                        <tr>
-                            <td><label>Amount Claimed ZMW:</label></td>
-                            <td><input type="text" required name="amount_claimed" class="form-control"
-                                       placeholder="Enter Amount Claimed"></td>
-                            <td class="text-center"><label>Being ZMW:</label></td>
-                            <td><input type="text" required name="amount" class="form-control"
-                                       placeholder="Enter Amount"></td>
-                            <td class="text-center"><label>Per Night:</label></td>
-                            <!--                <td><input type="text" name="" class="form-control"></td>-->
-                        </tr>
-                        <tr>
-                            <td><label>Name of Chief Accountant</label></td>
-                            <td><input type="text" required name="chief_accountant_name" class="form-control" readonly>
-                            </td>
-                            <td class="text-center"><label>Sign:</label></td>
-                            <td><input type="text" name="chief_staff_no" class="form-control" readonly></td>
-                            <td class="text-center"><label>Date:</label></td>
-                            <td><input type="Date" required name="chief_accountant_authorised_date" class="form-control"
-                                       readonly></td>
-                        </tr>
-                        <tr>
-                            <td><label>Name of HOD:</label></td>
-                            <td><input type="text" required name="hod_name" class="form-control" readonly></td>
-                            <td class="text-center"><label>Signature:</label></td>
-                            <td><input type="text" required name="hod_staff_no" class="form-control" readonly></td>
-                            <td class="text-center"><label>Date:</label></td>
-                            <td><input type="Date" required name="hod_authorised_date" class="form-control" readonly>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>Approved by Director:</label></td>
-                            <td><input type="text" required name="director_name" class="form-control" readonly></td>
-                            <td class="text-center"><label>Signature:</label></td>
-                            <td><input type="text" required name="director_staff_no" class="form-control" readonly></td>
-                            <td class="text-center"><label>Date:</label></td>
-                            <td><input type="Date" required name="director_authorised_date" class="form-control"
-                                       readonly></td>
-                        </tr>
-                        <tr>
-                            <td height="10" colspan="6"></td>
-                        </tr>
-                        <tr>
-                            <td height="15"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><p><b>Note:</b> To be Filled in Duplicate. </br>
-                                    <br>First Copy to the Chief Accountant for Payment.
-                                    Second Copy to Finance for Order Processing</br>
-
+                            <td colspan="2"><p><b>Note:</b> To be Filled in Duplicate.<br>
+                                    First Copy to the Chief Accountant for Payment.<br>
+                                    Second Copy to Finance for Order Processing<br>
                                 </p></td>
                         </tr>
                         <tr>
@@ -207,10 +309,12 @@
                                     IMS, DCS etc. giving rise to the expenditure</p></td>
 
                         </tr>
-
-
                     </table>
+
+
                 </div>
+
+
                 <div class="card-footer">
                     <div class="col-12 text-center">
                         <input class="btn btn-lg btn-success" type="submit"
@@ -233,12 +337,12 @@
 
 
         function getvalues() {
-            var inps = document.getElementsByName('amount[]');
-            var total = 0;
-            for (var i = 0; i < inps.length; i++) {
-                var inp = inps[i];
-                total = total + parseFloat(inp.value || 0);
-            }
+            var inps = document.getElementById('amount1');
+
+            var total = parseFloat(inps.value || 0);
+
+
+
 
             if (!isNaN(total)) {
 
@@ -255,6 +359,7 @@
                 }
                 //set value
                 document.getElementById('total-payment').value = total;
+                document.getElementById('estimated_cost').value = total;
             }
         }
 
@@ -270,61 +375,5 @@
 
     </script>
 
-
-    <SCRIPT language="javascript">
-        function addRow(tableID) {
-
-            var table = document.getElementById(tableID);
-
-            var rowCount = table.rows.length;
-            var row = table.insertRow(rowCount);
-
-            var colCount = table.rows[0].cells.length;
-
-            for (var i = 0; i < colCount; i++) {
-
-                var newcell = row.insertCell(i);
-
-                newcell.innerHTML = table.rows[0].cells[i].innerHTML;
-                //alert(newcell.childNodes);
-                switch (newcell.childNodes[0].type) {
-                    case "text":
-                        newcell.childNodes[0].value = "";
-                        break;
-                    case "checkbox":
-                        newcell.childNodes[0].checked = false;
-                        break;
-                    case "select-one":
-                        newcell.childNodes[0].selectedIndex = 0;
-                        break;
-                }
-            }
-        }
-
-        function deleteRow(tableID) {
-            try {
-                var table = document.getElementById(tableID);
-                var rowCount = table.rows.length;
-
-                for (var i = 0; i < rowCount; i++) {
-                    var row = table.rows[i];
-                    var chkbox = row.cells[0].childNodes[0];
-                    if (null != chkbox && true == chkbox.checked) {
-                        if (rowCount <= 1) {
-                            alert("Cannot delete all the rows.");
-                            break;
-                        }
-                        table.deleteRow(i);
-                        rowCount--;
-                        i--;
-                    }
-                }
-                getvalues();
-            } catch (e) {
-                alert(e);
-            }
-        }
-
-    </SCRIPT>
 
 @endpush

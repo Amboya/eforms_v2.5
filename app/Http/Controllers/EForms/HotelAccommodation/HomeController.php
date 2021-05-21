@@ -100,24 +100,19 @@ class HomeController extends Controller
                 // ->where('code_superior', Auth::user()->position->code )
                 ->count();
 
-        } //for the HR
-        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+        } //for the DR
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_003')) {
             $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.hod_approved'))->count();
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.hod_approved'))->count();
+            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.director_approved'))->count();
 
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.chief_accountant'))
-                ->orWhere('config_status_id', config('constants.hotel_accommodation_status.security_approved'))
+            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.chief_accountant_approved'))
                 ->count();
-        } //for the SECURITY
-        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.funds_acknowledgement'))->count();
-            //
-        } //for the AUDIT
+              } //for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
             $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.closed'))
                 ->count();
@@ -127,7 +122,6 @@ class HomeController extends Controller
         return $list;
     }
 
-
     public static function needsMeList()
     {
         $user = Auth::user();
@@ -136,6 +130,7 @@ class HomeController extends Controller
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
             $list = HotelAccommodationModel::whereDate('updated_at', \Carbon::today())
                 ->orderBy('code')->paginate(50);
+            dd(1);
             dd(1);
 
         } //for the REQUESTER
@@ -149,27 +144,23 @@ class HomeController extends Controller
             $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
                 ->orderBy('code')->paginate(50);
-        } //for the HR
-        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+        } //for the DR
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_003')) {
             $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.hod_approved'))
                 ->orderBy('code')->paginate(50);
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.hod_approved'))
+            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.director_approved'))
                 ->orderBy('code')->paginate(50);
             //  dd(5) ;
         }
         //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.chief_accountant'))
-                ->orWhere('config_status_id', config('constants.hotel_accommodation_status.security_approved'))
+            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.chief_accountant_approved'))
+
                 ->orderBy('code')->paginate(50);
 
-        } //for the SECURITY
-        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.funds_acknowledgement'))
-                ->orderBy('code')->paginate(50);
         }//for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
             $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.closed'))
@@ -182,7 +173,6 @@ class HomeController extends Controller
         }
         return $list;
     }
-
 
     public static function pendingForMe()
     {

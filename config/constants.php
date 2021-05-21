@@ -237,7 +237,8 @@ return [
         'director_approved' => "184",
         'closed' => "185",
         'rejected' => "186",
-
+        'audited' => "29",
+        'queried' => "201",
         'not_exported' => "41",
         'exported' => "42",
         'export_failed' => "43",
