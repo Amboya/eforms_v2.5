@@ -309,27 +309,27 @@ Route::group([
 
     //petty cah routes
     Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty-cash-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'index'])->name('petty-cash-list');
-    Route::get('create', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'create'])->name('petty-cash-create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'show'])->name('petty-cash-show');
-    Route::post('store', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'store'])->name('petty-cash-store');
-    Route::post('approve', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'approve'])->name('petty-cash-approve');
-    Route::post('update', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'update'])->name('petty-cash-update');
-    Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'destroy'])->name('petty-cash-destroy');
-    Route::get('reports/{value}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reports'])->name('petty-cash-report');
-    Route::get('reportExport', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reportsExport'])->name('petty-cash-report-export');
-    Route::get('reportSync', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reportsSync'])->name('petty-cash-report-sync');
-    Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reportsExportUnmarkExported'])->name('petty-cash-report-export-unmark-exported');
-    Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reportsExportUnmarkExportedAll'])->name('petty-cash-report-export-unmark-exported-all');
-    Route::get('sync/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'sync'])->name('petty-cash-sync');
-    Route::get('records/{value}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'records'])->name('petty-cash-record');
-    Route::post('void/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'void'])->name('petty-cash-void');
-    Route::post('reverse/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'reverse'])->name('petty-cash-reverse');
-    Route::post('search', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'search'])->name('petty-cash-search');
+    Route::get('list/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'index'])->name('petty-cash-list');
+    Route::get('create', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'create'])->name('petty-cash-create');
+    Route::post('show/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'show'])->name('petty-cash-show');
+    Route::post('store', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'store'])->name('petty-cash-store');
+    Route::post('approve', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'approve'])->name('petty-cash-approve');
+    Route::post('update', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'update'])->name('petty-cash-update');
+    Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'destroy'])->name('petty-cash-destroy');
+    Route::get('reports/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reports'])->name('petty-cash-report');
+    Route::get('reportExport', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExport'])->name('petty-cash-report-export');
+    Route::get('reportSync', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsSync'])->name('petty-cash-report-sync');
+    Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExported'])->name('petty-cash-report-export-unmark-exported');
+    Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExportedAll'])->name('petty-cash-report-export-unmark-exported-all');
+    Route::get('sync/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'sync'])->name('petty-cash-sync');
+    Route::get('records/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'records'])->name('petty-cash-record');
+    Route::post('void/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'void'])->name('petty-cash-void');
+    Route::post('reverse/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reverse'])->name('petty-cash-reverse');
+    Route::post('search', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'search'])->name('petty-cash-search');
 
-    Route::get('charts', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'charts'])->name('petty-cash-charts');
-    Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'markAccountLinesAsDuplicates'])->name('petty-cash-accounts-duplicate-remove');
-    Route::get('showForm/{id}', [App\Http\Controllers\EForms\PettyCash\HotelAccommodationController::class, 'showForm'])->name('petty-cash-reports-show');
+    Route::get('charts', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'charts'])->name('petty-cash-charts');
+    Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'markAccountLinesAsDuplicates'])->name('petty-cash-accounts-duplicate-remove');
+    Route::get('showForm/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'showForm'])->name('petty-cash-reports-show');
 
 
     //REPORTS
@@ -490,28 +490,80 @@ Route::group([
 |
 */
 
+//
+//Route::group([
+//    'namespace' => 'subsistence',
+//    'prefix' => 'subsistence',
+//    'middleware' => 'auth'],
+//    function () {
+//    Route::get('home', [App\Http\Controllers\EForms\Subsistence1\HomeController::class, 'index'])->name('subsistence-home');
+//    Route::get('list/{value}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'index'])->name('subsistence-list');
+//    Route::get('create', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'create'])->name('subsistence-create');
+//    Route::post('show/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'show'])->name('subsistence-show');
+//    Route::post('store', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'store'])->name('subsistence-store');
+//    Route::post('approve', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'approve'])->name('subsistence-approve');
+//    Route::post('update', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'update'])->name('subsistence-update');
+//    Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'destroy'])->name('subsistence-destroy');
+//    Route::get('reports', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'reports'])->name('subsistence-report');
+//    Route::get('reportExport', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'reportsExport'])->name('subsistence-report-export');
+//    Route::get('records/{value}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'records'])->name('subsistence-record');
+//    Route::post('void/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'void'])->name('subsistence-void');
+//
+//    Route::get('charts', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'charts'])->name('subsistence-charts');
+//
+//});
+
+
 
 Route::group([
     'namespace' => 'subsistence',
     'prefix' => 'subsistence',
     'middleware' => 'auth'],
     function () {
-    Route::get('home', [App\Http\Controllers\EForms\Subsistence1\HomeController::class, 'index'])->name('subsistence-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'index'])->name('subsistence-list');
-    Route::get('create', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'create'])->name('subsistence-create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'show'])->name('subsistence-show');
-    Route::post('store', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'store'])->name('subsistence-store');
-    Route::post('approve', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'approve'])->name('subsistence-approve');
-    Route::post('update', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'update'])->name('subsistence-update');
-    Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'destroy'])->name('subsistence-destroy');
-    Route::get('reports', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'reports'])->name('subsistence-report');
-    Route::get('reportExport', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'reportsExport'])->name('subsistence-report-export');
-    Route::get('records/{value}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'records'])->name('subsistence-record');
-    Route::post('void/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'void'])->name('subsistence-void');
 
-    Route::get('charts', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'charts'])->name('subsistence-charts');
+        //subsistence routes
+        Route::get('home', [App\Http\Controllers\EForms\Subsistence\HomeController::class, 'index'])->name('subsistence.home');
+        Route::get('list/{value}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'index'])->name('subsistence.list');
+        Route::get('create', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'create'])->name('subsistence.create');
+        Route::post('show/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'show'])->name('subsistence.show');
+        Route::post('store', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'store'])->name('subsistence.store');
+        Route::post('approve', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'approve'])->name('subsistence.approve');
+        Route::post('update', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'update'])->name('subsistence.update');
+        Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'destroy'])->name('subsistence.destroy');
+        Route::get('reports/{value}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reports'])->name('subsistence.report');
+        Route::get('reportExport', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reportsExport'])->name('subsistence.report.export');
+        Route::get('reportSync', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reportsSync'])->name('subsistence.report.sync');
+        Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reportsExportUnmarkExported'])->name('subsistence.report.unmark.exported');
+        Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reportsExportUnmarkExportedAll'])->name('subsistence.report.export.unmark.exported.all');
+        Route::get('sync/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'sync'])->name('subsistence.sync');
+        Route::get('records/{value}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'records'])->name('subsistence.record');
+        Route::post('void/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'void'])->name('subsistence.void');
+        Route::post('reverse/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reverse'])->name('subsistence.reverse');
+        Route::post('search', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'search'])->name('subsistence.search');
 
-});
+        Route::get('charts', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'charts'])->name('subsistence.charts');
+        Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'markAccountLinesAsDuplicates'])->name('subsistence.accounts.duplicate-remove');
+        Route::get('showForm/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'showForm'])->name('subsistence.reports.show');
+
+
+        //REPORTS
+        Route::group([
+            'prefix' => 'report'
+        ], function () {
+            Route::get('directorates', [App\Http\Controllers\EForms\Subsistence\ReportsController::class, 'index'])->name('subsistence.reports.index');
+            Route::get('syncDirectorates', [App\Http\Controllers\EForms\Subsistence\ReportsController::class, 'syncDirectorates'])->name('subsistence.reports.sync.directorates');
+            Route::get('syncUserUnits', [App\Http\Controllers\EForms\Subsistence\ReportsController::class, 'syncUserUnits'])->name('subsistence.reports.sync.units');
+
+        });
+        Route::group([
+            'prefix' => 'filtered/report'
+        ], function () {
+            Route::get('index', [App\Http\Controllers\EForms\Subsistence\ReportsController::class, 'filteredReports'])->name('subsistence.filtered.report');
+            Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\Subsistence\ReportsController::class, 'getFilteredReports'])->name('subsistence.filtered.get');
+        });
+
+
+    });
 
 
 
@@ -894,5 +946,21 @@ Route::group([
 
     });
 
+
+
+Route::group([
+    'namespace' => 'system_clients',
+    'prefix' => 'system/clients'
+], function () {
+
+    //system
+    Route::get('list', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'index'])->name('system.index');
+    Route::post('store', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'store'])->name('system.store');
+    Route::post('update', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'update'])->name('system.update');
+    Route::post('update/key', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'updateKey'])->name('system.update.key');
+//    Route::post('destroy/{id}', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'destroy'])->name('system.destroy');
+//    Route::get('sync', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'sync'])->name('system.sync');
+
+});
 
 

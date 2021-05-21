@@ -99,7 +99,7 @@ class RegisterController extends Controller
             'con_wet_date' => $phirs_user_details->con_wet_date,
             'job_code' => $phirs_user_details->job_code,
             'staff_no' => $data['staff_no'],
-            'email' => $data['email'],
+            'email' => $phirs_user_details->staff_email ?? $data['email'],
             'phone' => $data['phone'],
             'password' => Hash::make($data['password']),
             'profile_id' => $data['profile_id'],

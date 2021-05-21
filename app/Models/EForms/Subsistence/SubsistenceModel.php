@@ -4,6 +4,7 @@ namespace App\Models\EForms\Subsistence;
 
 use App\Models\Main\EformApprovalsModel;
 use App\Models\Main\ProfileAssigmentModel;
+use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\StatusModel;
 use App\Models\Main\UserUnitModel;
 use App\Models\User;
@@ -103,6 +104,23 @@ class SubsistenceModel extends Model
         'audit_staff_no',
         'audit_date',
 
+        'expenditure_office',
+        'expenditure_office_staff_no',
+        'expenditure_date',
+
+        'hod_code',
+        'hod_unit',
+        'ca_code',
+        'ca_unit',
+        'hrm_code',
+        'hrm_unit',
+        'expenditure_code',
+        'expenditure_unit',
+        'dr_code',
+        'dr_unit',
+        'audit_code',
+        'audit_unit',
+
         'created_by',
         'created_at',
         'updated_at',
@@ -139,70 +157,105 @@ class SubsistenceModel extends Model
 
 
 
+
     protected static function booted()
     {
         //check if authenticated user
         if (auth()->check()) {
             //get the profile for this user
             $user = Auth::user();
-            $profile_assignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.subsistence'))
+
+            //[1]  GET YOUR PROFILE
+            $profile_assignement = ProfileAssigmentModel::
+            where('eform_id', config('constants.eforms_id.subsistence'))
                 ->where('user_id', $user->id)->first();
-
-            $default_profile =  $profile_assignement->profiles->id  ?? config('constants.user_profiles.EZESCO_002') ;
-            $user->profile_id = $default_profile ;
-
+            //  use my profile - if i dont have one - give me the default
+            $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
+            $user->profile_id = $default_profile;
+            $user->profile_unit_code = $user->user_unit_code;
+            $user->profile_job_code = $user->job_code;
             $user->save();
+
+            //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
+            $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.subsistence'))
+                ->where('delegated_to', $user->id)
+                ->where('config_status_id',  config('constants.active_state') );
+            if ($profile_delegated->exists()) {
+                //
+                $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
+                $user->profile_id = $default_profile;
+                $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
+                $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
+                $user->save();
+            }
 
             //[1] REQUESTER
             //if you are just a requester, then only see your forms
-            if ($user->profile_id == config('constants.user_profiles.EZESCO_002'))  {
+            if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
                 static::addGlobalScope('staff_number', function (Builder $builder) {
                     $builder->where('claimant_staff_no', Auth::user()->staff_no);
                 });
             } else {
                 //[2A] HOD
                 //see forms for the same work area and user unit
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_004'))  {
-                    // dd(Auth::user()->user_unit->id) ;
-                    static::addGlobalScope('user_unit_id', function (Builder $builder) {
-                        $builder->where('user_unit_id', Auth::user()->user_unit->id );
+                if ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
+                    //  dd(Auth::user()->user_unit->code) ;
+                    static::addGlobalScope('hod', function (Builder $builder) {
+                        $builder->Where('hod_code', Auth::user()->profile_job_code);
+                        $builder->where('hod_unit', Auth::user()->profile_unit_code);
                     });
                 }
-                //[2B] SNR MANAGER
-                //see forms for where the code superior matches
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_015'))  {
-                    // dd(Auth::user()->user_unit->id) ;
-                    static::addGlobalScope('code_superior', function (Builder $builder) {
-                        $builder->where('code_superior', Auth::user()->position->code );
+                //[2B] HUMAN RESOURCE
+                //see forms for the
+                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+                    static::addGlobalScope('hrm', function (Builder $builder) {
+                        $builder->Where('hrm_code', Auth::user()->profile_job_code);
+                        $builder->where('hrm_unit', Auth::user()->profile_unit_code);
                     });
                 }
-                //[2C] HUMAN RESOURCE
-                //see forms for the same pay point
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_009'))  {
-                    static::addGlobalScope('pay_point_id', function (Builder $builder) {
-                        $builder->where('pay_point_id', Auth::user()->pay_point_id);
+                //[2C] CHIEF ACCOUNTANT
+                //see forms for the
+                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
+                    static::addGlobalScope('ca', function (Builder $builder) {
+                        $builder->Where('ca_code', Auth::user()->profile_job_code);
+                        $builder->where('ca_unit', Auth::user()->profile_unit_code);
                     });
+                    //   dd(3);
                 }
-                //[2D] CHIEF ACCOUNTANT
-                //see forms for the same pay point
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_007'))  {
-                    static::addGlobalScope('pay_point_id', function (Builder $builder) {
-                        $builder->where('pay_point_id', Auth::user()->pay_point_id);
+                //[2D] EXPENDITURE
+                //see forms for the
+                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
+                    static::addGlobalScope('expenditure', function (Builder $builder) {
+                        //  $builder->Where('expenditure_code', Auth::user()->job_code);
+                        $builder->where('expenditure_unit', Auth::user()->profile_unit_code);
                     });
                 }
 
-                //[2E] AUDIT
-                //see forms for the same pay point
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_011'))  {
-                    static::addGlobalScope('pay_point_id', function (Builder $builder) {
-                        $builder->where('pay_point_id', Auth::user()->pay_point_id);
+                //[2E] SECURITY
+                //see forms for the
+                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
+                    static::addGlobalScope('security', function (Builder $builder) {
+                        // $builder->Where('security_code', Auth::user()->job_code);
+                        $builder->where('security_unit', Auth::user()->profile_unit_code);
                     });
+                }
+                //[2F] AUDIT
+                //see forms for the
+                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
+                    static::addGlobalScope('audit', function (Builder $builder) {
+                        // $builder->Where('security_code', Auth::user()->job_code);
+                        $builder->where('audit_unit', Auth::user()->profile_unit_code);
+                    });
+                }
+                else{
+
                 }
             }
 
         }
 
     }
+
 
 
 }

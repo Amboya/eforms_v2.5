@@ -54,7 +54,7 @@
             <!-- /.card-header -->
             <div class="card-header text-right  ">
                 @if ( Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007') || Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
-                    <a class="btn btn-sm btn-success " href="{{route('subsistence-report-export')}}">
+                    <a class="btn btn-sm btn-success " href="{{route('subsistence.report.export')}}">
                         Export {{sizeof($list)}} Records <i class="fa fa-download"></i>
                     </a>
                 @endif

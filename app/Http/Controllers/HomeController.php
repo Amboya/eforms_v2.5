@@ -75,6 +75,7 @@ class HomeController extends Controller
         /** upload quotation files */
         // upload the receipt files
         if ($request->hasFile('add_file')) {
+
             $file = $request->file('add_file');
             $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
             // Get just filename
@@ -111,9 +112,11 @@ class HomeController extends Controller
                 ]
             );
 
-        }
+            //
+            return Redirect::route('petty-cash-home')->with('message', "File Has Been Added Successfully");
 
-        return Redirect::route('petty-cash-home')->with('message', "File Has Been Added Successfully");
+        }
+        return Redirect::route('petty-cash-home')->with('error', "File failed to upload");
 
     }
 

@@ -70,7 +70,7 @@
                             <tr>
                                 <td><a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();
                                         document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
-                                    <form id="show-form{{$item->id}}" action="{{ route('subsistence-show', $item->id) }}"
+                                    <form id="show-form{{$item->id}}" action="{{ route('subsistence.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
@@ -82,7 +82,7 @@
                                 <td>{{$item->updated_at->diffForHumans()}}</td>
                                 <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
                                         document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
-                                    <form id="show-form{{$item->id}}" action="{{ route('subsistence-show', $item->id) }}"
+                                    <form id="show-form{{$item->id}}" action="{{ route('subsistence.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>

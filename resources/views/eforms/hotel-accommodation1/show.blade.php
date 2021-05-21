@@ -80,7 +80,7 @@
 
                     <tr>
                         <td><label>Name:</label></td>
-                        <td><input type="text" name="staff_name" class="form-control"  value="{{$form->staff_name}}" readonly></td>
+                        <td style=""><input type="text" name="staff_name" class="form-control"  value="{{$form->staff_name}}" readonly></td>
                         <td class="text-center"><label>Man No:</label></td>
                         <td><input type="text" name="staff_no"
                                    class="form-control" value="{{$form->staff_no}}"

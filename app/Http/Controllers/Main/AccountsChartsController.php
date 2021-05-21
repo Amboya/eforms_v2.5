@@ -79,8 +79,6 @@ class AccountsChartsController extends Controller
         //log the activity
         ActivityLogsController::store($request,"Creating of Account","update", " user unit created", json_encode( $model));
         return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Created successfully');
-
-
     }
 
     /**

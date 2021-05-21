@@ -117,8 +117,8 @@
                             <div class="row">
                                 <div class="col-6"><label>Cost Center:</label></div>
                                 <div class="col-6">
-                                    <input value="{{Auth::user()->user_unit->cost_center_code }}" type="cost_center"
-                                           name="date" readonly class="form-control">
+                                    <input value="{{Auth::user()->user_unit->user_unit_code }}" type="cost_center"
+                                           name="cost_center" readonly class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -136,21 +136,21 @@
                                 <div class="col-6"><label>Station:</label></div>
                                 <div class="col-6">
                                     <input  type="text" name="station" id="station" placeholder="Enter the Station"
-                                           required class="form-control">
+                                            required class="form-control">
                                 </div>
                             </div>
                         </div>
 
 
-{{--                        <div class="col-4 mb-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Sys Ref No:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input  type="text" name="sysRefNo" id="sysRefNo" placeholder="Enter the related Sys Ref no."--}}
-{{--                                            class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
+                        {{--                        <div class="col-4 mb-1">--}}
+                        {{--                            <div class="row">--}}
+                        {{--                                <div class="col-6"><label>Sys Ref No:</label></div>--}}
+                        {{--                                <div class="col-6">--}}
+                        {{--                                    <input  type="text" name="sysRefNo" id="sysRefNo" placeholder="Enter the related Sys Ref no."--}}
+                        {{--                                            class="form-control">--}}
+                        {{--                                </div>--}}
+                        {{--                            </div>--}}
+                        {{--                        </div>--}}
                     </div>
 
                     <div class="col-lg-12 grid-margin stretch-card">
@@ -252,7 +252,7 @@
                                         <div class="form-group">
                                             <div class="radio">
                                                 <label name="fuel_type" id="fuel_type" >
-                                                   (Select Fuel Type)
+                                                    (Select Fuel Type)
                                                 </label>
                                             </div>
                                             <div class="radio">
@@ -281,7 +281,7 @@
                                     <label for="pump_price" class="col-sm-12 control-label">Pump Price (ZMW/L)</label>
                                     <div class="col-sm-12">
                                         <input type="number" step='any' required class="form-control" name="pump_price"
-                                            readonly   id="pump_price" placeholder="Enter the Pump Price" >
+                                               readonly   id="pump_price" placeholder="Enter the Pump Price" >
                                     </div>
                                 </div>
                             </div>
@@ -556,4 +556,8 @@
 
 
 
+
+
+
 @endpush
+

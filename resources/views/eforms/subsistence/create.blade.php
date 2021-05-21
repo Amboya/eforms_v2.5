@@ -19,7 +19,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('subsistence-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('subsistence.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">New Subsistence Claim</li>
                     </ol>
                 </div><!-- /.col -->
@@ -57,7 +57,7 @@
 
     <!-- Default box -->
         <div class="card">
-            <form enctype="multipart/form-data" name="db1" action="{{route('subsistence-store')}}"
+            <form enctype="multipart/form-data" name="db1" action="{{route('subsistence.store')}}"
                   method="post">
                 @csrf
                 <div class="card-body">

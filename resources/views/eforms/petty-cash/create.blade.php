@@ -142,7 +142,7 @@
                                                       placeholder="Item Details / Description" id="name"
                                                       required></textarea>
                                         </TD>
-                                        <TD><input type="number" id="amount" name="amount[]" onchange="getvalues()"
+                                        <TD><input type="number" step="any" id="amount" name="amount[]" onchange="getvalues()"
                                                    class="form-control amount" placeholder="Amount [ZMW]">
                                         </TD>
                                     </TR>
@@ -170,15 +170,13 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="input-group">
-                                            <input type="file" class="form-control" multiple name="quotation[]"
-                                                   id="receipt" title="Upload Quotation Files (Optional)" >
+                                            <input type="file" class="form-control" multiple name="quotation[]" id="receipt" title="Upload Quotation Files (Optional)" >
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <hr>
                         </div>
-
                     </div>
 
 

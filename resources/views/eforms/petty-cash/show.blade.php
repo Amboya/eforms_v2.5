@@ -35,12 +35,12 @@
 
         @if(session()->has('message'))
             <div class="alert alert-success alert-dismissible">
-                <p class="lead"> {{session()->get('message')}}</p>
+                <p class="lead"> {!! session()->get('message') !!}</p>
             </div>
         @endif
         @if(session()->has('error'))
             <div class="alert alert-danger alert-dismissible">
-                <p class="lead"> {{session()->get('message')}}</p>
+                <p class="lead"> {!! session()->get('message') !!}</p>
             </div>
         @endif
 
@@ -125,8 +125,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
 
@@ -243,6 +241,54 @@
             </div>
             <!-- /.card -->
 
+            {{-- FINANCIAL POSTINGS  --}}
+            @if(  ($form->config_status_id >= config('constants.petty_cash_status.closed') )
+               )
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-center">Financial Accounts Postings</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="table-responsive">
+                                <div class="col-lg-12 ">
+                                    <TABLE class="table">
+                                        <thead>
+                                        <TR>
+                                            <TD>Account</TD>
+                                            <TD>Debited Amount</TD>
+                                            <TD>Credited Amount</TD>
+                                        </TR>
+                                        </thead>
+
+                                        <tbody>
+                                        @foreach($form_accounts as $item)
+                                            <TR>
+                                                <TD><input list="accounts_list" type="text"
+                                                           value="{{$item->account}}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                                <TD><input type="number" id="credited_amount"
+                                                           value="{{ number_format($item->creditted_amount ?? 0,2) }}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                                <TD><input type="number" value="{{ number_format($item->debitted_amount ?? 0, 2) }}"
+                                                           class="form-control amount" readonly>
+                                                </TD>
+                                            </TR>
+                                        @endforeach
+                                        </tbody>
+
+                                    </TABLE>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="font-weight-normal">Change was: ZMW {{$form->change ?? 0}}</span>
+                    </div>
+                </div>
+            @endif
             {{-- NEXT PERSONS TO ACT --}}
             @if(  $form->config_status_id != config('constants.petty_cash_status.closed')   )
                 <div class="card">
@@ -278,27 +324,26 @@
                     @if( ($user->type_id == config('constants.user_types.developer')  || (
                                  $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                                &&  $user->id  == $form->created_by )
-                                 &&  ($form->config_status_id == config('constants.petty_cash_status.new_application'))
                              )
                                )
                         <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
                            data-target="#modal-add-quotation">Add File</a>
                     @endif
                 </div>
-                <div class="card-body" style="width:100%; height: 900px ">
+                <div class="card-body" style="width:100%;  ">
                     <div class="row">
                         @foreach($quotations as $item)
                             <div class="col-12">
                                 <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_quotation/'.$item->name)}}"
-                                        style="width:100%; height: 850px" title="{{$item->name}}"></iframe>
+                                        style="width:100%; " title="{{$item->name}}"></iframe>
                                 <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                 <span> | </span>
                                 <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}">View</a>
                                 @if( ($user->type_id == config('constants.user_types.developer')  || (
-                                  $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                                &&  $user->id  == $form->created_by ))
-                                &&  ($form->config_status_id == config('constants.petty_cash_status.new_application'))
+                                    $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                                  &&  $user->id  == $form->created_by )
                                 )
+                                  )
                                     <span> | </span>
                                     <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
                                        data-target="#modal-change">Edit</a>
@@ -323,17 +368,17 @@
               || ($user->type_id == config('constants.user_types.developer'))
             &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
             ($form->config_status_id == config('constants.petty_cash_status.closed')) ) )    )
-                            <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$item}}"
+                            <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
                                data-target="#modal-add-receipt">Add File</a>
                         @endif
                     </div>
-                    <div class="card-body" style="width:100%; height: 900px ">
+                    <div class="card-body" style="width:100%;  ">
                         <div class="row">
                             @foreach($receipts as $item)
                                 <div class="col-12">
                                     <iframe id="{{$item->id}}"
                                             src="{{asset('storage/petty_cash_receipt/'.$item->name)}}"
-                                            style="width:100%; height: 840px " title="{{$item->name}}"></iframe>
+                                            style="width:100%; " title="{{$item->name}}"></iframe>
                                     <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                     <span> | </span>
                                     <a href="{{asset('storage/petty_cash_receipt/'.$item->name)}}">View</a>
@@ -344,7 +389,7 @@
                          &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
                          ($form->config_status_id == config('constants.petty_cash_status.closed'))  )    )
                                         <span> | </span>
-                                        <a href="#" data-toggle="modal" data-sent_data="{{$form}}"
+                                        <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
                                            data-target="#modal-change">Edit</a>
                                     @endif
                                 </div>
@@ -570,7 +615,6 @@
                                         <TABLE id="dataTable2" class="table">
                                             <TR>
                                                 <TD><INPUT type="checkbox" name="chk"/></TD>
-
                                                 <TD>
                                                     <div class="row">
                                                         <div class="col-12">
@@ -612,7 +656,7 @@
                                                         <div class="col-3">
                                                             <input type="number" id="credited_amount"
                                                                    name="credited_amount[]"
-                                                                   onchange="getvalues()" class="form-control amount"
+                                                                   onchange="getvalues()" step="any" class="form-control amount"
                                                                    placeholder=" Amount [ZMK]" required>
                                                         </div>
                                                         {{--                                                </TD>--}}
@@ -652,12 +696,10 @@
                                     </div>
                                 </div>
                             </div>
-
                             <hr>
                             <div class="row">
                                 <textarea hidden class="form-control" rows="2" name="reason" required> Funds Disbursement</textarea>
                                 <div id="submit_not_possible" class="col-12 text-center">
-
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
                                         Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
                                                 )</strong>
@@ -802,41 +844,6 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
-                            <h6 class="text-center">The Updated Accounts</h6>
-                            <div class="col-lg-12 grid-margin stretch-card">
-                                <div class="table-responsive">
-                                    <div class="col-lg-12 ">
-                                        <TABLE class="table">
-                                            <thead>
-                                            <TR>
-                                                <TD>Account</TD>
-                                                <TD>Credited Amount</TD>
-                                                <TD>Debited Amount</TD>
-                                            </TR>
-                                            </thead>
-
-                                            <tbody>
-                                            @foreach($form_accounts as $item)
-                                                <TR>
-                                                    <TD><input list="accounts_list" type="text"
-                                                               value="{{$item->account}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                    <TD><input type="number" id="credited_amount"
-                                                               value="{{$item->creditted_amount}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                    <TD><input type="number" value="{{$item->debitted_amount}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                </TR>
-                                            @endforeach
-                                            </tbody>
-
-                                        </TABLE>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="card">
                                 <div class="col-lg-10 p-2 mt-3 ">
                                     <div class="row">
@@ -846,7 +853,7 @@
                                         <div class="col-8">
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="number" onchange="showChange()" class="form-control"
+                                                    <input type="number" step="any" onchange="showChange()" class="form-control"
                                                            name="change" id="change" required>
                                                 </div>
                                             </div>
@@ -1062,14 +1069,14 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title text-center">Change File</h4>
+                    <h4 class="modal-title text-center">You want to change this file</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" enctype="multipart/form-data" method="post"
-                      action="{{route('attached-file-change')}} ">
+                <form id="change_form" method="post"
+                      action="{{route('attached-file-change')}}"   enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1083,7 +1090,7 @@
                                     <label>Change File</label>
                                     <input type="file" class="form-control" id="change_file" name="change_file"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="item_id2" name="id"
+                                    <input hidden class="form-control" id="item_id" name="id"
                                            placeholder="Enter profile name" required>
                                     <input hidden class="form-control" id="form_id" name="form_id"
                                            placeholder="Enter profile name" required>
@@ -1117,8 +1124,8 @@
                 </div>
 
                 <!-- form start -->
-                <form role="form-new" enctype="multipart/form-data" method="post"
-                      action="{{route('attached-file-add')}} ">
+                <form id="qoutation_form" method="post"
+                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1161,8 +1168,8 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" enctype="multipart/form-data" method="post"
-                      action="{{route('attached-file-add')}} ">
+                <form id="receipt_form"  method="post"
+                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1172,7 +1179,7 @@
                                     <label>Add File</label>
                                     <input type="file" class="form-control" id="add_file2" name="add_file"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="item_type2" name="file_type"
+                                    <input hidden  class="form-control" id="item_type2" name="file_type"
                                            placeholder="Enter profile name" required>
                                     <input hidden class="form-control" id="form_type2" name="form_type"
                                            placeholder="Enter profile name" required>
@@ -1394,7 +1401,6 @@
     </script>
 
     <script>
-
         $('#modal-change').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
@@ -1413,7 +1419,7 @@
             var sdfdfds = " <iframe  style='width:100%; height: 550px ' src='" + url + "'  ></iframe>"
 
             $('#name2').html(sdfdfds);
-            $('#item_id2').val(recipient.id);
+            $('#item_id').val(recipient.id);
             $('#form_id').val(recipient.form_id);
             $('#path').val(path);
 
@@ -1422,7 +1428,6 @@
     </script>
 
     <script>
-
         $('#modal-add-quotation').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
@@ -1449,10 +1454,10 @@
             var form_id = {!! config('constants.eforms_id.petty_cash') !!};
             var form_code = recipient.code;
 
-            $('#item_type1').val(type);
-            $('#form_type1').val(form_id);
-            $('#form_code1').val(form_code);
-            $('#path1').val(path);
+            $('#item_type2').val(type);
+            $('#form_type2').val(form_id);
+            $('#form_code2').val(form_code);
+            $('#path2').val(path);
 
         });
     </script>
