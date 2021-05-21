@@ -60,7 +60,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty-cash-list', config('constants.petty_cash_status.new_application') ) }}">
+                           href="{{route( 'petty.cash.list', config('constants.petty_cash_status.new_application') ) }}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -75,7 +75,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty-cash-list', 'pending')}}">
+                           href="{{route( 'petty.cash.list', 'pending')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -92,7 +92,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty-cash-list', config('constants.petty_cash_status.closed'))}}">
+                           href="{{route( 'petty.cash.list', config('constants.petty_cash_status.closed'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -106,7 +106,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty-cash-list', config('constants.petty_cash_status.rejected'))}}">
+                           href="{{route( 'petty.cash.list', config('constants.petty_cash_status.rejected'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -170,7 +170,7 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('petty-cash-show', $item->id) }}"
+                                                      action="{{ route('petty.cash.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
@@ -186,7 +186,7 @@
                                                    onclick="event.preventDefault();
                                                            document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('petty-cash-show', $item->id) }}"
+                                                      action="{{ route('petty.cash.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
@@ -203,7 +203,7 @@
                         <div class="card-footer clearfix">
                             @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )
                                 @if($pending < 1)
-                                    <a href="{{route('petty-cash-create')}}"
+                                    <a href="{{route('petty.cash.create')}}"
                                        class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
                                 @else
                                     <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>

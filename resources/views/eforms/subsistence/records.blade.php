@@ -56,45 +56,45 @@
                     <table id="example1" class="table m-0">
                         <thead>
                         <tr>
-                            <th>Serial</th>
-                            <th>Claimant</th>
-                            <th>Payment</th>
+                            <th>from</th>
+                            <th>to</th>
+                            <th>No. Days</th>
+                            <th>Allowance / Night</th>
+                            <th>Total</th>
                             <th>Status</th>
-                            <th>Period</th>
-                            <th>View</th>
-                            <th>Mark Void</th>
+                            <th>Time Period</th>
+                            <th>Status</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach( $list as $item )
                             <tr>
-                                <td><a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
-                                    <form id="show-form{{$item->id}}" action="{{ route('subsistence.show', $item->id) }}"
+                                <td><a href="{{ route('logout') }}" class="dropdown-item"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
+                                    <form id="show-form{{$item->id}}"
+                                          action="{{ route('subsistence.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
                                 </td>
                                 <td>{{$item->claimant_name}}</td>
-                                <td>{{$item->total_payment}}</td>
-                                <td><span class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                <td>{{$item->numdays ?? 0}}</td>
+                                <td>{{$item->absc_allowance_per_night}}</td>
+                                <td>ZMW {{number_format($item->total ?? 0,2)}}</td>
+
+                                <td><span
+                                        class="badge badge-{{$item->html ?? 11}}">{{$item->status_name ?? 00}}</span>
                                 </td>
-                                <td>{{$item->updated_at->diffForHumans()}}</td>
-                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
-                                        document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
-                                    <form id="show-form{{$item->id}}" action="{{ route('subsistence.show', $item->id) }}"
+                                <td>{{$item->created_at }}</td>
+                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
+                                    <form id="show-form{{$item->id}}"
+                                          action="{{ route('subsistence.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
-                                </td>
-                                <td>
-                                <button class="btn btn-sm bg-gradient-gray float-left" style="margin: 1px"
-                                        title="Mark as Void."
-                                        data-toggle="modal"
-                                        data-target="#modal-delete{{$item->id}}">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                                </td>
                             </tr>
                         @endforeach
                         </tbody>

@@ -16,12 +16,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty Cash Detail [ {{ $form->code }} ]</h1>
+                    <h1 class="m-0 text-dark">Petty Cash Voucher {{ $form->code }} </h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('petty-cash-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Petty Cash Detail</li>
+                        <li class="breadcrumb-item"><a href="{{route('petty.cash.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">Petty Cash Voucher</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -54,7 +54,7 @@
             </div>
         @endif
 
-        <form id="show_form" name="db1" action="{{route('petty-cash-approve')}}" method="post"
+        <form id="show_form" name="db1" action="{{route('petty.cash.approve')}}" method="post"
               enctype="multipart/form-data">
         @csrf
 
@@ -940,7 +940,7 @@
                                     <textarea hidden class="form-control" rows="2" name="reason" required> Closing of petty cash</textarea>
                                     <div class="col-2 text-center ">
                                         {{--                                        <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                value='Approved'>CLOSE PETTY-CASH--}}
+                                        {{--                                                value='Approved'>CLOSE PETTY.CASH.-}}
                                         {{--                                        </button>--}}
 
                                         <div id="divSubmit_show">
@@ -960,11 +960,11 @@
                                             </button>
                                             {{--                                            <button  disabled--}}
                                             {{--                                                     class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                     value='Approved'>CLOSE PETTY-CASH--}}
+                                            {{--                                                     value='Approved'>CLOSE PETTY.CASH.-}}
                                             {{--                                            </button>--}}
                                             {{--                                            <button style="display: none" disabled--}}
                                             {{--                                                    class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                    value='Rejected'>CLOSE PETTY-CASH--}}
+                                            {{--                                                    value='Rejected'>CLOSE PETTY.CASH.-}}
                                             {{--                                            </button>--}}
                                         </div>
                                     </div>
@@ -1090,7 +1090,7 @@
                                     <label>Change File</label>
                                     <input type="file" class="form-control" id="change_file" name="change_file"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="item_id" name="id"
+                                    <input hidden class="form-control" id="item_id" name="change_file_id"
                                            placeholder="Enter profile name" required>
                                     <input hidden class="form-control" id="form_id" name="form_id"
                                            placeholder="Enter profile name" required>
@@ -1133,15 +1133,15 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Add File</label>
-                                    <input type="file" class="form-control" id="add_file1" name="add_file"
+                                    <input type="file" class="form-control" id="add_file1" name="add_file1"
+                                           required>
+                                    <input hidden class="form-control" id="item_type1" name="file_type1"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="item_type1" name="file_type"
+                                    <input hidden class="form-control" id="form_type1" name="form_type1"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="form_type1" name="form_type"
+                                    <input hidden class="form-control" id="form_code1" name="form_id1"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="form_code1" name="form_id"
-                                           placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="path1" name="path"
+                                    <input hidden class="form-control" id="path1" name="path1"
                                            required>
                                 </div>
                             </div>
@@ -1169,7 +1169,7 @@
                 </div>
                 <!-- form start -->
                 <form id="receipt_form"  method="post"
-                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
+                      action="{{route('attached-file-add2')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1177,15 +1177,15 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Add File</label>
-                                    <input type="file" class="form-control" id="add_file2" name="add_file"
+                                    <input type="file" class="form-control" id="add_file2" name="add_file2"
+                                          required>
+                                    <input hidden  class="form-control" id="item_type2" name="file_type2"
                                            placeholder="Enter profile name" required>
-                                    <input hidden  class="form-control" id="item_type2" name="file_type"
+                                    <input hidden class="form-control" id="form_type2" name="form_type2"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="form_type2" name="form_type"
+                                    <input hidden class="form-control" id="form_code2" name="form_id2"
                                            placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="form_code2" name="form_id"
-                                           placeholder="Enter profile name" required>
-                                    <input hidden class="form-control" id="path2" name="path"
+                                    <input hidden class="form-control" id="path2" name="path2"
                                            required>
                                 </div>
                             </div>

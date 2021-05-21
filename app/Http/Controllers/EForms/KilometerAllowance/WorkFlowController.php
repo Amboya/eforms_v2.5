@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\EForms\PettyCash;
+namespace App\Http\Controllers\EForms\KilometerAllowance;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Main\ActivityLogsController;
@@ -27,8 +27,8 @@ class WorkFlowController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.main_dashboard')]);
-        session(['eform_code' => config('constants.eforms_name.main_dashboard')]);
+        session(['eform_id' => config('constants.eforms_id.kilometer_allowance')]);
+        session(['eform_code' => config('constants.eforms_name.kilometer_allowance')]);
     }
 
 
@@ -55,7 +55,7 @@ class WorkFlowController extends Controller
             'list' => $list,
         ];
 
-        return view('eforms.petty-cash.workflow')->with($params);
+        return view('eforms.kilometer-allowance.workflow')->with($params);
     }
 
     /**
@@ -121,7 +121,7 @@ class WorkFlowController extends Controller
             'workflow' => $workflow,
         ];
 
-        return view('eforms.petty-cash.showworkflow')->with($params);
+        return view('eforms.kilometer-allowance.showworkflow')->with($params);
     }
 
     /**
@@ -254,7 +254,7 @@ class WorkFlowController extends Controller
             'workflow' => $workflow->first(),
         ];
 
-        return view('eforms.petty-cash.showworkflow')->with($params);
+        return view('eforms.kilometer-allowance.showworkflow')->with($params);
     }
 
 

@@ -242,7 +242,7 @@
                 alert("Please fill in all the search parameters.");
             }else{
                 //get the route
-                var route = '{{url('petty_cash/filtered/report/get')}}' + '/' + unit_selected_value  + '/' + status_selected_value+ '/' + start_date+ '/' + end_date;
+                var route = '{{url('petty/cash/filtered/report/get')}}' + '/' + unit_selected_value  + '/' + status_selected_value+ '/' + start_date+ '/' + end_date;
                 // alert(route);
                 $.ajax({
                     url: route,
@@ -263,7 +263,7 @@
                                  $.each( list[i], function (index, value) {
 
                                      //list array
-                                     var route = '{{ url('petty_cash/showForm') }}' + '/'+ value.id ;
+                                     var route = '{{ url('petty/cash/show/form') }}' + '/'+ value.id ;
                                      var View = "View";
                                      //populate the table
                                      list_responce +=
@@ -294,7 +294,7 @@
                              $.each( response_data.list, function (index, value) {
                                  //list array
                                  var form_id  = 'show-form'+value.id ;
-                                 var route = '{{ url('petty_cash/showForm') }}' + '/'+ value.id ;
+                                 var route = '{{ url('petty/cash/show/form') }}' + '/'+ value.id ;
                                  var View = "View";
                                  var csrf = '@csrf' ;
                                  //populate the table
@@ -374,7 +374,7 @@
 
 
             {{--//get the route--}}
-            {{--var route = '{{url('petty_cash/filtered/report/get')}}' + '/' + selected_value  + '/' + selected_value+ '/' + selected_value+ '/' + selected_value;--}}
+            {{--var route = '{{url('petty/cash/filtered/report/get')}}' + '/' + selected_value  + '/' + selected_value+ '/' + selected_value+ '/' + selected_value;--}}
 
             /*GET */
             // $.get(route, function (data) {

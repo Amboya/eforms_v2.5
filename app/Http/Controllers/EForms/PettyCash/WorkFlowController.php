@@ -108,7 +108,7 @@ class WorkFlowController extends Controller
     public function show($id, $form_id)
     {
         $workflow = ConfigWorkFlow::find($id);
-        $users = User::orderBy('name')->get();
+        $users = User::where('profile_id','>', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -208,7 +208,7 @@ class WorkFlowController extends Controller
 
         //log the activity
         //  ActivityLogsController::store($request, "Updating of Petty Cash User Unit Workflow", "update", "petty cash unit user workflow updated", $model->id);
-        return Redirect::route('petty-cash-home')->with('message', 'Work Flow for ' . $model->name . ' have been Updated successfully');
+        return Redirect::route('petty.cash.home')->with('message', 'Work Flow for ' . $model->name . ' have been Updated successfully');
 
     }
 
@@ -220,6 +220,7 @@ class WorkFlowController extends Controller
      */
     public function destroy(Request $request, $id)
     {
+
 //        $model = DepartmentModel::find($id);
 //        DepartmentModel::destroy($id);
 //        //log the activity

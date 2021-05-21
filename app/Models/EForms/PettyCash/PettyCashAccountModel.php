@@ -61,14 +61,10 @@ class PettyCashAccountModel extends Model
     ];
 
     protected $with = [
-//        'petty_cash',
         'status',
     ];
 
-//    public function petty_cash()
-//    {
-//        return $this->belongsTo(PettyCashModel::class, 'eform_petty_cash_id', 'id');
-//    }
+
     public function status()
     {
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');

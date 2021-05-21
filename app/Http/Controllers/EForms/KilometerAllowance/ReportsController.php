@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\EForms\PettyCash;
+namespace App\Http\Controllers\EForms\KilometerAllowance;
 
 use App\Http\Controllers\Controller;
-use App\Models\EForms\PettyCash\PettyCashModel;
-use App\Models\EForms\PettyCash\Views\AllPettyCashTotalsView;
+use App\Models\Eforms\KilometerAllowance\KilometerAllowanceModel;
+use \App\Http\Controllers\Eforms\KilometerAllowance\HomeController;
 use App\Models\EForms\PettyCash\Views\DailyPettyCashTotalsView;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\StatusModel;
@@ -26,8 +26,8 @@ class ReportsController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.petty_cash')]);
-        session(['eform_code' => config('constants.eforms_name.petty_cash')]);
+        session(['eform_id' => config('constants.eforms_id.kilometer_allowance')]);
+        session(['eform_code' => config('constants.eforms_name.kilometer_allowance')]);
     }
 
 
@@ -86,7 +86,7 @@ class ReportsController extends Controller
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
-        $status = StatusModel::where('eform_id', config('constants.eforms_id.petty_cash'))->orderBy('name')->get();
+        $status = StatusModel::where('eform_id', config('constants.eforms_id.kilometer_allowance'))->orderBy('name')->get();
 
         //data to send to the view
         $params = [
@@ -97,7 +97,7 @@ class ReportsController extends Controller
         ];
 
         //reports one page
-        return view('eforms.petty-cash.reports.filtered_reports')->with($params);
+        return view('eforms.kilometer-allowance.reports.filtered_reports')->with($params);
     }
 
     public function getFilteredReports($user_unit, $status, $start_date, $end_date){
@@ -117,24 +117,24 @@ class ReportsController extends Controller
 
                 $user_unit_new = $item->user_unit_code ;
                 //get the list of transactions
-                $list_one = DB::select("SELECT * FROM eform_petty_cash
+                $list_one = DB::select("SELECT * FROM eform_kilometer_allowance
                     where config_status_id = '{$status}'
                       and user_unit_code = '{$user_unit_new}'
                       and  created_at <= '{$end_date}'
                       and  created_at >= '{$start_date}'
                      ");
-                $my_list = PettyCashModel::hydrate($list_one);
+                $my_list = KilometerAllowanceModel::hydrate($list_one);
                 if(sizeof($my_list) < 1){
                     //dd($my_list);
                 }else{
-                    $list[] = PettyCashModel::hydrate($list_one);
+                    $list[] = KilometerAllowanceModel::hydrate($list_one);
                 }
 
 
 
                 //get the summary
                 $summary_one = DB::select("SELECT sum(amount) as amount , sum(total)as total
-                    FROM eform_petty_cash_dashboard_daily_totals_view
+                    FROM eform_kilometer_allowance_dashboard_daily_totals_view
                       where config_status_id = '{$status}'
                       and  user_unit_code = '{$user_unit_new}'
                       and  claim_date <= '{$end_date}'
@@ -151,18 +151,18 @@ class ReportsController extends Controller
             }
         }else{
             //get the list of transactions
-            $list = DB::select("SELECT * FROM eform_petty_cash
+            $list = DB::select("SELECT * FROM eform_kilometer_allowance
                     where config_status_id = '{$status}'
                       and user_unit_code = '{$user_unit}'
                       and  created_at <= '{$end_date}'
                       and  created_at >= '{$start_date}'
                      ");
-            $list = PettyCashModel::hydrate($list);
+            $list = KilometerAllowanceModel::hydrate($list);
 
 
             //get the summary
             $summary = DB::select("SELECT sum(amount) as amount , sum(total)as total
-                    FROM eform_petty_cash_dashboard_daily_totals_view
+                    FROM eform_kilometer_allowance_dashboard_daily_totals_view
                       where config_status_id = '{$status}'
                       and  user_unit_code = '{$user_unit}'
                       and  claim_date <= '{$end_date}'
@@ -202,7 +202,7 @@ class ReportsController extends Controller
             DB::raw('sum(total) as total, sum(amount) as amount') )
             ->groupBy('directorate_id', 'config_status_id',  'total', 'amount' );
         $dir2 =  $directorate ->get() ;
-        $dir =  $directorate ->where('config_status_id',  config('constants.petty_cash_status.closed') )->get() ;
+        $dir =  $directorate ->where('config_status_id',  config('constants.kilometer_allowance_status.closed') )->get() ;
 
         $unitss = DailyPettyCashTotalsView::select('directorate_id','user_unit_code' )
             ->groupBy('user_unit_code','directorate_id' )->get();
@@ -238,7 +238,7 @@ class ReportsController extends Controller
             'totals_needs_me' => $totals_needs_me,
         ];
         //reports one page
-        return view('eforms.petty-cash.reports.index')->with($params);
+        return view('eforms.kilometer-allowance.reports.index')->with($params);
     }
 
     public
@@ -247,24 +247,24 @@ class ReportsController extends Controller
         /**
          * total Closed
          */
-        $closed_status = config('constants.petty_cash_status.closed');
+        $closed_status = config('constants.kilometer_allowance_status.closed');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_petty_cash where config_status_id = {$closed_status} group by directorate_id  order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$closed_status} group by directorate_id  order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         // dd($total_forms);
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_closed_count'),
                 'total_two' => config('constants.config_totals.dir_total_closed_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -281,22 +281,22 @@ class ReportsController extends Controller
         /**
          * total new
          */
-        $new_status = config('constants.petty_cash_status.new_application');
+        $new_status = config('constants.kilometer_allowance_status.new_application');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_petty_cash where config_status_id = {$new_status} group by directorate_id  order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$new_status} group by directorate_id  order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_new_count'),
                 'total_two' => config('constants.config_totals.dir_total_new_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -312,22 +312,22 @@ class ReportsController extends Controller
         /**
          * total rejected
          */
-        $rejected_status = config('constants.petty_cash_status.rejected');
+        $rejected_status = config('constants.kilometer_allowance_status.rejected');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_petty_cash where config_status_id = {$rejected_status} group by directorate_id  order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$rejected_status} group by directorate_id  order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_rejected_count'),
                 'total_two' => config('constants.config_totals.dir_total_rejected_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -343,14 +343,14 @@ class ReportsController extends Controller
         /**
          * total pending
          */
-        $status1 = config('constants.petty_cash_status.hod_approved');
-        $status2 = config('constants.petty_cash_status.hr_approved');
-        $status3 = config('constants.petty_cash_status.chief_accountant');
-        $status4 = config('constants.petty_cash_status.funds_disbursement');
-        $status5 = config('constants.petty_cash_status.funds_acknowledgement');
-        $status6 = config('constants.petty_cash_status.security_approved');
+        $status1 = config('constants.kilometer_allowance_status.hod_approved');
+        $status2 = config('constants.kilometer_allowance_status.hr_approved');
+        $status3 = config('constants.kilometer_allowance_status.chief_accountant');
+        $status4 = config('constants.kilometer_allowance_status.funds_disbursement');
+        $status5 = config('constants.kilometer_allowance_status.funds_acknowledgement');
+        $status6 = config('constants.kilometer_allowance_status.security_approved');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_petty_cash
+           FROM eform_kilometer_allowance
            where config_status_id = {$status1}
            or config_status_id = {$status2}
            or config_status_id = {$status3}
@@ -358,19 +358,19 @@ class ReportsController extends Controller
            or config_status_id = {$status5}
            or config_status_id = {$status6}
            group by directorate_id  order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_pending_count'),
                 'total_two' => config('constants.config_totals.dir_total_pending_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -386,22 +386,22 @@ class ReportsController extends Controller
         /**
          * total Cancelled
          */
-        $cancelled_status = config('constants.petty_cash_status.cancelled');
+        $cancelled_status = config('constants.kilometer_allowance_status.cancelled');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_petty_cash where config_status_id = {$cancelled_status} group by directorate_id  order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$cancelled_status} group by directorate_id  order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_cancelled_count'),
                 'total_two' => config('constants.config_totals.dir_total_cancelled_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -418,22 +418,22 @@ class ReportsController extends Controller
         /**
          * total Void
          */
-        $void_status = config('constants.petty_cash_status.void');
+        $void_status = config('constants.kilometer_allowance_status.void');
         $void_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_petty_cash where config_status_id = {$void_status} group by directorate_id , user_unit_code order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($void_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$void_status} group by directorate_id , user_unit_code order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($void_forms)->all();
 
         foreach ($void_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_void_count'),
                 'total_two' => config('constants.config_totals.dir_total_void_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -460,18 +460,18 @@ class ReportsController extends Controller
         /**
          * total Closed
          */
-        $closed_status = config('constants.petty_cash_status.closed');
+        $closed_status = config('constants.kilometer_allowance_status.closed');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_petty_cash where config_status_id = {$closed_status} group by directorate_id , user_unit_code order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$closed_status} group by directorate_id , user_unit_code order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         //  dd($total_forms);
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate(
                 [
-                    'eform_id' => config('constants.eforms_id.petty_cash'),
-                    'eform_code' => config('constants.eforms_name.petty_cash'),
+                    'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                    'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                     'column_one' => config('constants.config_totals.directorate'),
                     'column_one_value' => $total->directorate_id,
@@ -482,8 +482,8 @@ class ReportsController extends Controller
                     'total_two' => config('constants.config_totals.total_closed_amount')
                 ],
                 [
-                    'eform_id' => config('constants.eforms_id.petty_cash'),
-                    'eform_code' => config('constants.eforms_name.petty_cash'),
+                    'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                    'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                     'column_one' => config('constants.config_totals.directorate'),
                     'column_one_value' => $total->directorate_id,
@@ -502,15 +502,15 @@ class ReportsController extends Controller
         /**
          * total new
          */
-        $new_status = config('constants.petty_cash_status.new_application');
+        $new_status = config('constants.kilometer_allowance_status.new_application');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_petty_cash where config_status_id = {$new_status} group by directorate_id , user_unit_code order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$new_status} group by directorate_id , user_unit_code order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -518,8 +518,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_new_count'),
                 'total_two' => config('constants.config_totals.total_new_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -537,15 +537,15 @@ class ReportsController extends Controller
         /**
          * total rejected
          */
-        $rejected_status = config('constants.petty_cash_status.rejected');
+        $rejected_status = config('constants.kilometer_allowance_status.rejected');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_petty_cash where config_status_id = {$rejected_status} group by directorate_id , user_unit_code order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$rejected_status} group by directorate_id , user_unit_code order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -553,8 +553,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_rejected_count'),
                 'total_two' => config('constants.config_totals.total_rejected_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -572,14 +572,14 @@ class ReportsController extends Controller
         /**
          * total pending
          */
-        $status1 = config('constants.petty_cash_status.hod_approved');
-        $status2 = config('constants.petty_cash_status.hr_approved');
-        $status3 = config('constants.petty_cash_status.chief_accountant');
-        $status4 = config('constants.petty_cash_status.funds_disbursement');
-        $status5 = config('constants.petty_cash_status.funds_acknowledgement');
-        $status6 = config('constants.petty_cash_status.security_approved');
+        $status1 = config('constants.kilometer_allowance_status.hod_approved');
+        $status2 = config('constants.kilometer_allowance_status.hr_approved');
+        $status3 = config('constants.kilometer_allowance_status.chief_accountant');
+        $status4 = config('constants.kilometer_allowance_status.funds_disbursement');
+        $status5 = config('constants.kilometer_allowance_status.funds_acknowledgement');
+        $status6 = config('constants.kilometer_allowance_status.security_approved');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_petty_cash
+           FROM eform_kilometer_allowance
            where config_status_id = {$status1}
            or config_status_id = {$status2}
            or config_status_id = {$status3}
@@ -587,12 +587,12 @@ class ReportsController extends Controller
            or config_status_id = {$status5}
            or config_status_id = {$status6}
            group by directorate_id , user_unit_code order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -600,8 +600,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_pending_count'),
                 'total_two' => config('constants.config_totals.total_pending_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -619,15 +619,15 @@ class ReportsController extends Controller
         /**
          * total Cancelled
          */
-        $cancelled_status = config('constants.petty_cash_status.cancelled');
+        $cancelled_status = config('constants.kilometer_allowance_status.cancelled');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_petty_cash where config_status_id = {$cancelled_status} group by directorate_id , user_unit_code order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($total_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$cancelled_status} group by directorate_id , user_unit_code order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -635,8 +635,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_cancelled_count'),
                 'total_two' => config('constants.config_totals.total_cancelled_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -655,15 +655,15 @@ class ReportsController extends Controller
         /**
          * total Void
          */
-        $void_status = config('constants.petty_cash_status.void');
+        $void_status = config('constants.kilometer_allowance_status.void');
         $void_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_petty_cash where config_status_id = {$void_status} group by directorate_id , user_unit_code order by amount desc ");
-        $total_forms = PettyCashModel::hydrate($void_forms)->all();
+           FROM eform_kilometer_allowance where config_status_id = {$void_status} group by directorate_id , user_unit_code order by amount desc ");
+        $total_forms = KilometerAllowanceModel::hydrate($void_forms)->all();
 
         foreach ($void_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -671,8 +671,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_void_count'),
                 'total_two' => config('constants.config_totals.total_void_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_code' => config('constants.eforms_name.petty_cash'),
+                'eform_id' => config('constants.eforms_id.kilometer_allowance'),
+                'eform_code' => config('constants.eforms_name.kilometer_allowance'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,

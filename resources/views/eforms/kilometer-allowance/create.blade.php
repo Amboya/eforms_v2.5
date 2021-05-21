@@ -19,7 +19,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('kilometer-allowance-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('kilometer.allowance.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">New Kilometer Allowance</li>
                     </ol>
                 </div><!-- /.col -->
@@ -57,7 +57,7 @@
 
     <!-- Default box -->
         <div class="card">
-            <form enctype="multipart/form-data" name="db1" action="{{route('kilometer-allowance-store')}}"
+            <form enctype="multipart/form-data" name="db1" action="{{route('kilometer.allowance.store')}}"
                   method="post">
                 @csrf
                 <div class="card-body">

@@ -16,7 +16,7 @@
                 data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="{{route('petty-cash-home')}}" class="nav-link ">
+                    <a href="{{route('petty.cash.home')}}" class="nav-link ">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -24,7 +24,7 @@
 
                 <li class="nav-header">PETTY CASH</li>
                 <li class="nav-item">
-                    <a href="{{route('petty-cash-list', 'needs_me')}}" class="nav-link ">
+                    <a href="{{route('petty.cash.list', 'needs_me')}}" class="nav-link ">
                         <i class="nav-icon fas fa-laptop"></i>
                         <p> My Attention</p><span class="badge badge-success right ml-2">{{$totals_needs_me}}</span>
                     </a>
@@ -39,13 +39,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{route('petty-cash-list', 'all')}}" class="nav-link ">
+                            <a href="{{route('petty.cash.list', 'all')}}" class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> All</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty-cash-list', config('constants.petty_cash_status.new_application') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.new_application') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> New
@@ -53,14 +53,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('petty-cash-list', 'pending')}}" class="nav-link ">
+                            <a href="{{route('petty.cash.list', 'pending')}}" class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Open
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty-cash-list', config('constants.petty_cash_status.closed') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.closed') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Closed
@@ -68,7 +68,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty-cash-list', config('constants.petty_cash_status.rejected') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.rejected') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Rejected
@@ -76,7 +76,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty-cash-list', config('constants.petty_cash_status.cancelled') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.cancelled') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Cancelled
@@ -84,7 +84,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty-cash-list', config('constants.petty_cash_status.void') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.void') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Void
@@ -92,7 +92,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty-cash-list', config('constants.petty_cash_status.audited') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.audited') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Audited
@@ -100,7 +100,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty-cash-list', config('constants.petty_cash_status.queried') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.queried') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Queried
@@ -131,14 +131,14 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                {{--                        <a href="{{route('petty-cash-report', config('constants.all'))}}" class="nav-link ">--}}
+                                {{--                        <a href="{{route('petty.cash.report', config('constants.all'))}}" class="nav-link ">--}}
                                 {{--                            <i class="nav-icon fas fa-file"></i>--}}
                                 {{--                            <p> All Reports--}}
                                 {{--                            </p>--}}
                                 {{--                        </a>--}}
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('petty-cash-report', config('constants.petty_cash_status.exported'))}}"
+                                <a href="{{route('petty.cash.report', config('constants.petty_cash_status.exported'))}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p> Exported
@@ -146,7 +146,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('petty-cash-report', config('constants.petty_cash_status.not_exported'))}}"
+                                <a href="{{route('petty.cash.report', config('constants.petty_cash_status.not_exported'))}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p> Not Exported
@@ -154,7 +154,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('petty-cash-report', config('constants.petty_cash_status.export_failed'))}}"
+                                <a href="{{route('petty.cash.report', config('constants.petty_cash_status.export_failed'))}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p> Export Failed
@@ -165,7 +165,7 @@
                     </li>
                     @if (Auth::user()->type_id == config('constants.user_types.developer'))
                         <li class="nav-item">
-                            <a href="{{route('petty-cash-record','all')}}" class="nav-link ">
+                            <a href="{{route('petty.cash.record','all')}}" class="nav-link ">
                                 <i class="nav-icon fas fa-file-download"></i>
                                 <p> All Petty Cash Records
                                 </p>
@@ -173,6 +173,34 @@
                         </li>
                     @endif
                 @endif
+
+
+
+                <li class="nav-header">MANAGEMENT</li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-file-download"></i>
+                        <p>
+                            Petty Cash Float
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('petty.cash.report', config('constants.all'))}}" class="nav-link ">
+                                <i class="nav-icon fas fa-file"></i>
+                                <p> Float Allocation
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('petty.cash.report', config('constants.all'))}}" class="nav-link ">
+                                <i class="nav-icon fas fa-file"></i>
+                                <p> Float Reimbursement
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
 
                 <li class="nav-header">CONFIGURATIONS</li>
 
@@ -277,7 +305,7 @@
 {{--                                                </a>--}}
 {{--                                            </li>--}}
 {{--                                            <li class="nav-item">--}}
-{{--                                                <a href="{{route('petty-cash-reports-index')}}" class="nav-link ">--}}
+{{--                                                <a href="{{route('petty.cash.reports.index')}}" class="nav-link ">--}}
 {{--                                                    <i class="nav-icon fas fa-file"></i>--}}
 {{--                                                    <p> All Time--}}
 {{--                                                    </p>--}}

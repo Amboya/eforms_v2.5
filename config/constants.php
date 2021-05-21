@@ -21,6 +21,8 @@ return [
     'file_type' => [
         'quotation' => "1",
         'receipt' => "0",
+        'directors' => 1,
+        'general' => 0,
     ],
 
     'team_email_list' =>  [
@@ -75,8 +77,8 @@ return [
 
     'user_profiles' => [
         'initiator' =>  1,
-        'EZESCO_001' => 2,
         'EZESCO_002' => 1,
+        'EZESCO_001' => 2,
         'EZESCO_003' => 3,
         'EZESCO_004' => 4,
         'EZESCO_005' => 5,
@@ -187,6 +189,8 @@ return [
         'export_failed' => "43",
         'void' => "101",
         'cancelled' => "161",
+        'queried' => "201",
+        'audited' => "29",
     ],
     'data_center_ca_status' => [
         'new_submission' => "89",
@@ -212,6 +216,9 @@ return [
         'exported' => "42",
         'export_failed' => "43",
         'void' => "101",
+        'cancelled' => "161",
+        'queried' => "201",
+        'audited' => "29",
     ],
 
     'trip_status' => [

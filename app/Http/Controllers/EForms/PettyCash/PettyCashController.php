@@ -293,7 +293,7 @@ class PettyCashController extends Controller
             ]);
 
         //redirect home
-        return Redirect::route('petty-cash-home')->with('message', 'Petty Cash ' . $form->code . ' for has been marked as Void successfully');
+        return Redirect::route('petty.cash.home')->with('message', 'Petty Cash ' . $form->code . ' for has been marked as Void successfully');
 
     }
 
@@ -335,7 +335,7 @@ class PettyCashController extends Controller
         $pending = HomeController::pendingForMe();
         if ($pending >= 1) {
             //return with error msg
-            return Redirect::route('petty-cash-home')->with('error', 'Sorry, You can not raise a new petty cash because you already have an open petty cash. Please allow the opened one to be closed or cancelled');
+            return Redirect::route('petty.cash.home')->with('error', 'Sorry, You can not raise a new petty cash because you already have an open petty cash. Please allow the opened one to be closed or cancelled');
         }
 
         //[2A] find my code superior
@@ -345,7 +345,7 @@ class PettyCashController extends Controller
             //prepare details
             $details = [
                 'name' => "Team",
-                'url' => 'petty-cash-home',
+                'url' => 'petty.cash.home',
                 'subject' => "Petty-Cash-Voucher Path Configuration Needs Your Attention",
                 'title' => "Path Configuration Not Defined For {$user->name}",
                 'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} and Phone/Extension {$user->phone}, managed to submit or raise new petty-cash voucher.
@@ -507,7 +507,7 @@ class PettyCashController extends Controller
         //prepare details
         $details = [
             'name' => $names,
-            'url' => 'petty-cash-home',
+            'url' => 'petty.cash.home',
             'subject' => "New Petty-Cash Voucher Needs Your Attention",
             'title' => "New Petty-Cash Voucher Needs Your Attention {$user->name}",
             'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} has successfully raised a petty-cash voucher with
@@ -522,12 +522,12 @@ class PettyCashController extends Controller
 
         if ($error) {
             // return with error msg
-            return Redirect::route('petty-cash-home')->with('error', 'Sorry!, The superior who is supposed to approve your petty cash,
+            return Redirect::route('petty.cash.home')->with('error', 'Sorry!, The superior who is supposed to approve your petty cash,
                        <br> has not registered or not fully configured yet, Please, <b>try first contacting your superior</b> so as to make sure he/she has registered in the system,
                        then you can contact eZESCO Admins (1142,1126,2350,2345,3309,3306 or 3319) isd@zesco.co.zm to configure your petty cash voucher path. Your petty-cash voucher has been saved.');
         } else {
             // return the view
-            return Redirect::route('petty-cash-home')->with('message', 'Petty Cash Details for ' . $formModel->code . ' have been Created successfully');
+            return Redirect::route('petty.cash.home')->with('message', 'Petty Cash Details for ' . $formModel->code . ' have been Created successfully');
         }
     }
 
@@ -692,7 +692,6 @@ class PettyCashController extends Controller
 //            //find the petty cash with that id
 //            $form = PettyCashModel::find($id);
 //        }
-
         $receipts = AttachedFileModel::where('form_id', $form->code)
             ->where('form_type', config('constants.eforms_id.petty_cash'))
             ->where('file_type', config('constants.file_type.receipt'))
@@ -818,128 +817,6 @@ class PettyCashController extends Controller
         $form = PettyCashModel::find($request->id);
         $current_status = $form->status->id;
         $user = Auth::user();
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
-
-
-        //HANDLE CANCELLATION
-        if ($request->approval == config('constants.approval.cancelled')) {
-
-            if ($current_status = config('constants.petty_cash_status.new_application')) {
-                $total_to_subtract_from = config('constants.totals.petty_cash_new');
-            } else {
-                $total_to_subtract_from = config('constants.totals.petty_cash_open');
-            }
-
-            //update the totals rejected
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('id', config('constants.totals.petty_cash_reject'))
-                ->first();
-            $totals->value = $totals->value + 1;
-            $totals->save();
-            $eform_pettycash->total_rejected = $totals->value;
-            $eform_pettycash->save();
-
-            //update the totals open
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('id', $total_to_subtract_from)
-                ->first();
-            $totals->value = $totals->value - 1;
-            $totals->save();
-            $eform_pettycash->total_pending = $totals->value;
-            $eform_pettycash->save();
-
-        }
-
-        //HANDLE REJECTION
-        if ($request->approval == config('constants.approval.reject')) {
-
-            //update the totals rejected
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('id', config('constants.totals.petty_cash_reject'))
-                ->first();
-            $totals->value = $totals->value + 1;
-            $totals->save();
-            $eform_pettycash->total_rejected = $totals->value;
-            $eform_pettycash->save();
-
-            //update the totals open
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('id', config('constants.totals.petty_cash_open'))
-                ->first();
-            $totals->value = $totals->value - 1;
-            $totals->save();
-            $eform_pettycash->total_pending = $totals->value;
-            $eform_pettycash->save();
-
-        }
-
-
-        //HANDLE APPROVAL
-        if ($request->approval == config('constants.approval.approve')) {
-            if ($form->status->id == config('constants.petty_cash_status.security_approved')) {
-
-                //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_closed'))
-                    ->first();
-                $totals->value = $totals->value + 1;
-                $totals->save();
-                $eform_pettycash->total_closed = $totals->value;
-                $eform_pettycash->save();
-
-                //update the totals open
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_open'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_pending = $totals->value;
-                $eform_pettycash->save();
-
-            } else if ($form->status->id == config('constants.petty_cash_status.new_application')) {
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_open'))
-                    ->first();
-                $totals->value = $totals->value + 1;
-                $totals->save();
-                $eform_pettycash->total_pending = $totals->value;
-                $eform_pettycash->save();
-
-                //update the totals new
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_new'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_new = $totals->value;
-                $eform_pettycash->save();
-            } else if ($form->status->id == config('constants.petty_cash_status.closed')) {
-                //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_closed'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_closed = $totals->value;
-                $eform_pettycash->save();
-            }
-        }
-
-
-        //HANDLE AUDIT QUERY
-        if ($request->approval == config('constants.approval.queried')) {
-//            if ($form->status->id == config('constants.petty_cash_status.closed')) {
-//                //update the totals closed
-//                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-//                    ->where('id', config('constants.totals.petty_cash_closed'))
-//                    ->first();
-//                $totals->value = $totals->value - 1;
-//                $totals->save();
-//                $eform_pettycash->total_closed = $totals->value;
-//                $eform_pettycash->save();
-//            }
-        }
-
 
         //FOR CLAIMANT CANCELLATION
         if (
@@ -1507,7 +1384,7 @@ class PettyCashController extends Controller
         //FOR NO-ONE
         else {
             //return with an error
-            return Redirect::route('petty-cash-home')->with('message', 'Petty Cash ' . $form->code . ' for has been ' . $request->approval . ' successfully');
+            return Redirect::route('petty.cash.home')->with('message', 'Petty Cash ' . $form->code . ' for has been ' . $request->approval . ' successfully');
         }
 
         //reason
@@ -1546,7 +1423,7 @@ class PettyCashController extends Controller
         }
 
         //redirect home
-        return Redirect::route('petty-cash-home')->with('message', $form->total_payment . ' petty-cash ' . $form->code . ' for ' . $form->claimant_name . ' has been ' . $request->approval . ' successfully');
+        return Redirect::route('petty.cash.home')->with('message', $form->total_payment . ' petty-cash ' . $form->code . ' for ' . $form->claimant_name . ' has been ' . $request->approval . ' successfully');
 
     }
 
@@ -1605,7 +1482,7 @@ class PettyCashController extends Controller
         //prepare details
         $details = [
             'name' => $names,
-            'url' => 'petty-cash-home',
+            'url' => 'petty.cash.home',
             'subject' => $subject,
             'title' => $title,
             'body' => $message
@@ -2027,7 +1904,7 @@ class PettyCashController extends Controller
 //            ]);
 
         //redirect home
-        return Redirect::route('petty-cash-home')->with('message', 'Petty Cash Voucher have been synced successfully');
+        return Redirect::route('petty.cash.home')->with('message', 'Petty Cash Voucher have been synced successfully');
 
         dd($claimant->position->superior_code ?? "");
     }
@@ -2133,55 +2010,54 @@ class PettyCashController extends Controller
     {
         try {
 
-//            /*
-//             * NEEDED AS A FUNCTION SOMEWHERE IN PETTY CASH CONTROLLER
-
-//            $tasks = DB::select("SELECT * FROM eform_petty_cash_account where business_unit_code LIKE '%13231%'
-
-            $form = DB::select("SELECT * FROM eform_petty_cash
-                            WHERE config_status_id = 28 ");
-            $form = PettyCashModel::hydrate($form)->all();
-
-            foreach ($form as $form_item) {
-                $form_id = $form_item->id ;
-                $tasks = DB::select("SELECT * FROM eform_petty_cash_account
-                            where status_id != '41'  and status_id != '41' and eform_petty_cash_id  = '{$form_id}'
-                             ");
-                $tasks = PettyCashAccountModel::hydrate($tasks);
-
-                if(sizeof($tasks) > 0){
-                    dd($tasks);
-                }
-
-
-            }
-
-
-
-            dd(122112212 );
-
-            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
-                            where status_id = '41'
-                            ORDER BY eform_petty_cash_id ASC ");
-            $tasks = PettyCashAccountModel::hydrate($tasks);
-
-          //  dd($tasks);
-            foreach ($tasks as $account) {
-                //get associated petty cash
-                $petty_cash_id = $account->eform_petty_cash_id;
-                $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
-                            WHERE id = {$petty_cash_id}  ");
-                $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
-
-                //update account with the petty cash details
-                $eform_petty_cash_account = DB::table('eform_petty_cash_account')
-                    ->where('id', $account->id)
-                    ->update([
-                        'status_id' => '41',
-                    ]);
-
-            }
-
+////            /*
+////             * NEEDED AS A FUNCTION SOMEWHERE IN PETTY CASH CONTROLLER
+//
+////            $tasks = DB::select("SELECT * FROM eform_petty_cash_account where business_unit_code LIKE '%13231%'
+//
+//            $form = DB::select("SELECT * FROM eform_petty_cash
+//                            WHERE config_status_id = 28 ");
+//            $form = PettyCashModel::hydrate($form)->all();
+//
+//            foreach ($form as $form_item) {
+//                $form_id = $form_item->id ;
+//                $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+//                            where status_id != '41'  and status_id != '41' and eform_petty_cash_id  = '{$form_id}'
+//                             ");
+//                $tasks = PettyCashAccountModel::hydrate($tasks);
+//
+//                if(sizeof($tasks) > 0){
+//                    dd($tasks);
+//                }
+//
+//
+//            }
+//
+//
+//
+//            dd(122112212 );
+//
+//            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+//                            where status_id = '41'
+//                            ORDER BY eform_petty_cash_id ASC ");
+//            $tasks = PettyCashAccountModel::hydrate($tasks);
+//
+//          //  dd($tasks);
+//            foreach ($tasks as $account) {
+//                //get associated petty cash
+//                $petty_cash_id = $account->eform_petty_cash_id;
+//                $tasks_pt = DB::select("SELECT * FROM eform_petty_cash
+//                            WHERE id = {$petty_cash_id}  ");
+//                $tasks_pt = PettyCashModel::hydrate($tasks_pt)->first();
+//
+//                //update account with the petty cash details
+//                $eform_petty_cash_account = DB::table('eform_petty_cash_account')
+//                    ->where('id', $account->id)
+//                    ->update([
+//                        'status_id' => '41',
+//                    ]);
+//
+//            }
 
             //UPDATE ONE  - Update all petty cash accounts with the user unit and work-flow details
             //get a list of all the petty cash account models

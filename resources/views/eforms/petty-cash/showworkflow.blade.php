@@ -56,7 +56,7 @@
                    onclick="event.preventDefault();
                        document.getElementById('show-form'+{{$form_id}}).submit();"> View the Form</a>
                 <form id="show-form{{$form_id}}"
-                      action="{{ route('petty-cash-show', $form_id) }}"
+                      action="{{ route('petty.cash.show', $form_id) }}"
                       method="POST" class="d-none">
                     @csrf
                 </form>

@@ -2,11 +2,11 @@
 
 namespace App\Models\EForms\Subsistence;
 
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\EformApprovalsModel;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\StatusModel;
-use App\Models\Main\UserUnitModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -68,11 +68,12 @@ class SubsistenceModel extends Model
         'claimant_staff_no',
         'station',
         'section',
+        'type',
 
         'absc_absent_from',
         'absc_absent_to',
-        'absc_visited_place_reason',
         'absc_visited_place',
+        'absc_visited_reason',
         'absc_allowance_per_night',
         'absc_amount',
 
@@ -83,6 +84,7 @@ class SubsistenceModel extends Model
 
         'allocation_code',
         'total_amount',
+        'total_days',
 
         'authorised_by',
         'authorised_staff_no',
@@ -133,11 +135,10 @@ class SubsistenceModel extends Model
     protected $with = [
         'user',
         'status',
-        'approval',
     ];
 
     public function user_unit(){
-        return $this->belongsTo(UserUnitModel::class, 'user_unit_code', 'code');
+        return $this->belongsTo(ConfigWorkFlow::class, 'user_unit_code', 'user_unit_code');
     }
 
     public function user()
@@ -148,11 +149,6 @@ class SubsistenceModel extends Model
     public function status()
     {
         return $this->belongsTo(StatusModel::class, 'config_status_id', 'id');
-    }
-
-    public function approval()
-    {
-        return $this->belongsTo(EformApprovalsModel::class, 'eform_id', 'id');
     }
 
 

@@ -82,7 +82,7 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('petty-cash-show', $item->id) }}"
+                                                      action="{{ route('petty.cash.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
@@ -98,7 +98,7 @@
                                                        document.getElementById('show-form'+{{$item->id}}).submit();">
                                                     View </a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('petty-cash-show', $item->id) }}"
+                                                      action="{{ route('petty.cash.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
@@ -116,7 +116,7 @@
                                                             data-target="#modal-reverse{{$item->id}}">
                                                         <i class="fa fa-redo"></i>
                                                     </button>
-                                                    <a class="btn btn-sm bg-gradient-gray "  href="{{route('petty-cash-sync', $item->id)}}"
+                                                    <a class="btn btn-sm bg-gradient-gray "  href="{{route('petty.cash.sync', $item->id)}}"
                                                        title="Sync Application Forms">
                                                         <i class="fas fa-sync"></i>
                                                     </a>
@@ -139,7 +139,7 @@
             <div class="card-footer clearfix">
                 @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
                     @if($pending < 1)
-                        <a href="{{route('petty-cash-create')}}"
+                        <a href="{{route('petty.cash.create')}}"
                            class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
                     @else
                         <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
@@ -164,7 +164,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('petty-cash-void', ['id' => $item->id])}}">
+                          action="{{route('petty.cash.void', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">
@@ -207,7 +207,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('petty-cash-reverse', ['id' => $item->id])}}">
+                          action="{{route('petty.cash.reverse', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

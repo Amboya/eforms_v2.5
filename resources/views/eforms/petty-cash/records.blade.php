@@ -84,7 +84,7 @@
                                 <td><a href="{{ route('logout') }}" class="dropdown-item"
                                        onclick="event.preventDefault();
                                            document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
-                                    <form id="show-form{{$item->id}}" action="{{ route('petty-cash-show', $item->id) }}"
+                                    <form id="show-form{{$item->id}}" action="{{ route('petty.cash.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
@@ -98,7 +98,7 @@
                                 <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
                                        onclick="event.preventDefault();
                                            document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
-                                    <form id="show-form{{$item->id}}" action="{{ route('petty-cash-show', $item->id) }}"
+                                    <form id="show-form{{$item->id}}" action="{{ route('petty.cash.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
@@ -116,7 +116,7 @@
                                             data-target="#modal-reverse{{$item->id}}">
                                         <i class="fa fa-redo"></i>
                                     </button>
-                                    <a class="btn btn-tool" href="{{route('petty-cash-sync', $item->id)}}"
+                                    <a class="btn btn-tool" href="{{route('petty.cash.sync', $item->id)}}"
                                        title="Sync Application Forms">
                                         <i class="fas fa-sync"></i></a>
                                 </td>
@@ -149,7 +149,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('petty-cash-void', ['id' => $item->id])}}">
+                          action="{{route('petty.cash.void', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">
@@ -192,7 +192,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('petty-cash-reverse', ['id' => $item->id])}}">
+                          action="{{route('petty.cash.reverse', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">
