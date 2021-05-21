@@ -15,12 +15,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty-Cash : {{$category}}</h1>
+                    <h1 class="m-0 text-dark">Hotel Accommodation : {{$category}}</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Petty-Cash : {{$category}}</li>
+                        <li class="breadcrumb-item active">Hotel Accommodation  : {{$category}}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -140,10 +140,10 @@
                 @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
                     @if($pending < 1)
                         <a href="{{route('hotel.accommodation.create')}}"
-                           class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
+                           class="btn btn-sm bg-gradient-green float-left">Hotel Accommodation </a>
                     @else
-                        <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
-                        <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
+                        <a href="#" class="btn btn-sm btn-default float-left">Hotel Accommodation </a>
+                        <span class="text-danger m-3"> Sorry, You can not raise a new Hotel Accommodation  because you already have an open Hotel Accommodation Transaction.</span>
                     @endif
                 @endif
             </div>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Main\ActivityLogsController;
 use App\Mail\SendMail;
 use App\Models\EForms\HotelAccommodation\HotelAccommodationAccountModel;
 use App\Models\Eforms\HotelAccommodation\HotelAccommodationModel;
+use App\Models\EForms\HotelAccommodation\HotelSuppliersModel;
 use App\Models\Main\AccountsChartModel;
 use App\Models\Main\AttachedFileModel;
 use App\Models\Main\EformApprovalsModel;
@@ -283,11 +284,19 @@ class HotelAccommodationController extends Controller
       //  $projects = ProjectsModel::all();
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
+    //    $hotel = HotelSuppliersModel::all();
+        $list = DB::select("SELECT name_supplier, code_supplier  from suppliers
+                                  where name_supplier like '%HOTEL%'
+            ");
+          //  $list = HotelSuppliersModel::hydrate($list)->all();
+
+
         //data to send to the view
         $params = [
             'totals_needs_me' => $totals_needs_me,
           //  'projects' => $projects,
-            'user' => $user
+            'user' => $user,
+            'hotel' => $list,
         ];
         //show the create form
         return view('eforms.hotel-accommodation.create')->with($params);
@@ -658,9 +667,11 @@ class HotelAccommodationController extends Controller
             ->where('file_type', config('constants.file_type.receipt'))
             ->get();
         $quotations = AttachedFileModel::where('form_id', $form->code)
+
             ->where('form_type', config('constants.eforms_id.hotel_accommodation'))
             ->where('file_type', config('constants.file_type.quotation'))
             ->get();
+//        dd($quotations);
         $form_accounts = HotelAccommodationModel::where('id', $id)->get();
       //  $projects = ProjectsModel::all();
         $accounts = AccountsChartModel::all();
@@ -776,126 +787,6 @@ class HotelAccommodationController extends Controller
         $form = HotelAccommodationModel::find($request->id);
         $current_status = $form->status->id;
         $user = Auth::user();
-        $eform_hotel_accommodation = EFormModel::find(config('constants.eforms_id.hotel_accommodation'));
-
-
-//        //HANDLE CANCELLATION
-//        if ($request->approval == config('constants.approval.cancelled')) {
-//
-//            if ($current_status = config('constants.hotel_accommodation_status.new_application')) {
-//                $total_to_subtract_from = config('constants.totals.hotel_accommodation_new');
-//            } else {
-//                $total_to_subtract_from = config('constants.totals.hotel_accommodation_open');
-//            }
-//
-//            //update the totals rejected
-//            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-//                ->where('id', config('constants.totals.hotel_accommodation_reject'))
-//                ->first();
-//            $totals->value = $totals->value + 1;
-//            $totals->save();
-//            $eform_hotel_accommodation->total_rejected = $totals->value;
-//            $eform_hotel_accommodation->save();
-//
-//            //update the totals open
-//            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-//                ->where('id', $total_to_subtract_from)
-//                ->first();
-//            $totals->value = $totals->value - 1;
-//            $totals->save();
-//            $eform_hotel_accommodation->total_pending = $totals->value;
-//            $eform_hotel_accommodation->save();
-//
-//        }
-//
-//        //HANDLE REJECTION
-//        if ($request->approval == config('constants.approval.reject')) {
-//
-//            //update the totals rejected
-//            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-//                ->where('id', config('constants.totals.hotel_accommodation_reject'))
-//                ->first();
-//            $totals->value = $totals->value + 1;
-//            $totals->save();
-//            $eform_hotel_accommodation->total_rejected = $totals->value;
-//            $eform_hotel_accommodation->save();
-//
-//            //update the totals open
-//            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-//                ->where('id', config('constants.totals.hotel_accommodation_open'))
-//                ->first();
-//            $totals->value = $totals->value - 1;
-//            $totals->save();
-//            $eform_hotel_accommodation->total_pending = $totals->value;
-//            $eform_hotel_accommodation->save();
-//
-//        }
-//
-//        //HANDLE APPROVAL
-//        if ($request->approval == config('constants.approval.approve')) {
-//            if ($form->status->id == config('constants.hotel_accommodation_status.security_approved')) {
-//
-//                //update the totals closed
-//                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-//                    ->where('id', config('constants.totals.hotel_accommodation_closed'))
-//                    ->first();
-//                $totals->value = $totals->value + 1;
-//                $totals->save();
-//                $eform_hotel_accommodation->total_closed = $totals->value;
-//                $eform_hotel_accommodation->save();
-//
-//                //update the totals open
-////                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-////                    ->where('id', config('constants.totals.hotel_accommodation_open'))
-////                    ->first();
-////                $totals->value = $totals->value - 1;
-////                $totals->save();
-//                $eform_hotel_accommodation->total_pending = $totals->value;
-//                $eform_hotel_accommodation->save();
-//
-//            } else if ($form->status->id == config('constants.hotel_accommodation_status.new_application')) {
-//                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-//                    ->where('id', config('constants.totals.hotel_accommodation_open'))
-//                    ->first();
-////                $totals->value = $totals->value + 1;
-////                $totals->save();
-////                $eform_hotel_accommodation->total_pending = $totals->value;
-////                $eform_hotel_accommodation->save();
-//
-//                //update the totals new
-////                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-////                    ->where('id', config('constants.totals.hotel_accommodation_new'))
-////                    ->first();
-////                $totals->value = $totals->value - 1;
-////                $totals->save();
-////                $eform_hotel_accommodation->total_new = $totals->value;
-////                $eform_hotel_accommodation->save();
-//            } else if ($form->status->id == config('constants.hotel_accommodation_status.closed')) {
-//                //update the totals closed
-////                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-////                    ->where('id', config('constants.totals.hotel_accommodation_closed'))
-////                    ->first();
-////                $totals->value = $totals->value - 1;
-////                $totals->save();
-////                $eform_hotel_accommodation->total_closed = $totals->value;
-////                $eform_hotel_accommodation->save();
-//            }
-//        }
-//
-//        //HANDLE AUDIT QUERY
-//        if ($request->approval == config('constants.approval.queried')) {
-//            if ($form->status->id == config('constants.hotel_accommodation_status.closed')) {
-//                //update the totals closed
-////                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-////                    ->where('id', config('constants.totals.hotel_accommodation_closed'))
-////                    ->first();
-////                $totals->value = $totals->value - 1;
-////                $totals->save();
-////                $eform_hotel_accommodation->total_closed = $totals->value;
-////                $eform_hotel_accommodation->save();
-//            }
-//        }
-//
 
         //FOR FOR CLAIMANT CANCELLATION
         if (
@@ -947,44 +838,10 @@ class HotelAccommodationController extends Controller
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
-//            $form->config_status_id = $new_status;
-//            $form->chief_accountant_name = $user->name;
-//            $form->chief_accountant_staff_no = $user->staff_no;
-//            $form->chief_accountant_date = $request->sig_date;
-//            $form->profile = Auth::user()->profile_id;
-//            $form->save();
-
-        } //FOR CHIEF ACCOUNTANT
-        elseif (
-            Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
+        }
+        //FOR FOR  DIRECTOR
+        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_003')
             && $current_status == config('constants.hotel_accommodation_status.hod_approved')
-        ) {
-            //cancel status
-            $insert_reasons = true;
-            if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
-            } //reject status
-            elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
-            }//approve status
-            elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.chief_accountant_approved');
-            } else {
-                $new_status = config('constants.hotel_accommodation_status.hod_approved');
-                $insert_reasons = false;
-            }
-
-            //update
-            $form->config_status_id = $new_status;
-            $form->chief_accountant_name = $user->name;
-            $form->chief_accountant_staff_no = $user->staff_no;
-            $form->chief_accountant_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-
-        } //FOR FOR  DIRECTOR
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
-            && $current_status == config('constants.hotel_accommodation_status.chief_accountant_approved')
         ) {
             $insert_reasons = true;
             //cancel status
@@ -997,7 +854,7 @@ class HotelAccommodationController extends Controller
             elseif ($request->approval == config('constants.approval.approve')) {
                 $new_status = config('constants.hotel_accommodation_status.director_approved');
             } else {
-                $new_status = config('constants.hotel_accommodation_status.chief_accountant_approved');
+                $new_status = config('constants.hotel_accommodation_status.hod_approved');
                 $insert_reasons = false;
             }
             //update
@@ -1007,9 +864,40 @@ class HotelAccommodationController extends Controller
             $form->director_authorised_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR FOR EXPENDITURE OFFICE FUNDS
+        }
+        //FOR CHIEF ACCOUNTANT
+        elseif (
+            Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
+            && $current_status == config('constants.hotel_accommodation_status.director_approved')
+        ) {
+            //cancel status
+            $insert_reasons = true;
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.hotel_accommodation_status.cancelled');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.hotel_accommodation_status.rejected');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.hotel_accommodation_status.chief_accountant_approved');
+            } else {
+                $new_status = config('constants.hotel_accommodation_status.director_approved');
+                $insert_reasons = false;
+            }
+
+            //update
+            $form->config_status_id = $new_status;
+            $form->chief_accountant_name = $user->name;
+            $form->chief_accountant_staff_no = $user->staff_no;
+            $form->chief_accountant_date = $request->sig_date;
+            $form->profile = Auth::user()->profile_id;
+            $form->save();
+
+        }
+
+        //FOR FOR EXPENDITURE OFFICE FUNDS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
-            && $current_status == config('constants.hotel_accommodation_status.chief_accountant')
+            && $current_status == config('constants.hotel_accommodation_status.chief_accountant_approved')
         ) {
             //cancel status
             $insert_reasons = true;
@@ -1020,372 +908,38 @@ class HotelAccommodationController extends Controller
                 $new_status = config('constants.hotel_accommodation_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.funds_disbursement');
+                $new_status = config('constants.hotel_accommodation_status.closed');
             } else {
-                $new_status = config('constants.hotel_accommodation_status.chief_accountant');
+                $new_status = config('constants.hotel_accommodation_status.chief_accountant_approved');
                 $insert_reasons = false;
             }
+//            dd($request->all());
             //update
             $form->config_status_id = $new_status;
-            $form->expenditure_office = $user->name;
-            $form->expenditure_office_staff_no = $user->staff_no;
-            $form->expenditure_date = $request->sig_date;
+//            $form->expenditure_office = $user->name;
+//            $form->expenditure_office_staff_no = $user->staff_no;
+//            $form->expenditure_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
-            //create records for the accounts associated with this petty cash transaction
-            for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
-                $des = "";
-                $des = $des . " " . $request->account_items[$i] . ",";
-                $des = "hotel-accommodation Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
 
-                //[1] CREDITED ACCOUNT
-                //[1A] - money
-                $formAccountModel = HotelAccommodationAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => $request->credited_amount[$i],
-                        'account' => $request->credited_account[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        //'debitted_amount' => $request->debited_amount[$i],
-                        'eform_hotel_accommodation_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => $request->credited_amount[$i],
-                        'account' => $request->credited_account[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        //'debitted_amount' => $request->debited_amount[$i],
 
-                        'eform_hotel_accommodation_id' => $form->id,
-                        'hotel_accommodation_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
-
-                        'hod_code' => $form->hod_code,
-                        'hod_unit' => $form->hod_unit,
-                        'ca_code' => $form->ca_code,
-                        'ca_unit' => $form->ca_unit,
-                        'hrm_code' => $form->hrm_code,
-                        'hrm_unit' => $form->hrm_unit,
-                        'expenditure_code' => $form->expenditure_code,
-                        'expenditure_unit' => $form->expenditure_unit,
-                        'security_code' => $form->security_code,
-                        'security_unit' => $form->security_unit,
-                        'audit_code' => $form->audit_code,
-                        'audit_unit' => $form->audit_unit,
-
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
-                    ]
-                );
-
-                //[2] DEBITED ACCOUNT
-                //[2A] - money
-                $formAccountModel = HotelAccommodationAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        //'creditted_amount' => $request->credited_amount[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => $request->debited_amount[$i],
-                        'account' => $request->debited_account[$i],
-                        'eform_hotel_accommodation_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        //'creditted_amount' => $request->credited_amount[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => $request->debited_amount[$i],
-                        'account' => $request->debited_account[$i],
-
-                        'eform_hotel_accommodation_id' => $form->id,
-                        'hotel_accommodation_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
-                        'hod_code' => $form->hod_code,
-                        'hod_unit' => $form->hod_unit,
-                        'ca_code' => $form->ca_code,
-                        'ca_unit' => $form->ca_unit,
-                        'hrm_code' => $form->hrm_code,
-                        'hrm_unit' => $form->hrm_unit,
-                        'expenditure_code' => $form->expenditure_code,
-                        'expenditure_unit' => $form->expenditure_unit,
-                        'security_code' => $form->security_code,
-                        'security_unit' => $form->security_unit,
-                        'audit_code' => $form->audit_code,
-                        'audit_unit' => $form->audit_unit,
-
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
-                    ]
-                );
-            }
-
-        } //FOR CLAIMANT - ACKNOWLEDGEMENT
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_002')
-            && $current_status == config('constants.hotel_accommodation_status.funds_disbursement')
-        ) {
-            //cancel status
-            $insert_reasons = true;
-            if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
-            } //reject status
-            elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
-            }//approve status
-            elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.funds_acknowledgement');
-            } else {
-                $new_status = config('constants.hotel_accommodation_status.funds_disbursement');
-                $insert_reasons = false;
-            }
-            //update
-            $form->config_status_id = $new_status;
-//          $form->profile = Auth::user()->profile_id;
-            $form->profile = config('constants.user_profiles.EZESCO_007');
-            $form->save();
-        } //FOR FOR SECURITY
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_013')
-            && $current_status == config('constants.hotel_accommodation_status.funds_acknowledgement')
-        ) {
-            //cancel status
-            $insert_reasons = true;
-            if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
-            } //reject status
-            elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
-            }//approve status
-            elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.security_approved');
-            } else {
-                $new_status = config('constants.hotel_accommodation_status.funds_acknowledgement');
-                $insert_reasons = false;
-            }
-            //update
-            $form->config_status_id = $new_status;
-            $form->security_name = $user->name;
-            $form->security_staff_no = $user->staff_no;
-            $form->security_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-        } //FOR FOR EXPENDITURE OFFICE - RECEIPT
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
-            && $current_status == config('constants.hotel_accommodation_status.security_approved')
-        ) {
-            //cancel status
-            $insert_reasons = true;
-            if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
-            } //reject status
-            elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
-            }//approve status
-            elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.receipt_approved');
-            } else {
-                $new_status = config('constants.hotel_accommodation_status.security_approved');
-                $insert_reasons = false;
-            }
-            //update the form
-            $form->config_status_id = $new_status;
-            $form->expenditure_office = $user->name;
-            $form->expenditure_office_staff_no = $user->staff_no;
-            $form->expenditure_date = $request->sig_date;
-            $form->change = $request->change;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-
-            //check if there is need to create an account
-            if ($request->change > 0) {
-                $des = "";
-                $des = $des . " " . $request->account_item . ",";
-                $des = "hotel-accommodation Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount . '.';
-
-                //[1] CREDITED ACCOUNT
-                //[1A] - money
-                $formAccountModel = HotelAccommodationAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        'creditted_amount' => $request->credited_amount,
-                        'account' => $request->credited_account,
-                        'debitted_account_id' => $request->debited_account,
-                        //'debitted_amount' => $request->debited_amount,
-                        'eform_hotel_accommodation_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        'creditted_amount' => $request->credited_amount,
-                        'account' => $request->credited_account,
-                        'debitted_account_id' => $request->debited_account,
-                        //'debitted_amount' => $request->debited_amount,
-
-                        'eform_hotel_accommodation_id' => $form->id,
-                        'hotel_accommodation_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
-                        'hod_code' => $form->hod_code,
-                        'hod_unit' => $form->hod_unit,
-                        'ca_code' => $form->ca_code,
-                        'ca_unit' => $form->ca_unit,
-                        'hrm_code' => $form->hrm_code,
-                        'hrm_unit' => $form->hrm_unit,
-                        'expenditure_code' => $form->expenditure_code,
-                        'expenditure_unit' => $form->expenditure_unit,
-                        'security_code' => $form->security_code,
-                        'security_unit' => $form->security_unit,
-                        'audit_code' => $form->audit_code,
-                        'audit_unit' => $form->audit_unit,
-
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
-                    ]
-                );
-
-                //[2] DEBITED ACCOUNT
-                //[2A] - money
-                $formAccountModel = HotelAccommodationAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        //'creditted_amount' => $request->credited_amount,
-                        'debitted_account_id' => $request->debited_account,
-                        'debitted_amount' => $request->debited_amount,
-                        'account' => $request->debited_account,
-                        'eform_hotel_accommodation_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        //'creditted_amount' => $request->credited_amount,
-                        'debitted_account_id' => $request->debited_account,
-                        'debitted_amount' => $request->debited_amount,
-                        'account' => $request->debited_account,
-
-                        'eform_hotel_accommodation_id' => $form->id,
-                        'hotel_accommodation_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
-                        'hod_code' => $form->hod_code,
-                        'hod_unit' => $form->hod_unit,
-                        'ca_code' => $form->ca_code,
-                        'ca_unit' => $form->ca_unit,
-                        'hrm_code' => $form->hrm_code,
-                        'hrm_unit' => $form->hrm_unit,
-                        'expenditure_code' => $form->expenditure_code,
-                        'expenditure_unit' => $form->expenditure_unit,
-                        'security_code' => $form->security_code,
-                        'security_unit' => $form->security_unit,
-                        'audit_code' => $form->audit_code,
-                        'audit_unit' => $form->audit_unit,
-
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
-                    ]
-                );
-            }
-
-//            //update all accounts associated to this hotel_accommodation
-//            $formAccountModelList = HotelAccommodationModel::where('eform_hotel_accommodation_id', $form->id)
-//                ->where('status_id', config('constants.hotel_accommodation_status.export_not_ready'))
-//                ->get();
-//            foreach ($formAccountModelList as $item) {
-//                $item->status_id = config('constants.hotel_accommodation_status.not_exported');
-//                $item->save();
-//            }
-
-            //Make the update on the petty cash account
-            $export_not_ready = config('constants.hotel_accommodation_status.export_not_ready');
-            $not_exported = config('constants.hotel_accommodation_status.not_exported');
-            $id = $form->id;
-            $formAccountModelList = DB::table('eform_hotel_accommodation_account')
-                ->where('eform_hotel_accommodation_id', $id)
-                ->where('status_id', $export_not_ready)
-                ->update(
-                    ['status_id' => $not_exported]
-                );
-
+            /** upload quotation files */
             // upload the receipt files
-            $files = $request->file('receipt');
-            if ($request->hasFile('receipt')) {
+            $files = $request->file('quotation');
+            if ($request->hasFile('quotation')) {
                 foreach ($files as $file) {
-                    $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
+                    $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
                     // Get just filename
                     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                     //get size
-                    $size = number_format($file->getSize() * 0.0000001, 2);
+                    $size = number_format($file->getSize() * 0.000001, 2);
                     // Get just ext
                     $extension = $file->getClientOriginalExtension();
                     // Filename to store
                     $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
                     // Upload File
-                    $path = $file->storeAs('public/hotel_accommodation_receipt', $fileNameToStore);
+                    $path = $file->storeAs('public/hotel_accommodation', $fileNameToStore);
 
                     //upload the receipt
                     $file = AttachedFileModel::updateOrCreate(
@@ -1396,7 +950,7 @@ class HotelAccommodationController extends Controller
                             'file_size' => $size,
                             'form_id' => $form->code,
                             'form_type' => config('constants.eforms_id.hotel_accommodation'),
-                            'file_type' => config('constants.file_type.receipt')
+                            'file_type' => config('constants.file_type.quotation')
                         ],
                         [
                             'name' => $fileNameToStore,
@@ -1405,13 +959,138 @@ class HotelAccommodationController extends Controller
                             'file_size' => $size,
                             'form_id' => $form->code,
                             'form_type' => config('constants.eforms_id.hotel_accommodation'),
-                            'file_type' => config('constants.file_type.receipt')
+                            'file_type' => config('constants.file_type.quotation')
                         ]
                     );
                 }
             }
 
-        }  //FOR AUDITING OFFICE
+
+            //create records for the accounts associated with this petty cash transaction
+//            for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
+//                $des = "";
+//                $des = $des . " " . $request->account_items[$i] . ",";
+//                $des = "hotel-accommodation Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
+//
+//                //[1] CREDITED ACCOUNT
+//                //[1A] - money
+//                $formAccountModel = HotelAccommodationAccountModel::updateOrCreate(
+//                    [
+//                        'creditted_account_id' => $request->credited_account[$i],
+//                        'creditted_amount' => $request->credited_amount[$i],
+//                        'account' => $request->credited_account[$i],
+//                        'debitted_account_id' => $request->debited_account[$i],
+//                        //'debitted_amount' => $request->debited_amount[$i],
+//                        'eform_hotel_accommodation_id' => $form->id,
+//                        'created_by' => $user->id,
+//                        'company' => '01',
+//                        'intra_company' => '01',
+//                        'project' => $form->project->code ?? "",
+//                        'pems_project' => 'N',
+//                        'spare' => '0000',
+//                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
+//                    ],
+//                    [
+//                        'creditted_account_id' => $request->credited_account[$i],
+//                        'creditted_amount' => $request->credited_amount[$i],
+//                        'account' => $request->credited_account[$i],
+//                        'debitted_account_id' => $request->debited_account[$i],
+//                        //'debitted_amount' => $request->debited_amount[$i],
+//
+//                        'eform_hotel_accommodation_id' => $form->id,
+//                        'hotel_accommodation_code' => $form->code,
+//                        'cost_center' => $form->cost_center,
+//                        'business_unit_code' => $form->business_unit_code,
+//                        'user_unit_code' => $form->user_unit_code,
+//                        'claimant_name' => $form->claimant_name,
+//                        'claimant_staff_no' => $form->claimant_staff_no,
+//                        'claim_date' => $form->claim_date,
+//
+//                        'hod_code' => $form->hod_code,
+//                        'hod_unit' => $form->hod_unit,
+//                        'ca_code' => $form->ca_code,
+//                        'ca_unit' => $form->ca_unit,
+//                        'hrm_code' => $form->hrm_code,
+//                        'hrm_unit' => $form->hrm_unit,
+//                        'expenditure_code' => $form->expenditure_code,
+//                        'expenditure_unit' => $form->expenditure_unit,
+//                        'security_code' => $form->security_code,
+//                        'security_unit' => $form->security_unit,
+//                        'audit_code' => $form->audit_code,
+//                        'audit_unit' => $form->audit_unit,
+//
+//                        'created_by' => $user->id,
+//                        'company' => '01',
+//                        'intra_company' => '01',
+//                        'project' => $form->project->code ?? "",
+//                        'pems_project' => 'N',
+//                        'spare' => '0000',
+//                        'description' => $des,
+//                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
+//                    ]
+//                );
+//
+//                //[2] DEBITED ACCOUNT
+//                //[2A] - money
+//                $formAccountModel = HotelAccommodationAccountModel::updateOrCreate(
+//                    [
+//                        'creditted_account_id' => $request->credited_account[$i],
+//                        //'creditted_amount' => $request->credited_amount[$i],
+//                        'debitted_account_id' => $request->debited_account[$i],
+//                        'debitted_amount' => $request->debited_amount[$i],
+//                        'account' => $request->debited_account[$i],
+//                        'eform_hotel_accommodation_id' => $form->id,
+//                        'created_by' => $user->id,
+//                        'company' => '01',
+//                        'intra_company' => '01',
+//                        'project' => $form->project->code ?? "",
+//                        'pems_project' => 'N',
+//                        'spare' => '0000',
+//                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
+//                    ],
+//                    [
+//                        'creditted_account_id' => $request->credited_account[$i],
+//                        //'creditted_amount' => $request->credited_amount[$i],
+//                        'debitted_account_id' => $request->debited_account[$i],
+//                        'debitted_amount' => $request->debited_amount[$i],
+//                        'account' => $request->debited_account[$i],
+//
+//                        'eform_hotel_accommodation_id' => $form->id,
+//                        'hotel_accommodation_code' => $form->code,
+//                        'cost_center' => $form->cost_center,
+//                        'business_unit_code' => $form->business_unit_code,
+//                        'user_unit_code' => $form->user_unit_code,
+//                        'claimant_name' => $form->claimant_name,
+//                        'claimant_staff_no' => $form->claimant_staff_no,
+//                        'claim_date' => $form->claim_date,
+//                        'hod_code' => $form->hod_code,
+//                        'hod_unit' => $form->hod_unit,
+//                        'ca_code' => $form->ca_code,
+//                        'ca_unit' => $form->ca_unit,
+//                        'hrm_code' => $form->hrm_code,
+//                        'hrm_unit' => $form->hrm_unit,
+//                        'expenditure_code' => $form->expenditure_code,
+//                        'expenditure_unit' => $form->expenditure_unit,
+//                        'security_code' => $form->security_code,
+//                        'security_unit' => $form->security_unit,
+//                        'audit_code' => $form->audit_code,
+//                        'audit_unit' => $form->audit_unit,
+//
+//                        'created_by' => $user->id,
+//                        'company' => '01',
+//                        'intra_company' => '01',
+//                        'project' => $form->project->code ?? "",
+//                        'pems_project' => 'N',
+//                        'spare' => '0000',
+//                        'description' => $des,
+//                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
+//                    ]
+//                );
+//            }
+
+        }
+
+        //FOR AUDITING OFFICE
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.hotel_accommodation_status.closed')
         ) {
@@ -1434,12 +1113,14 @@ class HotelAccommodationController extends Controller
             }
             //update
             $form->config_status_id = $new_status;
-            $form->audit_office_name = $user->name;
-            $form->audit_office_staff_no = $user->staff_no;
-            $form->audit_office_date = $request->sig_date;
+//            $form->audit_office_name = $user->name;
+//            $form->audit_office_staff_no = $user->staff_no;
+//            $form->audit_office_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR NO-ONE
+        }
+
+        //FOR NO-ONE
         else {
             //return with an error
             return Redirect::route('hotel.accommodation.home')->with('message', 'Hotel Accommodation ' . $form->code . ' for has been ' . $request->approval . ' successfully');
@@ -1455,6 +1136,7 @@ class HotelAccommodationController extends Controller
                     'name' => $user->name,
                     'staff_no' => $user->staff_no,
                     'reason' => $request->reason,
+                    'current_status_id' => $current_status,
                     'action' => $request->approval,
                     'config_eform_id' => config('constants.eforms_id.hotel_accommodation'),
                     'eform_id' => $form->id,
@@ -1476,7 +1158,7 @@ class HotelAccommodationController extends Controller
 
             );
             //send the email
-            self::nextUserSendMail($new_status, $form);
+          //  self::nextUserSendMail($new_status, $form);
 
         }
 
@@ -1561,7 +1243,7 @@ class HotelAccommodationController extends Controller
 
     public function nextUsers($new_status, $user_unit, $user)
     {
-//        dd($user_unit);
+//       dd($user_unit);
         $users_array = [];
         $not_claimant = true;
 
@@ -1571,14 +1253,14 @@ class HotelAccommodationController extends Controller
             $superior_user_code = $user_unit->hod_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
         } elseif ($new_status == config('constants.hotel_accommodation_status.hod_approved')) {
-            $superior_user_code = $user_unit->hrm_code;
-            $superior_user_unit = $user_unit->hrm_unit;
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
-        } elseif ($new_status == config('constants.hotel_accommodation_status.hr_approved')) {
             $superior_user_code = $user_unit->ca_code;
             $superior_user_unit = $user_unit->ca_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+        } elseif ($new_status == config('constants.hotel_accommodation_status.chief_accountant_approved')) {
+            $superior_user_code = $user_unit->dr_code;
+            $superior_user_unit = $user_unit->dr_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
-        } elseif ($new_status == config('constants.hotel_accommodation_status.chief_accountant')) {
+        } elseif ($new_status == config('constants.hotel_accommodation_status.director_approved')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
@@ -2200,6 +1882,9 @@ class HotelAccommodationController extends Controller
         $pending = HomeController::pendingForMe();
         $category = "Search Results";
 
+
+       // dd($hotel);
+
         //data to send to the view
         $params = [
             'totals_needs_me' => $totals_needs_me,
@@ -2207,6 +1892,8 @@ class HotelAccommodationController extends Controller
             'totals' => $totals,
             'pending' => $pending,
             'category' => $category,
+
+
         ];
 
         //return view

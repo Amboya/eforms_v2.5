@@ -187,14 +187,17 @@
                         <div class="col-3">
                             <input type="text" name="claimant_name" class="form-control"
                                    value="{{Auth::user()->name}}" readonly required></div>
+
                         <div class="col-2 text-center"><label>Signature:</label></div>
                         <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"
                                                   value="{{Auth::user()->staff_no}}" readonly required></div>
                         <div class="col-1 text-center"><label>Date:</label></div>
+
                         <div class="col-2"><input type="Date" name="date_claimant" class="form-control"
                                                   value="{{date('Y-m-d')}}" readonly required>
                         </div>
                     </div>
+
                     <div class="row mb-1">
                         <div class="col-2"><label>Claim Authorised by:</label></div>
                         <div class="col-3"><input type="text" name="claim_authorised_by" readonly class="form-control">

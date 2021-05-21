@@ -175,7 +175,7 @@
                         </tr>
                         <tr>
                             <td><label>Approved by Director:</label></td>
-                            <td><input type="text" required name="director_name"  value= "{{$form->director_name}}" class="form-control" readonly></td>
+                            <td><input type="text" required name="director_name"  value= "{{$form->director}}" class="form-control" readonly></td>
                             <td class="text-center"><label>Signature:</label></td>
                             <td><input type="text" required name="director_staff_no" value= "{{$form->director_staff_no}}" class="form-control" readonly></td>
                             <td class="text-center"><label>Date:</label></td>
@@ -248,10 +248,10 @@
                     <div class="row">
                         @foreach($quotations as $item)
                             <div class="col-12">
-                                <iframe id="{{$item->id}}" src="{{asset('storage/hotel_accommodation_quotation/'.$item->name)}}"
+                                <iframe id="{{$item->id}}" src="{{asset('storage/hotel_accommodation/'.$item->name)}}"
                                         style="width:100%; height: 850px" title="{{$item->name}}"></iframe>
                                 <span>{{$item->file_size}}MB {{$item->name}} </span>
-                                <a href="{{asset('storage/hotel_accommodation_quotation/'.$item->name)}}">View</a>
+                                <a href="{{asset('storage/hotel_accommodation/'.$item->name)}}">View</a>
                             </div>
                         @endforeach
                     </div>
@@ -407,11 +407,10 @@
                         </div>
                     @endif
 
-                    {{--  HR APPROVAL--}}
-                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_009')
+                    {{--  DIRECTOR APPROVAL--}}
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_003')
                          &&  $form->config_status_id == config('constants.hotel_accommodation_status.hod_approved')
-                         &&  $form->user_unit->hrm_code == Auth::user()->profile_job_code
-                         &&  $form->user_unit->hrm_unit == Auth::user()->profile_unit_code
+
                      )
                         <div class="">
                             <hr>
@@ -452,7 +451,7 @@
 
                     {{--  CHIEF ACCOUNTANT APPROVAL--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
-                         &&  $form->config_status_id == config('constants.hotel_accommodation_status.hod_approved')
+                         &&  $form->config_status_id == config('constants.hotel_accommodation_status.director_approved')
 
                         )
                         <div class="">
@@ -492,7 +491,7 @@
                     {{--  FUNDS DISBURSEMNET APPROVAL--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
                          &&  $form->config_status_id == config('constants.hotel_accommodation_status.chief_accountant')
-                         &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
+
                        )
                         <div class="">
                             <h5 class="text-center">Please Update the Accounts </h5>
@@ -729,134 +728,134 @@
 
                     {{--  RECEIPT APPROVAL--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->status_id == config('constants.hotel_accommodation_status.security_approved')
-                         &&  $form->user_unit->expenditure_unit == Auth::user()->profile_unit_code
+                         &&  $form->status_id == config('constants.hotel_accommodation_status.chief_accountant_approved')
+
                        )
                         <div class="">
-                            <h6 class="text-center">The Updated Accounts</h6>
-                            <div class="col-lg-12 grid-margin stretch-card">
-                                <div class="table-responsive">
-                                    <div class="col-lg-12 ">
-                                        <TABLE class="table">
-                                            <thead>
-                                            <TR>
-                                                <TD>Account</TD>
-                                                <TD>Credited Amount</TD>
-                                                <TD>Debited Amount</TD>
-                                            </TR>
-                                            </thead>
+{{--                            <h6 class="text-center">The Updated Accounts</h6>--}}
+{{--                            <div class="col-lg-12 grid-margin stretch-card">--}}
+{{--                                <div class="table-responsive">--}}
+{{--                                    <div class="col-lg-12 ">--}}
+{{--                                        <TABLE class="table">--}}
+{{--                                            <thead>--}}
+{{--                                            <TR>--}}
+{{--                                                <TD>Account</TD>--}}
+{{--                                                <TD>Credited Amount</TD>--}}
+{{--                                                <TD>Debited Amount</TD>--}}
+{{--                                            </TR>--}}
+{{--                                            </thead>--}}
 
-                                            <tbody>
-                                            @foreach($form_accounts as $item)
-                                                <TR>
-                                                    <TD><input list="accounts_list" type="text"
-                                                               value="{{$item->account}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                    <TD><input type="number" id="credited_amount"
-                                                               value="{{$item->creditted_amount}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                    <TD><input type="number" value="{{$item->debitted_amount}}"
-                                                               class="form-control amount" readonly>
-                                                    </TD>
-                                                </TR>
-                                            @endforeach
-                                            </tbody>
+{{--                                            <tbody>--}}
+{{--                                            @foreach($form_accounts as $item)--}}
+{{--                                                <TR>--}}
+{{--                                                    <TD><input list="accounts_list" type="text"--}}
+{{--                                                               value="{{$item->account}}"--}}
+{{--                                                               class="form-control amount" readonly>--}}
+{{--                                                    </TD>--}}
+{{--                                                    <TD><input type="number" id="credited_amount"--}}
+{{--                                                               value="{{$item->creditted_amount}}"--}}
+{{--                                                               class="form-control amount" readonly>--}}
+{{--                                                    </TD>--}}
+{{--                                                    <TD><input type="number" value="{{$item->debitted_amount}}"--}}
+{{--                                                               class="form-control amount" readonly>--}}
+{{--                                                    </TD>--}}
+{{--                                                </TR>--}}
+{{--                                            @endforeach--}}
+{{--                                            </tbody>--}}
 
-                                        </TABLE>
-                                    </div>
-                                </div>
-                            </div>
+{{--                                        </TABLE>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
                             <div class="card">
-                                <div class="col-lg-10 p-2 mt-3 ">
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <label class="form-control-label">Total Change</label>
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="number" onchange="showChange()" class="form-control"
-                                                           name="change" id="change" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 grid-margin stretch-card" id="show_change">
-                                    <h6 class="text-left p-2">Select Account to Retire Change</h6>
-                                    <div class="table-responsive">
-                                        <div class="col-lg-12 ">
-                                            <TABLE class="table">
-                                                <tbody>
-                                                <TR>
+{{--                                <div class="col-lg-10 p-2 mt-3 ">--}}
+{{--                                    <div class="row">--}}
+{{--                                        <div class="col-2">--}}
+{{--                                            <label class="form-control-label">Total Change</label>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-8">--}}
+{{--                                            <div class="input-group">--}}
+{{--                                                <div class="custom-file">--}}
+{{--                                                    <input type="number" onchange="showChange()" class="form-control"--}}
+{{--                                                           name="change" id="change" required>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-12 grid-margin stretch-card" id="show_change">--}}
+{{--                                    <h6 class="text-left p-2">Select Account to Retire Change</h6>--}}
+{{--                                    <div class="table-responsive">--}}
+{{--                                        <div class="col-lg-12 ">--}}
+{{--                                            <TABLE class="table">--}}
+{{--                                                <tbody>--}}
+{{--                                                <TR>--}}
 
-                                                    <TD>
-                                                        <div class="form-group">
-                                                            <input list="items_list" type="text" name="account_item"
-                                                                   class="form-control amount"
-                                                                   placeholder="Select Item/s   " id="account_item1">
-                                                            <datalist id="items_list">
-                                                                @foreach($form->item as $item)
-                                                                    <option>{{$item->name}}</option>
-                                                                @endforeach
-                                                            </datalist>
-                                                        </div>
-                                                    </TD>
-                                                    <TD>
-                                                        <select name="credited_account" id="credited_account1"
-                                                                class="form-control amount">
-                                                            <option value="">Select Account To Credit</option>
-                                                            @foreach($accounts as $account)
-                                                                <option
-                                                                    value="{{$account->code}}">{{$account->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </TD>
-                                                    <TD><input type="number" name="credited_amount"
-                                                               id="credited_amount1" class="form-control amount"
-                                                               placeholder=" Credited Amount [ZMK]" readonly>
-                                                    </TD>
-                                                    <TD>
-                                                        <select name="debited_account" id="debited_account1"
-                                                                class="form-control amount">
-                                                            @foreach($accounts as $account)
-                                                                @if($account->id  ==  config('constants.hotel_accommodation_account_id')  )
-                                                                    <option
-                                                                        value="{{$account->code}}">{{$account->name}}
-                                                                        :{{$account->code}}</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </TD>
-                                                    <TD><input type="number" name="debited_amount"
-                                                               class="form-control amount" id="debited_amount1"
-                                                               placeholder="Amount [ZMK]" readonly>
-                                                    </TD>
-                                                </TR>
-                                                </tbody>
-                                                <datalist id="accounts_list">
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->code}}">{{$account->name}}</option>
-                                                    @endforeach
-                                                </datalist>
+{{--                                                    <TD>--}}
+{{--                                                        <div class="form-group">--}}
+{{--                                                            <input list="items_list" type="text" name="account_item"--}}
+{{--                                                                   class="form-control amount"--}}
+{{--                                                                   placeholder="Select Item/s   " id="account_item1">--}}
+{{--                                                            <datalist id="items_list">--}}
+{{--                                                                @foreach($form->item as $item)--}}
+{{--                                                                    <option>{{$item->name}}</option>--}}
+{{--                                                                @endforeach--}}
+{{--                                                            </datalist>--}}
+{{--                                                        </div>--}}
+{{--                                                    </TD>--}}
+{{--                                                    <TD>--}}
+{{--                                                        <select name="credited_account" id="credited_account1"--}}
+{{--                                                                class="form-control amount">--}}
+{{--                                                            <option value="">Select Account To Credit</option>--}}
+{{--                                                            @foreach($accounts as $account)--}}
+{{--                                                                <option--}}
+{{--                                                                    value="{{$account->code}}">{{$account->name}}</option>--}}
+{{--                                                            @endforeach--}}
+{{--                                                        </select>--}}
+{{--                                                    </TD>--}}
+{{--                                                    <TD><input type="number" name="credited_amount"--}}
+{{--                                                               id="credited_amount1" class="form-control amount"--}}
+{{--                                                               placeholder=" Credited Amount [ZMK]" readonly>--}}
+{{--                                                    </TD>--}}
+{{--                                                    <TD>--}}
+{{--                                                        <select name="debited_account" id="debited_account1"--}}
+{{--                                                                class="form-control amount">--}}
+{{--                                                            @foreach($accounts as $account)--}}
+{{--                                                                @if($account->id  ==  config('constants.hotel_accommodation_account_id')  )--}}
+{{--                                                                    <option--}}
+{{--                                                                        value="{{$account->code}}">{{$account->name}}--}}
+{{--                                                                        :{{$account->code}}</option>--}}
+{{--                                                                @endif--}}
+{{--                                                            @endforeach--}}
+{{--                                                        </select>--}}
+{{--                                                    </TD>--}}
+{{--                                                    <TD><input type="number" name="debited_amount"--}}
+{{--                                                               class="form-control amount" id="debited_amount1"--}}
+{{--                                                               placeholder="Amount [ZMK]" readonly>--}}
+{{--                                                    </TD>--}}
+{{--                                                </TR>--}}
+{{--                                                </tbody>--}}
+{{--                                                <datalist id="accounts_list">--}}
+{{--                                                    @foreach($accounts as $account)--}}
+{{--                                                        <option value="{{$account->code}}">{{$account->name}}</option>--}}
+{{--                                                    @endforeach--}}
+{{--                                                </datalist>--}}
 
-                                            </TABLE>
-                                        </div>
-                                    </div>
-                                </div>
+{{--                                            </TABLE>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
                                 <hr>
                                 <div class="row p-2">
                                     <div class="col-10">
                                         <div class="row">
                                             <div class="col-2">
-                                                <label class="form-control-label">Receipt Files</label>
+                                                <label class="form-control-label">Quotation Files</label>
                                             </div>
                                             <div class="col-8">
                                                 <div class="input-group">
-                                                    <input type="file" class="form-control" multiple name="receipt[]"
-                                                           id="receipt" required>
+                                                    <input type="file" class="form-control" multiple name="quotation[]"
+                                                           id="quotation" required>
                                                 </div>
                                             </div>
                                         </div>

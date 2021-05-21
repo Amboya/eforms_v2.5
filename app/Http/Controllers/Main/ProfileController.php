@@ -85,7 +85,7 @@ class ProfileController extends Controller
             ]);
 
         //log the activity
-        ActivityLogsController::store($request,"Creating of System Profile","update", " system profile created", json_encode( $model));
+        ActivityLogsController::store($request,"Creating of System Profile","update", " system profile created", json_encode( $model->id));
 
         return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Created successfully');
 
@@ -129,7 +129,7 @@ class ProfileController extends Controller
         $model->save();
 
         //log the activity
-        ActivityLogsController::store($request,"Updating of System Profile","update", " system profile updated", json_encode( $model));
+        ActivityLogsController::store($request,"Updating of System Profile","update", " system profile updated", json_encode( $model->id));
         return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Created successfully');
 
     }
@@ -145,7 +145,7 @@ class ProfileController extends Controller
         $model = ProfileModel::find($id);
         ProfileModel::destroy($id);
         //log the activity
-        ActivityLogsController::store($request,"Deleting of System Profile ","delete", " system profile deleted", json_encode( $model));
+        ActivityLogsController::store($request,"Deleting of System Profile ","delete", " system profile deleted", json_encode( $model->id));
         return Redirect::back()->with('message', 'Details for ' . $model->name . ' has been Deleted successfully');
 
     }
@@ -182,7 +182,7 @@ class ProfileController extends Controller
             ]);
 
         //log the activity
-        ActivityLogsController::store($request,"Creating of Profile Assignment","update", " system profile assignment created", json_encode( $model));
+        ActivityLogsController::store($request,"Creating of Profile Assignment","update", " system profile assignment created", json_encode( $model->id));
 
         return Redirect::back()->with('message', 'Profile for ' . $model->profile . ' has been Assigned successfully');
 
@@ -286,7 +286,7 @@ class ProfileController extends Controller
             ]);
 
         //log the activity
-        ActivityLogsController::store($request,"Creating of Profile Delegation","update", " system profile delegation created", json_encode( $model));
+        ActivityLogsController::store($request,"Creating of Profile Delegation","update", " system profile delegation created", json_encode( $model->id));
 
         return Redirect::back()->with('message', 'Profile has been Delegated successfully');
 
@@ -326,7 +326,7 @@ class ProfileController extends Controller
             ]);
 
         //log the activity
-        ActivityLogsController::store($request,"Creating of Profile Delegation","update", " system profile delegation created", json_encode( $model));
+        ActivityLogsController::store($request,"Creating of Profile Delegation","update", " system profile delegation created", json_encode( $model->id));
 
         return Redirect::back()->with('message', 'Profile has been Delegated successfully');
 
