@@ -187,15 +187,15 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{route('petty.cash.report', config('constants.all'))}}" class="nav-link ">
-                                <i class="nav-icon fas fa-file"></i>
+                            <a href="{{ route( 'petty.cash.float.index') }}" class="nav-link ">
+                                <i class="nav-icon far fa-circle"></i>
                                 <p> Float Allocation
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('petty.cash.report', config('constants.all'))}}" class="nav-link ">
-                                <i class="nav-icon fas fa-file"></i>
+                            <a href="{{ route( 'petty.cash.float.index')  }}" class="nav-link ">
+                                <i class="nav-icon far fa-circle"></i>
                                 <p> Float Reimbursement
                                 </p>
                             </a>

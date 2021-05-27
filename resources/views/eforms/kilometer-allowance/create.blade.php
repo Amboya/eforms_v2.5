@@ -115,7 +115,7 @@
                         </div>
                         <div class="col-4 mb-1">
                             <div class="row">
-                                <div class="col-6"><label>Cost Center:</label></div>
+                                <div class="col-6"><label>User Unit Code:</label></div>
                                 <div class="col-6">
                                     <input value="{{Auth::user()->user_unit->user_unit_code }}" type="cost_center"
                                            name="cost_center" readonly class="form-control">
@@ -311,7 +311,7 @@
                                 <div class="form-group">
                                     <label for="destination" class="col-sm-12 control-label">File Uploads</label>
                                     <div class="col-sm-12">
-                                        <input type="file" required multiple class="form-control" name="file_upload[]"
+                                        <input type="file" required multiple class="form-control" name="quotation[]"
                                                id="file_upload" placeholder="Upload a file">
                                     </div>
                                 </div>

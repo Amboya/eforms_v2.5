@@ -25,7 +25,7 @@ class CreateEformPettyCashReimbursementTable extends Migration
             $table->string('title')->nullable();
             $table->string('profile')->nullable();
             $table->integer('created_by')->nullable();
-            $table->integer('created_by_name')->nullable();
+            $table->string('created_by_name')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

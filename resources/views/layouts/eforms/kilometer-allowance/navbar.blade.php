@@ -13,7 +13,7 @@
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3" method="post" action="{{route('petty-cash-search')}}">
+    <form class="form-inline ml-3" method="post" action="{{route('kilometer.allowance.search')}}">
         @csrf
         <div class="input-group input-group-sm">
             <input class="form-control form-control-navbar" type="search"

@@ -19,16 +19,10 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return Renderable
-     */
     public function index()
     {
         return view('home');
     }
-
 
     public function changeFile(Request $request)
     {
@@ -67,7 +61,6 @@ class HomeController extends Controller
         return Redirect::route('petty-cash-home')->with('message', "File Has Been Updated Successfully");
 
     }
-
 
     public function addFile(Request $request)
     {
@@ -167,6 +160,7 @@ class HomeController extends Controller
         return Redirect::route('petty-cash-home')->with('error', "File failed to upload");
 
     }
+
 
 }
 

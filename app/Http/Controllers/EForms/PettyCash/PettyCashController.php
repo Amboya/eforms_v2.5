@@ -243,29 +243,9 @@ class PettyCashController extends Controller
         $current_status = $form->status->id;
         $new_status = 0;
         $user = Auth::user();
-        //get the form type
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
 
         //HANDLE VOID REQUEST
         $new_status = config('constants.petty_cash_status.void');
-
-        //update the totals rejected
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('id', config('constants.totals.petty_cash_reject'))
-            ->first();
-        $totals->value = $totals->value + 1;
-        $totals->save();
-        $eform_pettycash->total_rejected = $totals->value;
-        $eform_pettycash->save();
-
-        //update the totals open
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('id', config('constants.totals.petty_cash_open'))
-            ->first();
-        $totals->value = $totals->value - 1;
-        $totals->save();
-        $eform_pettycash->total_pending = $totals->value;
-        $eform_pettycash->save();
 
         //get status id
         $status_model = StatusModel::where('id', $new_status)
@@ -483,16 +463,6 @@ class PettyCashController extends Controller
             }
         }
 
-        /** update the totals */
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('id', config('constants.totals.petty_cash_new'))
-            ->first();
-        $totals->value = $totals->value + 1;
-        $totals->save();
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
-        $eform_pettycash->total_new = $totals->value;
-        $eform_pettycash->save();
-
         /** send email to supervisor */
         //get team email addresses
 
@@ -518,7 +488,7 @@ class PettyCashController extends Controller
         $mail_to_is = Mail::to($to)->send(new SendMail($details));
 
         // log the activity
-        ActivityLogsController::store($request, "Creating of Petty Cash", "update", " pay point created", $formModel->id);
+       // ActivityLogsController::store($request, "Creating of Petty Cash", "update", " pay point created", $formModel->id);
 
         if ($error) {
             // return with error msg
@@ -1804,18 +1774,11 @@ class PettyCashController extends Controller
             ->where('id', $id)
             ->get()->first();
 
-        //get the claimant with the user unit which has the workflow details
-//        $user_unit = ConfigWorkFlow::where('user_unit_code',$form->user_unit_code )
-//            ->where('user_unit_cc_code',$form->cost_center)
-//            ->where('user_unit_bc_code',$form->business_unit_code)->first();
-
         $user = User::find($form->created_by);
         $user_unit = $user->user_unit;
         try {
             $test = $user_unit->user_unit_cc_code;
         } catch (\Exception $exception) {
-//            $user = User::find($form->created_by);
-//            $user_unit = $user->user_unit;
             //redirect home
             return Redirect::back()->with('error', 'Petty Cash Voucher did not sync, because of the user-unit problem.');
         }
@@ -1840,6 +1803,36 @@ class PettyCashController extends Controller
                 'security_code' => $user_unit->security_code,
                 'security_unit' => $user_unit->security_unit
             ]);
+
+        //UPDATE ONE  - Update all petty cash accounts with the user unit and work-flow details
+
+            //update account with the petty cash details
+            $eform_petty_cash_account = DB::table('eform_petty_cash_account')
+                ->where('eform_petty_cash_id',  $form->id)
+                ->update([
+                    'cost_center' =>  $user_unit->user_unit_cc_code ,
+                    'business_unit_code' => $user_unit->user_unit_bc_code,
+                    'user_unit_code' => $user_unit->user_unit_code,
+
+                    'claimant_name' => $form->claimant_name,
+                    'claimant_staff_no' => $form->claimant_staff_no,
+                    'claim_date' => $form->claim_date,
+                    'petty_cash_code' => $form->code,
+
+                    'hod_code' => $user_unit->hod_code,
+                    'hod_unit' => $user_unit->hod_unit,
+                    'ca_code' => $user_unit->ca_code,
+                    'ca_unit' => $user_unit->ca_unit,
+                    'hrm_code' => $user_unit->hrm_code,
+                    'hrm_unit' => $user_unit->hrm_unit,
+                    'expenditure_code' => $user_unit->expenditure_code,
+                    'expenditure_unit' => $user_unit->expenditure_unit,
+                    'security_code' => $user_unit->security_code,
+                    'security_unit' => $user_unit->security_unit,
+                ]);
+
+
+
 
 
         // SYNC ALL
@@ -2097,6 +2090,8 @@ class PettyCashController extends Controller
                         'security_unit' => $tasks_pt->security_unit,
                     ]);
             }
+
+
 //           */
 
 

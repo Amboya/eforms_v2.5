@@ -39,11 +39,17 @@ class HomeController extends Controller
         $new_forms = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.new_application'))
             ->count();
         //count pending forms
-        $pending_forms = KilometerAllowanceModel::where('config_status_id', '>', config('constants.kilometer_allowance_status.new_application'))
-            ->where('config_status_id', '<', config('constants.kilometer_allowance_status.closed'))
+        $pending_forms = KilometerAllowanceModel::
+        where('config_status_id', '!=' , config('constants.kilometer_allowance_status.new_application'))
+            ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.audit_approved'))
+            ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.rejected'))
+            ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.audited'))
+            ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.cancelled'))
+            ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.void'))
+            ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.receipt_approved'))
             ->count();
         //count closed forms
-        $closed_forms = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.closed'))
+        $closed_forms = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.receipt_approved'))
             ->count();
         //count rejected forms
         $rejected_forms = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.rejected'))
@@ -99,7 +105,7 @@ class HomeController extends Controller
         $user = Auth::user();
         //[1]  GET YOUR PROFILE
         $profile_assignement = ProfileAssigmentModel::
-        where('eform_id', config('constants.eforms_id.petty_cash'))
+        where('eform_id', config('constants.eforms_id.kilometer_allowance'))
             ->where('user_id', $user->id)->first();
         //  use my profile - if i dont have one - give me the default
         $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
@@ -110,7 +116,7 @@ class HomeController extends Controller
 
         //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
         $profile_delegated = ProfileDelegatedModel::
-        where('eform_id', config('constants.eforms_id.petty_cash'))
+        where('eform_id', config('constants.eforms_id.kilometer_allowance'))
             ->where('delegated_to', $user->id)
             ->where('config_status_id', config('constants.active_state'));
         if ($profile_delegated->exists()) {
@@ -127,7 +133,6 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        $pending = 0;
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
@@ -143,10 +148,13 @@ class HomeController extends Controller
             $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
                 ->count();
-
-        } //for the HR
-        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+        } //for the SENIOR MANAGER
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
             $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.hod_approved'))->count();
+        }
+        //for the HR
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.manager_approved'))->count();
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
@@ -154,9 +162,7 @@ class HomeController extends Controller
 
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.chief_accountant'))
-                ->orWhere('config_status_id', config('constants.kilometer_allowance_status.security_approved'))
-                ->orWhere('config_status_id', config('constants.kilometer_allowance_status.queried'))
+            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.audited'))
                 ->count();
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
@@ -192,41 +198,26 @@ class HomeController extends Controller
             $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
                 ->orderBy('code')->paginate(50);
-        } //for the HR
-        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+        } //for the SENIOR MANAGER
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
             $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.hod_approved'))
+                ->orderBy('code')->paginate(50);
+        }//for the HR
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.manager_approved'))
                 ->orderBy('code')->paginate(50);
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
             $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.hr_approved'))
                 ->orderBy('code')->paginate(50);
-            //  dd(5) ;
+
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-
-            /** check if auditor created last months files */
-            $fromDate = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-            $tillDate = Carbon::now()->subMonth()->endOfMonth()->toDateString();
-
-            $list_for_auditors_action = KilometerAllowanceModel::
-            where('config_status_id', config('constants.kilometer_allowance_status.closed'))
-                ->where('created_at', '>=', $fromDate)
-                ->orWhere('created_at', '<=', $tillDate)
-                ->count();
-
-            if ($list_for_auditors_action > 1) {
-                // not cleared
-                $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.chief_accountant'))
-                    ->orWhere('config_status_id', config('constants.kilometer_allowance_status.queried'))
+            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.audited'))
                     ->orderBy('code')->paginate(50);
-            } else {
-                //cleared
-                $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.chief_accountant'))
-                    ->orWhere('config_status_id', config('constants.kilometer_allowance_status.security_approved'))
-                    ->orWhere('config_status_id', config('constants.kilometer_allowance_status.queried'))
-                    ->orderBy('code')->paginate(50);
-            }
+
+         //   dd(3233);
 
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {

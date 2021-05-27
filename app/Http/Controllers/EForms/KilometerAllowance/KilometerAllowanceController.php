@@ -66,7 +66,8 @@ class KilometerAllowanceController extends Controller
         if ($value == "all") {
             if ($list_for_auditors_action > 1) {
                 // not cleared
-                $list = KilometerAllowanceModel::where('config_status_id', '!=', config('constants.kilometer_allowance_status.chief_accountant'))
+                $list = KilometerAllowanceModel::
+                where('config_status_id', '!=', config('constants.kilometer_allowance_status.chief_accountant'))
                     ->orderBy('code')->paginate(50);
             } else {
                 //cleared
@@ -78,18 +79,26 @@ class KilometerAllowanceController extends Controller
             if ($list_for_auditors_action > 1) {
                 // not cleared
                 $list = KilometerAllowanceModel::
-                where('config_status_id', config('constants.kilometer_allowance_status.hod_approved'))
-                    ->orwhere('config_status_id', config('constants.kilometer_allowance_status.hr_approved'))
-                    ->orwhere('config_status_id', config('constants.kilometer_allowance_status.chief_accountant'))
-                    ->orwhere('config_status_id', config('constants.kilometer_allowance_status.funds_disbursement'))
-                    ->orwhere('config_status_id', config('constants.kilometer_allowance_status.new_application'))
-                    ->orwhere('config_status_id', config('constants.kilometer_allowance_status.funds_acknowledgement'))
-                    ->where('config_status_id', '!=', config('constants.kilometer_allowance_status.security_approved'))
+                where('config_status_id', '!=' , config('constants.kilometer_allowance_status.new_application'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.closed'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.audit_approved'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.rejected'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.audited'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.cancelled'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.void'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.receipt_approved'))
                     ->orderBy('code')->paginate(50);
             } else {
                 //cleared
-                $list = KilometerAllowanceModel::where('config_status_id', '>', config('constants.kilometer_allowance_status.new_application'))
-                    ->where('config_status_id', '<', config('constants.kilometer_allowance_status.closed'))
+                $list = KilometerAllowanceModel::
+                where('config_status_id', '!=' , config('constants.kilometer_allowance_status.new_application'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.closed'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.audit_approved'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.rejected'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.audited'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.cancelled'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.void'))
+                    ->orWhere('config_status_id', '!=' ,  config('constants.kilometer_allowance_status.receipt_approved'))
                     ->orderBy('code')->paginate(50);
             }
             $category = "Opened";
@@ -98,7 +107,7 @@ class KilometerAllowanceController extends Controller
                 ->orderBy('code')->paginate(50);
             $category = "New Application";
         } else if ($value == config('constants.kilometer_allowance_status.closed')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.closed'))
+            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.receipt_approved'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
             //  dd(11);
@@ -107,8 +116,9 @@ class KilometerAllowanceController extends Controller
                 ->orderBy('code')->paginate(50);
             $category = "Rejected";
         } else if ($value == config('constants.kilometer_allowance_status.cancelled')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status. cancelled'))
+            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.cancelled'))
                 ->orderBy('code')->paginate(50);
+
             $category = "Cancelled";
         } else if ($value == config('constants.kilometer_allowance_status.void')) {
             $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.void'))
@@ -242,29 +252,9 @@ class KilometerAllowanceController extends Controller
         $current_status = $form->status->id;
         $new_status = 0;
         $user = Auth::user();
-        //get the form type
-        $eform_kilometer_allowance = EFormModel::find(config('constants.eforms_id.kilometer_allowance'));
 
         //HANDLE VOID REQUEST
         $new_status = config('constants.kilometer_allowance_status.void');
-
-        //update the totals rejected
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.kilometer_allowance'))
-            ->where('id', config('constants.totals.kilometer_allowance_reject'))
-            ->first();
-        $totals->value = $totals->value + 1;
-        $totals->save();
-        $eform_kilometer_allowance->total_rejected = $totals->value;
-        $eform_kilometer_allowance->save();
-
-        //update the totals open
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.kilometer_allowance'))
-            ->where('id', config('constants.totals.kilometer_allowance_open'))
-            ->first();
-        $totals->value = $totals->value - 1;
-        $totals->save();
-        $eform_kilometer_allowance->total_pending = $totals->value;
-        $eform_kilometer_allowance->save();
 
         //get status id
         $status_model = StatusModel::where('id', $new_status)
@@ -373,36 +363,49 @@ class KilometerAllowanceController extends Controller
         }
 
         //generate the kilometer allowance unique code
-        $code = self::randGenerator("PT", 1);
+        $code = self::randGenerator("KA", 1);
+
+      //  dd($user->user_unit->user_unit_cc_code);
 
         //raise the voucher
-        $formModel = KilometerAllowanceModel::firstOrCreate(
+        $formModel = KilometerAllowanceModel::updateOrCreate(
             [
-                'total_payment' => $request->total_payment,
-                'claim_date' => $request->date,
-                'claimant_name' => $request->claimant_name,
-                'claimant_staff_no' => $request->sig_of_claimant,
+
+                'destination'  => $request->destination,
+                'purpose_of_visit' => $request->purpose,
+                'start_date' => $request->period_of_stay_from,
+                'end_date' => $request->period_of_stay_to,
+                'reg_no' => $request->vehicle_reg_no,
+                'engine_capacity' => $request->engine_capacity,
+                'fuel_type' => $request->propelled_by,
+                'kilometers' => $request->covered_kilometers,
+                'pump_price' => $request->pump_price,
+                'amount' => $request->claim_amount,
+                'staff_name' => $request->staff_name,
+                'staff_no' => $request->employee_number,
             ],
             [
-                'pay_point_id' => $user->pay_point_id,
-                'location_id' => $user->location_id,
-                'division_id' => $user->user_division_id,
-                'region_id' => $user->user_region_id,
-                'directorate_id' => $user->user_directorate_id,
-                'projects_id' => $request->projects_id,
-
-                'total_payment' => $request->total_payment,
                 'code' => $code,
-                'ref_no' => $request->ref_no,
+                'destination'  => $request->destination,
+                'station'  => $request->station,
+                'purpose_of_visit' => $request->purpose,
+                'start_date' => $request->period_of_stay_from,
+                'end_date' => $request->period_of_stay_to,
+                'reg_no' => $request->vehicle_reg_no,
+                'engine_capacity' => $request->engine_capacity,
+                'fuel_type' => $request->propelled_by,
+                'kilometers' => $request->covered_kilometers,
+                'pump_price' => $request->pump_price,
+                'amount' => $request->claim_amount,
+                'staff_name' => $user->name,
+                'staff_no' => $request->employee_number,
+                'claim_date' => $request->date_claimant,
                 'config_status_id' => config('constants.kilometer_allowance_status.new_application'),
+                'profile' => Auth::user()->profile_id,
 
-                'claimant_name' => $request->claimant_name,
-                'claimant_staff_no' => $request->sig_of_claimant,
-                'claim_date' => $request->date,
-
-                'created_by' => $user->id,
-                'profile' => $user->profile_id,
-                'code_superior' => $user->user_unit->user_unit_superior,
+                'cost_centre' => $user->user_unit->user_unit_cc_code,
+                'business_code' => $user->user_unit->user_unit_bc_code,
+                'user_unit_code' => $user->user_unit->user_unit_code,
 
                 'hod_code' => $user->user_unit->hod_code,
                 'hod_unit' => $user->user_unit->hod_unit,
@@ -412,15 +415,12 @@ class KilometerAllowanceController extends Controller
                 'hrm_unit' => $user->user_unit->hrm_unit,
                 'expenditure_code' => $user->user_unit->expenditure_code,
                 'expenditure_unit' => $user->user_unit->expenditure_unit,
-                'security_code' => $user->user_unit->security_code,
-                'security_unit' => $user->user_unit->security_unit,
+                'dm_code' => $user->user_unit->dm_code,
+                'dm_unit' => $user->user_unit->dm_unit,
                 'audit_code' => $user->user_unit->audit_code,
                 'audit_unit' => $user->user_unit->audit_unit,
 
-                'cost_center' => $user->user_unit->user_unit_cc_code,
-                'business_unit_code' => $user->user_unit->user_unit_bc_code,
-                'user_unit_code' => $user->user_unit->user_unit_code,
-                'user_unit_id' => $user->user_unit->id,
+                'created_by' => $user->id,
             ]);
 
 
@@ -465,16 +465,6 @@ class KilometerAllowanceController extends Controller
             }
         }
 
-        /** update the totals */
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.kilometer_allowance'))
-            ->where('id', config('constants.totals.kilometer_allowance_new'))
-            ->first();
-        $totals->value = $totals->value + 1;
-        $totals->save();
-        $eform_kilometer_allowance = EFormModel::find(config('constants.eforms_id.kilometer_allowance'));
-        $eform_kilometer_allowance->total_new = $totals->value;
-        $eform_kilometer_allowance->save();
-
         /** send email to supervisor */
         //get team email addresses
 
@@ -497,10 +487,7 @@ class KilometerAllowanceController extends Controller
             This voucher now needs your approval, kindly click on the button below to login to E-ZESCO and take action on the voucher.<br> regards. "
         ];
         // send mail
-        $mail_to_is = Mail::to($to)->send(new SendMail($details));
-
-        // log the activity
-        ActivityLogsController::store($request, "Creating of Kilometer Allowance", "update", " pay point created", $formModel->id);
+     //   $mail_to_is = Mail::to($to)->send(new SendMail($details));
 
         if ($error) {
             // return with error msg
@@ -531,6 +518,11 @@ class KilometerAllowanceController extends Controller
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
 
         } elseif ($current_status == config('constants.kilometer_allowance_status.hod_approved')) {
+            $superior_user_code = $user_unit->dm_code;
+            $superior_user_unit = $user_unit->dm_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
+
+        } elseif ($current_status == config('constants.kilometer_allowance_status.manager_approved')) {
             $superior_user_code = $user_unit->hrm_code;
             $superior_user_unit = $user_unit->hrm_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
@@ -541,9 +533,14 @@ class KilometerAllowanceController extends Controller
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
 
         } elseif ($current_status == config('constants.kilometer_allowance_status.chief_accountant')) {
+            $superior_user_unit = $user_unit->audit_unit;
+            $superior_user_code = $user_unit->audit_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
+
+        }  elseif ($current_status == config('constants.kilometer_allowance_status.audited')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_unit;
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
 
         } elseif ($current_status == config('constants.kilometer_allowance_status.funds_disbursement')) {
             $not_claimant = false;
@@ -622,6 +619,7 @@ class KilometerAllowanceController extends Controller
             $users_array[] = $claimant;
         }
 
+
         //[3] return the list of users
         return $users_array;
     }
@@ -654,7 +652,7 @@ class KilometerAllowanceController extends Controller
         if ($total < 1) {
             return $random;
         } else {
-            self::randGenerator("PT", $value);
+            self::randGenerator($head, $value);
         }
     }
 
@@ -674,6 +672,7 @@ class KilometerAllowanceController extends Controller
 //            //find the kilometer allowance with that id
 //            $form = KilometerAllowanceModel::find($id);
 //        }
+
 
         $receipts = AttachedFileModel::where('form_id', $form->code)
             ->where('form_type', config('constants.eforms_id.kilometer_allowance'))
@@ -696,8 +695,6 @@ class KilometerAllowanceController extends Controller
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
-
-        dd($form);
 
         //data to send to the view
         $params = [
@@ -759,6 +756,8 @@ class KilometerAllowanceController extends Controller
             'approvals' => $approvals,
             'accounts' => $accounts
         ];
+
+
         //return view
         return view('eforms.kilometer-allowance.show')->with($params);
 
@@ -855,10 +854,40 @@ class KilometerAllowanceController extends Controller
             $form->authorised_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR CHIEF HR
+        }
+        //FOR SENIOR MANAGER
+        elseif (
+            Auth::user()->profile_id == config('constants.user_profiles.EZESCO_015')
+            && $current_status == config('constants.kilometer_allowance_status.hod_approved')
+        ) {
+            //cancel status
+            $insert_reasons = true;
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.kilometer_allowance_status.cancelled');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.kilometer_allowance_status.rejected');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.kilometer_allowance_status.manager_approved');
+            } else {
+                $new_status = config('constants.kilometer_allowance_status.hod_approved');
+                $insert_reasons = false;
+            }
+
+            //update
+            $form->config_status_id = $new_status;
+            $form->station_manager = $user->name;
+            $form->station_manager_staff_no = $user->staff_no;
+            $form->station_manager_date = $request->sig_date;
+            $form->profile = Auth::user()->profile_id;
+            $form->save();
+
+        }
+        //FOR CHIEF HR
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_009')
-            && $current_status == config('constants.kilometer_allowance_status.hod_approved')
+            && $current_status == config('constants.kilometer_allowance_status.manager_approved')
         ) {
             //cancel status
             $insert_reasons = true;
@@ -877,13 +906,17 @@ class KilometerAllowanceController extends Controller
 
             //update
             $form->config_status_id = $new_status;
-            $form->station_manager = $user->name;
-            $form->station_manager_staff_no = $user->staff_no;
-            $form->station_manager_date = $request->sig_date;
+
+            $form->hrm_manager = $user->name;
+            $form->hrm_manager_staff_no = $user->staff_no;
+            $form->hrm_manager_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
-        } //FOR FOR CHIEF ACCOUNTANT
+        }
+
+
+        //FOR FOR CHIEF ACCOUNTANT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
             && $current_status == config('constants.kilometer_allowance_status.hr_approved')
         ) {
@@ -901,6 +934,8 @@ class KilometerAllowanceController extends Controller
                 $new_status = config('constants.kilometer_allowance_status.hr_approved');
                 $insert_reasons = false;
             }
+
+            //dd($new_status);
             //update
             $form->config_status_id = $new_status;
             $form->accountant = $user->name;
@@ -910,7 +945,7 @@ class KilometerAllowanceController extends Controller
             $form->save();
         } //FOR FOR EXPENDITURE OFFICE FUNDS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
-            && $current_status == config('constants.kilometer_allowance_status.chief_accountant')
+            && $current_status == config('constants.kilometer_allowance_status.audited')
         ) {
             //cancel status
             $insert_reasons = true;
@@ -926,6 +961,7 @@ class KilometerAllowanceController extends Controller
                 $new_status = config('constants.kilometer_allowance_status.chief_accountant');
                 $insert_reasons = false;
             }
+
             //update
             $form->config_status_id = $new_status;
             $form->expenditure_office = $user->name;
@@ -934,11 +970,14 @@ class KilometerAllowanceController extends Controller
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
+
             //create records for the accounts associated with this kilometer allowance transaction
             for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
+
+
                 $des = "";
-                $des = $des . " " . $request->account_items[$i] . ",";
-                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
+                $des = $des . " " . $form->destination. ": " . $form->purpose_of_visit. ",";
+                $des = "Kilometer Claim Serial: " . $form->code . ", Claimant: " . $form->staff_name . ', Destination/Purpose : ' . $des . ' Amount: ZMW ' . $request->credited_amount[$i] . '.';
 
                 //[1] CREDITED ACCOUNT
                 //[1A] - money
@@ -970,8 +1009,8 @@ class KilometerAllowanceController extends Controller
                         'cost_center' => $form->cost_center,
                         'business_unit_code' => $form->business_unit_code,
                         'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
+                        'staff_name' => $form->staff_name,
+                        'staff_no' => $form->staff_no,
                         'claim_date' => $form->claim_date,
 
                         'hod_code' => $form->hod_code,
@@ -1028,8 +1067,8 @@ class KilometerAllowanceController extends Controller
                         'cost_center' => $form->cost_center,
                         'business_unit_code' => $form->business_unit_code,
                         'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
+                        'staff_name' => $form->staff_name,
+                        'staff_no' => $form->staff_no,
                         'claim_date' => $form->claim_date,
                         'hod_code' => $form->hod_code,
                         'hod_unit' => $form->hod_unit,
@@ -1074,6 +1113,8 @@ class KilometerAllowanceController extends Controller
                 $new_status = config('constants.kilometer_allowance_status.funds_disbursement');
                 $insert_reasons = false;
             }
+
+           // dd($new_status);
             //update
             $form->config_status_id = $new_status;
 //          $form->profile = Auth::user()->profile_id;
@@ -1097,9 +1138,10 @@ class KilometerAllowanceController extends Controller
                 $new_status = config('constants.kilometer_allowance_status.funds_acknowledgement');
                 $insert_reasons = false;
             }
+
             //update
             $form->config_status_id = $new_status;
-            $form->security_name = $user->name;
+            $form->security_office = $user->name;
             $form->security_staff_no = $user->staff_no;
             $form->security_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
@@ -1123,6 +1165,7 @@ class KilometerAllowanceController extends Controller
                 $new_status = config('constants.kilometer_allowance_status.security_approved');
                 $insert_reasons = false;
             }
+
             //update the form
             $form->config_status_id = $new_status;
             $form->expenditure_office = $user->name;
@@ -1135,8 +1178,8 @@ class KilometerAllowanceController extends Controller
             //check if there is need to create an account
             if ($request->change > 0) {
                 $des = "";
-                $des = $des . " " . $request->account_item . ",";
-                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount . '.';
+                $des = $des . " " . $form->destination . "/,". $form->purpose_of_visit.",";
+                $des = "Kilometer Claim Serial: " . $form->code . ", Claimant: " . $form->staff_name . ', Destination/Purpose : ' . $des . ' Amount: ' . $request->credited_amount . '.';
 
                 //[1] CREDITED ACCOUNT
                 //[1A] - money
@@ -1168,8 +1211,8 @@ class KilometerAllowanceController extends Controller
                         'cost_center' => $form->cost_center,
                         'business_unit_code' => $form->business_unit_code,
                         'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
+                        'staff_name' => $form->staff_name,
+                        'staff_no' => $form->staff_no,
                         'claim_date' => $form->claim_date,
                         'hod_code' => $form->hod_code,
                         'hod_unit' => $form->hod_unit,
@@ -1225,8 +1268,8 @@ class KilometerAllowanceController extends Controller
                         'cost_center' => $form->cost_center,
                         'business_unit_code' => $form->business_unit_code,
                         'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
+                        'staff_name' => $form->staff_name,
+                        'staff_no' => $form->staff_no,
                         'claim_date' => $form->claim_date,
                         'hod_code' => $form->hod_code,
                         'hod_unit' => $form->hod_unit,
@@ -1252,15 +1295,6 @@ class KilometerAllowanceController extends Controller
                     ]
                 );
             }
-
-//            //update all accounts associated to this kilometer allowance
-//            $formAccountModelList = KilometerAllowanceAccountModel::where('eform_kilometer_allowance_id', $form->id)
-//                ->where('status_id', config('constants.kilometer_allowance_status.export_not_ready'))
-//                ->get();
-//            foreach ($formAccountModelList as $item) {
-//                $item->status_id = config('constants.kilometer_allowance_status.not_exported');
-//                $item->save();
-//            }
 
             //Make the update on the kilometer allowance account
             $export_not_ready = config('constants.kilometer_allowance_status.export_not_ready');
@@ -1316,7 +1350,7 @@ class KilometerAllowanceController extends Controller
         }
         //FOR AUDITING OFFICE
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
-            && $current_status == config('constants.kilometer_allowance_status.closed')
+            && $current_status == config('constants.kilometer_allowance_status.chief_accountant')
         ) {
             //cancel status
             $insert_reasons = true;
@@ -1335,11 +1369,12 @@ class KilometerAllowanceController extends Controller
                 $new_status = config('constants.kilometer_allowance_status.closed');
                 $insert_reasons = false;
             }
+
             //update
             $form->config_status_id = $new_status;
-            $form->audit_office_name = $user->name;
-            $form->audit_office_staff_no = $user->staff_no;
-            $form->audit_office_date = $request->sig_date;
+            $form->audit_office = $user->name;
+            $form->audit_staff_no = $user->staff_no;
+            $form->audit_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
         }
@@ -1364,7 +1399,7 @@ class KilometerAllowanceController extends Controller
                 $new_status = config('constants.kilometer_allowance_status.queried');
                 $insert_reasons = false;
             }
-            //  dd($new_status);
+              dd($new_status);
             //update
             $form->config_status_id = $new_status;
             $form->profile = Auth::user()->profile_id;
@@ -1412,7 +1447,7 @@ class KilometerAllowanceController extends Controller
         }
 
         //redirect home
-        return Redirect::route('kilometer.allowance.home')->with('message', $form->total_payment . ' kilometer.allowance.' . $form->code . ' for ' . $form->claimant_name . ' has been ' . $request->approval . ' successfully');
+        return Redirect::route('kilometer.allowance.home')->with('message', $form->total_payment . ' kilometer.allowance.' . $form->code . ' for ' . $form->staff_name . ' has been ' . $request->approval . ' successfully');
 
     }
 
@@ -1435,7 +1470,7 @@ class KilometerAllowanceController extends Controller
             //message details
             $subject = 'Petty-Cash Voucher Needs Your Attention';
             $title = 'Petty-Cash Voucher Needs Your Attention';
-            $message = 'This is to notify you that there is a <b>ZMW ' . $form->total_payment . '</b>  Petty-Cash Voucher (' . $form->code . ') raised by ' . $form->claimant_name . ', that needs your attention.
+            $message = 'This is to notify you that there is a <b>ZMW ' . $form->total_payment . '</b>  Petty-Cash Voucher (' . $form->code . ') raised by ' . $form->staff_name . ', that needs your attention.
             <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at ' . $form->status->name . ' stage';
         } //check if this next profile is for a claimant and if the Petty-Cash is closed
         else if ($new_status == config('constants.kilometer_allowance_status.closed')) {
@@ -1450,7 +1485,7 @@ class KilometerAllowanceController extends Controller
             //message details
             $subject = 'Petty-Cash Voucher Needs Your Attention';
             $title = 'Petty-Cash Voucher Needs Your Attention';
-            $message = 'This is to notify you that there is a <b>ZMW ' . $form->total_payment . '</b>  Petty-Cash Voucher (' . $form->code . ') raised by ' . $form->claimant_name . ',that needs your attention.
+            $message = 'This is to notify you that there is a <b>ZMW ' . $form->total_payment . '</b>  Petty-Cash Voucher (' . $form->code . ') raised by ' . $form->staff_name . ',that needs your attention.
             <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at ' . $form->status->name . ' stage.';
         }
 
@@ -1722,7 +1757,7 @@ class KilometerAllowanceController extends Controller
                     ->update(['status_id' => $previous_status]);
 
                 $row['Code'] = $item->kilometer_allowance_code;
-                $row['Claimant'] = $item->claimant_name;
+                $row['Claimant'] = $item->staff_name;
                 $row['Claim Date'] = $item->claim_date;
                 $row['Company'] = $item->company;
                 $row['Business Unit'] = $item->business_unit_code;
@@ -2070,8 +2105,8 @@ class KilometerAllowanceController extends Controller
                         'business_unit_code' => $tasks_pt->business_unit_code,
                         'user_unit_code' => $tasks_pt->user_unit_code,
 
-                        'claimant_name' => $tasks_pt->claimant_name,
-                        'claimant_staff_no' => $tasks_pt->claimant_staff_no,
+                        'staff_name' => $tasks_pt->staff_name,
+                        'staff_no' => $tasks_pt->staff_no,
                         'claim_date' => $tasks_pt->claim_date,
                         'kilometer_allowance_code' => $tasks_pt->code,
 
@@ -2102,8 +2137,8 @@ class KilometerAllowanceController extends Controller
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
             $list = DB::select("SELECT * FROM eform_kilometer_allowance
               where code LIKE '%{$search}%'
-              or claimant_name LIKE '%{$search}%'
-              or claimant_staff_no LIKE '%{$search}%'
+              or staff_name LIKE '%{$search}%'
+              or staff_no LIKE '%{$search}%'
               or config_status_id LIKE '%{$search}%'
               or user_unit_code LIKE '%{$search}%'
             ");
@@ -2112,8 +2147,8 @@ class KilometerAllowanceController extends Controller
             //find the kilometer allowance with that id
             $list = KilometerAllowanceModel::
             where('code', 'LIKE', "%{$search}%")
-                ->orWhere('claimant_name', 'LIKE', "%{$search}%")
-                ->orWhere('claimant_staff_no', 'LIKE', "%{$search}%")
+                ->orWhere('staff_name', 'LIKE', "%{$search}%")
+                ->orWhere('staff_no', 'LIKE', "%{$search}%")
                 ->orWhere('config_status_id', 'LIKE', "%{$search}%")
                 ->orWhere('user_unit_code', 'LIKE', "%{$search}%")
                 ->paginate(50);

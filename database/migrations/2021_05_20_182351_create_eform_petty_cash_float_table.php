@@ -20,6 +20,7 @@ class CreateEformPettyCashFloatTable extends Migration
             $table->double('float',20,5)->nullable();
             $table->double('utilised',20,5)->nullable();
             $table->double('cash',20,5)->nullable();
+            $table->integer('percentage')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('created_by_name')->nullable();
             $table->timestamps();

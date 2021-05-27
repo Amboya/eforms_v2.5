@@ -129,7 +129,7 @@
                             <div class="row">
                                 <div class="col-6"><label>Department:</label></div>
                                 <div class="col-6">
-                                    <input value="{{$form->user->user_unit->name }}" type="text" name="department"
+                                    <input value="{{$form->user->user_unit->user_unit_description }}" type="text" name="department"
                                            readonly class="form-control">
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                             <div class="row">
                                 <div class="col-6"><label>Station:</label></div>
                                 <div class="col-6">
-                                    <input value="{{$form->user->location->name }}" type="text" name="station" readonly
+                                    <input value="{{$form->station }}" type="text" name="station" readonly
                                            class="form-control">
                                 </div>
                             </div>
@@ -339,8 +339,8 @@
             <!-- /.card -->
 
             {{-- FINANCIAL POSTINGS  --}}
-            @if(  ($form->config_status_id >= config('constants.kilometer_allowance_status.closed') )
-               )
+            @if(  true )
+
                 <div class="card">
                     <div class="card-header">
                         <h4 class="text-center">Financial Accounts Postings</h4>
@@ -365,11 +365,11 @@
                                                            value="{{$item->account}}"
                                                            class="form-control amount" readonly>
                                                 </TD>
-                                                <TD><input type="number" id="credited_amount"
-                                                           value="{{ number_format($item->creditted_amount ?? 0,2) }}"
+                                                <TD><input type="text" id="credited_amount"
+                                                           value=" ZMW {{ number_format($item->creditted_amount ?? 0,2) }}"
                                                            class="form-control amount" readonly>
                                                 </TD>
-                                                <TD><input type="number" value="{{ number_format($item->debitted_amount ?? 0, 2) }}"
+                                                <TD><input type="text" value="ZMW {{ number_format($item->debitted_amount ?? 0, 2) }}"
                                                            class="form-control amount" readonly>
                                                 </TD>
                                             </TR>
@@ -454,9 +454,9 @@
             </div>
 
             {{--  RECEIPT FILES - ONLY WHEN FORM HAS BEEN CLOSED--}}
-            @if(  $form->config_status_id == config('constants.kilometer_allowance_status.closed')
-            ||  $form->config_status_id == config('constants.kilometer_allowance_status.audited')
-            ||  $form->config_status_id == config('constants.kilometer_allowance_status.queried')    )
+{{--            @if(  $form->config_status_id == config('constants.kilometer_allowance_status.closed')--}}
+{{--            ||  $form->config_status_id == config('constants.kilometer_allowance_status.audited')--}}
+{{--            ||  $form->config_status_id == config('constants.kilometer_allowance_status.queried')    )--}}
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Receipt Files</h4>
@@ -496,7 +496,7 @@
                     <div class="card-footer">
                     </div>
                 </div>
-            @endif
+{{--            @endif--}}
 
             {{--  FORM PPROVALS--}}
             <div class="card ">
@@ -618,9 +618,48 @@
                         </div>
                     @endif
 
+                    {{--  SENIOR MANAGER APPROVAL--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
+                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.hod_approved')
+                         &&  $form->user_unit->dm_code == $user->profile_job_code
+                         &&  $form->user_unit->dm_unit == $user->profile_unit_code
+                     )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>APPROVE
+                                        </button>
+                                        <button id="btnSubmit_reject" type="submit" name="approval"
+                                                class="btn btn-outline-danger ml-2 p-2  "
+                                                value='Rejected'>REJECT
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     {{--  HR APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.hod_approved')
+                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.manager_approved')
                          &&  $form->user_unit->hrm_code == $user->profile_job_code
                          &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                      )
@@ -700,12 +739,12 @@
 
                     {{--  FUNDS DISBURSEMNET APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.chief_accountant')
+                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.audited')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
                             <h5 class="text-center">Please Update the Accounts </h5>
-                            <h6 class="text-center">(Total Amount : ZMW {{$form->total_payment}}) </h6>
+                            <h6 class="text-center">(Total Amount : ZMW {{$form->amount}}) </h6>
                             <div class="col-lg-12 grid-margin stretch-card">
                                 <div class="table-responsive">
                                     <div class="col-lg-12 ">
@@ -713,25 +752,6 @@
                                             <TR>
                                                 <TD><INPUT type="checkbox" name="chk"/></TD>
                                                 <TD>
-                                                    <div class="row">
-                                                        <div class="col-12">
-                                                            <div class="form-group">
-                                                                <input list="items_list1" type="text"
-                                                                       name="account_items[]"
-                                                                       class="form-control amount"
-                                                                       placeholder="Select Item/s   "
-                                                                       id="account_items1">
-                                                                <datalist id="items_list1">
-                                                                    @foreach($form->item as $item)
-                                                                        <option>{{$item->name}} : (ZMK {{$item->amount}}
-                                                                            )
-                                                                        </option>
-                                                                    @endforeach
-                                                                </datalist>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
                                                     {{--                                                </TD>--}}
                                                     {{--                                                <TD>--}}
                                                     <div class="row">
@@ -740,11 +760,11 @@
                                                                     required
                                                                     class="form-control amount">
                                                                 @foreach($accounts as $account)
-                                                                    @if($account->id  ==  config('constants.kilometer_allowance_account_id')  )
+{{--                                                                    @if($account->id  ==  config('constants.kilometer_allowance_account_id')  )--}}
                                                                         <option
                                                                             value="{{$account->code}}">{{$account->name}}
                                                                             :{{$account->code}}</option>
-                                                                    @endif
+{{--                                                                    @endif--}}
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -798,7 +818,7 @@
                                 <textarea hidden class="form-control" rows="2" name="reason" required> Funds Disbursement</textarea>
                                 <div id="submit_not_possible" class="col-12 text-center">
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
-                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
+                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->amount}}
                                                 )</strong>
                                    </span>
                                 </div>
@@ -839,7 +859,7 @@
                     {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                          &&  $form->config_status_id == config('constants.kilometer_allowance_status.funds_disbursement')
-                         &&  $form->claimant_staff_no == $user->staff_no
+                         &&  $form->staff_no == $user->staff_no
                           )
                         <div class="">
                             <hr>
@@ -935,7 +955,7 @@
                         </div>
                     @endif
 
-                    {{--  RECEIPT APPROVAL--}}
+                    {{--  RECEIPT UPLOAD--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                          &&  $form->config_status_id == config('constants.kilometer_allowance_status.security_approved')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
@@ -966,18 +986,6 @@
                                                 <TR>
 
                                                     <TD>
-                                                        <div class="form-group">
-                                                            <input list="items_list" type="text" name="account_item"
-                                                                   class="form-control amount"
-                                                                   placeholder="Select Item/s   " id="account_item1">
-                                                            <datalist id="items_list">
-                                                                @foreach($form->item as $item)
-                                                                    <option>{{$item->name}}</option>
-                                                                @endforeach
-                                                            </datalist>
-                                                        </div>
-                                                    </TD>
-                                                    <TD>
                                                         <select name="credited_account" id="credited_account1"
                                                                 class="form-control amount">
                                                             <option value="">Select Account To Credit</option>
@@ -995,11 +1003,11 @@
                                                         <select name="debited_account" id="debited_account1"
                                                                 class="form-control amount">
                                                             @foreach($accounts as $account)
-                                                                @if($account->id  ==  config('constants.kilometer_allowance_account_id')  )
+{{--                                                                @if($account->id  ==  config('constants.kilometer_allowance_account_id')  )--}}
                                                                     <option
                                                                         value="{{$account->code}}">{{$account->name}}
                                                                         :{{$account->code}}</option>
-                                                                @endif
+{{--                                                                @endif--}}
                                                             @endforeach
                                                         </select>
                                                     </TD>
@@ -1072,7 +1080,7 @@
 
                     {{--  AUDIT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
-                        &&  $form->config_status_id == config('constants.kilometer_allowance_status.closed')
+                        &&  $form->config_status_id == config('constants.kilometer_allowance_status.chief_accountant')
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
@@ -1346,7 +1354,7 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var total_payment = {!! json_encode($form->total_payment) !!};
+            var total_payment = {!! json_encode($form->amount) !!};
 
             if (!isNaN(total)) {
 
@@ -1380,7 +1388,7 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var total_payment = {!! json_encode($form->total_payment) !!};
+            var total_payment = {!! json_encode($form->amount) !!};
 
             if (!isNaN(total)) {
 

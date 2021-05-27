@@ -40,8 +40,8 @@ class CreateEformKillometerAllowanceAccountTable extends Migration
             $table->string('hrm_unit')->nullable();
             $table->string('expenditure_code')->nullable();
             $table->string('expenditure_unit')->nullable();
-            $table->string('dr_code')->nullable();
-            $table->string('dr_unit')->nullable();
+            $table->string('dm_code')->nullable();
+            $table->string('dm_unit')->nullable();
             $table->string('audit_code')->nullable();
             $table->string('audit_unit')->nullable();
 

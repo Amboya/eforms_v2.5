@@ -121,7 +121,7 @@ class PettyCashModel extends Model
             //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
             $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('delegated_to', $user->id)
-                ->where('config_status_id',  config('constants.active_state') );
+                ->where('config_status_id', config('constants.active_state'));
             if ($profile_delegated->exists()) {
                 //
                 $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
@@ -138,62 +138,25 @@ class PettyCashModel extends Model
                     $builder->where('claimant_staff_no', Auth::user()->staff_no);
                 });
             } else {
-                //[2A] HOD
-                //see forms for the same work area and user unit
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-                    //  dd(Auth::user()->user_unit->code) ;
-                    static::addGlobalScope('hod', function (Builder $builder) {
-                        $builder->Where('hod_code', Auth::user()->profile_job_code);
-                        $builder->where('hod_unit', Auth::user()->profile_unit_code);
-                    });
-                }
-                //[2B] HUMAN RESOURCE
+
                 //see forms for the
-                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
-                    static::addGlobalScope('hrm', function (Builder $builder) {
-                        $builder->Where('hrm_code', Auth::user()->profile_job_code);
-                        $builder->where('hrm_unit', Auth::user()->profile_unit_code);
-                    });
-                }
-                //[2C] CHIEF ACCOUNTANT
-                //see forms for the
-                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
+                if ($user->profile_id == config('constants.user_profiles.EZESCO_007')
+                    || $user->profile_id == config('constants.user_profiles.EZESCO_009')
+                    || $user->profile_id == config('constants.user_profiles.EZESCO_004')) {
                     static::addGlobalScope('ca', function (Builder $builder) {
-                        $builder->Where('ca_code', Auth::user()->profile_job_code);
-                        $builder->where('ca_unit', Auth::user()->profile_unit_code);
+                        $builder->Where(Auth::user()->code_column, Auth::user()->profile_job_code);
+                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
                     });
-                    //   dd(3);
-                }
-                //[2D] EXPENDITURE
-                //see forms for the
-                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-                    static::addGlobalScope('expenditure', function (Builder $builder) {
-                        //  $builder->Where('expenditure_code', Auth::user()->job_code);
-                        $builder->where('expenditure_unit', Auth::user()->profile_unit_code);
-                    });
-                }
 
-                //[2E] SECURITY
-                //see forms for the
-                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
+                } //see forms for the
+                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')
+                    || $user->profile_id == config('constants.user_profiles.EZESCO_013')
+                    || $user->profile_id == config('constants.user_profiles.EZESCO_011')) {
                     static::addGlobalScope('security', function (Builder $builder) {
-                        // $builder->Where('security_code', Auth::user()->job_code);
-                        $builder->where('security_unit', Auth::user()->profile_unit_code);
+                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
                     });
-                }
-                //[2F] AUDIT
-                //see forms for the
-                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-                    static::addGlobalScope('audit', function (Builder $builder) {
-                        // $builder->Where('security_code', Auth::user()->job_code);
-                        $builder->where('audit_unit', Auth::user()->profile_unit_code);
-                    });
-                }
-                else{
-
                 }
             }
-
         }
 
     }
@@ -210,6 +173,7 @@ class PettyCashModel extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
+
     public function directorate()
     {
         return $this->belongsTo(DirectoratesModel::class, 'directorate_id', 'id');

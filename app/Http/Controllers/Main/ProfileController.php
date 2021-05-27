@@ -258,7 +258,6 @@ class ProfileController extends Controller
         //get eform
         $eform = EFormModel::find($request->eform_id);
 
-
         //create model
         $model = ProfileDelegatedModel::firstOrCreate(
             [
@@ -269,6 +268,8 @@ class ProfileController extends Controller
                 'delegated_profile' => $request->profile,
                 'delegated_user_unit' => $user->user_unit_code,
                 'delegated_job_code' => $user->job_code,
+                'delegated_unit_column' => $user->unit_column,
+                'delegated_code_column' => $user->code_column,
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' =>  config('constants.active_state') ,
                 'created_by'=> $user->id
@@ -280,6 +281,8 @@ class ProfileController extends Controller
                 'delegated_profile' => $request->profile,
                 'delegated_user_unit' => $user->user_unit_code,
                 'delegated_job_code' => $user->job_code,
+                'delegated_unit_column' => $user->unit_column,
+                'delegated_code_column' => $user->code_column,
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' =>  config('constants.active_state') ,
                 'created_by'=> $user->id
@@ -309,6 +312,8 @@ class ProfileController extends Controller
                 'delegated_profile' => $request->profile,
                 'delegated_user_unit' => $owner->user_unit_code,
                 'delegated_job_code' => $owner->job_code,
+                'delegated_unit_column' => $owner->unit_column,
+                'delegated_code_column' => $owner->code_column,
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' =>  config('constants.active_state') ,
                 'created_by'=> $owner->id
@@ -320,6 +325,8 @@ class ProfileController extends Controller
                 'delegated_profile' => $request->profile,
                 'delegated_user_unit' => $owner->user_unit_code,
                 'delegated_job_code' => $owner->job_code,
+                'delegated_unit_column' => $owner->unit_column,
+                'delegated_code_column' => $owner->code_column,
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' =>  config('constants.active_state') ,
                 'created_by'=> $owner->id

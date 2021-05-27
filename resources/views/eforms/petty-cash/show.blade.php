@@ -338,7 +338,7 @@
                                         style="width:100%; " title="{{$item->name}}"></iframe>
                                 <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                 <span> | </span>
-                                <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}">View</a>
+                                <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}" target="_blank">View</a>
                                 @if( ($user->type_id == config('constants.user_types.developer')  || (
                                     $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                                   &&  $user->id  == $form->created_by )
@@ -381,7 +381,7 @@
                                             style="width:100%; " title="{{$item->name}}"></iframe>
                                     <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                     <span> | </span>
-                                    <a href="{{asset('storage/petty_cash_receipt/'.$item->name)}}">View</a>
+                                    <a href="{{asset('storage/petty_cash_receipt/'.$item->name)}}" target="_blank">View</a>
 
                                     @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                              &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
