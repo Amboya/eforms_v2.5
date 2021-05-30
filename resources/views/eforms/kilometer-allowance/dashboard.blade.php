@@ -1,8 +1,10 @@
 @extends('layouts.eforms.kilometer-allowance.master')
 
-
 @push('custom-styles')
-    <!-- -->
+  <!-- DataTables -->
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
 @endpush
 
 
@@ -13,12 +15,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Kilometer Allowance Claim</h1>
+                    <h1 class="m-0 text-dark">Kilometer Allowance</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Kilometer Allowance Claim</li>
+                        <li class="breadcrumb-item active">Kilometer Allowance</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -32,12 +34,12 @@
 
         @if(session()->has('message'))
             <div class="alert alert-success alert-dismissible">
-                <p class="lead"> {{session()->get('message')}}</p>
+                <p class="lead"> {!! session()->get('message') !!}</p>
             </div>
         @endif
         @if(session()->has('error'))
-            <div class="alert alert-danger alert-dismissible">
-                <p class="lead"> {{session()->get('message')}}</p>
+            <div class="alert alert-info alert-dismissible">
+                <p class="lead"> {!!  session()->get('error') !!}</p>
             </div>
         @endif
 
@@ -58,7 +60,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'kilometer-allowance-list', config('constants.kilometer_allowance_status.new_application') ) }}">
+                           href="{{route( 'kilometer.allowance.list', config('constants.kilometer_allowance_status.new_application') ) }}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -73,7 +75,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'kilometer-allowance-list', 'pending')}}">
+                           href="{{route( 'kilometer.allowance.list', 'pending')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -90,7 +92,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'kilometer-allowance-list', config('constants.kilometer_allowance_status.closed'))}}">
+                           href="{{route( 'kilometer.allowance.list', config('constants.kilometer_allowance_status.closed'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -104,7 +106,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'kilometer-allowance-list', config('constants.kilometer_allowance_status.rejected'))}}">
+                           href="{{route( 'kilometer.allowance.list', config('constants.kilometer_allowance_status.rejected'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -139,9 +141,17 @@
                             </div>
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table m-0">
+                        <div class="card-body p-2">
+                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')   )
+                                @if($auditor < 1)
+                                @else
+                                    <p class="text-danger  mb-10">
+                                           Please note that the transactions for the current period cannot be closed because the transactions for the previous period
+                                            have not been cleared by Audit. ({{$auditor}} transactions pending).</p>
+                                @endif
+                            @endif
+                            <div class="table-responsive mt-10 ">
+                                <table id="example1" class="table ">
                                     <thead>
                                     <tr>
                                         <th>Serial</th>
@@ -160,7 +170,7 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('kilometer-allowance-show', $item->id) }}"
+                                                      action="{{ route('kilometer.allowance.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
@@ -176,7 +186,7 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('kilometer-allowance-show', $item->id) }}"
+                                                      action="{{ route('kilometer.allowance.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form></td>
@@ -184,20 +194,22 @@
                                     @endforeach
                                     </tbody>
                                 </table>
+
                             </div>
                             <!-- /.table-responsive -->
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer clearfix">
-                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
-                                @if($pending < 1)
-                                    <a href="{{route('kilometer-allowance-create')}}"
-                                       class="btn btn-sm bg-gradient-green float-left">New Kilometer Allowance Claim</a>
-                                @else
-                                    <a href="#" class="btn btn-sm btn-default float-left">New Kilometer Allowance Claim</a>
-                                    <span class="text-danger m-3"> Sorry, You can not raise a new Kilometer Allowance Claim because you already have an open form.</span>
-                                @endif
-                            @endif
+{{--                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )--}}
+{{--                                @if($pending < 1)--}}
+                                    <a href="{{route('kilometer.allowance.create')}}"
+                                       class="btn btn-sm bg-gradient-green float-left">New Kilometer Allowance</a>
+{{--                                @else--}}
+{{--                                    <a href="#" class="btn btn-sm btn-default float-left">New Kilometer Allowance</a>--}}
+{{--                                    <span class="text-danger m-3"> Sorry, You can not raise a new kilometer allowance because you already have an open kilometer allowance.</span>--}}
+{{--                                @endif--}}
+{{--                            @endif--}}
+                                {!! $list->links() !!}
                         </div>
                         <!-- /.card-footer -->
                     </div>
@@ -213,5 +225,41 @@
 
 
 @push('custom-scripts')
-    <!--  -->
+
+    <!-- DataTables  & Plugins -->
+    <script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/jszip/jszip.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/pdfmake/pdfmake.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/pdfmake/vfs_fonts.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+
+    <!-- page script -->
+    <script>
+        $(function () {
+
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+
+
 @endpush

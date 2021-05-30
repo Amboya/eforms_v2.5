@@ -317,8 +317,9 @@ class UserController extends Controller
         //get user unit
         $user_unit = ConfigWorkFlow::find($request->user_unit);
         $model = \Auth::user();
+      //  dd($model);
         $model->user_unit_id = $user_unit->id ;
-        $model->user_unit_code = $user_unit->code ;
+        $model->user_unit_code = $user_unit->user_unit_code ;
         $model->save();
         //log the activity
         ActivityLogsController::store($request, "Updating of User's User-Unit", "update", " user's user-unit updated", $model->staff_no);

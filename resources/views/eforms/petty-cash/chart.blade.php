@@ -53,7 +53,7 @@
         <div class="card">
             <!-- /.card-header -->
             <div class="card-header text-right  ">
-                <a class="btn btn-sm btn-success " href="{{route('petty-cash-report-export')}}">
+                <a class="btn btn-sm btn-success " href="{{route('petty.cash.report.export')}}">
                     Export {{sizeof($list)}} Records <i class="fa fa-download"></i>
                 </a>
             </div>
@@ -112,7 +112,7 @@
             <div class="card-footer clearfix">
                 {{--@if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))--}}
                     {{--@if($pending < 1)--}}
-                        {{--<a href="{{route('petty-cash-create')}}"--}}
+                        {{--<a href="{{route('petty.cash.create')}}"--}}
                            {{--class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>--}}
                     {{--@else--}}
                         {{--<a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>--}}

@@ -59,7 +59,7 @@
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="info-box mb-3">
                             <a class="info-box-icon bg-gray elevation-1"
-                               href="{{route( 'petty-cash-list', config('constants.petty_cash_status.rejected'))}}">
+                               href="{{route( 'petty.cash.list', config('constants.petty_cash_status.rejected'))}}">
                                 <span><i class="fa fa-file"></i></span>
                             </a>
                             <div class="info-box-content">
@@ -80,7 +80,7 @@
             {{--                    <div class="col-12 col-sm-6 col-md-3">--}}
             {{--                        <div class="info-box mb-3">--}}
             {{--                            <a class="info-box-icon bg-gray elevation-1"--}}
-            {{--                               href="{{route( 'petty-cash-list', config('constants.petty_cash_status.rejected'))}}">--}}
+            {{--                               href="{{route( 'petty.cash.list', config('constants.petty_cash_status.rejected'))}}">--}}
             {{--                                <span><i class="fa fa-file"></i></span>--}}
             {{--                            </a>--}}
             {{--                            <div class="info-box-content">--}}
@@ -108,10 +108,10 @@
                             <h3 class="card-title">Bar Chart</h3>
 
                             <div class="card-tools">
-                                <a href="{{route('petty-cash-reports-sync-directorates')}}" class="btn btn-tool">
+                                <a href="{{route('petty.cash.reports.sync.directorates')}}" class="btn btn-tool">
                                     <i class="fas fa-sync"> Directorates</i>
                                 </a>
-                                <a href="{{route('petty-cash-reports-sync-units')}}" class="btn btn-tool">
+                                <a href="{{route('petty.cash.reports.sync.units')}}" class="btn btn-tool">
                                     <i class="fas fa-sync">Units</i>
                                 </a>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i

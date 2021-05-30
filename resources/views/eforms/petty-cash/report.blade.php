@@ -61,7 +61,7 @@
                     </button>
                 @endif
                 @if (Auth::user()->type_id == config('constants.user_types.developer') )
-                    <a class="btn btn-sm btn-default " href="{{route('petty-cash-report-export-unmark-exported-all')}}"
+                    <a class="btn btn-sm btn-default " href="{{route('petty.cash.report-export-unmark-exported-all')}}"
                        title="Only Chief Account and Expenditure Officers can Export">
                         Unmark the exported Records <i class="fa fa-rev"></i>
                     </a>
@@ -69,11 +69,11 @@
                        title="Only Chief Account and Expenditure Officers can Export">
                         Export {{sizeof($list)}} Records <i class="fa fa-download"></i>
                     </a>
-{{--                    <a class="btn btn-sm btn-default " href="{{route('petty-cash-accounts-duplicate-remove')}}"--}}
+{{--                    <a class="btn btn-sm btn-default " href="{{route('petty.cash.accounts-duplicate-remove')}}"--}}
 {{--                       title="Only Chief Account and Expenditure Officers can Export">--}}
 {{--                        Remove Duplicates<i class="fa fa-rev"></i>--}}
 {{--                    </a>--}}
-                        <a  class="btn btn-tool" href="{{route('petty-cash-report-sync')}}"
+                        <a  class="btn btn-tool" href="{{route('petty.cash.report-sync')}}"
                             title="Sync Accounts">
                             <i class="fas fa-sync"></i></a>
 
@@ -127,9 +127,9 @@
                                 <td>{{$item->creditted_amount ?? ""}}</td>
                                 <td>{{$item->description ?? ""}}</td>
                                 @if (Auth::user()->type_id == config('constants.user_types.developer') )
-                                    <td><a href="{{route('petty-cash-accounts-duplicate-remove',$item->id)}}">Mark As Duplicate</a></td>
+                                    <td><a href="{{route('petty.cash.accounts-duplicate-remove',$item->id)}}">Mark As Duplicate</a></td>
                                 @endif
-                                {{--                                petty-cash-report-export-unmark-exported--}}
+                                {{--                                petty.cash.report-export-unmark-exported--}}
                             </tr>
                         @endforeach
                         </tbody>
@@ -141,7 +141,7 @@
             <div class="card-footer clearfix">
                 {{--@if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))--}}
                 {{--@if($pending < 1)--}}
-                {{--<a href="{{route('petty-cash-create')}}"--}}
+                {{--<a href="{{route('petty.cash.create')}}"--}}
                 {{--class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>--}}
                 {{--@else--}}
                 {{--<a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>--}}
@@ -166,7 +166,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" method="get" action="{{route('petty-cash-report-export')}} ">
+                <form role="form-new" method="get" action="{{route('petty.cash.report.export')}} ">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

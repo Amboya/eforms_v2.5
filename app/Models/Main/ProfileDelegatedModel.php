@@ -27,6 +27,8 @@ class ProfileDelegatedModel extends Model
         'delegated_user_unit',
         'delegated_job_code',
         'delegated_profile',
+        'delegated_unit_column',
+        'delegated_code_column',
         'config_status_id',
         'delegation_end',
         'reason',
@@ -39,22 +41,31 @@ class ProfileDelegatedModel extends Model
     ];
 
 
-    public function status(){
+    public function status()
+    {
         return $this->belongsTo(StatusModel::class, 'config_status_id', 'id');
     }
-    public function user_unit(){
+
+    public function user_unit()
+    {
         return $this->belongsTo(ConfigWorkFlow::class, 'delegated_user_unit', 'user_unit_code');
     }
-    public function me(){
+
+    public function me()
+    {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
-    public function delegation(){
+
+    public function delegation()
+    {
         return $this->belongsTo(User::class, 'delegated_to', 'id');
     }
+
     public function profile()
     {
         return $this->belongsTo(ProfileModel::class, 'delegated_profile', 'id');
     }
+
     public function form()
     {
         return $this->belongsTo(EFormModel::class, 'eform_id', 'id');

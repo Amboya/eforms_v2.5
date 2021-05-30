@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('petty-cash-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('petty.cash.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">New Petty Cash</li>
                     </ol>
                 </div><!-- /.col -->
@@ -56,7 +56,7 @@
 
     <!-- Default box -->
         <div class="card">
-            <form id="create_form" name="db1" action="{{route('petty-cash-store')}}" method="post" enctype="multipart/form-data">
+            <form id="create_form" name="db1" action="{{route('petty.cash.store')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="card-body">
 

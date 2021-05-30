@@ -45,7 +45,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'subsistence.list', config('constants.petty_cash_status.new_application') ) }}"
+                            <a href="{{route( 'subsistence.list', config('constants.subsistence_status.new_application') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> New
@@ -60,7 +60,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'subsistence.list', config('constants.petty_cash_status.closed') ) }}"
+                            <a href="{{route( 'subsistence.list', config('constants.subsistence_status.closed') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Closed
@@ -68,7 +68,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'subsistence.list', config('constants.petty_cash_status.rejected') ) }}"
+                            <a href="{{route( 'subsistence.list', config('constants.subsistence_status.rejected') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Rejected
@@ -76,7 +76,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'subsistence.list', config('constants.petty_cash_status.cancelled') ) }}"
+                            <a href="{{route( 'subsistence.list', config('constants.subsistence_status.cancelled') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Cancelled
@@ -84,7 +84,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'subsistence.list', config('constants.petty_cash_status.void') ) }}"
+                            <a href="{{route( 'subsistence.list', config('constants.subsistence_status.void') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Void
@@ -92,7 +92,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'subsistence.list', config('constants.petty_cash_status.audited') ) }}"
+                            <a href="{{route( 'subsistence.list', config('constants.subsistence_status.audited') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Audited
@@ -100,7 +100,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'subsistence.list', config('constants.petty_cash_status.queried') ) }}"
+                            <a href="{{route( 'subsistence.list', config('constants.subsistence_status.queried') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Queried
@@ -138,7 +138,7 @@
                                 {{--                        </a>--}}
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('subsistence.report', config('constants.petty_cash_status.exported'))}}"
+                                <a href="{{route('subsistence.report', config('constants.subsistence_status.exported'))}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p> Exported
@@ -146,7 +146,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('subsistence.report', config('constants.petty_cash_status.not_exported'))}}"
+                                <a href="{{route('subsistence.report', config('constants.subsistence_status.not_exported'))}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p> Not Exported
@@ -154,7 +154,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('subsistence.report', config('constants.petty_cash_status.export_failed'))}}"
+                                <a href="{{route('subsistence.report', config('constants.subsistence_status.export_failed'))}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p> Export Failed

@@ -109,8 +109,8 @@
                         <a href="{{route('subsistence.create')}}"
                            class="btn btn-sm bg-gradient-green float-left">New Subsistence Claim</a>
                     @else
-                        <a href="#" class="btn btn-sm btn-default float-left">New Kilometer Allowance Claim</a>
-                        <span class="text-danger m-3"> Sorry, You can not raise a new Kilometer Allowance Claim because you already have an open petty cash.</span>
+                        <a href="#" class="btn btn-sm btn-default float-left">New Subsistence Claim</a>
+                        <span class="text-danger m-3"> Sorry, You can not raise a new Subsistence Claim because you already have an open subsistence.</span>
                     @endif
                 @endif
             </div>

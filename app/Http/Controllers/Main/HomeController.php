@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DepartmentModel;
 use App\Models\Main\EFormCategoryModel;
 use App\Models\Main\EFormModel;
@@ -41,7 +42,7 @@ class HomeController extends Controller
         $totals= TotalsModel::where('eform_id', config('constants.eforms_id.main_dashboard'))->get();
         //data to send to the view
 
-        $user_unit = DepartmentModel::select('*')->orderBy('code')->get();
+        $user_unit = ConfigWorkFlow::select('*')->orderBy('user_unit_code')->get();
         $params = [
             'eforms' => $eforms,
             'categories' => $categories,

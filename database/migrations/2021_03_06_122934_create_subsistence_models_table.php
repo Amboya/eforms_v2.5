@@ -28,6 +28,7 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('config_status_id')->nullable();
             $table->string('profile')->nullable();
             $table->string('code_superior')->nullable();
+            $table->integer('type')->nullable();
             //
             $table->string('grade')->nullable();
             $table->string('ext_no')->nullable();
@@ -41,7 +42,8 @@ class CreateSubsistenceModelsTable extends Migration
             //
             $table->string('absc_absent_from')->nullable();
             $table->string('absc_absent_to')->nullable();
-            $table->string('absc_visited_place_reason')->nullable();
+            $table->string('absc_visited_place')->nullable();
+            $table->string('absc_visited_reason')->nullable();
             $table->string('absc_allowance_per_night')->nullable();
             $table->string('absc_amount')->nullable();
             //
@@ -52,6 +54,7 @@ class CreateSubsistenceModelsTable extends Migration
             //
             $table->string('allocation_code')->nullable();
             $table->string('total_amount')->nullable();
+            $table->string('total_days')->nullable();
             //
             $table->string('authorised_by')->nullable();
             $table->string('authorised_staff_no')->nullable();
@@ -77,6 +80,19 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('expenditure_office_staff_no')->nullable();
             $table->string('expenditure_date')->nullable();
             //
+            $table->string('hod_code')->nullable();
+            $table->string('hod_unit')->nullable();
+            $table->string('ca_code')->nullable();
+            $table->string('ca_unit')->nullable();
+            $table->string('hrm_code')->nullable();
+            $table->string('hrm_unit')->nullable();
+            $table->string('expenditure_code')->nullable();
+            $table->string('expenditure_unit')->nullable();
+            $table->string('dr_code')->nullable();
+            $table->string('dr_unit')->nullable();
+            $table->string('audit_code')->nullable();
+            $table->string('audit_unit')->nullable();
+
             $table->integer('created_by');
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();

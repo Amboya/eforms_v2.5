@@ -74,7 +74,7 @@
                                         <th>Period</th>
                                         <th>Action</th>
                                     </tr>
-                                    </thead>
+                                    git pull </thead>
                                     <tbody>
                                     @foreach( $list as $item )
                                         <tr>git add .git add .

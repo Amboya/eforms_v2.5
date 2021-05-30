@@ -46,219 +46,219 @@ Route::group([
     'middleware' => 'auth'],
     function () {
 
-    Route::get('/master', function () {
-        return view('main.dashboard');
-    });
-    Route::get('/blank', function () {
-        return view('main.blank');
-    });
+        Route::get('/master', function () {
+            return view('main.dashboard');
+        });
+        Route::get('/blank', function () {
+            return view('main.blank');
+        });
 
-    Route::get('home', [App\Http\Controllers\Main\HomeController::class, 'index'])->name('main-home');
+        Route::get('home', [App\Http\Controllers\Main\HomeController::class, 'index'])->name('main-home');
 
 
-    //user
-    Route::group([
-        'prefix' => 'user'], function () {
-        Route::get('list', [App\Http\Controllers\Main\UserController::class, 'index'])->name('main-user');
-        Route::get('show/{id}', [App\Http\Controllers\Main\UserController::class, 'show'])->name('main-user-show');
-        Route::post('store', [App\Http\Controllers\Main\UserController::class, 'store'])->name('main-user-store');
-        Route::post('update/{id}', [App\Http\Controllers\Main\UserController::class, 'update'])->name('main-user-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\UserController::class, 'destroy'])->name('main-user-destroy');
-        Route::post('avatar/{id}', [App\Http\Controllers\Main\UserController::class, 'updatePhoto'])->name('main-user-avatar');
-        Route::get('sync/{id}', [App\Http\Controllers\Main\UserController::class, 'sync'])->name('main-user-sync');
-        Route::post('change', [App\Http\Controllers\Main\UserController::class, 'changePassword'])->name('main-user-change-password');
-        Route::post('change_unit', [App\Http\Controllers\Main\UserController::class, 'changeUnit'])->name('main-user-change-unit');
-    });
-    //user type
-    Route::group([
-        'prefix' => 'user-type'], function () {
-        Route::get('list', [App\Http\Controllers\Main\UserTypeController::class, 'index'])->name('main-user-type');
-        Route::post('store', [App\Http\Controllers\Main\UserTypeController::class, 'store'])->name('main-user-type-store');
-        Route::post('update', [App\Http\Controllers\Main\UserTypeController::class, 'update'])->name('main-user-type-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\UserTypeController::class, 'destroy'])->name('main-user-type-destroy');
-    });
+        //user
+        Route::group([
+            'prefix' => 'user'], function () {
+            Route::get('list', [App\Http\Controllers\Main\UserController::class, 'index'])->name('main-user');
+            Route::get('show/{id}', [App\Http\Controllers\Main\UserController::class, 'show'])->name('main-user-show');
+            Route::post('store', [App\Http\Controllers\Main\UserController::class, 'store'])->name('main-user-store');
+            Route::post('update/{id}', [App\Http\Controllers\Main\UserController::class, 'update'])->name('main-user-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\UserController::class, 'destroy'])->name('main-user-destroy');
+            Route::post('avatar/{id}', [App\Http\Controllers\Main\UserController::class, 'updatePhoto'])->name('main-user-avatar');
+            Route::get('sync/{id}', [App\Http\Controllers\Main\UserController::class, 'sync'])->name('main-user-sync');
+            Route::post('change', [App\Http\Controllers\Main\UserController::class, 'changePassword'])->name('main-user-change-password');
+            Route::post('change_unit', [App\Http\Controllers\Main\UserController::class, 'changeUnit'])->name('main-user-change-unit');
+        });
+        //user type
+        Route::group([
+            'prefix' => 'user-type'], function () {
+            Route::get('list', [App\Http\Controllers\Main\UserTypeController::class, 'index'])->name('main-user-type');
+            Route::post('store', [App\Http\Controllers\Main\UserTypeController::class, 'store'])->name('main-user-type-store');
+            Route::post('update', [App\Http\Controllers\Main\UserTypeController::class, 'update'])->name('main-user-type-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\UserTypeController::class, 'destroy'])->name('main-user-type-destroy');
+        });
 
-    //eforms
-    Route::group([
-        'prefix' => 'eform'], function () {
-        Route::get('list', [App\Http\Controllers\Main\EformController::class, 'index'])->name('main-eforms');
-        Route::post('store', [App\Http\Controllers\Main\EformController::class, 'store'])->name('main-eforms-store');
-        Route::post('update', [App\Http\Controllers\Main\EformController::class, 'update'])->name('main-eforms-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\EformController::class, 'destroy'])->name('main-eforms-destroy');
-    });
-    //eforms Category
-    Route::group([
-        'prefix' => 'eform_category'], function () {
-        Route::get('list', [App\Http\Controllers\Main\EformCategoryController::class, 'index'])->name('main-eforms-category');
-        Route::post('store', [App\Http\Controllers\Main\EformCategoryController::class, 'store'])->name('main-eforms-category-store');
-        Route::post('update', [App\Http\Controllers\Main\EformCategoryController::class, 'update'])->name('main-eforms-category-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\EformCategoryController::class, 'destroy'])->name('main-eforms-category-destroy');
-    });
-    //status
-    Route::group([
-        'prefix' => 'status'], function () {
-        Route::get('list', [App\Http\Controllers\Main\StatusController::class, 'index'])->name('main-status');
-        Route::post('store', [App\Http\Controllers\Main\StatusController::class, 'store'])->name('main-status-store');
-        Route::post('update', [App\Http\Controllers\Main\StatusController::class, 'update'])->name('main-status-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\StatusController::class, 'destroy'])->name('main-status-destroy');
-    });
-    //system logs
-    Route::group([
-        'prefix' => 'logs'], function () {
-        Route::get('list', [App\Http\Controllers\Main\ActivityLogsController::class, 'index'])->name('main-logs');
-        Route::get('show/{id}', [App\Http\Controllers\Main\ActivityLogsController::class, 'show'])->name('main-logs-show');
-        Route::get('destroy/{id}', [App\Http\Controllers\Main\ActivityLogsController::class, 'destroy'])->name('main-logs-destroy');
-    });
-    //profile
-    Route::group([
-        'prefix' => 'profile'], function () {
-        Route::get('list', [App\Http\Controllers\Main\ProfileController::class, 'index'])->name('main-profile');
-        Route::post('store', [App\Http\Controllers\Main\ProfileController::class, 'store'])->name('main-profile-store');
-        Route::post('update', [App\Http\Controllers\Main\ProfileController::class, 'update'])->name('main-profile-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\ProfileController::class, 'destroy'])->name('main-profile-destroy');
-        Route::get('assignment', [App\Http\Controllers\Main\ProfileController::class, 'assignmentCreate'])->name('main-profile-assignment');
-        Route::post('assignment/store', [App\Http\Controllers\Main\ProfileController::class, 'assignmentStore'])->name('main-profile-assignment-store');
-        Route::get('delegation', [App\Http\Controllers\Main\ProfileController::class, 'delegationCreate'])->name('main-profile-delegation');
-        Route::get('delegation/list', [App\Http\Controllers\Main\ProfileController::class, 'delegationList'])->name('main-profile-delegation-list');
-        Route::get('delegation/show/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationShowOnBehalf'])->name('main-profile-delegation-show-on-behalf');
-        Route::post('delegation/store/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationStoreOnBehalf'])->name('main-profile-delegation-store-on-behalf');
-        Route::post('delegation/store', [App\Http\Controllers\Main\ProfileController::class, 'delegationStore'])->name('main-profile-delegation-store');
-        Route::post('delegation/end/{id}', [App\Http\Controllers\Main\ProfileController::class, 'delegationEnd'])->name('main-profile-delegation-end');
+        //eforms
+        Route::group([
+            'prefix' => 'eform'], function () {
+            Route::get('list', [App\Http\Controllers\Main\EformController::class, 'index'])->name('main-eforms');
+            Route::post('store', [App\Http\Controllers\Main\EformController::class, 'store'])->name('main-eforms-store');
+            Route::post('update', [App\Http\Controllers\Main\EformController::class, 'update'])->name('main-eforms-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\EformController::class, 'destroy'])->name('main-eforms-destroy');
+        });
+        //eforms Category
+        Route::group([
+            'prefix' => 'eform_category'], function () {
+            Route::get('list', [App\Http\Controllers\Main\EformCategoryController::class, 'index'])->name('main-eforms-category');
+            Route::post('store', [App\Http\Controllers\Main\EformCategoryController::class, 'store'])->name('main-eforms-category-store');
+            Route::post('update', [App\Http\Controllers\Main\EformCategoryController::class, 'update'])->name('main-eforms-category-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\EformCategoryController::class, 'destroy'])->name('main-eforms-category-destroy');
+        });
+        //status
+        Route::group([
+            'prefix' => 'status'], function () {
+            Route::get('list', [App\Http\Controllers\Main\StatusController::class, 'index'])->name('main-status');
+            Route::post('store', [App\Http\Controllers\Main\StatusController::class, 'store'])->name('main-status-store');
+            Route::post('update', [App\Http\Controllers\Main\StatusController::class, 'update'])->name('main-status-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\StatusController::class, 'destroy'])->name('main-status-destroy');
+        });
+        //system logs
+        Route::group([
+            'prefix' => 'logs'], function () {
+            Route::get('list', [App\Http\Controllers\Main\ActivityLogsController::class, 'index'])->name('main-logs');
+            Route::get('show/{id}', [App\Http\Controllers\Main\ActivityLogsController::class, 'show'])->name('main-logs-show');
+            Route::get('destroy/{id}', [App\Http\Controllers\Main\ActivityLogsController::class, 'destroy'])->name('main-logs-destroy');
+        });
+        //profile
+        Route::group([
+            'prefix' => 'profile'], function () {
+            Route::get('list', [App\Http\Controllers\Main\ProfileController::class, 'index'])->name('main-profile');
+            Route::post('store', [App\Http\Controllers\Main\ProfileController::class, 'store'])->name('main-profile-store');
+            Route::post('update', [App\Http\Controllers\Main\ProfileController::class, 'update'])->name('main-profile-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\ProfileController::class, 'destroy'])->name('main-profile-destroy');
+            Route::get('assignment', [App\Http\Controllers\Main\ProfileController::class, 'assignmentCreate'])->name('main-profile-assignment');
+            Route::post('assignment/store', [App\Http\Controllers\Main\ProfileController::class, 'assignmentStore'])->name('main-profile-assignment-store');
+            Route::get('delegation', [App\Http\Controllers\Main\ProfileController::class, 'delegationCreate'])->name('main-profile-delegation');
+            Route::get('delegation/list', [App\Http\Controllers\Main\ProfileController::class, 'delegationList'])->name('main-profile-delegation-list');
+            Route::get('delegation/show/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationShowOnBehalf'])->name('main-profile-delegation-show-on-behalf');
+            Route::post('delegation/store/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationStoreOnBehalf'])->name('main-profile-delegation-store-on-behalf');
+            Route::post('delegation/store', [App\Http\Controllers\Main\ProfileController::class, 'delegationStore'])->name('main-profile-delegation-store');
+            Route::post('delegation/end/{id}', [App\Http\Controllers\Main\ProfileController::class, 'delegationEnd'])->name('main-profile-delegation-end');
 
-    });
-    //profile Permissions
-    Route::group([
-        'prefix' => 'profile-permissions'], function () {
-        Route::get('list', [App\Http\Controllers\Main\ProfilePermissionsController::class, 'index'])->name('main-profile-permissions');
-        Route::post('store', [App\Http\Controllers\Main\ProfilePermissionsController::class, 'store'])->name('main-profile-permission-store');
-        Route::post('update', [App\Http\Controllers\Main\ProfilePermissionsController::class, 'update'])->name('main-profile-permission-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\ProfilePermissionsController::class, 'destroy'])->name('main-profile-permission-destroy');
-    });
-    //Position
-    Route::group([
-        'prefix' => 'position'], function () {
-        Route::get('list', [App\Http\Controllers\Main\PositionController::class, 'index'])->name('main-position');
-        Route::post('store', [App\Http\Controllers\Main\PositionController::class, 'store'])->name('main-position-store');
-        Route::post('update', [App\Http\Controllers\Main\PositionController::class, 'update'])->name('main-position-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\PositionController::class, 'destroy'])->name('main-position-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\PositionController::class, 'sync'])->name('main-position-sync');
-    });
-    //User Unit
-    Route::group([
-        'prefix' => 'user-unit'], function () {
-        Route::get('list', [App\Http\Controllers\Main\UserUnitController::class, 'index'])->name('main-user_unit');
-        Route::post('store', [App\Http\Controllers\Main\UserUnitController::class, 'store'])->name('main-user_unit-store');
-        Route::post('update', [App\Http\Controllers\Main\UserUnitController::class, 'update'])->name('main-user_unit-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\UserUnitController::class, 'destroy'])->name('main-user_unit-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\UserUnitController::class, 'sync'])->name('main-user_unit-sync');
-    });
-    //Directorate
-    Route::group([
-        'prefix' => 'directorate'], function () {
-        Route::get('list', [App\Http\Controllers\Main\DirectoratesController::class, 'index'])->name('main-directorate');
-        Route::post('store', [App\Http\Controllers\Main\DirectoratesController::class, 'store'])->name('main-directorate-store');
-        Route::post('update', [App\Http\Controllers\Main\DirectoratesController::class, 'update'])->name('main-directorate-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\DirectoratesController::class, 'destroy'])->name('main-directorate-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\DirectoratesController::class, 'sync'])->name('main-directorate-sync');
-    });
-    //region
-    Route::group([
-        'prefix' => 'region'], function () {
-        Route::get('list', [App\Http\Controllers\Main\RegionsController::class, 'index'])->name('main-region');
-        Route::post('store', [App\Http\Controllers\Main\RegionsController::class, 'store'])->name('main-region-store');
-        Route::post('update', [App\Http\Controllers\Main\RegionsController::class, 'update'])->name('main-region-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\RegionsController::class, 'destroy'])->name('main-region-destroy');
-    });
-    //grade
-    Route::group([
-        'prefix' => 'grade'], function () {
-        Route::get('list', [App\Http\Controllers\Main\GradesController::class, 'index'])->name('main-grade');
-        Route::post('store', [App\Http\Controllers\Main\GradesController::class, 'store'])->name('main-grade-store');
-        Route::post('update', [App\Http\Controllers\Main\GradesController::class, 'update'])->name('main-grade-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\GradesController::class, 'destroy'])->name('main-grade-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\GradesController::class, 'sync'])->name('main-grade-sync');
-    });
-    //grade category
-    Route::group([
-        'prefix' => 'grade_category'], function () {
-        Route::get('list', [App\Http\Controllers\Main\GradesCategoryController::class, 'index'])->name('main-grade-category');
-        Route::post('store', [App\Http\Controllers\Main\GradesCategoryController::class, 'store'])->name('main-grade-category-store');
-        Route::post('update', [App\Http\Controllers\Main\GradesCategoryController::class, 'update'])->name('main-grade-category-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\GradesCategoryController::class, 'destroy'])->name('main-grade-category-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\GradesCategoryController::class, 'sync'])->name('main-grade-category-sync');
-    });
-    //project
-    Route::group([
-        'prefix' => 'project'], function () {
-        Route::get('list', [App\Http\Controllers\Main\ProjectsController::class, 'index'])->name('main-project');
-        Route::post('store', [App\Http\Controllers\Main\ProjectsController::class, 'store'])->name('main-project-store');
-        Route::post('update', [App\Http\Controllers\Main\ProjectsController::class, 'update'])->name('main-project-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\ProjectsController::class, 'destroy'])->name('main-project-destroy');
-    });
-    //account
-    Route::group([
-        'prefix' => 'account'], function () {
-        Route::get('list', [App\Http\Controllers\Main\AccountsChartsController::class, 'index'])->name('main-account');
-        Route::post('store', [App\Http\Controllers\Main\AccountsChartsController::class, 'store'])->name('main-account-store');
-        Route::post('update', [App\Http\Controllers\Main\AccountsChartsController::class, 'update'])->name('main-account-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\AccountsChartsController::class, 'destroy'])->name('main-account-destroy');
-    });
-    //department
-    Route::group([
-        'prefix' => 'department'], function () {
-        Route::get('list', [App\Http\Controllers\Main\DepartmentController::class, 'index'])->name('main-department');
-        Route::post('store', [App\Http\Controllers\Main\DepartmentController::class, 'store'])->name('main-department-store');
-        Route::post('update', [App\Http\Controllers\Main\DepartmentController::class, 'update'])->name('main-department-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\DepartmentController::class, 'destroy'])->name('main-department-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\DepartmentController::class, 'sync'])->name('main-department-sync');
-    });
-    //divisional_user_unit
-    Route::group([
-        'prefix' => 'divisional_user_unit'], function () {
-        Route::get('list', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'index'])->name('main-divisional-user-unit');
-        Route::post('store', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'store'])->name('main-divisional-user-unit-store');
-        Route::post('update', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'update'])->name('main-divisional-user-unit-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'destroy'])->name('main-divisional-user-unit-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'sync'])->name('main-divisional-user-unit-sync');
-    });
-    //division
-    Route::group([
-        'prefix' => 'division'], function () {
-        Route::get('list', [App\Http\Controllers\Main\DivisionsController::class, 'index'])->name('main-division');
-        Route::post('store', [App\Http\Controllers\Main\DivisionsController::class, 'store'])->name('main-division-store');
-        Route::post('update', [App\Http\Controllers\Main\DivisionsController::class, 'update'])->name('main-division-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\DivisionsController::class, 'destroy'])->name('main-division-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\DivisionsController::class, 'sync'])->name('main-division-sync');
-    });
-    //functional unit
-    Route::group([
-        'prefix' => 'functional_unit'], function () {
-        Route::get('list', [App\Http\Controllers\Main\FunctionalUnitController::class, 'index'])->name('main-functional-unit');
-        Route::post('store', [App\Http\Controllers\Main\FunctionalUnitController::class, 'store'])->name('main-functional-unit-store');
-        Route::post('update', [App\Http\Controllers\Main\FunctionalUnitController::class, 'update'])->name('main-functional-unit-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\FunctionalUnitController::class, 'destroy'])->name('main-functional-unit-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\FunctionalUnitController::class, 'sync'])->name('main-functional-unit-sync');
-    });
+        });
+        //profile Permissions
+        Route::group([
+            'prefix' => 'profile-permissions'], function () {
+            Route::get('list', [App\Http\Controllers\Main\ProfilePermissionsController::class, 'index'])->name('main-profile-permissions');
+            Route::post('store', [App\Http\Controllers\Main\ProfilePermissionsController::class, 'store'])->name('main-profile-permission-store');
+            Route::post('update', [App\Http\Controllers\Main\ProfilePermissionsController::class, 'update'])->name('main-profile-permission-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\ProfilePermissionsController::class, 'destroy'])->name('main-profile-permission-destroy');
+        });
+        //Position
+        Route::group([
+            'prefix' => 'position'], function () {
+            Route::get('list', [App\Http\Controllers\Main\PositionController::class, 'index'])->name('main-position');
+            Route::post('store', [App\Http\Controllers\Main\PositionController::class, 'store'])->name('main-position-store');
+            Route::post('update', [App\Http\Controllers\Main\PositionController::class, 'update'])->name('main-position-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\PositionController::class, 'destroy'])->name('main-position-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\PositionController::class, 'sync'])->name('main-position-sync');
+        });
+        //User Unit
+        Route::group([
+            'prefix' => 'user-unit'], function () {
+            Route::get('list', [App\Http\Controllers\Main\UserUnitController::class, 'index'])->name('main-user_unit');
+            Route::post('store', [App\Http\Controllers\Main\UserUnitController::class, 'store'])->name('main-user_unit-store');
+            Route::post('update', [App\Http\Controllers\Main\UserUnitController::class, 'update'])->name('main-user_unit-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\UserUnitController::class, 'destroy'])->name('main-user_unit-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\UserUnitController::class, 'sync'])->name('main-user_unit-sync');
+        });
+        //Directorate
+        Route::group([
+            'prefix' => 'directorate'], function () {
+            Route::get('list', [App\Http\Controllers\Main\DirectoratesController::class, 'index'])->name('main-directorate');
+            Route::post('store', [App\Http\Controllers\Main\DirectoratesController::class, 'store'])->name('main-directorate-store');
+            Route::post('update', [App\Http\Controllers\Main\DirectoratesController::class, 'update'])->name('main-directorate-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\DirectoratesController::class, 'destroy'])->name('main-directorate-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\DirectoratesController::class, 'sync'])->name('main-directorate-sync');
+        });
+        //region
+        Route::group([
+            'prefix' => 'region'], function () {
+            Route::get('list', [App\Http\Controllers\Main\RegionsController::class, 'index'])->name('main-region');
+            Route::post('store', [App\Http\Controllers\Main\RegionsController::class, 'store'])->name('main-region-store');
+            Route::post('update', [App\Http\Controllers\Main\RegionsController::class, 'update'])->name('main-region-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\RegionsController::class, 'destroy'])->name('main-region-destroy');
+        });
+        //grade
+        Route::group([
+            'prefix' => 'grade'], function () {
+            Route::get('list', [App\Http\Controllers\Main\GradesController::class, 'index'])->name('main-grade');
+            Route::post('store', [App\Http\Controllers\Main\GradesController::class, 'store'])->name('main-grade-store');
+            Route::post('update', [App\Http\Controllers\Main\GradesController::class, 'update'])->name('main-grade-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\GradesController::class, 'destroy'])->name('main-grade-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\GradesController::class, 'sync'])->name('main-grade-sync');
+        });
+        //grade category
+        Route::group([
+            'prefix' => 'grade_category'], function () {
+            Route::get('list', [App\Http\Controllers\Main\GradesCategoryController::class, 'index'])->name('main-grade-category');
+            Route::post('store', [App\Http\Controllers\Main\GradesCategoryController::class, 'store'])->name('main-grade-category-store');
+            Route::post('update', [App\Http\Controllers\Main\GradesCategoryController::class, 'update'])->name('main-grade-category-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\GradesCategoryController::class, 'destroy'])->name('main-grade-category-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\GradesCategoryController::class, 'sync'])->name('main-grade-category-sync');
+        });
+        //project
+        Route::group([
+            'prefix' => 'project'], function () {
+            Route::get('list', [App\Http\Controllers\Main\ProjectsController::class, 'index'])->name('main-project');
+            Route::post('store', [App\Http\Controllers\Main\ProjectsController::class, 'store'])->name('main-project-store');
+            Route::post('update', [App\Http\Controllers\Main\ProjectsController::class, 'update'])->name('main-project-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\ProjectsController::class, 'destroy'])->name('main-project-destroy');
+        });
+        //account
+        Route::group([
+            'prefix' => 'account'], function () {
+            Route::get('list', [App\Http\Controllers\Main\AccountsChartsController::class, 'index'])->name('main-account');
+            Route::post('store', [App\Http\Controllers\Main\AccountsChartsController::class, 'store'])->name('main-account-store');
+            Route::post('update', [App\Http\Controllers\Main\AccountsChartsController::class, 'update'])->name('main-account-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\AccountsChartsController::class, 'destroy'])->name('main-account-destroy');
+        });
+        //department
+        Route::group([
+            'prefix' => 'department'], function () {
+            Route::get('list', [App\Http\Controllers\Main\DepartmentController::class, 'index'])->name('main-department');
+            Route::post('store', [App\Http\Controllers\Main\DepartmentController::class, 'store'])->name('main-department-store');
+            Route::post('update', [App\Http\Controllers\Main\DepartmentController::class, 'update'])->name('main-department-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\DepartmentController::class, 'destroy'])->name('main-department-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\DepartmentController::class, 'sync'])->name('main-department-sync');
+        });
+        //divisional_user_unit
+        Route::group([
+            'prefix' => 'divisional_user_unit'], function () {
+            Route::get('list', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'index'])->name('main-divisional-user-unit');
+            Route::post('store', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'store'])->name('main-divisional-user-unit-store');
+            Route::post('update', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'update'])->name('main-divisional-user-unit-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'destroy'])->name('main-divisional-user-unit-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\DivisionalUserUnitController::class, 'sync'])->name('main-divisional-user-unit-sync');
+        });
+        //division
+        Route::group([
+            'prefix' => 'division'], function () {
+            Route::get('list', [App\Http\Controllers\Main\DivisionsController::class, 'index'])->name('main-division');
+            Route::post('store', [App\Http\Controllers\Main\DivisionsController::class, 'store'])->name('main-division-store');
+            Route::post('update', [App\Http\Controllers\Main\DivisionsController::class, 'update'])->name('main-division-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\DivisionsController::class, 'destroy'])->name('main-division-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\DivisionsController::class, 'sync'])->name('main-division-sync');
+        });
+        //functional unit
+        Route::group([
+            'prefix' => 'functional_unit'], function () {
+            Route::get('list', [App\Http\Controllers\Main\FunctionalUnitController::class, 'index'])->name('main-functional-unit');
+            Route::post('store', [App\Http\Controllers\Main\FunctionalUnitController::class, 'store'])->name('main-functional-unit-store');
+            Route::post('update', [App\Http\Controllers\Main\FunctionalUnitController::class, 'update'])->name('main-functional-unit-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\FunctionalUnitController::class, 'destroy'])->name('main-functional-unit-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\FunctionalUnitController::class, 'sync'])->name('main-functional-unit-sync');
+        });
 
-    //paypoint
-    Route::group([
-        'prefix' => 'pay_point'], function () {
-        Route::get('list', [App\Http\Controllers\Main\PayPointController::class, 'index'])->name('main-pay-point');
-        Route::post('store', [App\Http\Controllers\Main\PayPointController::class, 'store'])->name('main-pay-point-store');
-        Route::post('update', [App\Http\Controllers\Main\PayPointController::class, 'update'])->name('main-pay-point-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\PayPointController::class, 'destroy'])->name('main-pay-point-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\PayPointController::class, 'sync'])->name('main-pay-point-sync');
-    });
+        //paypoint
+        Route::group([
+            'prefix' => 'pay_point'], function () {
+            Route::get('list', [App\Http\Controllers\Main\PayPointController::class, 'index'])->name('main-pay-point');
+            Route::post('store', [App\Http\Controllers\Main\PayPointController::class, 'store'])->name('main-pay-point-store');
+            Route::post('update', [App\Http\Controllers\Main\PayPointController::class, 'update'])->name('main-pay-point-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\PayPointController::class, 'destroy'])->name('main-pay-point-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\PayPointController::class, 'sync'])->name('main-pay-point-sync');
+        });
 
-    //location
-    Route::group([
-        'prefix' => 'location'], function () {
-        Route::get('list', [App\Http\Controllers\Main\LocationController::class, 'index'])->name('main-location');
-        Route::post('store', [App\Http\Controllers\Main\LocationController::class, 'store'])->name('main-location-store');
-        Route::post('update', [App\Http\Controllers\Main\LocationController::class, 'update'])->name('main-location-update');
-        Route::post('destroy/{id}', [App\Http\Controllers\Main\LocationController::class, 'destroy'])->name('main-location-destroy');
-        Route::get('sync', [App\Http\Controllers\Main\LocationController::class, 'sync'])->name('main-location-sync');
-    });
+        //location
+        Route::group([
+            'prefix' => 'location'], function () {
+            Route::get('list', [App\Http\Controllers\Main\LocationController::class, 'index'])->name('main-location');
+            Route::post('store', [App\Http\Controllers\Main\LocationController::class, 'store'])->name('main-location-store');
+            Route::post('update', [App\Http\Controllers\Main\LocationController::class, 'update'])->name('main-location-update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\LocationController::class, 'destroy'])->name('main-location-destroy');
+            Route::get('sync', [App\Http\Controllers\Main\LocationController::class, 'sync'])->name('main-location-sync');
+        });
 
         //totals
         Route::group([
@@ -276,9 +276,8 @@ Route::group([
             'prefix' => 'files'], function () {
             Route::post('change', [App\Http\Controllers\HomeController::class, 'changeFile'])->name('attached-file-change');
             Route::post('add', [App\Http\Controllers\HomeController::class, 'addFile'])->name('attached-file-add');
+            Route::post('add2', [App\Http\Controllers\HomeController::class, 'addFile2'])->name('attached-file-add2');
         });
-
-
 
 
     });
@@ -296,64 +295,83 @@ Route::group([
 
 Route::group([
     'namespace' => 'petty_cash',
-    'prefix' => 'petty_cash',
+    'prefix' => 'petty/cash',
     'middleware' => 'auth'],
     function () {
 
-    Route::get('/master', function () {
-        return view('main.dashboard');
+        Route::get('/master', function () {
+            return view('main.dashboard');
+        });
+        Route::get('/blank', function () {
+            return view('main.blank');
+        });
+
+        //petty cah routes
+        //   Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty-cash-home');
+        Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty.cash.home');
+        Route::get('list/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'index'])->name('petty.cash.list');
+        Route::get('create', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'create'])->name('petty.cash.create');
+        Route::post('show/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'show'])->name('petty.cash.show');
+        Route::post('store', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'store'])->name('petty.cash.store');
+        Route::post('approve', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'approve'])->name('petty.cash.approve');
+        Route::post('update', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'update'])->name('petty.cash.update');
+        Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'destroy'])->name('petty.cash.destroy');
+        Route::get('reports/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reports'])->name('petty.cash.report');
+        Route::get('report/export', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExport'])->name('petty.cash.report.export');
+        Route::get('reports/sync', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsSync'])->name('petty.cash.report.sync');
+        Route::post('report/export/unmark/exported/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExported'])->name('petty.cash.report.export.unmark.exported');
+        Route::get('report/export/unmark/exported/all', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExportedAll'])->name('petty.cash.report.export.unmark.exported.all');
+        Route::get('sync/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'sync'])->name('petty.cash.sync');
+        Route::get('records/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'records'])->name('petty.cash.record');
+        Route::post('void/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'void'])->name('petty.cash.void');
+        Route::post('reverse/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reverse'])->name('petty.cash.reverse');
+        Route::post('search', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'search'])->name('petty.cash.search');
+
+        Route::get('charts', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'charts'])->name('petty.cash.charts');
+        Route::get('remove/duplicate/account/lines/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'markAccountLinesAsDuplicates'])->name('petty.cash.accounts.duplicate.remove');
+        Route::get('show/form/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'showForm'])->name('petty.cash.reports.show');
+
+
+        //REPORTS
+        Route::group([
+            'prefix' => 'report'
+        ], function () {
+            Route::get('directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'index'])->name('petty.cash.reports.index');
+            Route::get('sync/directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncDirectorates'])->name('petty.cash.reports.sync.directorates');
+            Route::get('sync/user/units', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncUserUnits'])->name('petty.cash.reports.sync.units');
+        });
+
+        Route::group([
+            'prefix' => 'filtered/report'
+        ], function () {
+            Route::get('index', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'filteredReports'])->name('petty.cash.filtered.report');
+            Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'getFilteredReports'])->name('petty.cash.filtered.get');
+        });
+
+        Route::group([
+            'prefix' => 'management'], function () {
+            Route::get('list', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'index'])->name('petty.cash.float.index');
+            Route::post('store', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'store'])->name('petty.cash.float.store');
+            Route::post('update', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'update'])->name('petty.cash.float.update');
+            Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'destroy'])->name('petty.cash.float.delete');
+        });
+        Route::group([
+            'prefix' => 'float'], function () {
+            Route::get('list', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'index'])->name('petty.cash.float.index');
+            Route::post('store', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'store'])->name('petty.cash.float.store');
+            Route::post('update', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'update'])->name('petty.cash.float.update');
+            Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'destroy'])->name('petty.cash.float.delete');
+        });
+        Route::group([
+            'prefix' => 'float/reimbursement'], function () {
+            Route::get('list', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'index'])->name('petty.cash.float.reimbursement.index');
+            Route::post('store', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'store'])->name('petty.cash.float.reimbursement.store');
+            Route::post('update', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'update'])->name('petty.cash.float.reimbursement.update');
+            Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'destroy'])->name('petty.cash.float.reimbursement.delete');
+        });
+
+
     });
-    Route::get('/blank', function () {
-        return view('main.blank');
-    });
-
-    //petty cah routes
-    Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty-cash-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'index'])->name('petty-cash-list');
-    Route::get('create', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'create'])->name('petty-cash-create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'show'])->name('petty-cash-show');
-    Route::post('store', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'store'])->name('petty-cash-store');
-    Route::post('approve', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'approve'])->name('petty-cash-approve');
-    Route::post('update', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'update'])->name('petty-cash-update');
-    Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'destroy'])->name('petty-cash-destroy');
-    Route::get('reports/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reports'])->name('petty-cash-report');
-    Route::get('reportExport', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExport'])->name('petty-cash-report-export');
-    Route::get('reportSync', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsSync'])->name('petty-cash-report-sync');
-    Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExported'])->name('petty-cash-report-export-unmark-exported');
-    Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reportsExportUnmarkExportedAll'])->name('petty-cash-report-export-unmark-exported-all');
-    Route::get('sync/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'sync'])->name('petty-cash-sync');
-    Route::get('records/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'records'])->name('petty-cash-record');
-    Route::post('void/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'void'])->name('petty-cash-void');
-    Route::post('reverse/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'reverse'])->name('petty-cash-reverse');
-    Route::post('search', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'search'])->name('petty-cash-search');
-
-    Route::get('charts', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'charts'])->name('petty-cash-charts');
-    Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'markAccountLinesAsDuplicates'])->name('petty-cash-accounts-duplicate-remove');
-    Route::get('showForm/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'showForm'])->name('petty-cash-reports-show');
-
-
-    //REPORTS
-    Route::group([
-        'prefix' => 'report'
-    ], function () {
-        Route::get('directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'index'])->name('petty-cash-reports-index');
-        Route::get('syncDirectorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncDirectorates'])->name('petty-cash-reports-sync-directorates');
-        Route::get('syncUserUnits', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncUserUnits'])->name('petty-cash-reports-sync-units');
-
-    });
-    Route::group([
-        'prefix' => 'filtered/report'
-    ], function () {
-        Route::get('index', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'filteredReports'])->name('petty.cash.filtered.report');
-        Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'getFilteredReports'])->name('petty.cash.filtered.get');
-    });
-
-
-});
-
-
-
-
 
 
 /*
@@ -383,10 +401,6 @@ Route::group([
     Route::get('reportExport', [App\Http\Controllers\EForms\GiftBenefitsRegister\GiftBenefitsRegisterController::class, 'reportsExport'])->name('gifts-benefits-report-export');
 
 });
-
-
-
-
 
 
 /*
@@ -474,13 +488,6 @@ Route::group([
 });
 
 
-
-
-
-
-
-
-
 /*
 |--------------------------------------------------------------------------
 |SUBSISTENCE DASHBOARD WEB ROUTES
@@ -489,31 +496,6 @@ Route::group([
 | Here is where you can register web routes for the SUBSISTENCE DASHBOARD.
 |
 */
-
-//
-//Route::group([
-//    'namespace' => 'subsistence',
-//    'prefix' => 'subsistence',
-//    'middleware' => 'auth'],
-//    function () {
-//    Route::get('home', [App\Http\Controllers\EForms\Subsistence1\HomeController::class, 'index'])->name('subsistence-home');
-//    Route::get('list/{value}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'index'])->name('subsistence-list');
-//    Route::get('create', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'create'])->name('subsistence-create');
-//    Route::post('show/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'show'])->name('subsistence-show');
-//    Route::post('store', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'store'])->name('subsistence-store');
-//    Route::post('approve', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'approve'])->name('subsistence-approve');
-//    Route::post('update', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'update'])->name('subsistence-update');
-//    Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'destroy'])->name('subsistence-destroy');
-//    Route::get('reports', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'reports'])->name('subsistence-report');
-//    Route::get('reportExport', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'reportsExport'])->name('subsistence-report-export');
-//    Route::get('records/{value}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'records'])->name('subsistence-record');
-//    Route::post('void/{id}', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'void'])->name('subsistence-void');
-//
-//    Route::get('charts', [App\Http\Controllers\EForms\Subsistence1\SubsistenceController::class, 'charts'])->name('subsistence-charts');
-//
-//});
-
-
 
 Route::group([
     'namespace' => 'subsistence',
@@ -545,7 +527,6 @@ Route::group([
         Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'markAccountLinesAsDuplicates'])->name('subsistence.accounts.duplicate-remove');
         Route::get('showForm/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'showForm'])->name('subsistence.reports.show');
 
-
         //REPORTS
         Route::group([
             'prefix' => 'report'
@@ -564,11 +545,6 @@ Route::group([
 
 
     });
-
-
-
-
-
 
 
 /*
@@ -600,10 +576,6 @@ Route::group([
 });
 
 
-
-
-
-
 /*
 |--------------------------------------------------------------------------
 |TEMPS AND CASUALS DASHBOARD WEB ROUTES
@@ -631,10 +603,6 @@ Route::group([
     Route::get('reportExport', [App\Http\Controllers\EForms\TempsCasuals\TempsCasualsController::class, 'reportsExport'])->name('temps-casuals-report-export');
 
 });
-
-
-
-
 
 
 /*
@@ -666,21 +634,6 @@ Route::group([
 });
 
 
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| HOTEL-ACCOMMODATION DASHBOARD WEB ROUTES
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for the HOTEL-ACCOMMODATION DASHBOARD.
-|
-*/
-
-
 /*
 |--------------------------------------------------------------------------
 | KILOMETER-ALLOWANCE DASHBOARD WEB ROUTES
@@ -689,27 +642,55 @@ Route::group([
 | Here is where you can register web routes for the KILOMETER-ALLOWANCE DASHBOARD.
 |
 */
+
 Route::group([
     'namespace' => 'kilometer_allowance',
-    'prefix' => 'kilometer_allowance',
-    'middleware' => 'auth'], function () {
+    'prefix' => 'kilometer/allowance',
+    'middleware' => 'auth'],
+    function () {
 
-    Route::get('home', [App\Http\Controllers\EForms\KilometerAllowance\HomeController::class, 'index'])->name('kilometer-allowance-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'index'])->name('kilometer-allowance-list');
-    Route::get('create', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'create'])->name('kilometer-allowance-create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'show'])->name('kilometer-allowance-show');
-    Route::post('store', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'store'])->name('kilometer-allowance-store');
-    Route::post('approve', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'approve'])->name('kilometer-allowance-approve');
-//    Route::post('update', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'update'])->name('kilometer-allowance-update');
-//    Route::post('destroy/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'destroy'])->name('kilometer-allowance-destroy');
-//    Route::get('reports', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reports'])->name('kilometer-allowance-report');
-//    Route::get('reportExport', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reportsExport'])->name('kilometer-allowance-report-export');
-//
-//    Route::get('charts', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'charts'])->name('kilometer-allowance-charts');
+        //kilometer allowance routes
+        Route::get('home', [App\Http\Controllers\EForms\KilometerAllowance\HomeController::class, 'index'])->name('kilometer.allowance.home');
+        Route::get('list/{value}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'index'])->name('kilometer.allowance.list');
+        Route::get('create', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'create'])->name('kilometer.allowance.create');
+        Route::post('show/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'show'])->name('kilometer.allowance.show');
+        Route::post('store', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'store'])->name('kilometer.allowance.store');
+        Route::post('approve', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'approve'])->name('kilometer.allowance.approve');
+        Route::post('update', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'update'])->name('kilometer.allowance.update');
+        Route::post('destroy/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'destroy'])->name('kilometer.allowance.destroy');
+        Route::get('reports/{value}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reports'])->name('kilometer.allowance.report');
+        Route::get('reportExport', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reportsExport'])->name('kilometer.allowance.report.export');
+        Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'reportsExportUnmarkExportedAll'])->name('kilometer.allowance.report.export.unmark.exported.all');
+        Route::get('reportSync', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reportsSync'])->name('kilometer.allowance.report.sync');
+        Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reportsExportUnmarkExported'])->name('kilometer.allowance.report.unmark.exported');
+        Route::get('sync/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'sync'])->name('kilometer.allowance.sync');
+        Route::get('records/{value}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'records'])->name('kilometer.allowance.record');
+        Route::post('void/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'void'])->name('kilometer.allowance.void');
+        Route::post('reverse/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reverse'])->name('kilometer.allowance.reverse');
+        Route::post('search', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'search'])->name('kilometer.allowance.search');
 
-});
+        Route::get('charts', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'charts'])->name('kilometer.allowance.charts');
+        Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'markAccountLinesAsDuplicates'])->name('kilometer.allowance.accounts.duplicate.remove');
+        Route::get('showForm/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'showForm'])->name('kilometer.allowance.reports.show');
+
+        //REPORTS
+        Route::group([
+            'prefix' => 'report'
+        ], function () {
+            Route::get('directorates', [App\Http\Controllers\EForms\KilometerAllowance\ReportsController::class, 'index'])->name('kilometer.allowance.reports.index');
+            Route::get('syncDirectorates', [App\Http\Controllers\EForms\KilometerAllowance\ReportsController::class, 'syncDirectorates'])->name('kilometer.allowance.reports.sync.directorates');
+            Route::get('syncUserUnits', [App\Http\Controllers\EForms\KilometerAllowance\ReportsController::class, 'syncUserUnits'])->name('kilometer.allowance.reports.sync.units');
+
+        });
+        Route::group([
+            'prefix' => 'filtered/report'
+        ], function () {
+            Route::get('index', [App\Http\Controllers\EForms\KilometerAllowance\ReportsController::class, 'filteredReports'])->name('kilometer.allowance.filtered.report');
+            Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\KilometerAllowance\ReportsController::class, 'getFilteredReports'])->name('kilometer.allowance.filtered.get');
+        });
 
 
+    });
 
 
 /*
@@ -770,7 +751,6 @@ Route::group([
 });
 
 
-
 /*
 |--------------------------------------------------------------------------
 | TRIP FORM DASHBOARD WEB ROUTES
@@ -805,7 +785,6 @@ Route::group([
 });
 
 
-
 //config_work_flow
 Route::group([
     'prefix' => 'work_flow'], function () {
@@ -837,30 +816,33 @@ Route::group([
     });
 
 
-
     //config_work_flow for subsistence
     Route::group([
         'prefix' => 'subsistence'], function () {
-        Route::get('list', [App\Http\Controllers\EForms\Subsistence1\WorkflowController::class, 'index'])->name('subsistence.workflow');
-        Route::post('store', [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'store'])->name('subsistence.workflow.store');
-        Route::post('update/{code}', [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'update'])->name('subsistence.workflow.update');
-        Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'destroy'])->name('subsistence.workflow.destroy');
-        Route::get('sync', [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'sync'])->name('subsistence.workflow.sync');
-        Route::get('show/{id}/{code}',  [App\Http\Controllers\EForms\Subsistence1\WorkFlowController::class, 'show'])->name('subsistence.workflow.show');
+
+        Route::get('list', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'index'])->name('subsistence.workflow');
+        Route::post('store', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'store'])->name('subsistence.workflow.store');
+        Route::post('update/{code}', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'update'])->name('subsistence.workflow.update');
+        Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'destroy'])->name('subsistence.workflow.destroy');
+        Route::post('search', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'search'])->name('subsistence.workflow.search');
+        Route::get('show/{id}/{code}', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'show'])->name('subsistence.workflow.show');
+        Route::get('sync', [App\Http\Controllers\EForms\Subsistence\WorkFlowController::class, 'sync'])->name('subsistence.workflow.sync');
     });
 
 
+    //config_work_flow for kilometer allowance
+    Route::group([
+        'prefix' => 'kilometer/allowance'], function () {
+        Route::get('list', [App\Http\Controllers\EForms\KilometerAllowance\WorkFlowController::class, 'index'])->name('kilometer.allowance.workflow');
+        Route::post('store', [App\Http\Controllers\EForms\KilometerAllowance\WorkFlowController::class, 'store'])->name('kilometer.allowance.workflow.store');
+        Route::post('update/{code}', [App\Http\Controllers\EForms\KilometerAllowance\WorkFlowController::class, 'update'])->name('kilometer.allowance.workflow.update');
+        Route::post('destroy/{id}', [App\Http\Controllers\EForms\KilometerAllowance\WorkFlowController::class, 'destroy'])->name('kilometer.allowance.workflow.destroy');
+        Route::post('search', [App\Http\Controllers\EForms\KilometerAllowance\WorkFlowController::class, 'search'])->name('kilometer.allowance.workflow.search');
+        Route::get('show/{id}/{code}', [App\Http\Controllers\EForms\KilometerAllowance\WorkFlowController::class, 'show'])->name('kilometer.allowance.workflow.show');
+        Route::get('sync', [App\Http\Controllers\EForms\KilometerAllowance\WorkFlowController::class, 'sync'])->name('kilometer.allowance.workflow.sync');
+    });
+
 });
-
-/*
-|--------------------------------------------------------------------------
-|HOTEL ACCOMMODATION DASHBOARD WEB ROUTES
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for the DATA CENTER CRITICAL ASSETS REGISTER DASHBOARD.
-|
-*/
-
 
 
 /*
@@ -871,30 +853,6 @@ Route::group([
 | Here is where you can register web routes for the HOTEL-ACCOMMODATION DASHBOARD.
 |
 */
-
-
-
-//Route::group([
-//    'namespace' => 'hotel_accommodation',
-//    'prefix' => 'hotel/accommodation',
-//    'middleware' => 'auth'], function () {
-//
-//    Route::get('home', [App\Http\Controllers\EForms\HotelAccommodation\HomeController::class, 'index'])->name('hotel.accommodation.home');
-//    Route::get('list/{value}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'index'])->name('hotel.accommodation.list');
-//    Route::get('create', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class,'create'])->name('hotel.accommodation.create');
-//    Route::post('show/{id}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'show'])->name('hotel.accommodation.show');
-//    Route::post('store', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'store'])->name('hotel.accommodation.store');
-//    Route::post('approve/{id}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'approve'])->name('hotel.accommodation.approve');
-////    Route::post('update', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'update'])->name('hotel.accommodation.update');
-////    Route::post('destroy/{id}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'destroy'])->name('hotel.accommodation.destroy');
-//    Route::get('reports', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reports'])->name('hotel.accommodation.report');
-////    Route::get('reportExport', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsExport'])->name('hotel.accommodation.report.export');
-////
-////    Route::get('charts', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'charts'])->name('hotel.accommodation.charts');
-//
-//});
-
-
 
 Route::group([
     'namespace' => 'hotel_accommodation',
@@ -913,7 +871,7 @@ Route::group([
         Route::post('destroy/{id}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'destroy'])->name('hotel.accommodation.destroy');
         Route::get('reports/{value}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reports'])->name('hotel.accommodation.report');
         Route::get('reportExport', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsExport'])->name('hotel.accommodation.report.export');
-        Route::get('reportSync', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsSync'])->name('hotel.accommodation.-report-sync');
+        Route::get('reportSync', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsSync'])->name('hotel.accommodation.report.sync');
         Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsExportUnmarkExported'])->name('hotel.accommodation.report.export.unmark.exported');
         Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsExportUnmarkExportedAll'])->name('hotel.accommodation.report.export.unmark.exported.all');
         Route::get('sync/{id}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'sync'])->name('hotel.accommodation.sync');
@@ -945,7 +903,6 @@ Route::group([
 
 
     });
-
 
 
 Route::group([

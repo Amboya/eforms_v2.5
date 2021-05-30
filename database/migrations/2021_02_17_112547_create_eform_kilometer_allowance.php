@@ -31,7 +31,7 @@ class CreateEformKilometerAllowance extends Migration
             $table->string('staff_no')->nullable();
             $table->string('claim_date')->nullable();
             $table->integer('config_status_id')->nullable();
-            $table->string('user_unit')->nullable();
+            $table->string('user_unit_code')->nullable();
             $table->string('cost_centre')->nullable();
             $table->string('business_code')->nullable();
 
@@ -43,6 +43,10 @@ class CreateEformKilometerAllowance extends Migration
             $table->string('station_manager_staff_no')->nullable();
             $table->string('station_manager_date')->nullable();
 
+            $table->string('hrm_manager')->nullable();
+            $table->string('hrm_manager_staff_no')->nullable();
+            $table->string('hrm_manager_date')->nullable();
+
             $table->string('accountant')->nullable();
             $table->string('accountant_staff_no')->nullable();
             $table->string('accountant_date')->nullable();
@@ -51,11 +55,19 @@ class CreateEformKilometerAllowance extends Migration
             $table->string('expenditure_office_staff_no')->nullable();
             $table->string('expenditure_date')->nullable();
 
+            $table->string('audit_office')->nullable();
+            $table->string('audit_staff_no')->nullable();
+            $table->string('audit_date')->nullable();
+
+            $table->string('security_office')->nullable();
+            $table->string('security_staff_no')->nullable();
+            $table->string('security_date')->nullable();
+
             $table->string('hod_code')->nullable();
             $table->string('hod_unit')->nullable();
 
-            $table->string('bm_code')->nullable();
-            $table->string('bm_unit')->nullable();
+            $table->string('dm_code')->nullable();
+            $table->string('dm_unit')->nullable();
 
             $table->string('hrm_code')->nullable();
             $table->string('hrm_unit')->nullable();

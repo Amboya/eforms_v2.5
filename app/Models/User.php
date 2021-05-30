@@ -54,6 +54,9 @@ class User extends Authenticatable
         'pay_point_id',
         'functional_unit_id',
 
+        'unit_column',
+        'code_column',
+
         'type_id',
         'grade_id',
         'profile_id',

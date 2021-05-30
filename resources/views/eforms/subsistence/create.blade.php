@@ -118,7 +118,7 @@
                             <div class="row">
                                 <div class="col-6"><label>Cost Center:</label></div>
                                 <div class="col-6">
-                                    <input value="{{Auth::user()->user_unit->cost_center_code }}" type="cost_center"
+                                    <input value="{{Auth::user()->user_unit->user_unit_cc_code }}" type="cost_center"
                                            name="date" readonly class="form-control">
                                 </div>
                             </div>
@@ -153,7 +153,7 @@
                             <div class="row">
                                 <div class="col-6"><label>System Reference No.:</label></div>
                                 <div class="col-6">
-                                    <input value="{{Auth::user()->location->name }}" type="text" name="ref_no" readonly
+                                    <input value="" type="text" name="ref_no" readonly
                                            class="form-control">
                                 </div>
                             </div>
@@ -180,7 +180,7 @@
                                 <td>Place</td>
                                 <td><textarea required name="absc_visited_place" class="form-control" >{{old('absc_visited_place')}}</textarea></td>
                                 <td>Reason</td>
-                                <td><textarea required name="absc_visited_place_reason" class="form-control">{{old('absc_visited_place_reason')}}</textarea></td>
+                                <td><textarea required name="absc_visited_reason" class="form-control">{{old('absc_visited_reason')}}</textarea></td>
                             </tr>
                             <tr>
                                 <td>Allowance Claim per Night</td>

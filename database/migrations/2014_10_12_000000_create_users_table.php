@@ -25,6 +25,8 @@ class CreateUsersTable extends Migration
             $table->string('user_unit_code')->nullable();
             $table->string('profile_job_code')->nullable();
             $table->string('profile_unit_code')->nullable();
+            $table->string('unit_column')->nullable();
+            $table->string('code_column')->nullable();
 
             $table->integer('user_unit_id')->nullable();
             $table->integer('user_directorate_id')->nullable();
