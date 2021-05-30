@@ -412,7 +412,7 @@ class HotelAccommodationController extends Controller
 
                 'cost_center' => $user->user_unit->user_unit_cc_code,
                 'business_code' => $user->user_unit->user_unit_bc_code,
-                'user_unit' => $user->user_unit->user_unit_code,
+                'user_unit_code' => $user->user_unit->user_unit_code,
             ]);
 
 
@@ -523,16 +523,16 @@ class HotelAccommodationController extends Controller
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
 
         } elseif ($current_status == config('constants.hotel_accommodation_status.hod_approved')) {
-            $superior_user_code = $user_unit->hrm_code;
-            $superior_user_unit = $user_unit->hrm_unit;
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+            $superior_user_code = $user_unit->dr_code;
+            $superior_user_unit = $user_unit->dr_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_003'));
 
-        } elseif ($current_status == config('constants.hotel_accommodation_status.hr_approved')) {
+        } elseif ($current_status == config('constants.hotel_accommodation_status.director_approved')) {
             $superior_user_code = $user_unit->ca_code;
             $superior_user_unit = $user_unit->ca_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
 
-        } elseif ($current_status == config('constants.hotel_accommodation_status.chief_accountant')) {
+        } elseif ($current_status == config('constants.hotel_accommodation_status.chief_accountant_approved')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
@@ -679,6 +679,8 @@ class HotelAccommodationController extends Controller
             ->orderBy('created_at', 'asc')->get();
 
         $user = User::find($form->created_by);
+        $hotel= HotelSuppliersModel::all();
+        //IMPORTANT AS WELL
         $user_array = self::findMyNextPerson($form->config_status_id, $user->user_unit, $user);
 
         //count all that needs me
@@ -693,10 +695,14 @@ class HotelAccommodationController extends Controller
             'form' => $form,
             'user_array' => $user_array,
             'approvals' => $approvals,
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'user' => Auth::user(),
+            'hotel' => $hotel
+
+
         ];
         //return view
-//        dd(125);
+
         return view('eforms.hotel-accommodation.show')->with($params);
 
     }

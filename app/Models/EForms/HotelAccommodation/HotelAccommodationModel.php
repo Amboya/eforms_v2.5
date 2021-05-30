@@ -2,6 +2,7 @@
 
 namespace App\Models\Eforms\HotelAccommodation;
 
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\StatusModel;
@@ -49,7 +50,7 @@ class HotelAccommodationModel extends Model
 
         'config_status_id',
         'profile',
-        'user_unit',
+        'user_unit_code',
         'cost_centre',
         'business_code',
 
@@ -74,9 +75,6 @@ class HotelAccommodationModel extends Model
 //        'security_unit',
         'audit_code',
         'audit_unit',
-
-
-
 
         'created_by',
         'deleted_at',
@@ -195,6 +193,12 @@ class HotelAccommodationModel extends Model
 
     }
 
+
+
+    public function user_unit()
+    {
+        return $this->belongsTo(ConfigWorkFlow::class, 'user_unit_code', 'user_unit_code');
+    }
 
     public function user()
     {

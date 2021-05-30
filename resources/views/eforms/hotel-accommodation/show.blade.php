@@ -77,116 +77,194 @@
                             <th colspan="1">Doc Number:<br>CO.14900.FORM.0003<br>Version: 3</th>
                         </tr>
                         </thead>
+
                     </table>
 
-                    <table border="0" width="100%" cellspacing="0" cellpadding="0" align="Centre">
-                        <tr>
-                            <td height="5" colspan="6"></td>
-                        </tr>
+                    <div class="row mt-2 mb-2">
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Name:</label></div>
+                                <div class="col-12"><input type="text" name="staff_name" value="{{$form->staff_name}}"
+                                                           readonly class="form-control"></div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12 "><label>Man No:</label></div>
+                                <div class="col-12"><input type="text" name="staff_no" class="form-control"
+                                                           value="{{$form->staff_no}}" readonly
+                                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Grade:</label></div>
+                                <div class="col-12"><input type="text" name="grade" class="form-control"
+                                                           value="{{$form->grade}}" readonly
+                                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Directorate:</label></div>
+                                <div class="col-12"><input type="text" name="directorate" class="form-control"
+                                                           value="{{Auth::user()->directorate->name}}" readonly
+                                                           required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2 mb-4">
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Cost Centre:</label></div>
+                                <div class="col-12"><input type="text" name="cost_center" class="form-control"
+                                                           value="{{$user->user_unit->user_unit_cc_code}}" readonly
+                                                          required>
+                                </div>
+                            </div>
+                        </div>
 
-                        <tr>
-                            <td><label>Name:</label></td>
-                            <td><input type="text" name="staff_name" class="form-control"  value="{{$form->staff_name}}" readonly></td>
-                            <td class="text-center"><label>Man No:</label></td>
-                            <td><input type="text" name="staff_no"
-                                       class="form-control" value="{{$form->staff_no}}"
-                                       readonly></td>
-                            <td class="text-center"><label>Grade:</label></td>
-                            <td><input type="text" name="grade" class="form-control"
-                                       value="{{$form->grade}}" readonly></td>
+                        <div class="col-3">
+{{--                            <div class="col-12"><label>Hotel Name:</label></div>--}}
+                                <div class="row">
+                                    <div class="col-12"><label>Hotel Name:</label></div>
+                                    <div class="col-12"><input type="text" name="hotel" class="form-control"
+                                                               value="{{$form->hotel}}" readonly
+                                                               required>
+                                    </div>
+                                </div>
+                            </div>
 
-                        </tr>
-                        <tr>
-                            <td><label>Directorate:</label></td>
-                            <td><input type="text" name="directorate"
-                                       class="form-control" value="{{$form->staff_no}}"
-                                       readonly></td>
-                            <td class="text-center"><label>Hotel:</label></td>
-                            <td><input type="text" required name="hotel" class="form-control" value= "{{$form->hotel}}" readonly placeholder="Enter Hotel Name"></td>
-                        </tr>
-                        <tr>
-                            <td class="text-"><label>Cost Centre:</label></td>
-                            <td><input type="text" name=""
-                                       class="form-control" value="{{$form->cost_centre}}"
-                                       readonly></td>
-                            <td class="text-"><label>SYS Ref No.</label></td>
-                            <td><input type="text" required name="ref_no" class="form-control" value= "{{$form->ref_number}}"
-                                       readonly></td>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Sys RefNo: (Optional)</label></div>
+                                <div class="col-12"><input type="text" name="ref_no" class="form-control"
+                                                            class="form-control" value="{{$form->ref_number}}" readonly
+                                                           required ></div>
+                            </div>
+                        </div>
 
-                        </tr>
-                        <tr>
-                            <td height="10" colspan="6"></td>
-                        </tr>
-                        <tr>
-                            <td height="15"></td>
-                        </tr>
-                        <tr>
-                        <tr>
-                            <td><label>Purpose of Journey</label></td>
-                            <td><input type="text" required name="purpose_of_journey" value= "{{$form->purpose_of_journey}}" class="form-control" readonly ></td>
-                        </tr>
+                    </div>
+                    </div>
 
-                        <tr>
-                            <td><label>Estimated Period of Stay</label></td>
-                            <td><input type="text" required name="estimated_period_of_stay" value= "{{$form->estimated_period_of_stay}}" class="form-control" readonly></td>
-                            <td class="text-center"><label>Estimated Cost:</label></td>
-                            <td><input type="text" required name="estimated_cost" class="form-control" value= "{{$form->estimated_cost}}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><label>Employee Name:</label></td>
-                            <td><input type="text" name="employee_name" class="form-control"
-                                       value="{{$form->staff_name}}" readonly></td>
-                            <td class="text-center"><label>Signature:</label></td>
-                            <td><input type="text" name="employee_staff_no"
-                                       class="form-control" value="{{$form->staff_no}}"
-                                       readonly></td>
-                            <td class="text-center"><label>Date:</label></td>
-                            <td><input type="date" required name="claim_date" class="form-control" value ="{{date('Y-m-d')}}"readonly></td>
-                        </tr>
-                        <tr>
-                            <td height="20"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="6"><p><b>Imprest Upon Being Accomodated in a Hotel:</b></p></td>
-                        </tr>
-                        <tr>
-                            <td><label>Amount Claimed ZMW:</label></td>
-                            <td><input type="text" required name="amount_claimed" class="form-control" value= "{{$form->amount_claimed}}" readonly></td>
-                            <td class="text-center"><label>Being ZMW:</label></td>
-                            <td><input type="text" required name="amount" class="form-control" value= "{{$form->amount}}" readonly> </td>
-                            <td class="text-center"><label>Per Night:</label></td>
-                            <!--                <td><input type="text" name="" class="form-control"></td>-->
-                        </tr>
-                        <tr>
-                            <td><label>Name of Chief Accountant</label></td>
-                            <td><input type="text" required name="chief_accountant_name" value= "{{$form->chief_accountant_name}}" class="form-control" readonly></td>
-                            <td class="text-center"><label>Sign:</label></td>
-                            <td><input type="text" name="chief_staff_no" class="form-control" value= "{{$form->chief_accountant_staff_no}}" readonly></td>
-                            <td class="text-center"><label>Date:</label></td>
-                            <td><input type="text" required name="chief_accountant_date" value= "{{$form->chief_accountant_date}}" class="form-control" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><label>Name of HOD:</label></td>
-                            <td><input type="text" required name="hod_name"  value= "{{$form->hod_name}}" class="form-control" readonly></td>
-                            <td class="text-center"><label>Signature:</label></td>
-                            <td><input type="text" required name="hod_staff_no" class="form-control" value= "{{$form->hod_staff_no}}" readonly></td>
-                            <td class="text-center"><label>Date:</label></td>
-                            <td><input type="text" required name="hod_authorised_date" value= "{{$form->hod_authorised_date}}" class="form-control" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><label>Approved by Director:</label></td>
-                            <td><input type="text" required name="director_name"  value= "{{$form->director}}" class="form-control" readonly></td>
-                            <td class="text-center"><label>Signature:</label></td>
-                            <td><input type="text" required name="director_staff_no" value= "{{$form->director_staff_no}}" class="form-control" readonly></td>
-                            <td class="text-center"><label>Date:</label></td>
-                            <td><input type="text" required name="director_authorised_date" value= "{{$form->director_authorised_date}}" class="form-control" readonly></td>
-                        </tr>
-                        <tr>
-                            <td height="10" colspan="6"></td>
-                        </tr>
-                        <tr>
-                            <td height="15"></td>
-                        </tr>
+                <div class="col-lg-12 grid-margin stretch-card">
+                    <div class="table-responsive">
+                        <div class="col-lg-12 ">
+                            <table class="table bg-green">
+                                <thead>
+                                <tr>
+                                    <th>PURPOSE OF JOURNEY</th>
+                                    <th>AMOUNT CLAIMED</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div class="col-lg-12 ">
+                            <TABLE class="table">
+                                <TR>
+                                    <TD>
+                                            <textarea rows="4" type="text"  name="purpose_of_journey"
+                                                      class="form-control amount"
+                                                      readonly> {{$form->purpose_of_journey}} </textarea>
+
+                                    </TD>
+                                    <TD><input type="number" id="amount1" name="amount" onchange="getvalues()"
+                                               class="form-control amount" value="{{$form->amount}}" readonly>
+                                    </TD>
+                                </TR>
+                            </TABLE>
+                        </div>
+
+                        <div class="row mt-2 mb-4">
+                            <div class="col-3">
+                                <div class="row">
+                                    <div class="col-12"><label>Estimated Period of Stay (Days):</label></div>
+                                    <div class="col-12"><input type="number" name="estimated_period_of_stay" class="form-control" readonly
+                                                               value="{{$form->estimated_period_of_stay}}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="row">
+                                    <div class="col-12"><label>Estimated Cost:</label></div>
+                                    <div class="col-12"><input type="number" id="estimated_cost" name="estimated_cost" class="form-control"
+                                                               value="{{$form->estimated_cost}}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="row">
+                                    <div class="col-12"><label>BEING PAYMENT:</label></div>
+                                    <div class="col-12"><input type="text" class="form-control text-bold" readonly id="total-payment"
+                                                               name="amount" value="ZMW {{$form->amount_claimed}}" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                <div class="row mb-1 mt-4">
+                    <div class="col-2"> <label>Employee Name:</label> </div>
+                    <div class="col-3">
+                        <input type="text" name="employee_name" class="form-control"
+                               value="{{$form->staff_name}}" readonly required></div>
+
+                    <div class="col-2 text-center"><label>Signature:</label></div>
+                    <div class="col-2"><input type="text" name="employee_staff_no" class="form-control"
+                                              value="{{$form->staff_no}}" readonly required></div>
+
+                    <div class="col-1 text-center"><label>Date:</label></div>
+                    <div class="col-2"><input type="Date" name="claim_date" class="form-control"
+                                              value="{{date('Y-m-d')}}" readonly required>
+                    </div>
+                </div>
+
+                    <div class="row mb-1">
+                        <div class="col-2"><label>Name of HOD:</label></div>
+                        <div class="col-3"><input type="text" name="hod_name" value= "{{$form->hod_name}}" readonly class="form-control">
+                        </div>
+                        <div class="col-2 text-center"><label>Signature:</label></div>
+                        <div class="col-2"><input type="text" name="hod_staff_no" value= "{{$form->hod_staff_no}}" readonly class="form-control">
+                        </div>
+                        <div class="col-1  text-center"><label>Date:</label></div>
+                        <div class="col-2"><input type="text" name="hod_authorised_date" value= "{{$form->hod_authorised_date}}" readonly
+                                                  class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row mb-1">
+                        <div class="col-2"><label>Approved by Director:</label></div>
+                        <div class="col-3"><input type="text" name="director_name" value= "{{$form->director}}" readonly class="form-control">
+                        </div>
+                        <div class="col-2 text-center"><label>Signature:</label></div>
+                        <div class="col-2"><input type="text" name="director_staff_no" value= "{{$form->director_staff_no}}" readonly
+                                                  class="form-control"></div>
+                        <div class="col-1 text-center"><label>Date:</label></div>
+                        <div class="col-2"><input type="text" name="director_authorised_date" value= "{{$form->director_authorised_date}}" readonly
+                                                  class="form-control"></div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-2"><label>Name of Chief Accountant:</label></div>
+                        <div class="col-3"><input type="text" name="chief_accountant_name" value= "{{$form->chief_accountant_name}}" readonly
+                                                  class="form-control"></div>
+                        <div class="col-2 text-center"><label>Signature:</label></div>
+                        <div class="col-2"><input type="text" name="chief_staff_no" value= "{{$form->chief_accountant_staff_no}}" readonly class="form-control">
+                        </div>
+                        <div class="col-1 text-center"><label>Date:</label></div>
+                        <div class="col-2"><input type="text" name="chief_accountant_authorised_date" value= "{{$form->chief_accountant_date}}" readonly
+                                                  class="form-control">
+                        </div>
+                    </div>
+
+                    </div>
+
+
+                        <td colspan="6"><p><b>Imprest Upon Being Accomodated in a Hotel:</b></p></td>
+
+
                         <tr>
                             <td colspan="2"><p><b>Note:</b> To be Filled in Duplicate.<br>
                                     First Copy to the Chief Accountant for Payment.<br>
@@ -198,18 +276,16 @@
                                     number from any of the systems at ZESCO such as a work request number from
                                     PEMS, Task number from HQMS,Meeting Number from HQMS, Incident Number from
                                     IMS, DCS etc. giving rise to the expenditure</p></td>
-
                         </tr>
-                        {{--                    <tr>--}}
-                        {{--                        <td colspan="6" class="text-center"><input type="submit" value="submit" name="submit_form"--}}
-                        {{--                                                                   class="btn btn-outline-success"></td>--}}
-                        {{--                    </tr>--}}
 
-                    </table>
+
+
 
                 </div>
-            </div>
-            <!-- /.card -->
+                </div>
+{{--            </div>--}}
+
+
 
             {{-- NEXT PERSONS TO ACT --}}
             @if(  $form->status_id != config('constants.hotel_accommodation_status.closed')   )
@@ -370,7 +446,8 @@
                     {{--  HOD APPROVAL--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')
                          &&  $form->config_status_id == config('constants.hotel_accommodation_status.new_application')
-
+                         &&  $form->user_unit->hod_code == $user->profile_job_code
+                         &&  $form->user_unit->hod_unit == $user->profile_unit_code
                       )
 
                         <div class="">
@@ -410,7 +487,8 @@
                     {{--  DIRECTOR APPROVAL--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_003')
                          &&  $form->config_status_id == config('constants.hotel_accommodation_status.hod_approved')
-
+                         &&  $form->user_unit->dr_code == $user->profile_job_code
+                         &&  $form->user_unit->dr_unit == $user->profile_unit_code
                      )
                         <div class="">
                             <hr>
@@ -452,7 +530,8 @@
                     {{--  CHIEF ACCOUNTANT APPROVAL--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
                          &&  $form->config_status_id == config('constants.hotel_accommodation_status.director_approved')
-
+                         &&  $form->user_unit->ca_code == $user->profile_job_code
+                         &&  $form->user_unit->ca_unit == $user->profile_unit_code
                         )
                         <div class="">
                             <hr>
@@ -490,12 +569,11 @@
 
                     {{--  FUNDS DISBURSEMNET APPROVAL--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.hotel_accommodation_status.chief_accountant')
 
                        )
                         <div class="">
                             <h5 class="text-center">Please Update the Accounts </h5>
-                            <h6 class="text-center">(Total Amount : ZMW {{$form->total_payment}}) </h6>
+                            <h6 class="text-center">(Total Amount : ZMW {{$form->amount}}) </h6>
                             <div class="col-lg-12 grid-margin stretch-card">
                                 <div class="table-responsive">
                                     <div class="col-lg-12 ">
@@ -505,35 +583,16 @@
 
                                                 <TD>
                                                     <div class="row">
-                                                        <div class="col-12">
-                                                            <div class="form-group">
-                                                                <input list="items_list1" type="text"
-                                                                       name="account_items[]"
-                                                                       class="form-control amount"
-                                                                       placeholder="Select Item/s   "
-                                                                       id="account_items1">
-                                                                <datalist id="items_list1">
-                                                                    @foreach($form->item as $item)
-                                                                        <option  >{{$item->name}} : (ZMK {{$item->amount}})</option>
-                                                                    @endforeach
-                                                                </datalist>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {{--                                                </TD>--}}
-                                                    {{--                                                <TD>--}}
-                                                    <div class="row">
                                                         <div class="col-3">
                                                             <select name="credited_account[]" id="credited_account"
                                                                     required
                                                                     class="form-control amount">
                                                                 @foreach($accounts as $account)
-                                                                    @if($account->id  ==  config('constants.hotel_accommodation_account_id')  )
+{{--                                                                    @if($account->id  ==  config('constants.hotel_accommodation_account_id')  )--}}
                                                                         <option
                                                                             value="{{$account->code}}">{{$account->name}}
                                                                             :{{$account->code}}</option>
-                                                                    @endif
+{{--                                                                    @endif--}}
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -589,7 +648,7 @@
                                 <div id="submit_not_possible" class="col-12 text-center">
 
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
-                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
+                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->amount}}
                                                 )</strong>
                                    </span>
                                 </div>
@@ -732,41 +791,41 @@
 
                        )
                         <div class="">
-{{--                            <h6 class="text-center">The Updated Accounts</h6>--}}
-{{--                            <div class="col-lg-12 grid-margin stretch-card">--}}
-{{--                                <div class="table-responsive">--}}
-{{--                                    <div class="col-lg-12 ">--}}
-{{--                                        <TABLE class="table">--}}
-{{--                                            <thead>--}}
-{{--                                            <TR>--}}
-{{--                                                <TD>Account</TD>--}}
-{{--                                                <TD>Credited Amount</TD>--}}
-{{--                                                <TD>Debited Amount</TD>--}}
-{{--                                            </TR>--}}
-{{--                                            </thead>--}}
+                            <h6 class="text-center">The Updated Accounts</h6>
+                            <div class="col-lg-12 grid-margin stretch-card">
+                                <div class="table-responsive">
+                                    <div class="col-lg-12 ">
+                                        <TABLE class="table">
+                                            <thead>
+                                            <TR>
+                                                <TD>Account</TD>
+                                                <TD>Credited Amount</TD>
+                                                <TD>Debited Amount</TD>
+                                            </TR>
+                                            </thead>
 
-{{--                                            <tbody>--}}
-{{--                                            @foreach($form_accounts as $item)--}}
-{{--                                                <TR>--}}
-{{--                                                    <TD><input list="accounts_list" type="text"--}}
-{{--                                                               value="{{$item->account}}"--}}
-{{--                                                               class="form-control amount" readonly>--}}
-{{--                                                    </TD>--}}
-{{--                                                    <TD><input type="number" id="credited_amount"--}}
-{{--                                                               value="{{$item->creditted_amount}}"--}}
-{{--                                                               class="form-control amount" readonly>--}}
-{{--                                                    </TD>--}}
-{{--                                                    <TD><input type="number" value="{{$item->debitted_amount}}"--}}
-{{--                                                               class="form-control amount" readonly>--}}
-{{--                                                    </TD>--}}
-{{--                                                </TR>--}}
-{{--                                            @endforeach--}}
-{{--                                            </tbody>--}}
+                                            <tbody>
+                                            @foreach($form_accounts as $item)
+                                                <TR>
+                                                    <TD><input list="accounts_list" type="text"
+                                                               value="{{$item->account}}"
+                                                               class="form-control amount" readonly>
+                                                    </TD>
+                                                    <TD><input type="number" id="credited_amount"
+                                                               value="{{$item->creditted_amount}}"
+                                                               class="form-control amount" readonly>
+                                                    </TD>
+                                                    <TD><input type="number" value="{{$item->debitted_amount}}"
+                                                               class="form-control amount" readonly>
+                                                    </TD>
+                                                </TR>
+                                            @endforeach
+                                            </tbody>
 
-{{--                                        </TABLE>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                                        </TABLE>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="card">
 {{--                                <div class="col-lg-10 p-2 mt-3 ">--}}
 {{--                                    <div class="row">--}}
@@ -988,15 +1047,15 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var total_payment = {!! json_encode($form->total_payment) !!};
+            var amount = {!! json_encode($form->amount) !!};
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to total_payment
-                if (total == total_payment) {
+                //check if petty cash accounts is equal to amount
+                if (total == amount) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
-                } else if (total < total_payment) {
+                } else if (total < amount) {
                     $('#submit_not_possible').show();
                     $('#submit_possible').hide();
                 } else {
@@ -1022,15 +1081,15 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var total_payment = {!! json_encode($form->total_payment) !!};
+            var amount = {!! json_encode($form->amount) !!};
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to total_payment
-                if (total == total_payment) {
+                //check if petty cash accounts is equal to amount
+                if (total == amount) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
-                } else if (total < total_payment) {
+                } else if (total < amount) {
                     $('#submit_not_possible').show();
                     $('#submit_possible').hide();
                 } else {
@@ -1051,7 +1110,7 @@
 
                 var change_value_int = parseFloat(change_value);
 
-                //check if petty cash accounts is equal to total_payment
+                //check if petty cash accounts is equal to amount
                 if (Number(change_value_int) > 0) {
                     $('#show_change').show();
                     //set value

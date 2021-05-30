@@ -77,7 +77,7 @@
                                     </thead>
                                     <tbody>
                                     @foreach( $list as $item )
-                                        <tr>
+                                        <tr>git add .git add .
                                             <td><a href="{{ route('logout') }}" class="dropdown-item"
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
@@ -87,8 +87,8 @@
                                                     @csrf
                                                 </form>
                                             </td>
-                                            <td>{{$item->claimant_name}}</td>
-                                            <td>{{$item->total_payment}}</td>
+                                            <td>{{$item->staff_namegit add .}}</td>
+                                            <td>{{$item->amount}}</td>
                                             <td><span
                                                     class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                             </td>

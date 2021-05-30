@@ -102,6 +102,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-3">
                             <div class="row">
                                 <div class="col-12"><label>Directorate:</label></div>
@@ -114,6 +115,7 @@
                     </div>
 
                     <div class="row mt-2 mb-4">
+
                         <div class="col-3">
                             <div class="row">
                                 <div class="col-12"><label>Cost Centre:</label></div>
@@ -123,13 +125,9 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-3">
-{{--                            <div class="row">--}}
-{{--                                <div class="col-12"><label>Hotel Name</label></div>--}}
-{{--                                <div class="col-12"><input type="text" name="hotel" class="form-control"--}}
-{{--                                                           placeholder="Select a Hotel" required>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                            <div class="col-12"><label>Hotel Name:</label></div>
                             <select id="hotel" class="form-control select2 " name="hotel"  >
                                 <option value="" selected disabled >Select Hotel</option>
                                 @foreach($hotel as $item)
@@ -145,19 +143,17 @@
 
                         </div>
 
-
-
-
-                        </div>
                         <div class="col-3">
                             <div class="row">
-                                <div class="col-12"><label>Sys RefNo:</label></div>
+                                <div class="col-12"><label>Sys RefNo:(Optional)</label></div>
                                 <div class="col-12"><input type="text" name="ref_no"
                                                            placeholder="Enter System RefNo (optional)"
                                                            class="form-control"></div>
                             </div>
                         </div>
+
                     </div>
+
 
                     <div class="col-lg-12 grid-margin stretch-card">
                         <div class="table-responsive">
@@ -207,7 +203,7 @@
                                     <div class="row">
                                         <div class="col-12"><label>BEING PAYMENT:</label></div>
                                         <div class="col-12"><input type="text" class="form-control text-bold" readonly id="total-payment"
-                                                                   name="total_payment" value="">
+                                                                   name="amount_claimed" value="">
                                     </div>
                                 </div>
                             </div>
@@ -230,9 +226,7 @@
                         </div>
 
                         <div class="row mb-1 mt-4">
-                            <div class="col-2">
-                                <label>Employee Name:</label>
-                            </div>
+                            <div class="col-2"> <label>Employee Name:</label> </div>
                             <div class="col-3">
                                 <input type="text" name="employee_name" class="form-control"
                                        value="{{Auth::user()->name}}" readonly required></div>
