@@ -271,13 +271,13 @@ Route::group([
         });
 
 
-        //Files
-        Route::group([
-            'prefix' => 'files'], function () {
-            Route::post('change', [App\Http\Controllers\HomeController::class, 'changeFile'])->name('attached-file-change');
-            Route::post('add', [App\Http\Controllers\HomeController::class, 'addFile'])->name('attached-file-add');
-            Route::post('add2', [App\Http\Controllers\HomeController::class, 'addFile2'])->name('attached-file-add2');
-        });
+//        //Files
+//        Route::group([
+//            'prefix' => 'files'], function () {
+//            Route::post('change', [App\Http\Controllers\HomeController::class, 'changeFile'])->name('attached-file-change');
+////            Route::post('add', [App\Http\Controllers\HomeController::class, 'addFile'])->name('attached-file-add');
+//            Route::post('add2', [App\Http\Controllers\HomeController::class, 'addFile2'])->name('attached-file-add2');
+//        });
 
 
     });
@@ -307,8 +307,8 @@ Route::group([
         });
 
         //petty cah routes
-        //   Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty-cash-home');
-        Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty.cash.home');
+        Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty-cash-home');
+//        Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty.cash.home');
         Route::get('list/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'index'])->name('petty.cash.list');
         Route::get('create', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'create'])->name('petty.cash.create');
         Route::post('show/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'show'])->name('petty.cash.show');
@@ -437,7 +437,7 @@ Route::group([
     'prefix' => 'vehicle_requisitioning_home',
     'middleware' => 'auth'], function () {
 
-    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('vehicle-requisitioning-home');
+    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('vehicle.requisitioning.home');
 //    Route::get('list/{value}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'index'])->name('gifts-declaration-list');
 //    Route::get('create', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'create'])->name('gifts-declaration-create');
 //    Route::post('show/{id}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'show'])->name('gifts-declaration-show');
@@ -474,7 +474,7 @@ Route::group([
     'prefix' => 'salary/advance',
     'middleware' => 'auth'], function () {
 
-    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('salary-advance-home');
+    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('salary.advance.home');
 //    Route::get('list/{value}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'index'])->name('gifts-declaration-list');
 //    Route::get('create', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'create'])->name('gifts-declaration-create');
 //    Route::post('show/{id}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'show'])->name('gifts-declaration-show');
@@ -591,7 +591,7 @@ Route::group([
     'prefix' => 'temps_casuals',
     'middleware' => 'auth'], function () {
 
-    Route::get('home', [App\Http\Controllers\EForms\TempsCasuals\HomeController::class, 'index'])->name('temps-casuals-home');
+//    Route::get('home', [App\Http\Controllers\EForms\TempsCasuals\HomeController::class, 'index'])->name('temps-casuals-home');
     Route::get('list/{value}', [App\Http\Controllers\EForms\TempsCasuals\TempsCasualsController::class, 'index'])->name('temps-casuals-list');
     Route::get('create', [App\Http\Controllers\EForms\TempsCasuals\TempsCasualsController::class, 'create'])->name('temps-casuals-create');
     Route::post('show/{id}', [App\Http\Controllers\EForms\TempsCasuals\TempsCasualsController::class, 'show'])->name('temps-casuals-show');
@@ -706,18 +706,18 @@ Route::group([
     'prefix' => 'virement',
     'middleware' => 'auth'], function () {
 
-    Route::get('home', [App\Http\Controllers\EForms\Virement\HomeController::class, 'index'])->name('virement-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\Virement\VirementController::class, 'index'])->name('virement-list');
-    Route::get('create', [App\Http\Controllers\EForms\Virement\VirementController::class, 'create'])->name('virement-create');
-//    Route::post('show/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'show'])->name('virement-show');
-    Route::post('store', [App\Http\Controllers\EForms\Virement\VirementController::class, 'store'])->name('virement-store');
-//    Route::post('approve', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'approve'])->name('virement-approve');
+    Route::get('home', [App\Http\Controllers\EForms\Virement\HomeController::class, 'index'])->name('virement.home');
+    Route::get('list/{value}', [App\Http\Controllers\EForms\Virement\VirementController::class, 'index'])->name('virement.list');
+    Route::get('create', [App\Http\Controllers\EForms\Virement\VirementController::class, 'create'])->name('virement.create');
+//    Route::post('show/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'show'])->name('virement.show');
+    Route::post('store', [App\Http\Controllers\EForms\Virement\VirementController::class, 'store'])->name('virement.store');
+//    Route::post('approve', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'approve'])->name('virement.approve');
 //    Route::post('update', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'update'])->name('viremenvirementt-update');
-//    Route::post('destroy/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'destroy'])->name('virement-destroy');
-    Route::get('reports', [App\Http\Controllers\EForms\Virement\VirementController::class, 'reports'])->name('virement-report');
-//    Route::get('reportExport', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reportsExport'])->name('virement-report-export');
+//    Route::post('destroy/{id}', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'destroy'])->name('virement.destroy');
+    Route::get('reports', [App\Http\Controllers\EForms\Virement\VirementController::class, 'reports'])->name('virement.report');
+//    Route::get('reportExport', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'reportsExport'])->name('virement.report-export');
 //
-//    Route::get('charts', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'charts'])->name('virement-charts');
+//    Route::get('charts', [App\Http\Controllers\EForms\KilometerAllowance\KilometerAllowanceController::class, 'charts'])->name('virement.charts');
 
 });
 
@@ -735,18 +735,18 @@ Route::group([
     'prefix' => 'datacenter_ca',
     'middleware' => 'auth'], function () {
 
-    Route::get('home', [App\Http\Controllers\EForms\DataCenterCA\HomeController::class, 'index'])->name('datacenter-ca-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'index'])->name('datacenter-ca-list');
-    Route::get('create', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'create'])->name('datacenter-ca-create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'show'])->name('datacenter-ca-show');
-    Route::post('store', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'store'])->name('datacenter-ca-store');
-//    Route::post('approve', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'approve'])->name('datacenter-ca-approve');
-//    Route::post('update', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'update'])->name('datacenter-ca-update');
-//    Route::post('destroy/{id}', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'destroy'])->name('datacenter-ca-destroy');
-    Route::get('reports', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'reports'])->name('datacenter-ca-report');
-//    Route::get('reportExport', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'reportsExport'])->name('datacenter-ca-report-export');
+    Route::get('home', [App\Http\Controllers\EForms\DataCenterCA\HomeController::class, 'index'])->name('datacenter.ca.home');
+    Route::get('list/{value}', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'index'])->name('datacenter.ca.list');
+    Route::get('create', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'create'])->name('datacenter.ca.create');
+    Route::post('show/{id}', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'show'])->name('datacenter.ca.show');
+    Route::post('store', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'store'])->name('datacenter.ca.store');
+//    Route::post('approve', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'approve'])->name('datacenter.ca.approve');
+//    Route::post('update', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'update'])->name('datacenter.ca.update');
+//    Route::post('destroy/{id}', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'destroy'])->name('datacenter.ca.destroy');
+    Route::get('reports', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'reports'])->name('datacenter.ca.report');
+//    Route::get('reportExport', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'reportsExport'])->name('datacenter.ca.report-export');
 //
-//    Route::get('charts', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'charts'])->name('datacenter-ca-charts');
+//    Route::get('charts', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'charts'])->name('datacenter.ca.charts');
 
 });
 
@@ -766,21 +766,21 @@ Route::group([
     'middleware' => 'auth'], function () {
 
     //petty cah routes
-    Route::get('home', [App\Http\Controllers\EForms\Trip\HomeController::class, 'index'])->name('trip-home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'index'])->name('trip-list');
-    Route::get('create', [App\Http\Controllers\EForms\Trip\TripController::class, 'create'])->name('trip-create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'show'])->name('trip-show');
-    Route::post('store', [App\Http\Controllers\EForms\Trip\TripController::class, 'store'])->name('trip-store');
-    Route::post('approve', [App\Http\Controllers\EForms\Trip\TripController::class, 'approve'])->name('trip-approve');
-    Route::post('update', [App\Http\Controllers\EForms\Trip\TripController::class, 'update'])->name('trip-update');
-    Route::post('destroy/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'destroy'])->name('trip-destroy');
-    Route::get('reports', [App\Http\Controllers\EForms\Trip\TripController::class, 'reports'])->name('trip-report');
-    Route::get('reportExport', [App\Http\Controllers\EForms\Trip\TripController::class, 'reportsExport'])->name('trip-report-export');
+    Route::get('home', [App\Http\Controllers\EForms\Trip\HomeController::class, 'index'])->name('trip.home');
+    Route::get('list/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'index'])->name('trip.list');
+    Route::get('create', [App\Http\Controllers\EForms\Trip\TripController::class, 'create'])->name('trip.create');
+    Route::post('show/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'show'])->name('trip.show');
+    Route::post('store', [App\Http\Controllers\EForms\Trip\TripController::class, 'store'])->name('trip.store');
+    Route::post('approve', [App\Http\Controllers\EForms\Trip\TripController::class, 'approve'])->name('trip.approve');
+    Route::post('update', [App\Http\Controllers\EForms\Trip\TripController::class, 'update'])->name('trip.update');
+    Route::post('destroy/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'destroy'])->name('trip.destroy');
+    Route::get('reports', [App\Http\Controllers\EForms\Trip\TripController::class, 'reports'])->name('trip.report');
+    Route::get('reportExport', [App\Http\Controllers\EForms\Trip\TripController::class, 'reportsExport'])->name('trip.report-export');
 
-    Route::get('records/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'records'])->name('trip-record');
-    Route::post('void/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'void'])->name('trip-void');
+    Route::get('records/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'records'])->name('trip.record');
+    Route::post('void/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'void'])->name('trip.void');
 
-    Route::get('charts', [App\Http\Controllers\EForms\Trip\TripController::class, 'charts'])->name('trip-charts');
+    Route::get('charts', [App\Http\Controllers\EForms\Trip\TripController::class, 'charts'])->name('trip.charts');
 
 });
 
@@ -803,17 +803,17 @@ Route::group([
         Route::get('sync', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'sync'])->name('petty.cash.workflow.sync');
     });
 
-    //config_work_flow for accommodation
-    Route::group([
-        'prefix' => 'hotel/accommodation'], function () {
-        Route::get('list', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'index'])->name('hotel.accommodation.workflow');
-        Route::post('store', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'store'])->name('hotel.accommodation.workflow.store');
-        Route::post('update/{code}', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'update'])->name('hotel.accommodation.workflow.update');
-        Route::post('destroy/{id}', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'destroy'])->name('hotel.accommodation.workflow.destroy');
-        Route::post('search', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'search'])->name('hotel.accommodation.workflow.search');
-        Route::get('show/{id}/{code}', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'show'])->name('hotel.accommodation.show');
-        Route::get('sync', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'sync'])->name('hotel.accommodation.workflow.sync');
-    });
+//    //config_work_flow for accommodation
+//    Route::group([
+//        'prefix' => 'hotel/accommodation'], function () {
+//        Route::get('list', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'index'])->name('hotel.accommodation.workflow');
+//        Route::post('store', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'store'])->name('hotel.accommodation.workflow.store');
+//        Route::post('update/{code}', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'update'])->name('hotel.accommodation.workflow.update');
+//        Route::post('destroy/{id}', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'destroy'])->name('hotel.accommodation.workflow.destroy');
+//        Route::post('search', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'search'])->name('hotel.accommodation.workflow.search');
+//        Route::get('show/{id}/{code}', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'show'])->name('hotel.accommodation.show');
+//        Route::get('sync', [App\Http\Controllers\EForms\HotelAccomodation\WorkFlowController::class, 'sync'])->name('hotel.accommodation.workflow.sync');
+//    });
 
 
     //config_work_flow for subsistence
@@ -860,7 +860,7 @@ Route::group([
     'middleware' => 'auth'],
     function () {
 
-        //petty cash routes
+        //hotel_accommodation routes
         Route::get('home', [App\Http\Controllers\EForms\HotelAccommodation\HomeController::class, 'index'])->name('hotel.accommodation.home');
         Route::get('list/{value}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'index'])->name('hotel.accommodation.list');
         Route::get('create', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'create'])->name('hotel.accommodation.create');
@@ -900,6 +900,66 @@ Route::group([
             Route::get('index', [App\Http\Controllers\EForms\HotelAccommodation\ReportsController::class, 'filteredReports'])->name('hotel.accommodation.filtered.report');
             Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\HotelAccommodation\ReportsController::class, 'getFilteredReports'])->name('hotel.accommodation.filtered.get');
         });
+
+
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+|PURCHASE ORDER AMENDMENT DASHBOARD WEB ROUTES
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for the PURCHASE ORDER AMENDMENT DASHBOARD.
+|
+*/
+
+Route::group([
+    'namespace' => 'purchase_order',
+    'prefix' => 'purchase/order',
+    'middleware' => 'auth'],
+    function () {
+
+        //hotel_accommodation routes
+        Route::get('home', [App\Http\Controllers\EForms\PurchaseOrder\HomeController::class, 'index'])->name('purchase.order.home');
+        Route::get('list/{value}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'index'])->name('purchase.order..list');
+        Route::get('create', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'create'])->name('purchase.order..create');
+//        Route::post('show/{id}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'show'])->name('purchase.order..show');
+//        Route::post('store', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'store'])->name('purchase.order..store');
+//        Route::post('approve', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'approve'])->name('purchase.order..approve');
+//        Route::post('update', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'update'])->name('purchase.order..update');
+//        Route::post('destroy/{id}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'destroy'])->name('purchase.order..destroy');
+//        Route::get('reports/{value}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'reports'])->name('purchase.order..report');
+//        Route::get('reportExport', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'reportsExport'])->name('purchase.order..report.export');
+//        Route::get('reportSync', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'reportsSync'])->name('purchase.order..report.sync');
+//        Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsExportUnmarkExported'])->name('purchase.order..report.export.unmark.exported');
+//        Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsExportUnmarkExportedAll'])->name('purchase.order..report.export.unmark.exported.all');
+//        Route::get('sync/{id}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'sync'])->name('purchase.order.sync');
+//        Route::get('records/{value}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'records'])->name('purchase.order..record');
+//        Route::post('void/{id}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'void'])->name('purchase.order..void');
+//        Route::post('reverse/{id}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'reverse'])->name('purchase.order..reverse');
+//        Route::post('search', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'search'])->name('purchase.order..search');
+//
+//        Route::get('charts', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'charts'])->name('purchase.order..charts');
+//        Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'markAccountLinesAsDuplicates'])->name('purchase.order..accounts.duplicate.remove');
+//        Route::get('showForm/{id}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'showForm'])->name('purchase.order..reports.show');
+
+//        //REPORTS
+//        Route::group([
+//            'prefix' => 'report'
+//        ], function () {
+//            Route::get('directorates', [App\Http\Controllers\EForms\HotelAccommodation\ReportsController::class, 'index'])->name('hotel.accommodation.reports.index');
+//            Route::get('syncDirectorates', [App\Http\Controllers\EForms\HotelAccommodation\ReportsController::class, 'syncDirectorates'])->name('hotel.accommodation.reports.sync.directorates');
+//            Route::get('syncUserUnits', [App\Http\Controllers\EForms\HotelAccommodation\ReportsController::class, 'syncUserUnits'])->name('hotel.accommodation.reports.sync.units');
+//
+//        });
+//
+//        Route::group([
+//            'prefix' => 'filtered/report'
+//        ], function () {
+//            Route::get('index', [App\Http\Controllers\EForms\HotelAccommodation\ReportsController::class, 'filteredReports'])->name('hotel.accommodation.filtered.report');
+//            Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\HotelAccommodation\ReportsController::class, 'getFilteredReports'])->name('hotel.accommodation.filtered.get');
+//        });
 
 
     });

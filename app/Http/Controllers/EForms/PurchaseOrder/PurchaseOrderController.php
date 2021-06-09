@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\EForms\HotelAccommodation;
+namespace App\Http\Controllers\EForms\PurchaseOrder;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Main\ActivityLogsController;
@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Redirect;
 use Mockery\CountValidator\Exception;
 
 
-class HotelAccommodationController extends Controller
+class PurchaseOrderControllerController extends Controller
 {
 
     /**
