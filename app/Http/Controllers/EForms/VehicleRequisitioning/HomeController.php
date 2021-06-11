@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Eforms\KilometerAllowance;
+namespace App\Http\Controllers\Eforms\VehicleRequisitioning;
 
 use App\Http\Controllers\Controller;
 use App\Models\Main\ProfileDelegatedModel;
@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\EForms\KilometerAllowance\KilometerAllowanceModel;
+use App\Models\EForms\VehicleRequisitioning\VehicleRequisitioningModel;
 use App\Models\Main\ProfileAssigmentModel;
 
 class HomeController extends Controller
@@ -22,8 +22,8 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.kilometer_allowance')]);
-        session(['eform_code' => config('constants.eforms_name.kilometer_allowance')]);
+        session(['eform_id' => config('constants.eforms_id.vehicle_requisitioning')]);
+        session(['eform_code' => config('constants.eforms_name.vehicle_requisitioning')]);
 
     }
 
@@ -36,27 +36,27 @@ class HomeController extends Controller
     public function index()
     {
         //count new forms
-        $new_forms = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.new_application'))
+        $new_forms = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.new_application'))
             ->count();
         //count pending forms
-        $pending_forms = KilometerAllowanceModel::
-        where('config_status_id',  config('constants.kilometer_allowance_status.new_application'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.hod_approved'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.manager_approved'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.hr_approved'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.chief_accountant'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.audit_approved'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.audited'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.funds_disbursement'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.funds_acknowledgement'))
-            ->orWhere('config_status_id',   config('constants.kilometer_allowance_status.security_approved'))
+        $pending_forms = VehicleRequisitioningModel::
+        where('config_status_id',  config('constants.vehicle_requisitioning_status.new_application'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.hod_approved'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.manager_approved'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.hr_approved'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.chief_accountant'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.audit_approved'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.audited'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.funds_disbursement'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.funds_acknowledgement'))
+            ->orWhere('config_status_id',   config('constants.vehicle_requisitioning_status.security_approved'))
 
             ->count();
         //count closed forms
-        $closed_forms = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.receipt_approved'))
+        $closed_forms = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.receipt_approved'))
             ->count();
         //count rejected forms
-        $rejected_forms = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.rejected'))
+        $rejected_forms = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.rejected'))
             ->count();
 
         //add to totals
@@ -84,8 +84,8 @@ class HomeController extends Controller
             $fromDate = Carbon::now()->subMonth()->startOfMonth()->toDateString();
             $tillDate = Carbon::now()->subMonth()->endOfMonth()->toDateString();
 
-            $list_for_auditors_action = KilometerAllowanceModel::
-            where('config_status_id', config('constants.kilometer_allowance_status.closed'))
+            $list_for_auditors_action = VehicleRequisitioningModel::
+            where('config_status_id', config('constants.vehicle_requisitioning_status.closed'))
                 ->where('created_at', '>=', $fromDate)
                 ->orWhere('created_at', '<=', $tillDate)
                 ->count();
@@ -100,16 +100,16 @@ class HomeController extends Controller
             'auditor' => $list_for_auditors_action,
         ];
         //return view
-        return view('eforms.kilometer-allowance.dashboard')->with($params);
+        return view('eforms.vehicle-requisitioning.dashboard')->with($params);
     }
 
     public static function getMyProfile()
     {
-        //get the profile associated with petty cash, for this user
+        //get the profile associated with vehicle requisitioning, for this user
         $user = Auth::user();
         //[1]  GET YOUR PROFILE
         $profile_assignement = ProfileAssigmentModel::
-        where('eform_id', config('constants.eforms_id.kilometer_allowance'))
+        where('eform_id', config('constants.eforms_id.vehicle_requisitioning'))
             ->where('user_id', $user->id)->first();
         //  use my profile - if i dont have one - give me the default
         $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
@@ -120,7 +120,7 @@ class HomeController extends Controller
 
         //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
         $profile_delegated = ProfileDelegatedModel::
-        where('eform_id', config('constants.eforms_id.kilometer_allowance'))
+        where('eform_id', config('constants.eforms_id.vehicle_requisitioning'))
             ->where('delegated_to', $user->id)
             ->where('config_status_id', config('constants.active_state'));
         if ($profile_delegated->exists()) {
@@ -140,44 +140,44 @@ class HomeController extends Controller
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-            $list = KilometerAllowanceModel::whereDate('updated_at', \Carbon::today())->count();
+            $list = VehicleRequisitioningModel::whereDate('updated_at', \Carbon::today())->count();
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-            $list = KilometerAllowanceModel::where('config_status_id', '=', config('constants.kilometer_allowance_status.new_application'))
-                ->orWhere('config_status_id', '=', config('constants.kilometer_allowance_status.funds_disbursement'))
+            $list = VehicleRequisitioningModel::where('config_status_id', '=', config('constants.vehicle_requisitioning_status.new_application'))
+                ->orWhere('config_status_id', '=', config('constants.vehicle_requisitioning_status.funds_disbursement'))
                 ->count();
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.new_application'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
                 ->count();
         } //for the SENIOR MANAGER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.hod_approved'))->count();
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.hod_approved'))->count();
         }
         //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.manager_approved'))->count();
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.manager_approved'))->count();
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.hr_approved'))->count();
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.hr_approved'))->count();
 
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.audited'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.audited'))
                 ->count();
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.funds_acknowledgement'))->count();
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.funds_acknowledgement'))->count();
             //
         } //for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.closed'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.closed'))
                 ->count();
         } else {
-            $list = KilometerAllowanceModel::where('config_status_id', 0)->count();
+            $list = VehicleRequisitioningModel::where('config_status_id', 0)->count();
         }
         return $list;
     }
@@ -189,50 +189,50 @@ class HomeController extends Controller
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-            $list = KilometerAllowanceModel::whereDate('updated_at', \Carbon::today())
+            $list = VehicleRequisitioningModel::whereDate('updated_at', \Carbon::today())
                 ->orderBy('code')->paginate(50);
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-            $list = KilometerAllowanceModel::where('config_status_id', '=', config('constants.kilometer_allowance_status.new_application'))
-                ->orWhere('config_status_id', '=', config('constants.kilometer_allowance_status.funds_disbursement'))
+            $list = VehicleRequisitioningModel::where('config_status_id', '=', config('constants.vehicle_requisitioning_status.new_application'))
+                ->orWhere('config_status_id', '=', config('constants.vehicle_requisitioning_status.funds_disbursement'))
                 ->orderBy('code')->paginate(50);
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.new_application'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
                 ->orderBy('code')->paginate(50);
         } //for the SENIOR MANAGER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.hod_approved'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.hod_approved'))
                 ->orderBy('code')->paginate(50);
         }//for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.manager_approved'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.manager_approved'))
                 ->orderBy('code')->paginate(50);
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.hr_approved'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.hr_approved'))
                 ->orderBy('code')->paginate(50);
 
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.audited'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.audited'))
                     ->orderBy('code')->paginate(50);
 
          //   dd(3233);
 
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.funds_acknowledgement'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.funds_acknowledgement'))
                 ->orderBy('code')->paginate(50);
         }//for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-            $list = KilometerAllowanceModel::where('config_status_id', config('constants.kilometer_allowance_status.closed'))
+            $list = VehicleRequisitioningModel::where('config_status_id', config('constants.vehicle_requisitioning_status.closed'))
                 ->orderBy('code')->paginate(50);
         } else {
-            $list = KilometerAllowanceModel::where('config_status_id', 0)
+            $list = VehicleRequisitioningModel::where('config_status_id', 0)
                 ->orderBy('code')->paginate(50);
             //  dd(8) ;
         }
@@ -247,8 +247,8 @@ class HomeController extends Controller
         //for the REQUESTER
         if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             //count pending applications
-            $pending = KilometerAllowanceModel::where('config_status_id', '>=', config('constants.kilometer_allowance_status.new_application'))
-                ->where('config_status_id', '<', config('constants.kilometer_allowance_status.closed'))
+            $pending = VehicleRequisitioningModel::where('config_status_id', '>=', config('constants.vehicle_requisitioning_status.new_application'))
+                ->where('config_status_id', '<', config('constants.vehicle_requisitioning_status.closed'))
                 ->count();
         }
 

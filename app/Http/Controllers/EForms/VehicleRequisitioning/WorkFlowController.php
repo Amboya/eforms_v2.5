@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\EForms\KilometerAllowance;
+namespace App\Http\Controllers\EForms\VehicleRequisitioning;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Main\ActivityLogsController;
@@ -27,8 +27,8 @@ class WorkFlowController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.kilometer_allowance')]);
-        session(['eform_code' => config('constants.eforms_name.kilometer_allowance')]);
+        session(['eform_id' => config('constants.eforms_id.vehicle_requisitioning')]);
+        session(['eform_code' => config('constants.eforms_name.vehicle_requisitioning')]);
     }
 
 
@@ -55,7 +55,7 @@ class WorkFlowController extends Controller
             'list' => $list,
         ];
 
-        return view('eforms.kilometer-allowance.workflow')->with($params);
+        return view('eforms.vehicle-requisitioning.workflow')->with($params);
     }
 
     /**
@@ -121,7 +121,7 @@ class WorkFlowController extends Controller
             'workflow' => $workflow,
         ];
 
-        return view('eforms.kilometer-allowance.showworkflow')->with($params);
+        return view('eforms.vehicle-requisitioning.showworkflow')->with($params);
     }
 
     /**
@@ -160,9 +160,9 @@ class WorkFlowController extends Controller
         $model->audit_unit = $request->audit_unit ??  "" ;
         $model->save();
 
-        //[2] update the kilometer allowance form
+        //[2] update the vehicle requisitioning form
         if($form_id != config('constants.all')){
-            $update_eform_kilometer_allowance = DB::table('eform_kilometer_allowance')
+            $update_eform_vehicle_requisitioning = DB::table('eform_vehicle_requisitioning')
                 ->where('id', $form_id)
                 ->update([
                     'cost_center' => $model->user_unit_cc_code,
@@ -183,9 +183,9 @@ class WorkFlowController extends Controller
                     'audit_unit' => $model->audit_unit
                 ]);
 
-            //[3] update the kilometer allowance account lines
-            $update_eform_kilometer_allowance_account = DB::table('eform_kilometer_allowance_account')
-                ->where('eform_kilometer_allowance_id', $form_id)
+            //[3] update the vehicle requisitioning account lines
+            $update_eform_vehicle_requisitioning_account = DB::table('eform_vehicle_requisitioning_account')
+                ->where('eform_vehicle_requisitioning_id', $form_id)
                 ->update([
                     'cost_center' => $model->user_unit_cc_code,
                     'business_unit_code' => $model->user_unit_bc_code,
@@ -207,8 +207,8 @@ class WorkFlowController extends Controller
         }
 
         //log the activity
-        //  ActivityLogsController::store($request, "Updating of kilometer allowance User Unit Workflow", "update", "kilometer allowance unit user workflow updated", $model->id);
-        return Redirect::route('kilometer.allowance.home')->with('message', 'Work Flow for ' . $model->name . ' have been Updated successfully');
+        //  ActivityLogsController::store($request, "Updating of vehicle requisitioning User Unit Workflow", "update", "vehicle requisitioning unit user workflow updated", $model->id);
+        return Redirect::route('vehicle.requisitioning.home')->with('message', 'Work Flow for ' . $model->name . ' have been Updated successfully');
 
     }
 
@@ -254,7 +254,7 @@ class WorkFlowController extends Controller
             'workflow' => $workflow->first(),
         ];
 
-        return view('eforms.kilometer-allowance.showworkflow')->with($params);
+        return view('eforms.vehicle-requisitioning.showworkflow')->with($params);
     }
 
 

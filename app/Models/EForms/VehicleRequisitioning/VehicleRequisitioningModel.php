@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Eforms\KilometerAllowance;
+namespace App\Models\Eforms\VehicleRequisitioning;
 
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\ProfileAssigmentModel;
@@ -13,13 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class KilometerAllowanceModel extends Model
+class VehicleRequisitioningModel extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     //table name
-    protected $table = 'eform_kilometer_allowance';
+    protected $table = 'eform_vehicle_requisitioning';
     //primary key
     protected $primaryKey = 'id';
     //fields fillable
@@ -107,11 +107,11 @@ class KilometerAllowanceModel extends Model
         'expenditure_unit'
 
     ];
-//    protected $with = [
-//        'user',
-//        'status',
-//        'user_unit',
-//    ];
+    protected $with = [
+        'user',
+        'status',
+        'user_unit',
+    ];
 
     protected static function booted()
     {
@@ -122,7 +122,7 @@ class KilometerAllowanceModel extends Model
 
             //[1]  GET YOUR PROFILE
             $profile_assignement = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.kilometer_allowance'))
+            where('eform_id', config('constants.eforms_id.vehicle_requisitioning'))
                 ->where('user_id', $user->id)->first();
             //  use my profile - if i dont have one - give me the default
             $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
@@ -132,7 +132,7 @@ class KilometerAllowanceModel extends Model
             $user->save();
 
             //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
-            $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.kilometer_allowance'))
+            $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.vehicle_requisitioning'))
                 ->where('delegated_to', $user->id)
                 ->where('config_status_id', config('constants.active_state'));
             if ($profile_delegated->exists()) {

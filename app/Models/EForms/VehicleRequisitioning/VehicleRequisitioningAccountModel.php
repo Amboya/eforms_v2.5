@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\EForms\KilometerAllowance;
+namespace App\Models\EForms\VehicleRequisitioning;
 
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class KilometerAllowanceAccountModel extends Model
+class VehicleRequisitioningAccountModel extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     //table name
-    protected $table = 'eform_kilometer_allowance_account';
+    protected $table = 'eform_vehicle_requisitioning_account';
     //primary key
     protected $primaryKey = 'id';
     //fields fillable
@@ -26,7 +26,7 @@ class KilometerAllowanceAccountModel extends Model
         'creditted_amount',
         'debitted_account_id',
         'debitted_amount',
-        'eform_kilometer_allowance_id',
+        'eform_vehicle_requisitioning_id',
 
         'subsistence_code',
 
@@ -58,9 +58,9 @@ class KilometerAllowanceAccountModel extends Model
         'deleted_at',
     ];
 
-//    protected $with = [
-//        'status',
-//    ];
+    protected $with = [
+        'status',
+    ];
 
 
     public function status()

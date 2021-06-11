@@ -1,4 +1,4 @@
-@extends('layouts.eforms.kilometer-allowance.master')
+@extends('layouts.eforms.vehicle-requisitioning.master')
 
 
 @push('custom-styles')
@@ -15,12 +15,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">New Kilometer Allowance</h1>
+                    <h1 class="m-0 text-dark">New Vehicle Requisition</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('kilometer.allowance.home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">New Kilometer Allowance</li>
+                        <li class="breadcrumb-item"><a href="{{route('vehicle.requisitioning.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">New Vehicle Requisition</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -57,7 +57,7 @@
 
     <!-- Default box -->
         <div class="card">
-            <form enctype="multipart/form-data" name="db1" action="{{route('kilometer.allowance.store')}}"
+            <form enctype="multipart/form-data" name="db1" action="{{route('vehicle.requisitioning.store')}}"
                   method="post">
                 @csrf
                 <div class="card-body">
@@ -69,7 +69,7 @@
                             <th width="33%" class="text-center"><a href="#"><img
                                         src="{{ asset('dashboard/dist/img/zesco1.png')}}" title="ZESCO" alt="ZESCO"
                                         width="30%"></a></th>
-                            <th width="33%" colspan="4" class="text-center">CLAIM FOR KILOMETER ALLOWANCE</th>
+                            <th width="33%" colspan="4" class="text-center">Vehicle Requisition</th>
                             <th width="34%" colspan="1" class="p-3">Doc Number:<br>CO.14900.FORM.00039<br>Version: 3
                             </th>
                         </tr>
@@ -102,7 +102,7 @@
                                     <input value="{{Auth::user()->staff_no }}" type="text" name="employee_number"
                                            readonly class="form-control">
                                 </div>
-/                            </div>
+                            </div>
                         </div>
                         <div class="col-4 mb-1 ">
                             <div class="row">
@@ -414,7 +414,7 @@
 
             if (!isNaN(total)) {
 
-                //check if petty cash is below 2000
+                //check if vehicle requisition is below 2000
                 if (total > 2000) {
                     $('#submit_possible').hide();
                     $('#submit_not_possible').show();

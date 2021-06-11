@@ -1,11 +1,11 @@
-@extends('layouts.eforms.kilometer-allowance.master')
+@extends('layouts.eforms.vehicle-requisitioning.master')
 
 
 @push('custom-styles')
 
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/select2/css/select2.min.css')}}">
-    <link rel="stylesheet" href="{{ asset('d/ashboard/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
 @endpush
 
 
@@ -16,12 +16,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Kilometer Allowance Voucher {{ $form->code }} </h1>
+                    <h1 class="m-0 text-dark">Vehicle Requisition {{ $form->code }} </h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('kilometer.allowance.home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Kilometer Allowance Voucher</li>
+                        <li class="breadcrumb-item"><a href="{{route('vehicle.requisitioning.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">Vehicle Requisition</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -54,7 +54,7 @@
             </div>
         @endif
 
-        <form id="show_form" name="db1" action="{{route('kilometer.allowance.approve')}}" method="post"
+        <form id="show_form" name="db1" action="{{route('vehicle.requisitioning.approve')}}" method="post"
               enctype="multipart/form-data">
         @csrf
 
@@ -72,7 +72,7 @@
                             <th width="33%" class="text-center"><a href="#"><img
                                         src="{{ asset('dashboard/dist/img/zesco1.png')}}" title="ZESCO" alt="ZESCO"
                                         width="30%"></a></th>
-                            <th width="33%" colspan="4" class="text-center">Kilometer Allowance Claim Voucher</th>
+                            <th width="33%" colspan="4" class="text-center">Vehicle Requisition</th>
                             <th width="34%" colspan="1" class="p-3">Doc Number:<br>CO.14900.FORM.00165<br>Version: 3
                             </th>
                         </tr>
@@ -252,10 +252,10 @@
                                     <div class="row">
 {{--                                        @foreach($attached_files as $item)--}}
 {{--                                            <div class="col-3">--}}
-{{--                                                <iframe id="{{$item->id}}" src="{{asset('storage/kilometer_allowance_files/'.$item->name)}}"--}}
+{{--                                                <iframe id="{{$item->id}}" src="{{asset('storage/vehicle_requisitioning_files/'.$item->name)}}"--}}
 {{--                                                        style="width:100%;" title="{{$item->name}}"></iframe>--}}
 {{--                                                <span>{{$item->file_size}}MB {{$item->name}} </span>--}}
-{{--                                                <a href="{{asset('storage/kilometer_allowance_files/'.$item->name)}}">View</a>--}}
+{{--                                                <a href="{{asset('storage/vehicle_requisitioning_files/'.$item->name)}}">View</a>--}}
 {{--                                            </div>--}}
 {{--                                        @endforeach--}}
                                     </div>
@@ -387,7 +387,7 @@
                 </div>
             @endif
             {{-- NEXT PERSONS TO ACT --}}
-            @if(  $form->config_status_id != config('constants.kilometer_allowance_status.closed')   )
+            @if(  $form->config_status_id != config('constants.vehicle_requisitioning_status.closed')   )
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Next Person/s to Act</h4>
@@ -407,7 +407,7 @@
                     </div>
                     <div class="card-footer">
                         <span class="font-weight-bold">Next Action:</span><span> {{$form->status->other}}</span>
-                        @if ($form->status->id == config('constants.kilometer_allowance_status.security_approved'))
+                        @if ($form->status->id == config('constants.vehicle_requisitioning_status.security_approved'))
                             <span class="font-weight-bold text-red"> Note:</span><span class="text-red"> Export Data to Excel and Import in Oracle Financial's using ADI</span>
                         @endif
                     </div>
@@ -431,11 +431,11 @@
                     <div class="row">
                         @foreach($quotations as $item)
                             <div class="col-12">
-                                <iframe id="{{$item->id}}" src="{{asset('storage/kilometer_allowance_quotation/'.$item->name)}}"
+                                <iframe id="{{$item->id}}" src="{{asset('storage/vehicle_requisitioning_quotation/'.$item->name)}}"
                                         style="width:100%; " title="{{$item->name}}"></iframe>
                                 <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                 <span> | </span>
-                                <a href="{{asset('storage/kilometer_allowance_quotation/'.$item->name)}}">View</a>
+                                <a href="{{asset('storage/vehicle_requisitioning_quotation/'.$item->name)}}">View</a>
                                 @if( ($user->type_id == config('constants.user_types.developer')  || (
                                     $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                                   &&  $user->id  == $form->created_by )
@@ -454,17 +454,17 @@
             </div>
 
             {{--  RECEIPT FILES - ONLY WHEN FORM HAS BEEN CLOSED--}}
-{{--            @if(  $form->config_status_id == config('constants.kilometer_allowance_status.closed')--}}
-{{--            ||  $form->config_status_id == config('constants.kilometer_allowance_status.audited')--}}
-{{--            ||  $form->config_status_id == config('constants.kilometer_allowance_status.queried')    )--}}
+{{--            @if(  $form->config_status_id == config('constants.vehicle_requisitioning_status.closed')--}}
+{{--            ||  $form->config_status_id == config('constants.vehicle_requisitioning_status.audited')--}}
+{{--            ||  $form->config_status_id == config('constants.vehicle_requisitioning_status.queried')    )--}}
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Receipt Files</h4>
                         @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                 &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
               || ($user->type_id == config('constants.user_types.developer'))
-            &&  ( ($form->config_status_id == config('constants.kilometer_allowance_status.queried')) ||
-            ($form->config_status_id == config('constants.kilometer_allowance_status.closed')) ) )    )
+            &&  ( ($form->config_status_id == config('constants.vehicle_requisitioning_status.queried')) ||
+            ($form->config_status_id == config('constants.vehicle_requisitioning_status.closed')) ) )    )
                             <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
                                data-target="#modal-add-receipt">Add File</a>
                         @endif
@@ -474,17 +474,17 @@
                             @foreach($receipts as $item)
                                 <div class="col-12">
                                     <iframe id="{{$item->id}}"
-                                            src="{{asset('storage/kilometer_allowance_receipt/'.$item->name)}}"
+                                            src="{{asset('storage/vehicle_requisitioning_receipt/'.$item->name)}}"
                                             style="width:100%; " title="{{$item->name}}"></iframe>
                                     <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                     <span> | </span>
-                                    <a href="{{asset('storage/kilometer_allowance_receipt/'.$item->name)}}">View</a>
+                                    <a href="{{asset('storage/vehicle_requisitioning_receipt/'.$item->name)}}">View</a>
 
                                     @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                              &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
                            || ($user->type_id == config('constants.user_types.developer'))  )
-                         &&  ( ($form->config_status_id == config('constants.kilometer_allowance_status.queried')) ||
-                         ($form->config_status_id == config('constants.kilometer_allowance_status.closed'))  )    )
+                         &&  ( ($form->config_status_id == config('constants.vehicle_requisitioning_status.queried')) ||
+                         ($form->config_status_id == config('constants.vehicle_requisitioning_status.closed'))  )    )
                                         <span> | </span>
                                         <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
                                            data-target="#modal-change">Edit</a>
@@ -542,7 +542,7 @@
                 <div class="card-footer">
                     {{--  CLAIMANT EDIT--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.new_application')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.new_application')
                          &&  $user->id  == $form->created_by)
                         <div class="">
                             <hr>
@@ -561,7 +561,7 @@
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
-                                                value='Cancelled'>CANCEL KILOMETER ALLOWANCE
+                                                value='Cancelled'>CANCEL VEHICLE REQUISITION
                                         </button>
                                         <button hidden id="btnSubmit_reject" type="submit" name="approval"
                                                 class="btn btn-outline-danger ml-2 p-2  "
@@ -580,7 +580,7 @@
 
                     {{--  HOD APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.new_application')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.new_application')
                          &&  $form->user_unit->hod_code == $user->profile_job_code
                          &&  $form->user_unit->hod_unit == $user->profile_unit_code
                       )
@@ -620,7 +620,7 @@
 
                     {{--  SENIOR MANAGER APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.hod_approved')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.hod_approved')
                          &&  $form->user_unit->dm_code == $user->profile_job_code
                          &&  $form->user_unit->dm_unit == $user->profile_unit_code
                      )
@@ -659,7 +659,7 @@
                     @endif
                     {{--  HR APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.manager_approved')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.manager_approved')
                          &&  $form->user_unit->hrm_code == $user->profile_job_code
                          &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                      )
@@ -699,7 +699,7 @@
 
                     {{--  CHIEF ACCOUNTANT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.hr_approved')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.hr_approved')
                          &&  $form->user_unit->ca_code == $user->profile_job_code
                          &&  $form->user_unit->ca_unit == $user->profile_unit_code
                         )
@@ -739,7 +739,7 @@
 
                     {{--  FUNDS DISBURSEMNET APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.audited')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.audited')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
@@ -760,7 +760,7 @@
                                                                     required
                                                                     class="form-control amount">
                                                                 @foreach($accounts as $account)
-{{--                                                                    @if($account->id  ==  config('constants.kilometer_allowance_account_id')  )--}}
+{{--                                                                    @if($account->id  ==  config('constants.vehicle_requisitioning_account_id')  )--}}
                                                                         <option
                                                                             value="{{$account->code}}">{{$account->name}}
                                                                             :{{$account->code}}</option>
@@ -858,7 +858,7 @@
 
                     {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.funds_disbursement')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.funds_disbursement')
                          &&  $form->staff_no == $user->staff_no
                           )
                         <div class="">
@@ -904,7 +904,7 @@
 
                     {{--  SECURITY APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_013')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.funds_acknowledgement')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.funds_acknowledgement')
                          &&  $form->user_unit->security_unit == $user->profile_unit_code
                         )
                         <div class="">
@@ -957,7 +957,7 @@
 
                     {{--  RECEIPT UPLOAD--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.security_approved')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.security_approved')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
@@ -1003,7 +1003,7 @@
                                                         <select name="debited_account" id="debited_account1"
                                                                 class="form-control amount">
                                                             @foreach($accounts as $account)
-{{--                                                                @if($account->id  ==  config('constants.kilometer_allowance_account_id')  )--}}
+{{--                                                                @if($account->id  ==  config('constants.vehicle_requisitioning_account_id')  )--}}
                                                                     <option
                                                                         value="{{$account->code}}">{{$account->name}}
                                                                         :{{$account->code}}</option>
@@ -1042,7 +1042,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <textarea hidden class="form-control" rows="2" name="reason" required> Closing of kilometer allowance</textarea>
+                                    <textarea hidden class="form-control" rows="2" name="reason" required> Closing of VEHICLE REQUISITION</textarea>
                                     <div class="col-2 text-center ">
                                         {{--                                        <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
                                         {{--                                                value='Approved'>CLOSE PETTY-CASH--}}
@@ -1080,7 +1080,7 @@
 
                     {{--  AUDIT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
-                        &&  $form->config_status_id == config('constants.kilometer_allowance_status.chief_accountant')
+                        &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.chief_accountant')
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
@@ -1120,7 +1120,7 @@
 
                     {{--  QUERIED RESOLUTION--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.queried')
+                         &&  $form->config_status_id == config('constants.vehicle_requisitioning_status.queried')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                         )
                         <div class="">
@@ -1358,7 +1358,7 @@
 
             if (!isNaN(total)) {
 
-                //check if kilometer allowance accounts is equal to total_payment
+                //check if VEHICLE REQUISITION accounts is equal to total_payment
                 if (total == total_payment) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
@@ -1392,7 +1392,7 @@
 
             if (!isNaN(total)) {
 
-                //check if kilometer allowance accounts is equal to total_payment
+                //check if VEHICLE REQUISITION accounts is equal to total_payment
                 if (total == total_payment) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
@@ -1417,7 +1417,7 @@
 
                 var change_value_int = parseFloat(change_value);
 
-                //check if kilometer allowance accounts is equal to total_payment
+                //check if VEHICLE REQUISITION accounts is equal to total_payment
                 if (Number(change_value_int) > 0) {
                     $('#show_change').show();
                     //set value
@@ -1510,12 +1510,12 @@
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
 
-            var url_start = '{{asset('storage/kilometer_allowance_quotation')}}';
-            var path = "public/kilometer_allowance_quotation";
+            var url_start = '{{asset('storage/vehicle_requisitioning_quotation')}}';
+            var path = "public/vehicle_requisitioning_quotation";
             var dds = recipient.file_type;
             if (dds == 0) {
-                url_start = '{{asset('storage/kilometer_allowance_receipt')}}';
-                path = "public/kilometer_allowance_receipt";
+                url_start = '{{asset('storage/vehicle_requisitioning_receipt')}}';
+                path = "public/vehicle_requisitioning_receipt";
             }
             var url = url_start + "/" + recipient.name;
 
@@ -1537,9 +1537,9 @@
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
 
-            var path = "public/kilometer_allowance_quotation";
+            var path = "public/vehicle_requisitioning_quotation";
             var type = {!! config('constants.file_type.quotation') !!};
-            var form_id = {!! config('constants.eforms_id.kilometer_allowance') !!};
+            var form_id = {!! config('constants.eforms_id.vehicle_requisitioning') !!};
             var form_code = recipient.code;
 
             $('#item_type1').val(type);
@@ -1554,9 +1554,9 @@
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
 
-            var path = "public/kilometer_allowance_receipt";
+            var path = "public/vehicle_requisitioning_receipt";
             var type = {!! config('constants.file_type.receipt') !!};
-            var form_id = {!! config('constants.eforms_id.kilometer_allowance') !!};
+            var form_id = {!! config('constants.eforms_id.vehicle_requisitioning') !!};
             var form_code = recipient.code;
 
             $('#item_type2').val(type);

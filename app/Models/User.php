@@ -106,13 +106,6 @@ class User extends Authenticatable
     }
 
 
-    protected $with = [
-        'user_unit',
-        'user_profile',
-        'delegated_profile',
-        'user_type',
-        'position',
-    ];
 
     //RELATIONSHIP
     public function user_unit(){

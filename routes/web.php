@@ -919,5 +919,62 @@ Route::group([
 //    Route::get('sync', [App\Http\Controllers\LoginAPI\ClientSystemController::class, 'sync'])->name('system.sync');
 
 });
+/*
+|--------------------------------------------------------------------------
+| VEHICLE-REQUISITIONING DASHBOARD WEB ROUTES
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for the VEHICLE-REQUISITIONING DASHBOARD.
+|
+*/
+
+Route::group([
+    'namespace' => 'vehicle_requisitioning',
+    'prefix' => 'vehicle/requisitioning',
+    'middleware' => 'auth'],
+    function () {
+
+        //vehicle requisitioning routes
+        Route::get('home', [App\Http\Controllers\EForms\VehicleRequisitioning\HomeController::class, 'index'])->name('vehicle.requisitioning.home');
+        Route::get('list/{value}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'index'])->name('vehicle.requisitioning.list');
+        Route::get('create', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'create'])->name('vehicle.requisitioning.create');
+        Route::post('show/{id}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'show'])->name('vehicle.requisitioning.show');
+        Route::post('store', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'store'])->name('vehicle.requisitioning.store');
+        Route::post('approve', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'approve'])->name('vehicle.requisitioning.approve');
+        Route::post('update', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'update'])->name('vehicle.requisitioning.update');
+        Route::post('destroy/{id}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'destroy'])->name('vehicle.requisitioning.destroy');
+        Route::get('reports/{value}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'reports'])->name('vehicle.requisitioning.report');
+        Route::get('reportExport', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'reportsExport'])->name('vehicle.requisitioning.report.export');
+        Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'reportsExportUnmarkExportedAll'])->name('vehicle.requisitioning.report.export.unmark.exported.all');
+        Route::get('reportSync', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'reportsSync'])->name('vehicle.requisitioning.report.sync');
+        Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'reportsExportUnmarkExported'])->name('vehicle.requisitioning.report.unmark.exported');
+        Route::get('sync/{id}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'sync'])->name('vehicle.requisitioning.sync');
+        Route::get('records/{value}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'records'])->name('vehicle.requisitioning.record');
+        Route::post('void/{id}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'void'])->name('vehicle.requisitioning.void');
+        Route::post('reverse/{id}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'reverse'])->name('vehicle.requisitioning.reverse');
+        Route::post('search', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'search'])->name('vehicle.requisitioning.search');
+
+        Route::get('charts', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'charts'])->name('vehicle.requisitioning.charts');
+        Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'markAccountLinesAsDuplicates'])->name('vehicle.requisitioning.accounts.duplicate.remove');
+        Route::get('showForm/{id}', [App\Http\Controllers\EForms\VehicleRequisitioning\VehicleRequisitioningController::class, 'showForm'])->name('vehicle.requisitioning.reports.show');
+
+        //REPORTS
+        Route::group([
+            'prefix' => 'report'
+        ], function () {
+            Route::get('directorates', [App\Http\Controllers\EForms\VehicleRequisitioning\ReportsController::class, 'index'])->name('vehicle.requisitioning.reports.index');
+            Route::get('syncDirectorates', [App\Http\Controllers\EForms\VehicleRequisitioning\ReportsController::class, 'syncDirectorates'])->name('vehicle.requisitioning.reports.sync.directorates');
+            Route::get('syncUserUnits', [App\Http\Controllers\EForms\VehicleRequisitioning\ReportsController::class, 'syncUserUnits'])->name('vehicle.requisitioning.reports.sync.units');
+
+        });
+        Route::group([
+            'prefix' => 'filtered/report'
+        ], function () {
+            Route::get('index', [App\Http\Controllers\EForms\VehicleRequisitioning\ReportsController::class, 'filteredReports'])->name('vehicle.requisitioning.filtered.report');
+            Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\VehicleRequisitioning\ReportsController::class, 'getFilteredReports'])->name('vehicle.requisitioning.filtered.get');
+        });
+
+
+    });
 
 

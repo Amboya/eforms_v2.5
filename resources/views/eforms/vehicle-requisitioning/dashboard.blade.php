@@ -1,4 +1,4 @@
-@extends('layouts.eforms.petty-cash.master')
+@extends('layouts.eforms.vehicle-requisitioning.master')
 
 @push('custom-styles')
   <!-- DataTables -->
@@ -15,12 +15,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty Cash</h1>
+                    <h1 class="m-0 text-dark">Vehicle Requisition</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Petty Cash</li>
+                        <li class="breadcrumb-item active">Vehicle Requisition</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -60,7 +60,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty.cash.list', config('constants.petty_cash_status.new_application') ) }}">
+                           href="{{route( 'vehicle.requisitioning.list', config('constants.vehicle_requisitioning_status.new_application') ) }}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -75,7 +75,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty.cash.list', 'pending')}}">
+                           href="{{route( 'vehicle.requisitioning.list', 'pending')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -92,7 +92,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty.cash.list', config('constants.petty_cash_status.closed'))}}">
+                           href="{{route( 'vehicle.requisitioning.list', config('constants.vehicle_requisitioning_status.closed'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -106,7 +106,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty.cash.list', config('constants.petty_cash_status.rejected'))}}">
+                           href="{{route( 'vehicle.requisitioning.list', config('constants.vehicle_requisitioning_status.rejected'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -155,12 +155,12 @@
                                     <thead>
                                     <tr>
                                         <th>Serial</th>
-                                        <th>UserUnit</th>
                                         <th>Claimant</th>
-                                        <th>Payment</th>
+                                        <th>Estimated Cost</th>
+                                        <th>Destination</th>
                                         <th>Status</th>
                                         <th>Period</th>
-                                        <td>View</td>
+                                        <th>View</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -170,27 +170,26 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('petty.cash.show', $item->id) }}"
+                                                      action="{{ route('vehicle.requisitioning.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
                                             </td>
-                                            <td>{{$item->user_unit_code}} : {{$item->user_unit->user_unit_description}}</td>
-                                            <td>{{$item->claimant_name}}</td>
-                                            <td>{{$item->total_payment}}</td>
+                                            <td>{{$item->staff_name}}</td>
+                                            <td>{{$item->amount}}</td>
+                                            <td>{{$item->destination}}</td>
                                             <td><span
                                                     class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>
                                             </td>
                                             <td>{{$item->created_at->diffForHumans()}}</td>
                                             <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
                                                    onclick="event.preventDefault();
-                                                           document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
+                                                       document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('petty.cash.show', $item->id) }}"
+                                                      action="{{ route('vehicle.requisitioning.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
-                                                </form>
-                                            </td>
+                                                </form></td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -201,21 +200,21 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer clearfix">
-                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )
-                                @if($pending < 1)
-                                    <a href="{{route('petty.cash.create')}}"
-                                       class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
-                                @else
-                                    <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
-                                    <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
-                                @endif
-                            @endif
+{{--                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )--}}
+{{--                                @if($pending < 1)--}}
+                                    <a href="{{route('vehicle.requisitioning.create')}}"
+                                       class="btn btn-sm bg-gradient-green float-left">New Vehicle Requisition</a>
+{{--                                @else--}}
+{{--                                    <a href="#" class="btn btn-sm btn-default float-left">New Vehicle Requisition</a>--}}
+{{--                                    <span class="text-danger m-3"> Sorry, You can not raise a new Vehicle Requisition because you already have an open Vehicle Requisition.</span>--}}
+{{--                                @endif--}}
+{{--                            @endif--}}
                                 {!! $list->links() !!}
                         </div>
                         <!-- /.card-footer -->
                     </div>
                     <!-- /.card -->
-                </div>.
+                </div>
                 <!-- /.col -->
             </div>
             <!-- /.row -->

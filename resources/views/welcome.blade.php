@@ -277,7 +277,7 @@
                                             <th>AMOUNT</th>
                                         </tr>
                                         </thead>
-                                    </table>
+                                    </table>.
                                 </div>
                                 <div class="col-lg-12 ">
                                     <TABLE id="dataTable1" class="table">
