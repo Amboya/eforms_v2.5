@@ -79,14 +79,14 @@
                     <div class="row mt-2 mb-2">
                         <div class="col-3">
                             <div class="row">
-                                <div class="col-12"><label>Employee Name:</label></div>
+                                <div class="col-10"><label>Employee Name:</label></div>
                                 <div class="col-12"><input type="text" name="staff_name" value="{{Auth::user()->name}}"
                                                            readonly class="form-control"></div>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-1">
                             <div class="row">
-                                <div class="col-12 "><label>Man No:</label></div>
+                                <div class="col-6 "><label>Man No:</label></div>
                                 <div class="col-12"><input type="text" name="staff_no" class="form-control"
                                                            value="{{Auth::user()->staff_no}}" readonly
                                                            required>
@@ -96,8 +96,18 @@
                         <div class="col-3">
                             <div class="row">
                                 <div class="col-12"><label>Job Title:</label></div>
-                                <div class="col-12"><input type="text" name="jobtitle" class="form-control"
-                                                           value="{{Auth::user()->jobtitle->name}}" readonly
+                                <div class="col-12"><input type="text" name="job_title" class="form-control"
+                                                           value="{{Auth::user()->job_code}}" readonly
+                                                           required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-12"><label>Cost Centre:</label></div>
+                                <div class="col-12"><input type="text" name="cost_centre" class="form-control"
+                                                           value="{{ $user->user_unit->user_unit_code}}" readonly
                                                            required>
                                 </div>
                             </div>
@@ -108,25 +118,15 @@
                     <div class="row mt-2 mb-4">
 
                         <div class="col-3">
-                            <div class="row">
-                                <div class="col-12"><label>Cost Centre:</label></div>
-                                <div class="col-12"><input type="text" name="ref_no" class="form-control"
-                                                           value="{{ $user->user_unit->user_unit_code}}" readonly
-                                                           required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-3">
                             <div class="col-12"><label>Purchase Order No:</label></div>
-                            <select id="hotel" class="form-control select2 " name="hotel"  >
+                            <select id="po" class="form-control select2 " name="purchase_order_no"  >
                                 <option value="" selected disabled >Select Purchase Order Number</option>
-                                @foreach(purchaseorder as $item)
-                                    <option value="{{$item->document_no}}" >{{$item->document_no}}: {{$item->document_no}} </option>
+                                @foreach($po as $item)
+                                    <option value="{{$item->document_no}}" >{{$item->document_no}}</option>
                                 @endforeach
                             </select>
 
-                            @error('hotel')
+                            @error('po')
                             <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -144,8 +144,8 @@
                                 <table class="table bg-green">
                                     <thead>
                                     <tr>
-                                        <th>PURPOSE OF JOURNEY</th>
-                                        <th>AMOUNT CLAIMED</th>
+                                        <th>REASON FOR REINSTATEMENT</th>
+                                        <th>PURCHASE ORDER AMOUNT(ESTIMATE)</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -154,9 +154,9 @@
                                 <TABLE class="table">
                                     <TR>
                                         <TD>
-                                            <textarea rows="4" type="text" name="purpose_of_journey"
+                                            <textarea rows="4" type="text" name="reason_for_reinstatement"
                                                       class="form-control amount"
-                                                      placeholder="Enter Purpose of Journey" id="name"
+                                                      placeholder="Enter Reason for Reinstatement" id="reason_for_reinstatement"
                                                       required></textarea>
                                         </TD>
                                         <TD><input type="number" id="amount1" name="amount" onchange="getvalues()"
@@ -167,35 +167,39 @@
                             </div>
 
                             <div class="row mt-2 mb-4">
+{{--                               <div class="col-3">--}}
+{{--                                    <div class="row">--}}
+{{--                                        <div class="col-12"><label>Purchase Order Amount:</label></div>--}}
+{{--                                        <div class="col-12"><input type="number" id="estimated_cost" name="estimated_cost" class="form-control"--}}
+{{--                                            value="" readonly>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
                                 <div class="col-3">
                                     <div class="row">
-                                        <div class="col-12"><label>Estimated Period of Stay (Days):</label></div>
-                                        <div class="col-12"><input type="number" name="estimated_period_of_stay" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="row">
-                                        <div class="col-12"><label>Estimated Cost:</label></div>
-                                        <div class="col-12"><input type="number" id="estimated_cost" name="estimated_cost" class="form-control"
-                                            value="" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="row">
-                                        <div class="col-12"><label>BEING PAYMENT:</label></div>
+                                        <div class="col-12"><label>PURCHASE ORDER AMOUNT(ACTUAL):</label></div>
                                         <div class="col-12"><input type="text" class="form-control text-bold" readonly id="total-payment"
-                                                                   name="amount_claimed" value="">
+                                                                   name="purchase_order_value" value="">
                                     </div>
                                 </div>
                             </div>
+{{--                                <div class="row">--}}
+{{--                                    <div class="col-2 offset-4">--}}
+{{--                                        <label class="form-control-label">Attach Quotation Files (optional)</label>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="col-6">--}}
+{{--                                        <div class="input-group">--}}
+{{--                                            <input type="file" class="form-control" multiple name="quotation[]"--}}
+{{--                                                   id="receipt" title="Upload Quotation Files (Optional)">--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
                             </div>
 
                             <div class="col-lg-12 mb-4">
                                 <div class="row">
                                     <div class="col-2 offset-4">
-                                        <label class="form-control-label">Attach Quotation Files (optional)</label>
+                                        <label class="form-control-label">Attach Support Documents (Mandatory)</label>
                                     </div>
                                     <div class="col-6">
                                         <div class="input-group">
@@ -208,70 +212,83 @@
                             <hr>
                         </div>
 
-                        <div class="row mb-1 mt-4">
-                            <div class="col-2"> <label>Requested By (User Dept):</label> </div>
-                            <div class="col-3">
-                                <input type="text" name="employee_name" class="form-control"
+                      <div class="row mb-1 mt-4">
+                            <div class="col-2"><label>Requested By (User Dept):</label> </div>
+                            <div class="col-2"><input type="text" name="employee_staff_name" class="form-control"
                                        value="{{Auth::user()->name}}" readonly required></div>
-                            <div class="col-2 text-center"><label>Job Title:</label></div>
-                            <div class="col-2"><input type="text" name="job_title" readonly
-                                                      class="form-control"></div>
 
-                            <div class="col-2 text-center"><label>Signature:</label></div>
-                            <div class="col-2"><input type="text" name="employee_staff_no" class="form-control"
+                            <div class="col-2"><label>Job Title:</label></div>
+                            <div class="col-2"><input type="text" name="employee_job_title"  class="form-control"
+                                                        value="{{Auth::user()->job_code}}" readonly required></div>
+
+                            <div class="col-1"><label>Signature:</label></div>
+                            <div class="col-1"><input type="text" name="employee_staff_no" class="form-control"
                                                       value="{{Auth::user()->staff_no}}" readonly required></div>
-                            <div class="col-1 text-center"><label>Date:</label></div>
 
-                            <div class="col-2"><input type="Date" name="claim_date" class="form-control"
+                            <div class="col-1"><label>Date:</label></div>
+                            <div class="col-1"><input type="Date" name="employee_claim_date" class="form-control"
                                                       value="{{date('Y-m-d')}}" readonly required>
                             </div>
                         </div>
 
-                        <div class="row mb-1">
-                            <div class="col-2"><label>Checked By (User Dept):</label></div>
-                            <div class="col-3"><input type="text" name="hod_name" readonly class="form-control">
-                            </div>
-                            <div class="col-2 text-center"><label>Job Title:</label></div>
-                            <div class="col-2"><input type="text" name="job_title" readonly
-                                                      class="form-control"></div>
-                            <div class="col-2 text-center"><label>Signature:</label></div>
-                            <div class="col-2"><input type="text" name="hod_staff_no" readonly class="form-control">
-                            </div>
-                            <div class="col-1  text-center"><label>Date:</label></div>
-                            <div class="col-2"><input type="text" name="hod_authorised_date" readonly
-                                                      class="form-control">
-                            </div>
-                        </div>
-                        <div class="row mb-1">
-                            <div class="col-2"><label>Approved By (User Dept):</label></div>
-                            <div class="col-3"><input type="text" name="director_name" readonly class="form-control">
-                            </div>
-                            <div class="col-2 text-center"><label>Job Title:</label></div>
-                            <div class="col-2"><input type="text" name="job_title" readonly
-                                                      class="form-control"></div>
-                            <div class="col-2 text-center"><label>Signature:</label></div>
-                            <div class="col-2"><input type="text" name="director_staff_no" readonly
-                                                      class="form-control"></div>
-                            <div class="col-1 text-center"><label>Date:</label></div>
-                            <div class="col-2"><input type="text" name="director_authorised_date" readonly
-                                                      class="form-control"></div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-2"><label>Reinstated By (Procurement):</label></div>
-                            <div class="col-3"><input type="text" name="chief_accountant_name" readonly
-                                                      class="form-control"></div>
-                            <div class="col-2 text-center"><label>Job Title:</label></div>
-                            <div class="col-2"><input type="text" name="job_title" readonly
-                                                      class="form-control"></div>
-                            <div class="col-2 text-center"><label>Signature:</label></div>
-                            <div class="col-2"><input type="text" name="chief_staff_no" readonly class="form-control">
-                            </div>
-                            <div class="col-1 text-center"><label>Date:</label></div>
-                            <div class="col-2"><input type="text" name="chief_accountant_authorised_date" readonly
-                                                      class="form-control">
+                        <div class="row mb-1 mt-2">
+                            <div class="col-2"><label>Checked By (User Dept):</label> </div>
+                            <div class="col-2"><input type="text" name="checker_name" class="form-control"
+                                                       readonly required></div>
+
+                            <div class="col-2"><label>Job Title:</label></div>
+                            <div class="col-2"><input type="text" name="checker_job_title"  class="form-control"
+                                                       readonly required></div>
+
+                            <div class="col-1"><label>Signature:</label></div>
+                            <div class="col-1"><input type="text" name="checker_staff_no" class="form-control"
+                                                       readonly required></div>
+
+                            <div class="col-1"><label>Date:</label></div>
+                            <div class="col-1"><input type="text" name="checker_date" class="form-control"
+                                                      readonly >
+
+
                             </div>
                         </div>
 
+                        <div class="row mb-1 mt-2">
+                            <div class="col-2"><label>Approved By (User Dept):</label> </div>
+                            <div class="col-2"><input type="text" name="approver_name" class="form-control"
+                                                       readonly required></div>
+
+                            <div class="col-2"><label>Job Title:</label></div>
+                            <div class="col-2"><input type="text" name="approver_job_title"  class="form-control"
+                                                      readonly required></div>
+
+                            <div class="col-1"><label>Signature:</label></div>
+                            <div class="col-1"><input type="text" name="approver_staff_no" class="form-control"
+                                                       readonly required></div>
+
+                            <div class="col-1"><label>Date:</label></div>
+                            <div class="col-1"><input type="text" name="approver_date" class="form-control"
+                                                       readonly >
+                            </div>
+                        </div>
+
+                        <div class="row mb-1 mt-2">
+                            <div class="col-2"><label>Reinstated By (Procurement):</label> </div>
+                            <div class="col-2"><input type="text" name="reinstater_name" class="form-control"
+                                                       readonly required></div>
+
+                            <div class="col-2"><label>Job Title:</label></div>
+                            <div class="col-2"><input type="text" name="reinstater_job_title"  class="form-control"
+                                                       readonly required></div>
+
+                            <div class="col-1"><label>Signature:</label></div>
+                            <div class="col-1"><input type="text" name="reinstater_staff_no" class="form-control"
+                                                     readonly required></div>
+
+                            <div class="col-1"><label>Date:</label></div>
+                            <div class="col-1"><input type="text" name="reinstater_date" class="form-control"
+                                                       readonly>
+                            </div>
+                        </div>
 
                     </div>
 

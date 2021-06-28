@@ -45,7 +45,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'hotel.accommodation.list', config('constants.petty_cash_status.new_application') ) }}"
+                            <a href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.new_application') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> New
@@ -60,7 +60,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'hotel.accommodation.list', config('constants.petty_cash_status.closed') ) }}"
+                            <a href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.closed') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Closed
@@ -68,7 +68,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'hotel.accommodation.list', config('constants.petty_cash_status.rejected') ) }}"
+                            <a href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.rejected') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Rejected
@@ -76,7 +76,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'hotel.accommodation.list', config('constants.petty_cash_status.cancelled') ) }}"
+                            <a href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.cancelled') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Cancelled
@@ -84,7 +84,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'hotel.accommodation.list', config('constants.petty_cash_status.void') ) }}"
+                            <a href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.void') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Void
@@ -92,7 +92,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'hotel.accommodation.list', config('constants.petty_cash_status.audited') ) }}"
+                            <a href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.audited') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Audited
@@ -100,7 +100,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'hotel.accommodation.list', config('constants.petty_cash_status.queried') ) }}"
+                            <a href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.queried') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Queried
@@ -112,7 +112,7 @@
 
                 <li class="nav-header">REPORTS</li>
                 <li class="nav-item">
-                    <a href="{{route('petty.cash.filtered.report')}}" class="nav-link ">
+                    <a href="{{route('hotel.accommodation.filtered.report')}}" class="nav-link ">
                         <i class="nav-icon fas fa-bars"></i>
                         <p> Transactions Summary
                         </p>
@@ -125,7 +125,7 @@
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-file-download"></i>
                             <p>
-                                Closed Petty Cash
+                                Closed Hotel Accommodation
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
@@ -167,7 +167,7 @@
                         <li class="nav-item">
                             <a href="{{route('hotel.accommodation.record','all')}}" class="nav-link ">
                                 <i class="nav-icon fas fa-file-download"></i>
-                                <p> All Petty Cash Records
+                                <p> All Hotel Accommodation Records
                                 </p>
                             </a>
                         </li>

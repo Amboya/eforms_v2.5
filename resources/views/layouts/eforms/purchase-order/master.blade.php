@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>eZesco | Hotel Accomodation</title>
+    <title>eZesco | Purchase Order</title>
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/fontawesome-free/css/all.min.css')}}">
@@ -23,11 +23,11 @@
 <div class="wrapper">
 
     <!-- Navbar -->
-@include('layouts.eforms.hotel-accommodation.navbar')
+@include('layouts.eforms.purchase-order.navbar')
 <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-@include('layouts.eforms.hotel-accommodation.sidebar')
+@include('layouts.eforms.purchase-order.sidebar')
 
 <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -46,7 +46,7 @@
     <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
-    @include('layouts.eforms.hotel-accommodation.footer')
+    @include('layouts.eforms.purchase-order.footer')
 
 </div>
 <!-- ./wrapper -->

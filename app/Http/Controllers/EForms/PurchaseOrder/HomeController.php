@@ -35,6 +35,8 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+//        dd(config('constants.purchase_order_status.new_application'));
         //count new forms
         $new_forms = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.new_application'))
             ->count();
@@ -75,7 +77,7 @@ class HomeController extends Controller
             'pending' => $pending,
         ];
         //return view
-        return view('eforms.hotel-accommodation.dashboard')->with($params);
+        return view('eforms.purchase-order.dashboard')->with($params);
     }
 
 

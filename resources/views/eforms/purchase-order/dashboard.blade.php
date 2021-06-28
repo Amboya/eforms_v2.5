@@ -16,12 +16,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Purchase Order</h1>
+                    <h1 class="m-0 text-dark">Purchase Order Reinstatement Form</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Purchase Order Reinstatement</li>
+                        <li class="breadcrumb-item active">Purchase Order Reinstatement Form</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -149,9 +149,8 @@
                                     <tr>
                                         <th>Serial</th>
                                         <th>Claimant</th>
-                                        <th>Estimated Cost</th>
-                                        <th>Purpose of Journey</th>
-                                        <th>Estimated Period (Days)</th>
+                                        <th>Purchase Order Value</th>
+                                        <th>Reason for Reinstatement</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                         <th>View</th>
@@ -172,9 +171,9 @@
                                             </td>
 
                                             <td>{{$item->staff_name}}</td>
-                                            <td>{{$item->estimated_cost}}</td>
-                                            <td>{{$item->purpose_of_journey}}</td>
-                                            <td>{{$item->estimated_period_of_stay}}</td>
+                                            <td>{{$item->purchase_order_value}}</td>
+                                            <td>{{$item->reason_for_reinstatement}}</td>
+
 
 
 
@@ -205,7 +204,7 @@
                             {{--                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))--}}
                             {{--                                @if($pending < 1)--}}
                             <a href="{{route('purchase.order.create')}}"
-                               class="btn btn-sm bg-gradient-green float-left">New Hotel Allocation Claim</a>
+                               class="btn btn-sm bg-gradient-green float-left">New Purchase Order Amendment</a>
                             {{--                                @else--}}
                             {{--                                    <a href="#" class="btn btn-sm btn-default float-left">New Hotel Allocation Claim</a>--}}
                             {{--                                    <span class="text-danger m-3"> Sorry, You can not raise a new Hotel Allocation Claim because you already have an open form.</span>--}}

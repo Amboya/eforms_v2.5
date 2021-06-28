@@ -19,28 +19,33 @@ class PurchaseOrderModel extends Model
     use SoftDeletes;
 
     //table name
-    protected $table = 'eform_purchase_order';
+    protected $table = 'eform_purchase_orders';
     //primary key
     protected $primaryKey = 'id';
     //fields fillable
     protected $fillable = [
-
+        'code',
         'purchase_order_no',
         'reason_for_reinstatement',
         'purchase_order_value',
+
+        'employee_staff_name',
+        'employee_job_title',
+        'employee_staff_no',
+        'employee_claim_date',
+
 
         'checker_name',
         'checker_job_title',
         'checker_staff_no',
         'checker_date',
 
-        'ch_code',
-        'ch_unit',
+
 
         'staff_name',
         'job_title',
         'staff_no',
-        'claim_date',
+//        'claim_date',
 
         'config_status_id',
         'profile',
@@ -59,15 +64,12 @@ class PurchaseOrderModel extends Model
         'reinstater_date',
 
 
-
         'ch_code',
         'ch_unit',
-        'app_code',
-        'app_unit',
+        'hod_code',
+        'hod_unit',
         're_code',
         're_unit',
-
-
 
         'created_by',
         'deleted_at',

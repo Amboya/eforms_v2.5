@@ -205,10 +205,10 @@
                             {{--                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))--}}
                             {{--                                @if($pending < 1)--}}
                             <a href="{{route('hotel.accommodation.create')}}"
-                               class="btn btn-sm bg-gradient-green float-left">New Hotel Allocation Claim</a>
+                               class="btn btn-sm bg-gradient-green float-left">New Hotel Accommodation Claim</a>
                             {{--                                @else--}}
-                            {{--                                    <a href="#" class="btn btn-sm btn-default float-left">New Hotel Allocation Claim</a>--}}
-                            {{--                                    <span class="text-danger m-3"> Sorry, You can not raise a new Hotel Allocation Claim because you already have an open form.</span>--}}
+                            {{--                                    <a href="#" class="btn btn-sm btn-default float-left">New Hotel Accommmodation Claim</a>--}}
+                            {{--                                    <span class="text-danger m-3"> Sorry, You can not raise a new Hotel Accommmodation Claim because you already have an open form.</span>--}}
                             {{--                                @endif--}}
                             {{--                            @endif--}}
                                 {!! $list->links() !!}

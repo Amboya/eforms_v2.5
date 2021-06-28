@@ -62,6 +62,7 @@ class HomeController extends Controller
         $totals_needs_me = self::needsMeCount();
         //list all that needs me
         $list = self::needsMeList();
+//        dd($list);
         //pending forms for me before i apply again
         $pending = self::pendingForMe();
 

@@ -69,10 +69,18 @@
                                     <tr>
                                         <th>Serial</th>
                                         <th>Claimant</th>
-                                        <th>Payment</th>
+                                        <th>Estimated Cost</th>
+                                        <th>Purpose of Journey</th>
+                                        <th>Estimated Period (Days)</th>
                                         <th>Status</th>
-                                        <th>Period</th>
                                         <th>Action</th>
+                                        <th>View</th>
+{{--                                        <th>Serial</th>--}}
+{{--                                        <th>Claimant</th>--}}
+{{--                                        <th>Payment</th>--}}
+{{--                                        <th>Status</th>--}}
+{{--                                        <th>Period</th>--}}
+{{--                                        <th>Action</th>--}}
                                     </tr>
                                      </thead>
                                     <tbody>

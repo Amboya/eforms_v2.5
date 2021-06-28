@@ -131,7 +131,7 @@
                             <select id="hotel" class="form-control select2 " name="hotel"  >
                                 <option value="" selected disabled >Select Hotel</option>
                                 @foreach($hotel as $item)
-                                    <option value="{{$item->code_supplier}}" >{{$item->code_supplier}}: {{$item->name_supplier}} </option>
+                                    <option value="{{$item->name_supplier}}" >{{$item->code_supplier}}: {{$item->name_supplier}} </option>
                                 @endforeach
                             </select>
 
@@ -145,9 +145,9 @@
 
                         <div class="col-3">
                             <div class="row">
-                                <div class="col-12"><label>Sys RefNo:(Optional)</label></div>
-                                <div class="col-12"><input type="text" name="ref_no"
-                                                           placeholder="Enter System RefNo (optional)"
+                                <div class="col-12"><label>Sys RefNo:(Auto Generated)</label></div>
+                                <div class="col-12"><input type="text" name="ref_no" readonly
+                                                           placeholder="System RefNo Auto Generated"
                                                            class="form-control"></div>
                             </div>
                         </div>
@@ -177,7 +177,7 @@
                                                       required></textarea>
                                         </TD>
                                         <TD><input type="number" id="amount1" name="amount" onchange="getvalues()"
-                                                   class="form-control amount" placeholder="Amount [ZMW]">
+                                                   class="form-control amount" placeholder="Amount [ZMW]" required>
                                         </TD>
                                     </TR>
                                 </TABLE>
@@ -187,7 +187,7 @@
                                 <div class="col-3">
                                     <div class="row">
                                         <div class="col-12"><label>Estimated Period of Stay (Days):</label></div>
-                                        <div class="col-12"><input type="number" name="estimated_period_of_stay" class="form-control">
+                                        <div class="col-12"><input type="number" min="0" max="7" step="" name="estimated_period_of_stay"  placeholder="Cannot exceed 7 days"class="form-control" required>
                                         </div>
                                     </div>
                                 </div>
@@ -217,7 +217,7 @@
                                     <div class="col-6">
                                         <div class="input-group">
                                             <input type="file" class="form-control" multiple name="quotation[]"
-                                                   id="receipt" title="Upload Quotation Files (Optional)">
+                                                   id="receipt" title="Upload Quotation Files (Optional)" required>
                                         </div>
                                     </div>
                                 </div>
@@ -264,18 +264,18 @@
                             <div class="col-2"><input type="text" name="director_authorised_date" readonly
                                                       class="form-control"></div>
                         </div>
-                        <div class="row mb-4">
-                            <div class="col-2"><label>Name of Chief Accountant:</label></div>
-                            <div class="col-3"><input type="text" name="chief_accountant_name" readonly
-                                                      class="form-control"></div>
-                            <div class="col-2 text-center"><label>Signature:</label></div>
-                            <div class="col-2"><input type="text" name="chief_staff_no" readonly class="form-control">
-                            </div>
-                            <div class="col-1 text-center"><label>Date:</label></div>
-                            <div class="col-2"><input type="text" name="chief_accountant_authorised_date" readonly
-                                                      class="form-control">
-                            </div>
-                        </div>
+{{--                        <div class="row mb-4">--}}
+{{--                            <div class="col-2"><label>Name of Chief Accountant:</label></div>--}}
+{{--                            <div class="col-3"><input type="text" name="chief_accountant_name" readonly--}}
+{{--                                                      class="form-control"></div>--}}
+{{--                            <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                            <div class="col-2"><input type="text" name="chief_staff_no" readonly class="form-control">--}}
+{{--                            </div>--}}
+{{--                            <div class="col-1 text-center"><label>Date:</label></div>--}}
+{{--                            <div class="col-2"><input type="text" name="chief_accountant_authorised_date" readonly--}}
+{{--                                                      class="form-control">--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
 
 
                     </div>

@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Main\ActivityLogsController;
 use App\Mail\SendMail;
 use App\Models\EForms\HotelAccommodation\HotelAccommodationAccountModel;
-use App\Models\Eforms\HotelAccommodation\PurchaseOrderModel;
+use App\Models\Eforms\HotelAccommodation\HotelAccommodationModel;
+use App\Models\Eforms\PurchaseOrder\PurchaseOrderModel;
 use App\Models\EForms\HotelAccommodation\HotelSuppliersModel;
 use App\Models\Main\AccountsChartModel;
 use App\Models\Main\AttachedFileModel;
@@ -29,7 +30,7 @@ use Illuminate\Support\Facades\Redirect;
 use Mockery\CountValidator\Exception;
 
 
-class PurchaseOrderControllerController extends Controller
+class PurchaseOrderController extends Controller
 {
 
     /**
@@ -41,8 +42,8 @@ class PurchaseOrderControllerController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.hotel_accommodation')]);
-        session(['eform_code' => config('constants.eforms_name.hotel_accommodation')]);
+        session(['eform_id' => config('constants.eforms_id.purchase_order')]);
+        session(['eform_code' => config('constants.eforms_name.purchase_order')]);
     }
 
 
@@ -54,46 +55,46 @@ class PurchaseOrderControllerController extends Controller
     public function index(Request $request, $value)
     {
 
-      //  dd(1111);
+//       dd(1111);
         //get list of all petty cash forms for today
         if ($value == "all") {
             $list = PurchaseOrderModel::orderBy('code')->paginate(50);
             $category = "All";
         } else if ($value == "pending") {
-            $list = PurchaseOrderModel::where('config_status_id', '>', config('constants.hotel_accommodation_status.new_application'))
-                ->where('config_status_id', '<', config('constants.hotel_accommodation_status.closed'))
+            $list = PurchaseOrderModel::where('config_status_id', '>', config('constants.purchase_order_status.new_application'))
+                ->where('config_status_id', '<', config('constants.purchase_order_status.closed'))
                 ->orderBy('code')->paginate(50);
             $category = "Opened";
-        } else if ($value == config('constants.hotel_accommodation_status.new_application')) {
-            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.new_application'))
+        } else if ($value == config('constants.purchase_order_status.new_application')) {
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.new_application'))
                 ->orderBy('code')->paginate(50);
             $category = "New Application";
-        } else if ($value == config('constants.hotel_accommodation_status.closed')) {
-            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.closed'))
+        } else if ($value == config('constants.purchase_order_status.closed')) {
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.closed'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
             //  dd(11);
-        } else if ($value == config('constants.hotel_accommodation_status.rejected')) {
-            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.rejected'))
+        } else if ($value == config('constants.purchase_order_status.rejected')) {
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.rejected'))
                 ->orderBy('code')->paginate(50);
             $category = "Rejected";
         }
-//        else if ($value == config('constants.hotel_accommodation_status.cancelled')) {
-//            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status. cancelled'))
+//        else if ($value == config('constants.purchase_order_status.cancelled')) {
+//            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status. cancelled'))
 //                ->orderBy('code')->paginate(50);
 //            $category = "Cancelled";
 //        }
-        else if ($value == config('constants.hotel_accommodation_status.void')) {
-            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.void'))
+        else if ($value == config('constants.purchase_order_status.void')) {
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.void'))
                 ->orderBy('code')->paginate(50);
             $category = "Void";
         }
-//        else if ($value == config('constants.hotel_accommodation_status.audited')) {
-//            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.audited'))
+//        else if ($value == config('constants.purchase_order_status.audited')) {
+//            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.audited'))
 //                ->orderBy('code')->paginate(50);
 //            $category = "Audited";
-//        } else if ($value == config('constants.hotel_accommodation_status.queried')) {
-//            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.queried'))
+//        } else if ($value == config('constants.purchase_order_status.queried')) {
+//            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.queried'))
 //                ->orderBy('code')->paginate(50);
 //            $category = "Queried";
 //        }
@@ -107,7 +108,7 @@ class PurchaseOrderControllerController extends Controller
         }
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.purchase_order'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -124,7 +125,7 @@ class PurchaseOrderControllerController extends Controller
         ];
 
         //return view
-        return view('eforms.hotel-accommodation.list')->with($params);
+        return view('eforms.purchase-order.list')->with($params);
 
     }
 
@@ -146,25 +147,25 @@ class PurchaseOrderControllerController extends Controller
 
             $category = "All Records";
         } else if ($value == "pending") {
-            $list = PurchaseOrderModel::where('config_status_id', '>', config('constants.hotel_accommodation_status.new_application'))
-                ->where('config_status_id', '<', config('constants.hotel_accommodation_status.closed'))
+            $list = PurchaseOrderModel::where('config_status_id', '>', config('constants.purchase_order_status.new_application'))
+                ->where('config_status_id', '<', config('constants.purchase_order_status.closed'))
                 ->orderBy('code')->paginate(50);
             $category = "Opened";
-        } else if ($value == config('constants.hotel_accommodation_status.new_application')) {
+        } else if ($value == config('constants.purchase_order_status.new_application')) {
 
-            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.new_application'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.new_application'))
                 ->orderBy('code')->paginate(50);
             $category = "New Application";
 
-        } else if ($value == config('constants.hotel_accommodation_status.closed')) {
+        } else if ($value == config('constants.purchase_order_status.closed')) {
 
-            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.closed'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.closed'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
 
-        } else if ($value == config('constants.hotel_accommodation_status.rejected')) {
+        } else if ($value == config('constants.purchase_order_status.rejected')) {
 
-            $list = PurchaseOrderModel::where('config_status_id', config('constants.hotel_accommodation_status.rejected'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.rejected'))
                 ->orderBy('code')->paginate(50);
 
             $category = "Rejected";
@@ -181,7 +182,7 @@ class PurchaseOrderControllerController extends Controller
 
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.purchase_order'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -211,39 +212,39 @@ class PurchaseOrderControllerController extends Controller
     public function void(Request $request, $id)
     {
         //GET THE HOTEL ACCOMMODATION MODEL
-        $list = DB::select("SELECT * FROM eform_hotel_accomodation where id = {$id} ");
+        $list = DB::select("SELECT * FROM eform_purchase_orders where id = {$id} ");
         $form = PurchaseOrderModel::hydrate($list)->first();
         //get the status
         $current_status = $form->status->id;
         $new_status = 0;
         $user = Auth::user();
         //get the form type
-        $eform_hotel_accommodation = EFormModel::find(config('constants.eforms_id.hotel_accommodation'));
+        $eform_purchase_order = EFormModel::find(config('constants.eforms_id.purchase_order'));
 
         //HANDLE VOID REQUEST
-        $new_status = config('constants.hotel_accommodation_status.void');
+        $new_status = config('constants.purchase_order_status.void');
 
         //update the totals rejected
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-            ->where('id', config('constants.totals.hotel_accommodation_reject'))
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.purchase_order'))
+            ->where('id', config('constants.totals.purchase_order_reject'))
             ->first();
         $totals->value = $totals->value + 1;
         $totals->save();
-        $eform_hotel_accommodation->total_rejected = $totals->value;
-        $eform_hotel_accommodation->save();
+        $eform_purchase_order->total_rejected = $totals->value;
+        $eform_purchase_order->save();
 
         //update the totals open
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-            ->where('id', config('constants.totals.hotel_accommodation_open'))
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.purchase_order'))
+            ->where('id', config('constants.totals.purchase_order_open'))
             ->first();
         $totals->value = $totals->value - 1;
         $totals->save();
-        $eform_hotel_accommodation->total_pending = $totals->value;
-        $eform_hotel_accommodation->save();
+        $eform_purchase_order->total_pending = $totals->value;
+        $eform_purchase_order->save();
 
         //get status id
         $status_model = StatusModel::where('id', $new_status)
-            ->where('eform_id', config('constants.eforms_id.hotel_accommodation'))->first();
+            ->where('eform_id', config('constants.eforms_id.purchase_order'))->first();
         $new_status = $status_model->id;
 
         //update the form status
@@ -261,13 +262,13 @@ class PurchaseOrderControllerController extends Controller
                 'action' => $request->approval,
                 'current_status_id' => $current_status,
                 'action_status_id' => $new_status,
-                'config_eform_id' => config('constants.eforms_id.hotel_accommodation'),
+                'config_eform_id' => config('constants.eforms_id.purchase_order'),
                 'eform_id' => $form->id,
                 'created_by' => $user->id,
             ]);
 
         //redirect home
-        return Redirect::back()->with('message', 'Hotel Accommodation ' . $form->code . ' for has been marked as Void successfully');
+        return Redirect::back()->with('message', 'Purchase Order ' . $form->code . ' for has been marked as Void successfully');
 
     }
 
@@ -278,29 +279,29 @@ class PurchaseOrderControllerController extends Controller
      * @return Response
      */
     public function create()
-
     {
+//        dd(1111);
         $user = auth()->user();
       //  $projects = ProjectsModel::all();
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
     //    $hotel = HotelSuppliersModel::all();
-        $list = DB::select("SELECT name_supplier, code_supplier  from suppliers
-                                  where name_supplier like '%HOTEL%'
+        $list = DB::select("SELECT document_no from purchase_order_header
+                                  where status = '02'
             ");
           //  $list = HotelSuppliersModel::hydrate($list)->all();
-
 
         //data to send to the view
         $params = [
             'totals_needs_me' => $totals_needs_me,
           //  'projects' => $projects,
             'user' => $user,
-            'hotel' => $list,
+            'po' => $list,
         ];
         //show the create form
-        return view('eforms.hotel-accommodation.create')->with($params);
+        return view('eforms.purchase-order.create')->with($params);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -324,26 +325,25 @@ class PurchaseOrderControllerController extends Controller
 //        }
 
         //[2A] find my code superior
-        $my_hods = self::findMyNextPerson(config('constants.hotel_accommodation_status.new_application'), $user->user_unit, $user);
+        $my_hods = self::findMyNextPerson(config('constants.purchase_order_status.new_application'), $user->user_unit, $user);
 
         if (empty($my_hods)) {
             //prepare details
             $details = [
                 'name' => "Team",
-                'url' => 'hotel.accommodation.home',
-                'subject' => "hotel-accommodation-Voucher Path Configuration Needs Your Attention",
+                'url' => 'purchase.order.home',
+                'subject' => "purchase-order-Voucher Path Configuration Needs Your Attention",
                 'title' => "Path Configuration Not Defined For {$user->name}",
-                'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} and Phone/Extension {$user->phone}, managed to submit or raise new hotel-accommodation voucher.
+                'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} and Phone/Extension {$user->phone}, managed to submit or raise new purchase-order voucher.
                      <br>But the voucher path is not completely configured. Please confirm that this is so and take action to correct this as soon as possible.
                      <br><br>
                      <b> Path for {$user->user_unit->user_unit_code} user-unit </b><br>
-                   1: HOD -> {$user->user_unit->hod_code} : {$user->user_unit->hod_unit}  <br>
-                   2: HR/Station Manager ->  {$user->user_unit->hrm_code} : {$user->user_unit->hrm_unit} <br>
-                   3: Account -> {$user->user_unit->ca_code} : {$user->user_unit->ca_unit}  <br>
-                   4: Expenditure -> {$user->user_unit->expenditure_code} : {$user->user_unit->expenditure_unit}  <br>
-                   5: Security -> {$user->user_unit->security_code} : {$user->user_unit->security_unit}  <br>
+                   1: Checker (User Department) -> {$user->user_unit->ch_code} : {$user->user_unit->ch_unit}  <br>
+                   2: Approver (User Department) ->  {$user->user_unit->hod_code} : {$user->user_unit->hod_unit} <br>
+                   3: Reinstater (Procurement) -> {$user->user_unit->re_code} : {$user->user_unit->re_unit}  <br>
+
                    Please assign the correct position code and position user-unit for {$user->user_unit->user_unit_code}. <br>
-                <br>You can update the details by clicking on 'Hotel Accommodation Work Flow' menu, then search for {$user->user_unit->user_unit_code}
+                <br>You can update the details by clicking on 'Purchase Order Work Flow' menu, then search for {$user->user_unit->user_unit_code}
                  and 'Edit' to update the correct details . <br> <br>
                  Else the HOD has not registered or assigned the correct profile yet.
                  "
@@ -351,64 +351,54 @@ class PurchaseOrderControllerController extends Controller
 
             //send emails
             $to = config('constants.team_email_list');
-            $mail_to_is = Mail::to($to)->send(new SendMail($details));
+         //   $mail_to_is = Mail::to($to)->send(new SendMail($details));
 
             $error = true;
             //return with error msg
 
              }
 
-        //generate the petty cash unique code
-        $code = self::randGenerator("HTA", 1);
+        //generate the purchase order unique code
+        $code = self::randGenerator("PO", 1);
 
         //raise the voucher
         $formModel = PurchaseOrderModel::firstOrCreate(
             [
-                'grade'  => $request->grade,
-                'directorate'=> $request->directorate,
-                'hotel'=> $request->hotel,
-                'ref_number'=> $request->ref_no,
-                'purpose_of_journey'=> $request->purpose_of_journey,
-                'estimated_period_of_stay'=> $request->estimated_period_of_stay,
-                'estimated_cost'=> $request->estimated_cost,
-                'amount_claimed'=> $request->amount_claimed,
-                'amount'=> $request->amount,
-                'staff_name' => $request->staff_name,
-                'staff_no' => $request->staff_no,
+                'code'=> $request->purchase_order_no,
+                'purchase_order_no' => $request->purchase_order_no,
+                'reason_for_reinstatement'=> $request->reason_for_reinstatement,
+                'purchase_order_value'=> $request->purchase_order_value,
+
+                'staff_name'=> $request->employee_staff_name,
+                'job_title'=> $request->employee_job_title,
+                'staff_no'=> $request->employee_staff_no,
+
+
+
             ],
             [
-                'grade'  => $request->grade,
-                'directorate'=> $request->directorate,
-                'hotel'=> $request->hotel,
-                'ref_number'=> $request->ref_no,
-                'purpose_of_journey'=> $request->purpose_of_journey,
-                'code' => $code,
-                'estimated_period_of_stay'=> $request->estimated_period_of_stay,
-                'estimated_cost'=> $request->estimated_cost,
-                'amount_claimed'=> $request->amount_claimed,
-                'amount'=> $request->amount,
-                'staff_name' => $request->staff_name,
-                'staff_no' => $request->staff_no,
-                'claim_date' => $request->claim_date,
-                'config_status_id' => config('constants.hotel_accommodation_status.new_application'),
-                'profile' => Auth::user()->profile_id,
+                'purchase_order_no' => $request->purchase_order_no,
+                'reason_for_reinstatement'=> $request->reason_for_reinstatement,
+                'purchase_order_value'=> $request->purchase_order_value,
 
+                'staff_name'=> $request->employee_staff_name,
+                'job_title'=> $request->employee_job_title,
+                'staff_no'=> $request->employee_staff_no,
+                'employee_claim_date'=> $request->employee_claim_date,
+
+                'config_status_id' => config('constants.purchase_order_status.new_application'),
+                'profile' => Auth::user()->profile_id,
                 'created_by' => $user->id,
 
+                'ch_code' => $user->user_unit->ch_code,
+                'ch_unit' => $user->user_unit->ch_unit,
                 'hod_code' => $user->user_unit->hod_code,
                 'hod_unit' => $user->user_unit->hod_unit,
-                'ca_code' => $user->user_unit->ca_code,
-                'ca_unit' => $user->user_unit->ca_unit,
-                'hrm_code' => $user->user_unit->hrm_code,
-                'hrm_unit' => $user->user_unit->hrm_unit,
-                'expenditure_code' => $user->user_unit->expenditure_code,
-                'expenditure_unit' => $user->user_unit->expenditure_unit,
-//                'security_code' => $user->user_unit->security_code,
-//                'security_unit' => $user->user_unit->security_unit,
-                'audit_code' => $user->user_unit->audit_code,
-                'audit_unit' => $user->user_unit->audit_unit,
-                'dr_code' => $user->user_unit->dr_code ?? "0",
-                'dr_unit' => $user->user_unit->dr_unit  ?? "0",
+                're_code' => $user->user_unit->re_code,
+                're_unit' => $user->user_unit->re_unit,
+
+//                'dr_code' => $user->user_unit->dr_code ?? "0",
+//                'dr_unit' => $user->user_unit->dr_unit  ?? "0",
 
                 'cost_center' => $user->user_unit->user_unit_cc_code,
                 'business_code' => $user->user_unit->user_unit_bc_code,
@@ -431,7 +421,7 @@ class PurchaseOrderControllerController extends Controller
                 // Filename to store
                 $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
                 // Upload File
-                $path = $file->storeAs('public/hotel_accommodation_quotation', $fileNameToStore);
+                $path = $file->storeAs('public/purchase_order_quotation', $fileNameToStore);
 
                 //upload the receipt
                 $file = AttachedFileModel::updateOrCreate(
@@ -441,7 +431,7 @@ class PurchaseOrderControllerController extends Controller
                         'extension' => $extension,
                         'file_size' => $size,
                         'form_id' => $formModel->code,
-                        'form_type' => config('constants.eforms_id.hotel_accommodation'),
+                        'form_type' => config('constants.eforms_id.purchase_order'),
                         'file_type' => config('constants.file_type.quotation')
                     ],
                     [
@@ -450,7 +440,7 @@ class PurchaseOrderControllerController extends Controller
                         'extension' => $extension,
                         'file_size' => $size,
                         'form_id' => $formModel->code,
-                        'form_type' => config('constants.eforms_id.hotel_accommodation'),
+                        'form_type' => config('constants.eforms_id.purchase_order'),
                         'file_type' => config('constants.file_type.quotation')
                     ]
                 );
@@ -458,14 +448,14 @@ class PurchaseOrderControllerController extends Controller
         }
 
         /** update the totals */
-//        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
-//            ->where('id', config('constants.totals.hotel_accommodation_new'))
+//        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.purchase_order'))
+//            ->where('id', config('constants.totals.purchase_order_new'))
 //            ->first();
 //        $totals->value = $totals->value + 1;
 //        $totals->save();
-//        $eform_hotel_accommodation = EFormModel::find(config('constants.eforms_id.hotel_accommodation'));
-//        $eform_hotel_accommodation->total_new = $totals->value;
-//        $eform_hotel_accommodation->save();
+//        $eform_purchase_order = EFormModel::find(config('constants.eforms_id.purchase_order'));
+//        $eform_purchase_order->total_new = $totals->value;
+//        $eform_purchase_order->save();
 
         /** send email to supervisor */
         //get team email addresses
@@ -481,27 +471,28 @@ class PurchaseOrderControllerController extends Controller
         //prepare details
         $details = [
             'name' => $names,
-            'url' => 'hotel.accommodation.home',
-            'subject' => "New hotel-accommodation Voucher Needs Your Attention",
-            'title' => "New hotel-accommodation Voucher Needs Your Attention {$user->name}",
-            'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} has successfully raised a hotel-accommodation voucher with
+            'url' => 'purchase.order.home',
+            'subject' => "New purchase-order Voucher Needs Your Attention",
+            'title' => "New purchase-order Voucher Needs Your Attention {$user->name}",
+            'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} has successfully raised a purchase-order voucher with
                    <br> Serial: {$formModel->code}  <br> Reference: {$formModel->ref_no} <br> Status: {$formModel->status->name}  and <br> <b>Amount: ZMW {$request->total_payment}</b></br>. <br>
             This voucher now needs your approval, kindly click on the button below to login to E-ZESCO and take action on the voucher.<br> regards. "
         ];
         // send mail
-        $mail_to_is = Mail::to($to)->send(new SendMail($details));
+//        $mail_to_is = Mail::to($to)->send(new SendMail($details));
 
         // log the activity
-        ActivityLogsController::store($request, "Creating of Hotel Accommodation", "update", " pay point created", $formModel->id);
+        ActivityLogsController::store($request, "Creating of Purchase Order", "update", " pay point created", $formModel->id);
 
         if ($error) {
+            dd ($error);
             // return with error msg
-            return Redirect::route('hotel.accommodation.home')->with('error', 'Sorry!, The superior who is supposed to approve your petty cash,
+            return Redirect::route('purchase.order.home')->with('error', 'Sorry!, The superior who is supposed to approve your purchase order,
                        <br> has not registered or not fully configured yet, Please, <b>try first contacting your superior</b> so as to make sure he/she has registered in the system,
-                       then you can contact eZESCO Admins (1142,1126,2350,2345,3309,3306 or 3319) isd@zesco.co.zm to configure your petty cash voucher path. Your hotel-accommodation voucher has been saved.');
+                       then you can contact eZESCO Admins (1142,1126,2350,2345,3309,3306 or 3319) isd@zesco.co.zm to configure your petty cash voucher path. Your purchase-order voucher has been saved.');
         } else {
             // return the view
-            return Redirect::route('hotel.accommodation.home')->with('message', 'Hotel Accommodation Details for ' . $formModel->code . ' have been Created successfully');
+            return Redirect::route('purchase.order.home')->with('message', 'Purchase Order Details for ' . $formModel->code . ' have been Created successfully');
         }
     }
 
@@ -517,40 +508,40 @@ class PurchaseOrderControllerController extends Controller
         $not_claimant = true;
 
         //FOR MY HOD USERS
-        if ($current_status == config('constants.hotel_accommodation_status.new_application')) {
-            $superior_user_unit = $user_unit->hod_unit;
+        if ($current_status == config('constants.purchase_order_status.new_application')) {
+            $superior_user_unit = $user_unit->ch_code;
+            $superior_user_code = $user_unit->ch_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_016'));
+
+        } elseif ($current_status == config('constants.purchase_order_status.hod_approved')) {
             $superior_user_code = $user_unit->hod_code;
+            $superior_user_unit = $user_unit->hod_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
 
-        } elseif ($current_status == config('constants.hotel_accommodation_status.hod_approved')) {
-            $superior_user_code = $user_unit->dr_code;
-            $superior_user_unit = $user_unit->dr_unit;
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_003'));
+        } elseif ($current_status == config('constants.purchase_order_status.re_approved')) {
+            $superior_user_code = $user_unit->re_code;
+            $superior_user_unit = $user_unit->re_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_017'));
 
-        } elseif ($current_status == config('constants.hotel_accommodation_status.director_approved')) {
-            $superior_user_code = $user_unit->ca_code;
-            $superior_user_unit = $user_unit->ca_unit;
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
+//        } elseif ($current_status == config('constants.purchase_order_status.chief_accountant_approved')) {
+//            $superior_user_unit = $user_unit->expenditure_unit;
+//            $superior_user_code = $user_unit->expenditure_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
 
-        } elseif ($current_status == config('constants.hotel_accommodation_status.chief_accountant_approved')) {
-            $superior_user_unit = $user_unit->expenditure_unit;
-            $superior_user_code = $user_unit->expenditure_unit;
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
-
-        } elseif ($current_status == config('constants.hotel_accommodation_status.funds_disbursement')) {
+        } elseif ($current_status == config('constants.purchase_order_status.funds_disbursement')) {
             $not_claimant = false;
 
-        } elseif ($current_status == config('constants.hotel_accommodation_status.funds_acknowledgement')) {
+        } elseif ($current_status == config('constants.purchase_order_status.funds_acknowledgement')) {
             $superior_user_unit = $user_unit->security_unit;
             $superior_user_code = $user_unit->security_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_013'));
 
-        } elseif ($current_status == config('constants.hotel_accommodation_status.security_approved')) {
+        } elseif ($current_status == config('constants.purchase_order_status.security_approved')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
             // dd(1);
-        } elseif ($current_status == config('constants.hotel_accommodation_status.closed')) {
+        } elseif ($current_status == config('constants.purchase_order_status.closed')) {
             $superior_user_unit = $user_unit->audit_unit;
             $superior_user_code = $user_unit->audit_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
@@ -567,7 +558,7 @@ class PurchaseOrderControllerController extends Controller
             $users_list[] = '';
             //[A]check for any users who have this assigned profile
             $assigned_users = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+            where('eform_id', config('constants.eforms_id.purchase_order'))
                 ->where('profile', $profile->code)
                 ->get();
             //loop through assigned users
@@ -596,7 +587,7 @@ class PurchaseOrderControllerController extends Controller
             }
             //[B]check if one the users with the profile have this delegated profile
             $delegated_users = ProfileDelegatedModel::
-            where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+            where('eform_id', config('constants.eforms_id.purchase_order'))
                 ->where('delegated_profile', $profile->id)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
@@ -625,7 +616,7 @@ class PurchaseOrderControllerController extends Controller
     public function randGenerator($head, $value)
     {
         // use the total number of petty cash in the system
-        $count = DB::select("SELECT count(id) as total FROM eform_hotel_accomodation ");
+        $count = DB::select("SELECT count(id) as total FROM EFORM_purchase_orders");
 
         //random number
         // $random = rand(1, 9999999);
@@ -634,7 +625,7 @@ class PurchaseOrderControllerController extends Controller
         $random = sprintf("%07d", ($random + $value));
         $random = $head . $random;
 
-        $count_existing_forms = DB::select("SELECT count(id) as total FROM eform_hotel_accomodation WHERE code = '{$random}'");
+        $count_existing_forms = DB::select("SELECT count(id) as total FROM EFORM_purchase_orders WHERE code = '{$random}'");
         try {
             $total = $count_existing_forms[0]->total;
         } catch (\Exception $exception) {
@@ -644,7 +635,7 @@ class PurchaseOrderControllerController extends Controller
         if ($total < 1) {
             return $random;
         } else {
-            self::randGenerator("PT", $value);
+            return self::randGenerator("PO", $value);
         }
     }
 
@@ -659,23 +650,23 @@ class PurchaseOrderControllerController extends Controller
 
         //GET THE PETTY CASH MODEL if you are an admin
         //  if (Auth::user()->type_id == config('constants.user_types.developer')) {
-        $list = DB::select("SELECT * FROM eform_hotel_accomodation where id = {$id} ");
+        $list = DB::select("SELECT * FROM eform_purchase_orders where id = {$id} ");
         $form = PurchaseOrderModel::hydrate($list)->first();
 
         $receipts = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.hotel_accommodation'))
+            ->where('form_type', config('constants.eforms_id.purchase_order'))
             ->where('file_type', config('constants.file_type.receipt'))
             ->get();
         $quotations = AttachedFileModel::where('form_id', $form->code)
 
-            ->where('form_type', config('constants.eforms_id.hotel_accommodation'))
+            ->where('form_type', config('constants.eforms_id.purchase_order'))
             ->where('file_type', config('constants.file_type.quotation'))
             ->get();
 //        dd($quotations);
         $form_accounts = PurchaseOrderModel::where('id', $id)->get();
       //  $projects = ProjectsModel::all();
         $accounts = AccountsChartModel::all();
-        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.hotel_accommodation'))
+        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.purchase_order'))
             ->orderBy('created_at', 'asc')->get();
 
         $user = User::find($form->created_by);
@@ -711,21 +702,21 @@ class PurchaseOrderControllerController extends Controller
     public function showForm($id)
     {
         //GET THE PETTY CASH MODEL if you are an admin
-        $list = DB::select("SELECT * FROM eform_hotel_accomodation where id = {$id} ");
+        $list = DB::select("SELECT * FROM eform_purchase_orders where id = {$id} ");
         $form = PurchaseOrderModel::hydrate($list)->first();
 
         $receipts = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.hotel_accommodation'))
+            ->where('form_type', config('constants.eforms_id.purchase_order'))
             ->where('file_type', config('constants.file_type.receipt'))
             ->get();
         $quotations = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.hotel_accommodation'))
+            ->where('form_type', config('constants.eforms_id.purchase_order'))
             ->where('file_type', config('constants.file_type.quotation'))
             ->get();
-        $form_accounts = PurchaseOrderModel::where('eform_hotel_accommodation_id', $id)->get();
+        $form_accounts = PurchaseOrderModel::where('eform_purchase_order_id', $id)->get();
         $projects = ProjectsModel::all();
         $accounts = AccountsChartModel::all();
-        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.hotel_accommodation'))
+        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.purchase_order'))
             ->orderBy('created_at', 'asc')->get();
 
         $user = User::find($form->created_by);
@@ -797,20 +788,20 @@ class PurchaseOrderControllerController extends Controller
         //FOR FOR CLAIMANT CANCELLATION
         if (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_002')
-            && $current_status == config('constants.hotel_accommodation_status.new_application')
+            && $current_status == config('constants.purchase_order_status.new_application')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
+                $new_status = config('constants.purchase_order_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
+                $new_status = config('constants.purchase_order_status.cancelled');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
+                $new_status = config('constants.purchase_order_status.cancelled');
             } else {
-                $new_status = config('constants.hotel_accommodation_status.new_application');
+                $new_status = config('constants.purchase_order_status.new_application');
                 $insert_reasons = false;
             }
             $form->config_status_id = $new_status;
@@ -820,20 +811,20 @@ class PurchaseOrderControllerController extends Controller
         } //FOR HOD
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')
-            && $current_status == config('constants.hotel_accommodation_status.new_application')
+            && $current_status == config('constants.purchase_order_status.new_application')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
+                $new_status = config('constants.purchase_order_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
+                $new_status = config('constants.purchase_order_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.hod_approved');
+                $new_status = config('constants.purchase_order_status.hod_approved');
             } else {
-                $new_status = config('constants.hotel_accommodation_status.new_application');
+                $new_status = config('constants.purchase_order_status.new_application');
                 $insert_reasons = false;
             }
             //update
@@ -847,20 +838,20 @@ class PurchaseOrderControllerController extends Controller
         }
         //FOR FOR  DIRECTOR
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_003')
-            && $current_status == config('constants.hotel_accommodation_status.hod_approved')
+            && $current_status == config('constants.purchase_order_status.hod_approved')
         ) {
             $insert_reasons = true;
             //cancel status
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
+                $new_status = config('constants.purchase_order_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
+                $new_status = config('constants.purchase_order_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.director_approved');
+                $new_status = config('constants.purchase_order_status.director_approved');
             } else {
-                $new_status = config('constants.hotel_accommodation_status.hod_approved');
+                $new_status = config('constants.purchase_order_status.hod_approved');
                 $insert_reasons = false;
             }
             //update
@@ -874,20 +865,20 @@ class PurchaseOrderControllerController extends Controller
         //FOR CHIEF ACCOUNTANT
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
-            && $current_status == config('constants.hotel_accommodation_status.director_approved')
+            && $current_status == config('constants.purchase_order_status.director_approved')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
+                $new_status = config('constants.purchase_order_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
+                $new_status = config('constants.purchase_order_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.chief_accountant_approved');
+                $new_status = config('constants.purchase_order_status.chief_accountant_approved');
             } else {
-                $new_status = config('constants.hotel_accommodation_status.director_approved');
+                $new_status = config('constants.purchase_order_status.director_approved');
                 $insert_reasons = false;
             }
 
@@ -903,20 +894,20 @@ class PurchaseOrderControllerController extends Controller
 
         //FOR FOR EXPENDITURE OFFICE FUNDS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
-            && $current_status == config('constants.hotel_accommodation_status.chief_accountant_approved')
+            && $current_status == config('constants.purchase_order_status.chief_accountant_approved')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
+                $new_status = config('constants.purchase_order_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
+                $new_status = config('constants.purchase_order_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.closed');
+                $new_status = config('constants.purchase_order_status.closed');
             } else {
-                $new_status = config('constants.hotel_accommodation_status.chief_accountant_approved');
+                $new_status = config('constants.purchase_order_status.chief_accountant_approved');
                 $insert_reasons = false;
             }
 //            dd($request->all());
@@ -945,7 +936,7 @@ class PurchaseOrderControllerController extends Controller
                     // Filename to store
                     $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
                     // Upload File
-                    $path = $file->storeAs('public/hotel_accommodation', $fileNameToStore);
+                    $path = $file->storeAs('public/purchase_order', $fileNameToStore);
 
                     //upload the receipt
                     $file = AttachedFileModel::updateOrCreate(
@@ -955,7 +946,7 @@ class PurchaseOrderControllerController extends Controller
                             'extension' => $extension,
                             'file_size' => $size,
                             'form_id' => $form->code,
-                            'form_type' => config('constants.eforms_id.hotel_accommodation'),
+                            'form_type' => config('constants.eforms_id.purchase_order'),
                             'file_type' => config('constants.file_type.quotation')
                         ],
                         [
@@ -964,7 +955,7 @@ class PurchaseOrderControllerController extends Controller
                             'extension' => $extension,
                             'file_size' => $size,
                             'form_id' => $form->code,
-                            'form_type' => config('constants.eforms_id.hotel_accommodation'),
+                            'form_type' => config('constants.eforms_id.purchase_order'),
                             'file_type' => config('constants.file_type.quotation')
                         ]
                     );
@@ -987,14 +978,14 @@ class PurchaseOrderControllerController extends Controller
 //                        'account' => $request->credited_account[$i],
 //                        'debitted_account_id' => $request->debited_account[$i],
 //                        //'debitted_amount' => $request->debited_amount[$i],
-//                        'eform_hotel_accommodation_id' => $form->id,
+//                        'eform_purchase_order_id' => $form->id,
 //                        'created_by' => $user->id,
 //                        'company' => '01',
 //                        'intra_company' => '01',
 //                        'project' => $form->project->code ?? "",
 //                        'pems_project' => 'N',
 //                        'spare' => '0000',
-//                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
+//                        'status_id' => config('constants.purchase_order_status.export_not_ready')
 //                    ],
 //                    [
 //                        'creditted_account_id' => $request->credited_account[$i],
@@ -1003,8 +994,8 @@ class PurchaseOrderControllerController extends Controller
 //                        'debitted_account_id' => $request->debited_account[$i],
 //                        //'debitted_amount' => $request->debited_amount[$i],
 //
-//                        'eform_hotel_accommodation_id' => $form->id,
-//                        'hotel_accommodation_code' => $form->code,
+//                        'eform_purchase_order_id' => $form->id,
+//                        'purchase_order_code' => $form->code,
 //                        'cost_center' => $form->cost_center,
 //                        'business_unit_code' => $form->business_unit_code,
 //                        'user_unit_code' => $form->user_unit_code,
@@ -1032,7 +1023,7 @@ class PurchaseOrderControllerController extends Controller
 //                        'pems_project' => 'N',
 //                        'spare' => '0000',
 //                        'description' => $des,
-//                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
+//                        'status_id' => config('constants.purchase_order_status.export_not_ready')
 //                    ]
 //                );
 //
@@ -1045,14 +1036,14 @@ class PurchaseOrderControllerController extends Controller
 //                        'debitted_account_id' => $request->debited_account[$i],
 //                        'debitted_amount' => $request->debited_amount[$i],
 //                        'account' => $request->debited_account[$i],
-//                        'eform_hotel_accommodation_id' => $form->id,
+//                        'eform_purchase_order_id' => $form->id,
 //                        'created_by' => $user->id,
 //                        'company' => '01',
 //                        'intra_company' => '01',
 //                        'project' => $form->project->code ?? "",
 //                        'pems_project' => 'N',
 //                        'spare' => '0000',
-//                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
+//                        'status_id' => config('constants.purchase_order_status.export_not_ready')
 //                    ],
 //                    [
 //                        'creditted_account_id' => $request->credited_account[$i],
@@ -1061,8 +1052,8 @@ class PurchaseOrderControllerController extends Controller
 //                        'debitted_amount' => $request->debited_amount[$i],
 //                        'account' => $request->debited_account[$i],
 //
-//                        'eform_hotel_accommodation_id' => $form->id,
-//                        'hotel_accommodation_code' => $form->code,
+//                        'eform_purchase_order_id' => $form->id,
+//                        'purchase_order_code' => $form->code,
 //                        'cost_center' => $form->cost_center,
 //                        'business_unit_code' => $form->business_unit_code,
 //                        'user_unit_code' => $form->user_unit_code,
@@ -1089,7 +1080,7 @@ class PurchaseOrderControllerController extends Controller
 //                        'pems_project' => 'N',
 //                        'spare' => '0000',
 //                        'description' => $des,
-//                        'status_id' => config('constants.hotel_accommodation_status.export_not_ready')
+//                        'status_id' => config('constants.purchase_order_status.export_not_ready')
 //                    ]
 //                );
 //            }
@@ -1098,23 +1089,23 @@ class PurchaseOrderControllerController extends Controller
 
         //FOR AUDITING OFFICE
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
-            && $current_status == config('constants.hotel_accommodation_status.closed')
+            && $current_status == config('constants.purchase_order_status.closed')
         ) {
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.hotel_accommodation_status.cancelled');
+                $new_status = config('constants.purchase_order_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.hotel_accommodation_status.rejected');
+                $new_status = config('constants.purchase_order_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.hotel_accommodation_status.audited');
+                $new_status = config('constants.purchase_order_status.audited');
             }//audit status
             elseif ($request->approval == config('constants.approval.queried')) {
-                $new_status = config('constants.hotel_accommodation_status.queried');
+                $new_status = config('constants.purchase_order_status.queried');
             } else {
-                $new_status = config('constants.hotel_accommodation_status.closed');
+                $new_status = config('constants.purchase_order_status.closed');
                 $insert_reasons = false;
             }
             //update
@@ -1129,7 +1120,7 @@ class PurchaseOrderControllerController extends Controller
         //FOR NO-ONE
         else {
             //return with an error
-            return Redirect::route('hotel.accommodation.home')->with('message', 'Hotel Accommodation ' . $form->code . ' for has been ' . $request->approval . ' successfully');
+            return Redirect::route('hotel.accommodation.home')->with('message', 'Purchase Order ' . $form->code . ' for has been ' . $request->approval . ' successfully');
         }
 
         //reason
@@ -1144,7 +1135,7 @@ class PurchaseOrderControllerController extends Controller
                     'reason' => $request->reason,
                     'current_status_id' => $current_status,
                     'action' => $request->approval,
-                    'config_eform_id' => config('constants.eforms_id.hotel_accommodation'),
+                    'config_eform_id' => config('constants.eforms_id.purchase_order'),
                     'eform_id' => $form->id,
                     'created_by' => $user->id,
                 ],
@@ -1157,7 +1148,7 @@ class PurchaseOrderControllerController extends Controller
                     'action' => $request->approval,
                     'current_status_id' => $current_status,
                     'action_status_id' => $new_status,
-                    'config_eform_id' => config('constants.eforms_id.hotel_accommodation'),
+                    'config_eform_id' => config('constants.eforms_id.purchase_order'),
                     'eform_id' => $form->id,
                     'created_by' => $user->id,
                 ]
@@ -1188,14 +1179,14 @@ class PurchaseOrderControllerController extends Controller
         $claimant_details = User::find($form->created_by);
 
         //check if this next profile is for a claimant and if the hotel-accommodation needs Acknowledgement
-        if ($new_status == config('constants.hotel_accommodation_status.security_approved')) {
+        if ($new_status == config('constants.purchase_order_status.security_approved')) {
             //message details
             $subject = 'hotel-accommodation Voucher Needs Your Attention';
             $title = 'hotel-accommodation Voucher Needs Your Attention';
             $message = 'This is to notify you that there is a <b>ZMW ' . $form->total_payment . '</b>  hotel-accommodation Voucher (' . $form->code . ') raised by ' . $form->claimant_name . ', that needs your attention.
             <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at ' . $form->status->name . ' stage';
         } //check if this next profile is for a claimant and if the hotel-accommodation is closed
-        else if ($new_status == config('constants.hotel_accommodation_status.closed')) {
+        else if ($new_status == config('constants.purchase_order_status.closed')) {
             $names = $names . '<br>' . $claimant_details->namee;
             //message details
             $subject = 'hotel-accommodation Voucher Closed Successfully';
@@ -1254,33 +1245,33 @@ class PurchaseOrderControllerController extends Controller
         $not_claimant = true;
 
         //FOR MY HOD USERS
-        if ($new_status == config('constants.hotel_accommodation_status.new_application')) {
+        if ($new_status == config('constants.purchase_order_status.new_application')) {
             $superior_user_unit = $user_unit->hod_unit;
             $superior_user_code = $user_unit->hod_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
-        } elseif ($new_status == config('constants.hotel_accommodation_status.hod_approved')) {
+        } elseif ($new_status == config('constants.purchase_order_status.hod_approved')) {
             $superior_user_code = $user_unit->ca_code;
             $superior_user_unit = $user_unit->ca_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
-        } elseif ($new_status == config('constants.hotel_accommodation_status.chief_accountant_approved')) {
+        } elseif ($new_status == config('constants.purchase_order_status.chief_accountant_approved')) {
             $superior_user_code = $user_unit->dr_code;
             $superior_user_unit = $user_unit->dr_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
-        } elseif ($new_status == config('constants.hotel_accommodation_status.director_approved')) {
+        } elseif ($new_status == config('constants.purchase_order_status.director_approved')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
-        } elseif ($new_status == config('constants.hotel_accommodation_status.funds_disbursement')) {
+        } elseif ($new_status == config('constants.purchase_order_status.funds_disbursement')) {
             $not_claimant = false;
-        } elseif ($new_status == config('constants.hotel_accommodation_status.funds_acknowledgement')) {
+        } elseif ($new_status == config('constants.purchase_order_status.funds_acknowledgement')) {
             $superior_user_unit = $user_unit->security_unit;
             $superior_user_code = $user_unit->security_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_013'));
-        } elseif ($new_status == config('constants.hotel_accommodation_status.security_approved')) {
+        } elseif ($new_status == config('constants.purchase_order_status.security_approved')) {
             $superior_user_unit = $user_unit->expenditure_unit;
             $superior_user_code = $user_unit->expenditure_code;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
-        } elseif ($new_status == config('constants.hotel_accommodation_status.closed')) {
+        } elseif ($new_status == config('constants.purchase_order_status.closed')) {
             $superior_user_unit = $user_unit->audit_unit;
             $superior_user_code = $user_unit->audit_unit;
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
@@ -1298,7 +1289,7 @@ class PurchaseOrderControllerController extends Controller
             $users_list[] = '';
             //[A]check if the users in my user unit have this assigned profile
             $assigned_users = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+            where('eform_id', config('constants.eforms_id.purchase_order'))
                 ->where('profile', $profile->code)
                 ->get();
             //loop through assigned users
@@ -1327,7 +1318,7 @@ class PurchaseOrderControllerController extends Controller
             }
             //[B]check if one the users with the profile have this delegated profile
             $delegated_users = ProfileDelegatedModel::
-            where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+            where('eform_id', config('constants.eforms_id.purchase_order'))
                 ->where('delegated_profile', $profile->id)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
@@ -1356,37 +1347,37 @@ class PurchaseOrderControllerController extends Controller
 
         if ($value == config('constants.all')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $list = DB::select("SELECT * FROM eform_hotel_accommodation_account  ");
+                $list = DB::select("SELECT * FROM eform_purchase_order_account  ");
                 $list = PurchaseOrderModel::hydrate($list);
             } else {
                 $list = PurchaseOrderModel::all();
             }
             $title = "ALl";
-        } elseif ($value == config('constants.hotel_accommodation_status.not_exported')) {
+        } elseif ($value == config('constants.purchase_order_status.not_exported')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $status = config('constants.hotel_accommodation_status.not_exported');
-                $list = DB::select("SELECT * FROM eform_hotel_accommodation_account where status_id = {$status} ");
+                $status = config('constants.purchase_order_status.not_exported');
+                $list = DB::select("SELECT * FROM eform_purchase_order_account where status_id = {$status} ");
                 $list = PurchaseOrderModel::hydrate($list);
             } else {
-                $list = PurchaseOrderModel::where('status_id', config('constants.hotel_accommodation_status.not_exported'))->get();
+                $list = PurchaseOrderModel::where('status_id', config('constants.purchase_order_status.not_exported'))->get();
             }
             $title = "Not Exported";
-        } elseif ($value == config('constants.hotel_accommodation_status.exported')) {
+        } elseif ($value == config('constants.purchase_order_status.exported')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $status = config('constants.hotel_accommodation_status.exported');
-                $list = DB::select("SELECT * FROM eform_hotel_accommodation_account where status_id = {$status} ");
+                $status = config('constants.purchase_order_status.exported');
+                $list = DB::select("SELECT * FROM eform_purchase_order_account where status_id = {$status} ");
                 $list = PurchaseOrderModel::hydrate($list);
             } else {
-                $list = PurchaseOrderModel::where('status_id', config('constants.hotel_accommodation_status.exported'))->get();
+                $list = PurchaseOrderModel::where('status_id', config('constants.purchase_order_status.exported'))->get();
             }
             $title = " Exported";
-        } elseif ($value == config('constants.hotel_accommodation_status.export_failed')) {
+        } elseif ($value == config('constants.purchase_order_status.export_failed')) {
             if (Auth::user()->type_id == config('constants.user_types.developer')) {
-                $status = config('constants.hotel_accommodation_status.export_failed');
-                $list = DB::select("SELECT * FROM eform_hotel_accommodation_account where status_id = {$status} ");
+                $status = config('constants.purchase_order_status.export_failed');
+                $list = DB::select("SELECT * FROM eform_purchase_order_account where status_id = {$status} ");
                 $list = PurchaseOrderModel::hydrate($list);
             } else {
-                $list = PurchaseOrderModel::where('status_id', config('constants.hotel_accommodation_status.export_failed'))->get();
+                $list = PurchaseOrderModel::where('status_id', config('constants.purchase_order_status.export_failed'))->get();
             }
             $title = "Failed Export";
         }
@@ -1407,14 +1398,14 @@ class PurchaseOrderControllerController extends Controller
 
     public function reportsExport(Request $request)
     {
-        $fileName = 'hotel_accommodation_Accounts.csv';
+        $fileName = 'purchase_order_Accounts.csv';
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
-            $tasks = PurchaseOrderModel::where('status_id', config('constants.hotel_accommodation_status.not_exported'))->get();
+            $tasks = PurchaseOrderModel::where('status_id', config('constants.purchase_order_status.not_exported'))->get();
         } else {
-            $not_exported = config('constants.hotel_accommodation_status.not_exported');
-            $tasks = DB::select("SELECT * FROM eform_hotel_accommodation_account
+            $not_exported = config('constants.purchase_order_status.not_exported');
+            $tasks = DB::select("SELECT * FROM eform_purchase_order_account
                         WHERE status_id = {$not_exported}
-                        ORDER BY eform_hotel_accommodation_id ASC ");
+                        ORDER BY eform_purchase_order_id ASC ");
             $tasks = PurchaseOrderModel::hydrate($tasks);
         }
 
@@ -1450,17 +1441,17 @@ class PurchaseOrderControllerController extends Controller
             foreach ($tasks as $item) {
 
                 //mark the item as exported
-//                $item->status_id = config('constants.hotel_accommodation_status.exported');
+//                $item->status_id = config('constants.purchase_order_status.exported');
 //                $item->save();
 
                 //Make the update on the petty cash account
-                $previous_status = config('constants.hotel_accommodation_status.exported');
+                $previous_status = config('constants.purchase_order_status.exported');
                 $id = $item->id;
-                $eform_hotel_accommodation_item = DB::table('eform_hotel_accommodation_account')
+                $eform_purchase_order_item = DB::table('eform_purchase_order_account')
                     ->where('id', $id)
                     ->update(['status_id' => $previous_status]);
 
-                $row['Code'] = $item->hotel_accommodation_code;
+                $row['Code'] = $item->purchase_order_code;
                 $row['Claimant'] = $item->claimant_name;
                 $row['Claim Date'] = $item->claim_date;
                 $row['Company'] = $item->company;
@@ -1547,11 +1538,11 @@ class PurchaseOrderControllerController extends Controller
 //            $user = User::find($form->created_by);
 //            $user_unit = $user->user_unit;
             //redirect home
-            return Redirect::back()->with('error', 'Hotel Accommodation Voucher did not sync, because of the user-unit problem.');
+            return Redirect::back()->with('error', 'Purchase Order Voucher did not sync, because of the user-unit problem.');
         }
 
         //make the update
-        $update_eform_hotel_accommodation = DB::table('eform_hotel_accomodation')
+        $update_eform_purchase_order = DB::table('eform_hotel_accomodation')
             ->where('id', $form->id)
             ->update([
 
@@ -1573,12 +1564,12 @@ class PurchaseOrderControllerController extends Controller
 
 
         // SYNC ALL
-//        $eform_hotel_accommodation_all = DB::select("SELECT * FROM eform_hotel_accomodation  ");
+//        $eform_purchase_order_all = DB::select("SELECT * FROM eform_purchase_orders  ");
 
-//        foreach ($eform_hotel_accommodation_all as $form) {
+//        foreach ($eform_purchase_order_all as $form) {
 //
 //            //get the form
-//            $eform_hotel_accommodation = DB::table('eform_hotel_accomodation')
+//            $eform_purchase_order = DB::table('eform_hotel_accomodation')
 //                ->where('id', $form->id)
 //                ->get()->first();
 //
@@ -1595,7 +1586,7 @@ class PurchaseOrderControllerController extends Controller
 //            }
 //
 //            //make the update
-//            $update_eform_hotel_accommodation = DB::table('eform_hotel_accomodation')
+//            $update_eform_purchase_order = DB::table('eform_hotel_accomodation')
 //                ->where('id', $form->id )
 //                ->update([
 //
@@ -1615,26 +1606,26 @@ class PurchaseOrderControllerController extends Controller
 //                    'security_unit' => $user_unit->security_unit
 //                ]);
 //
-//          //  dd($update_eform_hotel_accommodation);
+//          //  dd($update_eform_purchase_order);
 //
 //        }
-        //  dd($eform_hotel_accommodation_all);
+        //  dd($eform_purchase_order_all);
 
 
-//        $eform_hotel_accommodation = DB::select("SELECT * FROM eform_hotel_accomodation where id =  {$id} ");
-//        $eform_hotel_accommodation = PurchaseOrderModel::hydrate($eform_hotel_accommodation);
+//        $eform_purchase_order = DB::select("SELECT * FROM eform_purchase_orders where id =  {$id} ");
+//        $eform_purchase_order = PurchaseOrderModel::hydrate($eform_purchase_order);
 //
-//        $claimant = User::find($eform_hotel_accommodation[0]->created_by);
+//        $claimant = User::find($eform_purchase_order[0]->created_by);
 //        $user_unit_code = $claimant->user_unit->code;
 //        $superior_code = $claimant->position->superior_code;
-//        $eform_hotel_accommodation = DB::table('eform_hotel_accomodation')
+//        $eform_purchase_order = DB::table('eform_hotel_accomodation')
 //            ->where('id', $id)
 //            ->update(['code_superior' => $superior_code,
 //                'user_unit_code' => $user_unit_code,
 //            ]);
 
         //redirect home
-        return Redirect::route('hotel.accommodation.home')->with('message', 'Hotel Accommodation Voucher have been synced successfully');
+        return Redirect::route('hotel.accommodation.home')->with('message', 'Purchase Order Voucher have been synced successfully');
 
         dd($claimant->position->superior_code ?? "");
     }
@@ -1650,41 +1641,41 @@ class PurchaseOrderControllerController extends Controller
     public function reportsExportUnmarkExportedAll()
     {
         //get a list of forms with the above status
-        // $tasks = PurchaseOrderModel::where('status_id', config('constants.hotel_accommodation_status.exported'))->get();
-        $exported = config('constants.hotel_accommodation_status.exported');
-        $tasks = DB::select("SELECT * FROM eform_hotel_accommodation_account
+        // $tasks = PurchaseOrderModel::where('status_id', config('constants.purchase_order_status.exported'))->get();
+        $exported = config('constants.purchase_order_status.exported');
+        $tasks = DB::select("SELECT * FROM eform_purchase_order_account
                         WHERE status_id = {$exported}
-                        ORDER BY eform_hotel_accommodation_id ASC ");
+                        ORDER BY eform_purchase_order_id ASC ");
         $tasks = PurchaseOrderModel::hydrate($tasks);
 
         foreach ($tasks as $item) {
-//            $item->status_id = config('constants.hotel_accommodation_status.not_exported');
+//            $item->status_id = config('constants.purchase_order_status.not_exported');
 //            $item->save();
 
-            $previous_status = config('constants.hotel_accommodation_status.not_exported');
+            $previous_status = config('constants.purchase_order_status.not_exported');
             $id = $item->id;
-            $eform_hotel_accommodation_item = DB::table('eform_hotel_accommodation_account')
+            $eform_purchase_order_item = DB::table('eform_purchase_order_account')
                 ->where('id', $id)
                 ->update(['status_id' => $previous_status]);
 
         }
         //redirect home
-        return Redirect::back()->with('message', 'Hotel Accommodation Exported Accounts have been reversed successfully');
+        return Redirect::back()->with('message', 'Purchase Order Exported Accounts have been reversed successfully');
     }
 
     public function markAccountLinesAsDuplicates($id)
     {
         //$id = 124 ;
-        $account_line = DB::select("SELECT * FROM eform_hotel_accommodation_account where id =  {$id} ");
+        $account_line = DB::select("SELECT * FROM eform_purchase_order_account where id =  {$id} ");
         $account_line = PurchaseOrderModel::hydrate($account_line);
         $size = sizeof($account_line);
         if ($size > 0) {
             $item = $account_line[$size - 1];
-            $item->status_id = config('constants.hotel_accommodation_status.void');
+            $item->status_id = config('constants.purchase_order_status.void');
             $item->save();
         }
         //redirect home
-        return Redirect::back()->with('message', 'Hotel Accommodation Account Line have been Marked as Duplicate successfully');
+        return Redirect::back()->with('message', 'Purchase Order Account Line have been Marked as Duplicate successfully');
 
     }
 
@@ -1693,22 +1684,22 @@ class PurchaseOrderControllerController extends Controller
 
         try {
             // get the form using its id
-            $eform_hotel_accommodation = DB::select("SELECT * FROM eform_hotel_accomodation where id =  {$id} ");
-            $eform_hotel_accommodation = PurchaseOrderModel::hydrate($eform_hotel_accommodation);
+            $eform_purchase_order = DB::select("SELECT * FROM eform_purchase_orders where id =  {$id} ");
+            $eform_purchase_order = PurchaseOrderModel::hydrate($eform_purchase_order);
 
             //get current status id
-            $status_model = StatusModel::where('id', $eform_hotel_accommodation[0]->config_status_id)
-                ->where('eform_id', config('constants.eforms_id.hotel_accommodation'))->first();
+            $status_model = StatusModel::where('id', $eform_purchase_order[0]->config_status_id)
+                ->where('eform_id', config('constants.eforms_id.purchase_order'))->first();
             $current_status = $status_model->id;
 
             //new status
             $new_status_id = $current_status - 1;
             $status_model = StatusModel::where('id', $new_status_id)
-                ->where('eform_id', config('constants.eforms_id.hotel_accommodation'))->first();
+                ->where('eform_id', config('constants.eforms_id.purchase_order'))->first();
             $previous_status = $status_model->id;
 
-            //  $eform_hotel_accommodation = DB::select("UPDATE eform_hotel_accomodation SET config_status_id = {$previous_status} where id =  {$id} ");
-            $eform_hotel_accommodation = DB::table('eform_hotel_accomodation')
+            //  $eform_purchase_order = DB::select("UPDATE eform_purchase_orders SET config_status_id = {$previous_status} where id =  {$id} ");
+            $eform_purchase_order = DB::table('eform_hotel_accomodation')
                 ->where('id', $id)
                 ->update(['config_status_id' => $previous_status]);
 
@@ -1724,11 +1715,11 @@ class PurchaseOrderControllerController extends Controller
 //                    'action' => $request->approval,
 //                    'current_status_id' => $current_status,
 //                    'action_status_id' => $previous_status,
-//                    'config_eform_id' => config('constants.eforms_id.hotel_accommodation'),
-//                    'eform_id' => $eform_hotel_accommodation[0]->id,
+//                    'config_eform_id' => config('constants.eforms_id.purchase_order'),
+//                    'eform_id' => $eform_purchase_order[0]->id,
 //                    'created_by' => $user->id,
 //                ]);
-            return Redirect::back()->with('message', 'Hotel Accommodation Account Line have been dropped to the previous stage successfully');
+            return Redirect::back()->with('message', 'Purchase Order Account Line have been dropped to the previous stage successfully');
         } catch (Exception $exception) {
             return Redirect::back()->with('error', 'Sorry an error happened');
         }
@@ -1743,19 +1734,19 @@ class PurchaseOrderControllerController extends Controller
 
             //UPDATE ONE  - Update all petty cash accounts with the user unit and work-flow details
             //get a list of all the petty cash account models
-            $tasks = DB::select("SELECT * FROM eform_hotel_accommodation_account
-                            ORDER BY eform_hotel_accommodation_id ASC ");
+            $tasks = DB::select("SELECT * FROM eform_purchase_order_account
+                            ORDER BY eform_purchase_order_id ASC ");
             $tasks = PurchaseOrderModel::hydrate($tasks);
 
             foreach ($tasks as $account){
                 //get associated petty cash
-                $hotel_accommodation_id = $account->eform_hotel_accommodation_id ;
+                $purchase_order_id = $account->eform_purchase_order_id ;
                 $tasks_ht = DB::select("SELECT * FROM eform_hotel_accomodation
-                            WHERE id = {$hotel_accommodation_id}  ");
+                            WHERE id = {$purchase_order_id}  ");
                 $tasks_ht = PurchaseOrderModel::hydrate($tasks_ht)->first();
 
                 //update account with the petty cash details
-                $eform_hotel_accommodation_account = DB::table('eform_hotel_accommodation_account')
+                $eform_purchase_order_account = DB::table('eform_purchase_order_account')
                     ->where('id', $account->id)
                     ->update([
                         'cost_center' => $tasks_ht->cost_center,
@@ -1765,7 +1756,7 @@ class PurchaseOrderControllerController extends Controller
                         'claimant_name'=> $tasks_ht->claimant_name,
                         'claimant_staff_no'=> $tasks_ht->claimant_staff_no,
                         'claim_date'=> $tasks_ht->claim_date,
-                        'hotel_accommodation_code'=> $tasks_ht->code,
+                        'purchase_order_code'=> $tasks_ht->code,
 
                         'hod_code' => $tasks_ht->hod_code,
                         'hod_unit' => $tasks_ht->hod_unit,
@@ -1782,7 +1773,7 @@ class PurchaseOrderControllerController extends Controller
 //           */
 
 
-            return Redirect::back()->with('message', 'Hotel Accommodation Account Line have been dropped to the previous stage successfully');
+            return Redirect::back()->with('message', 'Purchase Order Account Line have been dropped to the previous stage successfully');
         } catch (Exception $exception) {
             return Redirect::back()->with('error', 'Sorry an error happened');
         }
@@ -1814,7 +1805,7 @@ class PurchaseOrderControllerController extends Controller
         }
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.purchase_order'))->get();
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
         //pending forms for me before i apply again
@@ -1881,7 +1872,7 @@ class PurchaseOrderControllerController extends Controller
         }
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.purchase_order'))->get();
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
         //pending forms for me before i apply again

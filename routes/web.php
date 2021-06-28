@@ -348,13 +348,13 @@ Route::group([
             Route::get('get/{unit}/{status}/{start_date}/{end_date}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'getFilteredReports'])->name('petty.cash.filtered.get');
         });
 
-        Route::group([
-            'prefix' => 'management'], function () {
-            Route::get('list', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'index'])->name('petty.cash.float.index');
-            Route::post('store', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'store'])->name('petty.cash.float.store');
-            Route::post('update', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'update'])->name('petty.cash.float.update');
-            Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'destroy'])->name('petty.cash.float.delete');
-        });
+//        Route::group([
+//            'prefix' => 'management'], function () {
+//            Route::get('list', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'index'])->name('petty.cash.float.index');
+//            Route::post('store', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'store'])->name('petty.cash.float.store');
+//            Route::post('update', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'update'])->name('petty.cash.float.update');
+//            Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'destroy'])->name('petty.cash.float.delete');
+//        });
         Route::group([
             'prefix' => 'float'], function () {
             Route::get('list', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'index'])->name('petty.cash.float.index');
@@ -450,12 +450,12 @@ Route::group([
 
 });
 
-Route::group([
-    'namespace' => 'hotel_accommodation_home',
-    'prefix' => 'hotel/accommodation/home',
-    'middleware' => 'auth'], function () {
-
-    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('hotel.accommodation.home');
+//Route::group([
+//    'namespace' => 'hotel_accommodation_home',
+//    'prefix' => 'hotel/accommodation/home',
+//    'middleware' => 'auth'], function () {
+//
+//    Route::get('home', [App\Http\Controllers\EForms\GiftDeclaration\HomeController::class, 'index'])->name('hotel.accommodation.home');
 //    Route::get('list/{value}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'index'])->name('gifts-declaration-list');
 //    Route::get('create', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'create'])->name('gifts-declaration-create');
 //    Route::post('show/{id}', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'show'])->name('gifts-declaration-show');
@@ -466,7 +466,7 @@ Route::group([
 //    Route::get('reports', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'reports'])->name('gifts-declaration-report');
 //    Route::get('reportExport', [App\Http\Controllers\EForms\GiftDeclaration\GiftDeclarationController::class, 'reportsExport'])->name('gifts-declaration-report-export');
 
-});
+//});
 
 
 Route::group([
@@ -922,16 +922,16 @@ Route::group([
 
         //hotel_accommodation routes
         Route::get('home', [App\Http\Controllers\EForms\PurchaseOrder\HomeController::class, 'index'])->name('purchase.order.home');
-        Route::get('list/{value}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'index'])->name('purchase.order..list');
-        Route::get('create', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'create'])->name('purchase.order..create');
-//        Route::post('show/{id}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'show'])->name('purchase.order..show');
-//        Route::post('store', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'store'])->name('purchase.order..store');
-//        Route::post('approve', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'approve'])->name('purchase.order..approve');
-//        Route::post('update', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'update'])->name('purchase.order..update');
-//        Route::post('destroy/{id}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'destroy'])->name('purchase.order..destroy');
-//        Route::get('reports/{value}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'reports'])->name('purchase.order..report');
-//        Route::get('reportExport', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'reportsExport'])->name('purchase.order..report.export');
-//        Route::get('reportSync', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'reportsSync'])->name('purchase.order..report.sync');
+        Route::get('create', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'create'])->name('purchase.order.create');
+        Route::get('list/{value}', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'index'])->name('purchase.order.list');
+        Route::post('show/{id}', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'show'])->name('purchase.order.show');
+        Route::post('store', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'store'])->name('purchase.order.store');
+//        Route::post('approve', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'approve'])->name('purchase.order..approve');
+//        Route::post('update', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'update'])->name('purchase.order..update');
+//        Route::post('destroy/{id}', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'destroy'])->name('purchase.order..destroy');
+//        Route::get('reports/{value}', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'reports'])->name('purchase.order..report');
+//        Route::get('reportExport', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'reportsExport'])->name('purchase.order..report.export');
+//        Route::get('reportSync', [App\Http\Controllers\EForms\PurchaseOrder\PurchaseOrderController::class, 'reportsSync'])->name('purchase.order..report.sync');
 //        Route::post('reportExportUnmarkExported/{value}', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsExportUnmarkExported'])->name('purchase.order..report.export.unmark.exported');
 //        Route::get('reportExportUnmarkExportedAll', [App\Http\Controllers\EForms\HotelAccommodation\HotelAccommodationController::class, 'reportsExportUnmarkExportedAll'])->name('purchase.order..report.export.unmark.exported.all');
 //        Route::get('sync/{id}', [App\Http\Controllers\EForms\PurchaseOrder\HotelAccommodationController::class, 'sync'])->name('purchase.order.sync');
