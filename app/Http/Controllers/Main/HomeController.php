@@ -34,7 +34,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //get the list of categories
         $categories = EFormCategoryModel::all();
         $categories->load('eforms');
         //return view

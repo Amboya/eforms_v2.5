@@ -17,7 +17,7 @@ class SubsistenceAccountModel extends Model
     use SoftDeletes ;
 
     //table name
-    protected $table = 'eform_subsistence_account';
+    protected $table = 'eform_subsistence_accounts';
     //primary key
     protected $primaryKey = 'id';
     //fields fillable

@@ -246,18 +246,18 @@
                                                   class="form-control"></div>
                     </div>
 
-                    <div class="row mb-4" mt-4>
-{{--                        <div class="col-2"><label>Name of Chief Accountant:</label></div>--}}
-{{--                        <div class="col-3"><input type="text" name="chief_accountant_name" value= "{{$form->chief_accountant_name}}" readonly--}}
-{{--                                                  class="form-control"></div>--}}
-{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" name="chief_staff_no" value= "{{$form->chief_accountant_staff_no}}" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" name="chief_accountant_authorised_date" value= "{{$form->chief_accountant_date}}" readonly--}}
-{{--                                                  class="form-control">--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
+                    <div class="row mb-4">
+                        <div class="col-2"><label>Name of Chief Accountant:</label></div>
+                        <div class="col-3"><input type="text" name="chief_accountant_name" value= "{{$form->chief_accountant_name}}" readonly
+                                                  class="form-control"></div>
+                        <div class="col-2 text-center"><label>Signature:</label></div>
+                        <div class="col-2"><input type="text" name="chief_staff_no" value= "{{$form->chief_accountant_staff_no}}" readonly class="form-control">
+                        </div>
+                        <div class="col-1 text-center"><label>Date:</label></div>
+                        <div class="col-2"><input type="text" name="chief_accountant_authorised_date" value= "{{$form->chief_accountant_date}}" readonly
+                                                  class="form-control">
+                        </div>
+                    </div>
 
                     </div>
 
@@ -320,12 +320,12 @@
                 <div class="card-header">
                     <h4 class="card-title">Invoice Files</h4>
                 </div>
-                <div class="card-body" style=" ">
+                <div class="card-body" style="width:100%; height: 900px ">
                     <div class="row">
                         @foreach($quotations as $item)
                             <div class="col-12">
                                 <iframe id="{{$item->id}}" src="{{asset('storage/hotel_accommodation/'.$item->name)}}"
-                                        style="width:100%; " title="{{$item->name}}"></iframe>
+                                        style="width:100%; height: 850px" title="{{$item->name}}"></iframe>
                                 <span>{{$item->file_size}}MB {{$item->name}} </span>
                                 <a href="{{asset('storage/hotel_accommodation/'.$item->name)}}">View</a>
                             </div>
@@ -344,7 +344,7 @@
                     <div class="card-header">
                         <h4 class="card-title">Receipt Files</h4>
                     </div>
-                    <div class="card-body" style="width:45%; ">
+                    <div class="card-body" style="width:100%; height: 900px ">
                         <div class="row">
                             @foreach($receipts as $item)
                                 <div class="col-12">

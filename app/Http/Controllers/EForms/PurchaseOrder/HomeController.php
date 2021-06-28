@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\EForms\HotelAccommodation;
+namespace App\Http\Controllers\EForms\PurchaseOrder;
 
 use App\Http\Controllers\Controller;
-use App\Models\Eforms\HotelAccommodation\HotelAccommodationModel;
+use App\Models\Eforms\PurchaseOrder\PurchaseOrderModel;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
 use App\Models\User;
@@ -22,8 +22,8 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.hotel_accommodation')]);
-        session(['eform_code' => config('constants.eforms_name.hotel_accommodation')]);
+        session(['eform_id' => config('constants.eforms_id.purchase_order')]);
+        session(['eform_code' => config('constants.eforms_name.purchase_order')]);
 
     }
 
@@ -35,18 +35,20 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+//        dd(config('constants.purchase_order_status.new_application'));
         //count new forms
-        $new_forms = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.new_application'))
+        $new_forms = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.new_application'))
             ->count();
         //count pending forms
-        $pending_forms = HotelAccommodationModel::where('config_status_id', '>', config('constants.hotel_accommodation_status.new_application'))
-            ->where('config_status_id', '<', config('constants.hotel_accommodation_status.closed'))
+        $pending_forms = PurchaseOrderModel::where('config_status_id', '>', config('constants.purchase_order_status.new_application'))
+            ->where('config_status_id', '<', config('constants.purchase_order_status.closed'))
             ->count();
         //count closed forms
-        $closed_forms = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.closed'))
+        $closed_forms = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.closed'))
             ->count();
         //count rejected forms
-        $rejected_forms = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.rejected'))
+        $rejected_forms = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.rejected'))
             ->count();
 
         //add to totals
@@ -62,7 +64,6 @@ class HomeController extends Controller
         $totals_needs_me = self::needsMeCount();
         //list all that needs me
         $list = self::needsMeList();
-//        dd($list);
         //pending forms for me before i apply again
         $pending = self::pendingForMe();
 
@@ -76,7 +77,7 @@ class HomeController extends Controller
             'pending' => $pending,
         ];
         //return view
-        return view('eforms.hotel-accommodation.dashboard')->with($params);
+        return view('eforms.purchase-order.dashboard')->with($params);
     }
 
 
@@ -88,37 +89,37 @@ class HomeController extends Controller
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-            $list = HotelAccommodationModel::whereDate('updated_at', \Carbon::today())->count();
+            $list = PurchaseOrderModel::whereDate('updated_at', \Carbon::today())->count();
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-            $list = HotelAccommodationModel::where('config_status_id', '=', config('constants.hotel_accommodation_status.new_application'))
-                ->orWhere('config_status_id', '=', config('constants.hotel_accommodation_status.funds_disbursement'))
+            $list = PurchaseOrderModel::where('config_status_id', '=', config('constants.purchase_order_status.new_application'))
+                ->orWhere('config_status_id', '=', config('constants.purchase_order_status.funds_disbursement'))
                 ->count();
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.new_application'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
                 ->count();
 
         } //for the DR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_003')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.hod_approved'))->count();
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.hod_approved'))->count();
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.director_approved'))->count();
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.director_approved'))->count();
 
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.chief_accountant_approved'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.chief_accountant_approved'))
                 ->count();
               } //for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.closed'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.closed'))
                 ->count();
         } else {
-            $list = HotelAccommodationModel::where('config_status_id', 0)->count();
+            $list = PurchaseOrderModel::where('config_status_id', 0)->count();
         }
         return $list;
     }
@@ -129,46 +130,46 @@ class HomeController extends Controller
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-            $list = HotelAccommodationModel::whereDate('updated_at', \Carbon::today())
+            $list = PurchaseOrderModel::whereDate('updated_at', \Carbon::today())
                 ->orderBy('code')->paginate(50);
             dd(1);
             dd(1);
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-            $list = HotelAccommodationModel::where('config_status_id', '=', config('constants.hotel_accommodation_status.new_application'))
-                ->orWhere('config_status_id', '=', config('constants.hotel_accommodation_status.funds_disbursement'))
+            $list = PurchaseOrderModel::where('config_status_id', '=', config('constants.purchase_order_status.new_application'))
+                ->orWhere('config_status_id', '=', config('constants.purchase_order_status.funds_disbursement'))
                 ->orderBy('code')->paginate(50);
             //   dd(2) ;
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.new_application'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
                 ->orderBy('code')->paginate(50);
         } //for the DR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_003')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.hod_approved'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.hod_approved'))
                 ->orderBy('code')->paginate(50);
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.director_approved'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.director_approved'))
                 ->orderBy('code')->paginate(50);
             //  dd(5) ;
         }
         //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.chief_accountant_approved'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.chief_accountant_approved'))
 
                 ->orderBy('code')->paginate(50);
 
         }//for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-            $list = HotelAccommodationModel::where('config_status_id', config('constants.hotel_accommodation_status.closed'))
+            $list = PurchaseOrderModel::where('config_status_id', config('constants.purchase_order_status.closed'))
                 ->orderBy('code')->paginate(50);
         }
         else {
-            $list = HotelAccommodationModel::where('config_status_id', 0)
+            $list = PurchaseOrderModel::where('config_status_id', 0)
                 ->orderBy('code')->paginate(50);
             //  dd(8) ;
         }
@@ -184,8 +185,8 @@ class HomeController extends Controller
         //for the REQUESTER
         if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             //count pending applications
-            $pending = HotelAccommodationModel::where('config_status_id', '>=', config('constants.hotel_accommodation_status.new_application'))
-                ->where('config_status_id', '<', config('constants.hotel_accommodation_status.closed'))
+            $pending = PurchaseOrderModel::where('config_status_id', '>=', config('constants.purchase_order_status.new_application'))
+                ->where('config_status_id', '<', config('constants.purchase_order_status.closed'))
                 ->count();
         }
 
@@ -200,7 +201,7 @@ class HomeController extends Controller
         $user = Auth::user();
         //[1]  GET YOUR PROFILE
         $profile_assignement = ProfileAssigmentModel::
-        where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+        where('eform_id', config('constants.eforms_id.purchase_order'))
             ->where('user_id', $user->id)->first();
         //  use my profile - if i dont have one - give me the default
         $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
@@ -210,7 +211,7 @@ class HomeController extends Controller
         $user->save();
 
         //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
-        $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+        $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.purchase_order'))
             ->where('delegated_to', $user->id)
             ->where('config_status_id',  config('constants.active_state') );
         if ($profile_delegated->exists()) {

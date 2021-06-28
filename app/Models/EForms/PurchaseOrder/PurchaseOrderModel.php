@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Eforms\HotelAccommodation;
+namespace App\Models\Eforms\PurchaseOrder;
 
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\ProfileAssigmentModel;
@@ -13,40 +13,39 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class HotelAccommodationModel extends Model
+class PurchaseOrderModel extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     //table name
-    protected $table = 'eform_hotel_accomodation';
+    protected $table = 'eform_purchase_orders';
     //primary key
     protected $primaryKey = 'id';
     //fields fillable
     protected $fillable = [
         'code',
-        'grade',
-        'directorate',
-        'hotel',
-        'ref_number',
-        'purpose_of_journey',
-//        'date_from',
-//        'date_to',
-        'estimated_period_of_stay',
-        'estimated_cost',
-        'amount_claimed',
-        'amount',
+        'purchase_order_no',
+        'reason_for_reinstatement',
+        'purchase_order_value',
 
-        'chief_accountant_name',
-        'chief_accountant_staff_no',
-        'chief_accountant_date',
+        'employee_staff_name',
+        'employee_job_title',
+        'employee_staff_no',
+        'employee_claim_date',
 
-        'ca_code',
-        'ca_unit',
+
+        'checker_name',
+        'checker_job_title',
+        'checker_staff_no',
+        'checker_date',
+
+
 
         'staff_name',
+        'job_title',
         'staff_no',
-        'claim_date',
+//        'claim_date',
 
         'config_status_id',
         'profile',
@@ -54,27 +53,23 @@ class HotelAccommodationModel extends Model
         'cost_centre',
         'business_code',
 
-        'hod_name',
-        'hod_staff_no',
-        'hod_authorised_date',
+        'approver_name',
+        'approver_job_title',
+        'approver_staff_no',
+        'approver_date',
 
-        'director',
-        'director_staff_no',
-        'director_authorised_date',
+        'reinstater_name',
+        'reinstater_job_title',
+        'reinstater_staff_no',
+        'reinstater_date',
 
 
+        'ch_code',
+        'ch_unit',
         'hod_code',
         'hod_unit',
-        'ca_code',
-        'ca_unit',
-        'dr_code',
-        'dr_unit',
-        'expenditure_code',
-        'expenditure_unit',
-//        'security_code',
-//        'security_unit',
-        'audit_code',
-        'audit_unit',
+        're_code',
+        're_unit',
 
         'created_by',
         'deleted_at',
@@ -100,7 +95,7 @@ class HotelAccommodationModel extends Model
 
             //[1]  GET YOUR PROFILE
             $profile_assignement = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+            where('eform_id', config('constants.eforms_id.purchase_order'))
                 ->where('user_id', $user->id)->first();
             //  use my profile - if i dont have one - give me the default
             $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
@@ -110,7 +105,7 @@ class HotelAccommodationModel extends Model
             $user->save();
 
             //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
-            $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+            $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.purchase_order'))
                 ->where('delegated_to', $user->id)
                 ->where('config_status_id',  config('constants.active_state'));
             if ($profile_delegated->exists()) {
@@ -205,7 +200,7 @@ class HotelAccommodationModel extends Model
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
-    public function claimant()
+    public function requester()
     {
         return $this->belongsTo(User::class, 'staff_no', 'staff_no');
     }

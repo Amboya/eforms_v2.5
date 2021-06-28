@@ -13,7 +13,7 @@ class CreateEformSubsistenceAccountTable extends Migration
      */
     public function up()
     {
-        Schema::create('eform_subsistence_account', function (Blueprint $table) {
+        Schema::create('eform_subsistence_accounts', function (Blueprint $table) {
 
             $table->id();
 
@@ -60,6 +60,6 @@ class CreateEformSubsistenceAccountTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('eform_subsistence_account');
+        Schema::dropIfExists('eform_subsistence_accounts');
     }
 }

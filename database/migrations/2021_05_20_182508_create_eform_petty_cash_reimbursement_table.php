@@ -13,7 +13,7 @@ class CreateEformPettyCashReimbursementTable extends Migration
      */
     public function up()
     {
-        Schema::create('eform_petty_cash_reimbursement', function (Blueprint $table) {
+        Schema::create('eform_pt_reimbursement', function (Blueprint $table) {
             $table->id();
             $table->integer('user_unit_id');
             $table->string('user_unit_code')->nullable();
@@ -38,6 +38,6 @@ class CreateEformPettyCashReimbursementTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('eform_petty_cash_reimbursement');
+        Schema::dropIfExists('eform_pt_reimbursement');
     }
 }

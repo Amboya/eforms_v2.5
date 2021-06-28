@@ -1,3 +1,4 @@
+
 @extends('layouts.main.master')
 
 
@@ -86,30 +87,26 @@
                                         @if($eforms_item->id == config('constants.eforms_id.petty_cash') )
                                             <div class="col-12 col-sm-6   ">
                                                 <hr>
-                                                <a href="{{ route($eforms_item->test_url)}}">
+                                                <a href="{{ route($eforms_item->url ?? 'main-home')}}">
                                                     <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#1C984F " ></i>
                                                     <span class="text-center" style="color:#1C984F ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>
-{{--                                                    <span--}}
-{{--                                                        class="badge badge-secondary right ml-1">{{$eforms_item->total_pending ?? 0}}</span>--}}
-{{--                                                    </span>--}}
                                                 </a>
                                                 <hr>
                                             </div>
                                             <!-- fix for small devices only -->
                                             <div class="clearfix hidden-md-up"></div>
                                             <!-- /.col -->
+
                                         @else
-{{--                                            <div class="col-12 col-sm-6    ">--}}
-{{--                                                <hr>--}}
-{{--                                                <a href="{{ route($eforms_item->test_url)}}">--}}
-{{--                                                <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#969696 " ></i>--}}
-{{--                                                <span class="text-center" style="color:#969696 ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>--}}
-{{--                                                <span--}}
-{{--                                                    class="badge badge-secondary right ml-1">{{$eforms_item->total_pending ?? 0}}</span>--}}
-{{--                                                </span>--}}
-{{--                                                </a>--}}
-{{--                                                <hr>--}}
-{{--                                            </div>--}}
+
+                                            <div class="col-12 col-sm-6    ">
+                                                <hr>
+                                                <a href="{{ route($eforms_item->test_url ?? 'main-home')}}">
+                                                <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#969696 " ></i>
+                                                <span class="text-center" style="color:#969696 ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>
+                                                </a>
+                                                <hr>
+                                            </div>
                                             <!-- fix for small devices only -->
                                             <div class="clearfix hidden-md-up"></div>
                                             <!-- /.col -->
@@ -130,8 +127,6 @@
         </div><!--/. container-fluid -->
     </section>
     <!-- /.content -->
-
-
 
 
     <!-- /.POP UP MODEL TO FORCE USER TO CHANGE PASSWORD -->
