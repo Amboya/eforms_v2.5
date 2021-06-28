@@ -1,3 +1,4 @@
+
 @extends('layouts.main.master')
 
 
@@ -86,30 +87,26 @@
                                         @if($eforms_item->id == config('constants.eforms_id.petty_cash') )
                                             <div class="col-12 col-sm-6   ">
                                                 <hr>
-                                                <a href="{{ route($eforms_item->test_url)}}">
+                                                <a href="{{ route($eforms_item->url ?? 'main-home')}}">
                                                     <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#1C984F " ></i>
                                                     <span class="text-center" style="color:#1C984F ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>
-{{--                                                    <span--}}
-{{--                                                        class="badge badge-secondary right ml-1">{{$eforms_item->total_pending ?? 0}}</span>--}}
-{{--                                                    </span>--}}
                                                 </a>
                                                 <hr>
                                             </div>
                                             <!-- fix for small devices only -->
                                             <div class="clearfix hidden-md-up"></div>
                                             <!-- /.col -->
+
                                         @else
-{{--                                            <div class="col-12 col-sm-6    ">--}}
-{{--                                                <hr>--}}
-{{--                                                <a href="{{ route($eforms_item->test_url)}}">--}}
-{{--                                                <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#969696 " ></i>--}}
-{{--                                                <span class="text-center" style="color:#969696 ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>--}}
-{{--                                                <span--}}
-{{--                                                    class="badge badge-secondary right ml-1">{{$eforms_item->total_pending ?? 0}}</span>--}}
-{{--                                                </span>--}}
-{{--                                                </a>--}}
-{{--                                                <hr>--}}
-{{--                                            </div>--}}
+
+                                            <div class="col-12 col-sm-6    ">
+                                                <hr>
+                                                <a href="{{ route($eforms_item->test_url ?? 'main-home')}}">
+                                                <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#969696 " ></i>
+                                                <span class="text-center" style="color:#969696 ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>
+                                                </a>
+                                                <hr>
+                                            </div>
                                             <!-- fix for small devices only -->
                                             <div class="clearfix hidden-md-up"></div>
                                             <!-- /.col -->
@@ -149,12 +146,12 @@
                         <div class="form-group row">
                             <label for="user_unit" class="col-md-2 col-form-label text-md-right">{{ __('User Unit') }}</label>
                             <div class="col-md-8">
-{{--                                <select id="user_unit" class="form-control " name="user_unit"  >--}}
-{{--                                    <option value="" selected disabled >Select User Unit</option>--}}
-{{--                                    @foreach($user_unit as $item)--}}
-{{--                                        <option value="{{$item->id}}" >{{$item->user_unit_code}} : {{$item->user_unit_description}}</option>--}}
-{{--                                    @endforeach--}}
-{{--                                </select>--}}
+                                <select id="user_unit" class="form-control " name="user_unit"  >
+                                    <option value="" selected disabled >Select User Unit</option>
+                                    @foreach($user_unit as $item)
+                                        <option value="{{$item->id}}" >{{$item->user_unit_code}} : {{$item->user_unit_description}}</option>
+                                    @endforeach
+                                </select>
                                 <input list="user_unit_list" id="user_unit" class="form-control " name="user_unit" required >
                                     <datalist id="user_unit_list"   >
                                     <option value="" selected disabled >Select User Unit</option>

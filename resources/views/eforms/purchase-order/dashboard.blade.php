@@ -1,4 +1,4 @@
-@extends('layouts.eforms.hotel-accommodation.master')
+@extends('layouts.eforms.purchase-order.master')
 
 @push('custom-styles')
   <!-- DataTables -->
@@ -16,12 +16,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Hotel Accommodation</h1>
+                    <h1 class="m-0 text-dark">Purchase Order Reinstatement Form</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Hotel Accommodation Claim</li>
+                        <li class="breadcrumb-item active">Purchase Order Reinstatement Form</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -61,7 +61,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.new_application') ) }}">
+                           href="{{route( 'purchase.order.list', config('constants.purchase_order_status.new_application') ) }}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -76,7 +76,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'hotel.accommodation.list', 'pending')}}">
+                           href="{{route( 'purchase.order.list', 'pending')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -93,7 +93,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.closed'))}}">
+                           href="{{route( 'purchase.order.list', config('constants.purchase_order_status.closed'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -107,7 +107,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'hotel.accommodation.list', config('constants.hotel_accommodation_status.rejected'))}}">
+                           href="{{route( 'purchase.order.list', config('constants.purchase_order_status.rejected'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -149,9 +149,8 @@
                                     <tr>
                                         <th>Serial</th>
                                         <th>Claimant</th>
-                                        <th>Estimated Cost</th>
-                                        <th>Purpose of Journey</th>
-                                        <th>Estimated Period (Days)</th>
+                                        <th>Purchase Order Value</th>
+                                        <th>Reason for Reinstatement</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                         <th>View</th>
@@ -165,16 +164,16 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('hotel.accommodation.show', $item->id) }}"
+                                                      action="{{ route('purchase.order.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
                                             </td>
 
                                             <td>{{$item->staff_name}}</td>
-                                            <td>{{$item->estimated_cost}}</td>
-                                            <td>{{$item->purpose_of_journey}}</td>
-                                            <td>{{$item->estimated_period_of_stay}}</td>
+                                            <td>{{$item->purchase_order_value}}</td>
+                                            <td>{{$item->reason_for_reinstatement}}</td>
+
 
 
 
@@ -187,7 +186,7 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('hotel.accommodation.show', $item->id) }}"
+                                                      action="{{ route('purchase.order.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
@@ -204,11 +203,11 @@
                         <div class="card-footer clearfix">
                             {{--                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))--}}
                             {{--                                @if($pending < 1)--}}
-                            <a href="{{route('hotel.accommodation.create')}}"
-                               class="btn btn-sm bg-gradient-green float-left">New Hotel Accommodation Claim</a>
+                            <a href="{{route('purchase.order.create')}}"
+                               class="btn btn-sm bg-gradient-green float-left">New Purchase Order Amendment</a>
                             {{--                                @else--}}
-                            {{--                                    <a href="#" class="btn btn-sm btn-default float-left">New Hotel Accommmodation Claim</a>--}}
-                            {{--                                    <span class="text-danger m-3"> Sorry, You can not raise a new Hotel Accommmodation Claim because you already have an open form.</span>--}}
+                            {{--                                    <a href="#" class="btn btn-sm btn-default float-left">New Hotel Allocation Claim</a>--}}
+                            {{--                                    <span class="text-danger m-3"> Sorry, You can not raise a new Hotel Allocation Claim because you already have an open form.</span>--}}
                             {{--                                @endif--}}
                             {{--                            @endif--}}
                                 {!! $list->links() !!}

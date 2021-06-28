@@ -17,7 +17,7 @@ class KilometerAllowanceAccountModel extends Model
     use SoftDeletes;
 
     //table name
-    protected $table = 'eform_kilometer_allowance_account';
+    protected $table = 'eform_kilometer_accounts';
     //primary key
     protected $primaryKey = 'id';
     //fields fillable
@@ -28,7 +28,7 @@ class KilometerAllowanceAccountModel extends Model
         'debitted_amount',
         'eform_kilometer_allowance_id',
 
-        'subsistence_code',
+        'kilometer_allowance_code',
 
         'status_id',
         'account',

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\EForms\HotelAccommodation;
 
 use App\Http\Controllers\Controller;
-use App\Models\Eforms\HotelAccomodation\HotelAccomodationModel;
+use App\Models\Eforms\HotelAccomodation\HotelAccomodationModel;//
 use App\Models\EForms\PettyCash\Views\DailyPettyCashTotalsView;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\StatusModel;
@@ -25,8 +25,8 @@ class ReportsController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.hotel_accommodation')]);
-        session(['eform_code' => config('constants.eforms_name.hotel_accommodation')]);
+        session(['eform_id' => config('constants.eforms_id.petty_cash')]);
+        session(['eform_code' => config('constants.eforms_name.petty_cash')]);
     }
 
 
@@ -73,7 +73,7 @@ class ReportsController extends Controller
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
-        $status = StatusModel::where('eform_id', config('constants.eforms_id.hotel_accommodation'))->orderBy('name')->get();
+        $status = StatusModel::where('eform_id', config('constants.eforms_id.petty_cash'))->orderBy('name')->get();
 
         //data to send to the view
         $params = [
@@ -84,7 +84,7 @@ class ReportsController extends Controller
         ];
 
         //reports one page
-        return view('eforms.hotel-accommodation.reports.filtered_reports')->with($params);
+        return view('eforms.petty-cash.reports.filtered_reports')->with($params);
     }
 
     public function getFilteredReports($user_unit, $status, $start_date, $end_date){
@@ -104,7 +104,7 @@ class ReportsController extends Controller
 
                 $user_unit_new = $item->user_unit_code ;
                 //get the list of transactions
-                $list_one = DB::select("SELECT * FROM EFORM_HOTEL_ACCOMODATION
+                $list_one = DB::select("SELECT * FROM eform_petty_cash
                     where config_status_id = '{$status}'
                       and user_unit_code = '{$user_unit_new}'
                       and  created_at <= '{$end_date}'
@@ -118,7 +118,7 @@ class ReportsController extends Controller
                 }
 
 
-                // create yable for hotel-accommodation
+
                 //get the summary
                 $summary_one = DB::select("SELECT sum(amount) as amount , sum(total)as total
                     FROM eform_petty_cash_dashboard_daily_totals_view
@@ -138,7 +138,7 @@ class ReportsController extends Controller
             }
         }else{
             //get the list of transactions
-            $list = DB::select("SELECT * FROM eform_hotel_accommodation
+            $list = DB::select("SELECT * FROM eform_petty_cash
                     where config_status_id = '{$status}'
                       and user_unit_code = '{$user_unit}'
                       and  created_at <= '{$end_date}'
@@ -186,7 +186,7 @@ class ReportsController extends Controller
         $totals_needs_me = HomeController::needsMeCount();
 
         $directorates = Totals:: select('column_one_value')
-            ->where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+            ->where('eform_id', config('constants.eforms_id.petty_cash'))
             ->where('column_one', config('constants.config_totals.directorate'))
             ->groupBy('column_one_value')
             ->get();
@@ -197,7 +197,7 @@ class ReportsController extends Controller
 
         //get the totals closed
         $directorates_closed_totals = Totals:: select('*')
-            ->where('eform_id', config('constants.eforms_id.hotel_accommodation'))
+            ->where('eform_id', config('constants.eforms_id.petty_cash'))
             ->where('column_one', config('constants.config_totals.directorate'))
             ->where('total_one', config('constants.config_totals.dir_total_closed_count'))
             ->get();
@@ -228,24 +228,24 @@ class ReportsController extends Controller
         /**
          * total Closed
          */
-        $closed_status = config('constants.hotel_accommodation.status.closed');
+        $closed_status = config('constants.petty_cash_status.closed');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_hotel_accommodation where config_status_id = {$closed_status} group by directorate_id  order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$closed_status} group by directorate_id  order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($total_forms)->all();
 
         // dd($total_forms);
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_closed_count'),
                 'total_two' => config('constants.config_totals.dir_total_closed_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -262,22 +262,22 @@ class ReportsController extends Controller
         /**
          * total new
          */
-        $new_status = config('constants.hotel_accommodation.status.new_application');
+        $new_status = config('constants.petty_cash_status.new_application');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_hotel_accommodation where config_status_id = {$new_status} group by directorate_id  order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$new_status} group by directorate_id  order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_new_count'),
                 'total_two' => config('constants.config_totals.dir_total_new_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -293,22 +293,22 @@ class ReportsController extends Controller
         /**
          * total rejected
          */
-        $rejected_status = config('constants.hotel_accommodation.status.rejected');
+        $rejected_status = config('constants.petty_cash_status.rejected');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_hotel_accommodation where config_status_id = {$rejected_status} group by directorate_id  order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$rejected_status} group by directorate_id  order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_rejected_count'),
                 'total_two' => config('constants.config_totals.dir_total_rejected_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -324,14 +324,14 @@ class ReportsController extends Controller
         /**
          * total pending
          */
-        $status1 = config('constants.hotel_accommodation.status.hod_approved');
-        $status2 = config('constants.hotel_accommodation.status.hr_approved');
-        $status3 = config('constants.hotel_accommodation.status.chief_accountant');
-        $status4 = config('constants.hotel_accommodation.status.funds_disbursement');
-        $status5 = config('constants.hotel_accommodation.status.funds_acknowledgement');
-        $status6 = config('constants.hotel_accommodation.status.security_approved');
+        $status1 = config('constants.petty_cash_status.hod_approved');
+        $status2 = config('constants.petty_cash_status.hr_approved');
+        $status3 = config('constants.petty_cash_status.chief_accountant');
+        $status4 = config('constants.petty_cash_status.funds_disbursement');
+        $status5 = config('constants.petty_cash_status.funds_acknowledgement');
+        $status6 = config('constants.petty_cash_status.security_approved');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_hotel_accommodation
+           FROM eform_petty_cash
            where config_status_id = {$status1}
            or config_status_id = {$status2}
            or config_status_id = {$status3}
@@ -343,15 +343,15 @@ class ReportsController extends Controller
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_pending_count'),
                 'total_two' => config('constants.config_totals.dir_total_pending_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -367,22 +367,22 @@ class ReportsController extends Controller
         /**
          * total Cancelled
          */
-        $cancelled_status = config('constants.hotel_accommodation.status.cancelled');
+        $cancelled_status = config('constants.petty_cash_status.cancelled');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id
-           FROM eform_hotel_accommodation where config_status_id = {$cancelled_status} group by directorate_id  order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$cancelled_status} group by directorate_id  order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_cancelled_count'),
                 'total_two' => config('constants.config_totals.dir_total_cancelled_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -399,22 +399,22 @@ class ReportsController extends Controller
         /**
          * total Void
          */
-        $void_status = config('constants.hotel_accommodation.status.void');
+        $void_status = config('constants.petty_cash_status.void');
         $void_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_hotel_accommodation where config_status_id = {$void_status} group by directorate_id , user_unit_code order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$void_status} group by directorate_id , user_unit_code order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($void_forms)->all();
 
         foreach ($void_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'total_one' => config('constants.config_totals.dir_total_void_count'),
                 'total_two' => config('constants.config_totals.dir_total_void_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -441,9 +441,9 @@ class ReportsController extends Controller
         /**
          * total Closed
          */
-        $closed_status = config('constants.hotel_accommodation.status.closed');
+        $closed_status = config('constants.petty_cash_status.closed');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_hotel_accommodation where config_status_id = {$closed_status} group by directorate_id , user_unit_code order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$closed_status} group by directorate_id , user_unit_code order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($total_forms)->all();
 
         //  dd($total_forms);
@@ -451,8 +451,8 @@ class ReportsController extends Controller
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate(
                 [
-                    'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                    'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                    'eform_id' => config('constants.eforms_id.petty_cash'),
+                    'eform_code' => config('constants.eforms_name.petty_cash'),
 
                     'column_one' => config('constants.config_totals.directorate'),
                     'column_one_value' => $total->directorate_id,
@@ -463,8 +463,8 @@ class ReportsController extends Controller
                     'total_two' => config('constants.config_totals.total_closed_amount')
                 ],
                 [
-                    'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                    'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                    'eform_id' => config('constants.eforms_id.petty_cash'),
+                    'eform_code' => config('constants.eforms_name.petty_cash'),
 
                     'column_one' => config('constants.config_totals.directorate'),
                     'column_one_value' => $total->directorate_id,
@@ -483,15 +483,15 @@ class ReportsController extends Controller
         /**
          * total new
          */
-        $new_status = config('constants.hotel_accommodation.status.new_application');
+        $new_status = config('constants.petty_cash_status.new_application');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_hotel_accommodation where config_status_id = {$new_status} group by directorate_id , user_unit_code order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$new_status} group by directorate_id , user_unit_code order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -499,8 +499,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_new_count'),
                 'total_two' => config('constants.config_totals.total_new_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -518,15 +518,15 @@ class ReportsController extends Controller
         /**
          * total rejected
          */
-        $rejected_status = config('constants.hotel_accommodation.status.rejected');
+        $rejected_status = config('constants.petty_cash_status.rejected');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_hotel_accommodation where config_status_id = {$rejected_status} group by directorate_id , user_unit_code order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$rejected_status} group by directorate_id , user_unit_code order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -534,8 +534,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_rejected_count'),
                 'total_two' => config('constants.config_totals.total_rejected_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -553,14 +553,14 @@ class ReportsController extends Controller
         /**
          * total pending
          */
-        $status1 = config('constants.hotel_accommodation.status.hod_approved');
-        $status2 = config('constants.hotel_accommodation.status.hr_approved');
-        $status3 = config('constants.hotel_accommodation.status.chief_accountant');
-        $status4 = config('constants.hotel_accommodation.status.funds_disbursement');
-        $status5 = config('constants.hotel_accommodation.status.funds_acknowledgement');
-        $status6 = config('constants.hotel_accommodation.status.security_approved');
+        $status1 = config('constants.petty_cash_status.hod_approved');
+        $status2 = config('constants.petty_cash_status.hr_approved');
+        $status3 = config('constants.petty_cash_status.chief_accountant');
+        $status4 = config('constants.petty_cash_status.funds_disbursement');
+        $status5 = config('constants.petty_cash_status.funds_acknowledgement');
+        $status6 = config('constants.petty_cash_status.security_approved');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_hotel_accommodation
+           FROM eform_petty_cash
            where config_status_id = {$status1}
            or config_status_id = {$status2}
            or config_status_id = {$status3}
@@ -572,8 +572,8 @@ class ReportsController extends Controller
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -581,8 +581,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_pending_count'),
                 'total_two' => config('constants.config_totals.total_pending_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -600,15 +600,15 @@ class ReportsController extends Controller
         /**
          * total Cancelled
          */
-        $cancelled_status = config('constants.hotel_accommodation.status.cancelled');
+        $cancelled_status = config('constants.petty_cash_status.cancelled');
         $total_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_hotel_accommodation where config_status_id = {$cancelled_status} group by directorate_id , user_unit_code order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$cancelled_status} group by directorate_id , user_unit_code order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($total_forms)->all();
 
         foreach ($total_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -616,8 +616,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_cancelled_count'),
                 'total_two' => config('constants.config_totals.total_cancelled_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
@@ -636,15 +636,15 @@ class ReportsController extends Controller
         /**
          * total Void
          */
-        $void_status = config('constants.hotel_accommodation.status.void');
+        $void_status = config('constants.petty_cash_status.void');
         $void_forms = DB::select("SELECT SUM(total_payment) as amount,  count('id') as total , directorate_id, user_unit_code
-           FROM eform_hotel_accommodation where config_status_id = {$void_status} group by directorate_id , user_unit_code order by amount desc ");
+           FROM eform_petty_cash where config_status_id = {$void_status} group by directorate_id , user_unit_code order by amount desc ");
         $total_forms = HotelAccomodationModel::hydrate($void_forms)->all();
 
         foreach ($void_forms as $total) {
             $total_create = Totals::updateOrCreate([
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,
                 'column_two' => config('constants.config_totals.user_unit'),
@@ -652,8 +652,8 @@ class ReportsController extends Controller
                 'total_one' => config('constants.config_totals.total_void_count'),
                 'total_two' => config('constants.config_totals.total_void_amount')
             ], [
-                'eform_id' => config('constants.eforms_id.hotel_accommodation'),
-                'eform_code' => config('constants.eforms_name.hotel_accommodation'),
+                'eform_id' => config('constants.eforms_id.petty_cash'),
+                'eform_code' => config('constants.eforms_name.petty_cash'),
 
                 'column_one' => config('constants.config_totals.directorate'),
                 'column_one_value' => $total->directorate_id,

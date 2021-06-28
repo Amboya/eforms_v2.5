@@ -48,6 +48,7 @@ return [
         'subsistence' => "41",
         'trip' => "42",
         'hotel_accommodation' => "62",
+        'purchase_order'=> "1"
     ],
 
     'eforms_name' => [
@@ -59,6 +60,7 @@ return [
         'subsistence'=>"Subsistence",
         'trip'=>"Trip Form",
         'hotel_accommodation'=>"Hotel Accommodation Form",
+        'purchase_order'=>"Purchase Order Form",
     ],
 
     'approval' => [
@@ -275,6 +277,27 @@ return [
         'exported' => "42",
         'export_failed' => "43",
         'void' => "101",
+        'cancelled' => "161",
+
+    ],
+
+    'purchase_order_status' => [
+        'new_application' => "223",
+        'checker_approved' => "225",
+        'hod_approved' => "224",
+        'requester_approved' => "183",
+
+
+
+        'closed' => "185",
+        'rejected' => "186",
+        'audited' => "29",
+        'queried' => "201",
+        'not_exported' => "41",
+        'exported' => "42",
+        'export_failed' => "43",
+        'void' => "101",
+        'cancelled' => "161",
 
     ],
 

@@ -34,10 +34,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //get the list of categories
+//        dd(666777);
+//        //get the list of categories
         $categories = EFormCategoryModel::all();
         //get list of all eforms
         $eforms = EFormModel::all();
+//        dd($eforms);
         //count all
         $totals= TotalsModel::where('eform_id', config('constants.eforms_id.main_dashboard'))->get();
         //data to send to the view

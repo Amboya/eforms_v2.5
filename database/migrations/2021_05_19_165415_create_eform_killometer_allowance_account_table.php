@@ -13,7 +13,7 @@ class CreateEformKillometerAllowanceAccountTable extends Migration
      */
     public function up()
     {
-        Schema::create('eform_kilometer_allowance_account', function (Blueprint $table) {
+        Schema::create('eform_kilometer_accounts', function (Blueprint $table) {
             $table->id();
             $table->integer('creditted_account_id')->nullable();
             $table->string('creditted_amount')->nullable();
@@ -58,6 +58,6 @@ class CreateEformKillometerAllowanceAccountTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('eform_kilometer_allowance_account');
+        Schema::dropIfExists('eform_kilometer_accounts');
     }
 }

@@ -47,9 +47,9 @@ class EFormModel extends Model
         return $this->belongsTo(EFormCategoryModel::class, 'category_id', 'id');
     }
 
-    public function user(){
-        return $this->belongsTo(User::class, 'created_by', 'id');
-    }
+//    public function user(){
+//        return $this->belongsTo(User::class, 'created_by', 'id');
+//    }
 
     public function status(){
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');

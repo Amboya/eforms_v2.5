@@ -12,7 +12,7 @@ class PettyCashReimbursement extends Model
     use SoftDeletes;
 
     //table name
-    protected $table  = 'eform_petty_cash_reimbursement';
+    protected $table  = 'eform_pt_reimbursement';
     //primary key
     protected $primaryKey = 'id';
     //fields fillable
