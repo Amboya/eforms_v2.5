@@ -82,14 +82,13 @@
 
                             <!-- Info boxes -->
                             <div class="row">
-                                @foreach($item->eforms->where('category_id', $item->id ) as $eforms_item)
-{{--                                    @if($eforms_item->category_id == $item->id)--}}
-                                        @if($eforms_item->id == config('constants.eforms_id.petty_cash') )
+                                @foreach($item->eforms->where('category_id', $item->id ) as $eform)
+                                        @if($eform->id == config('constants.eforms_id.petty_cash') )
                                             <div class="col-12 col-sm-6   ">
                                                 <hr>
-                                                <a href="{{ route($eforms_item->url ?? 'main-home')}}">
-                                                    <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#1C984F " ></i>
-                                                    <span class="text-center" style="color:#1C984F ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>
+                                                <a href="{{ route($eform->test_url ?? 'main.home')}}">
+                                                    <i class="{{$eform->icon ?? "fas fa-file"}} mr-1" style="color:#1C984F " ></i>
+                                                    <span class="text-center" style="color:#1C984F ;font-family: 'Roboto Light'">{{$eform->name}}</span>
                                                 </a>
                                                 <hr>
                                             </div>
@@ -99,19 +98,18 @@
 
                                         @else
 
-                                            <div class="col-12 col-sm-6    ">
-                                                <hr>
-                                                <a href="{{ route($eforms_item->test_url ?? 'main-home')}}">
-                                                <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#969696 " ></i>
-                                                <span class="text-center" style="color:#969696 ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>
-                                                </a>
-                                                <hr>
-                                            </div>
-                                            <!-- fix for small devices only -->
-                                            <div class="clearfix hidden-md-up"></div>
+{{--                                            <div class="col-12 col-sm-6    ">--}}
+{{--                                                <hr>--}}
+{{--                                                <a href="{{ route($eforms_item->test_url ?? 'main.home')}}">--}}
+{{--                                                <i class="{{$eforms_item->icon ?? "fas fa-file"}} mr-1" style="color:#969696 " ></i>--}}
+{{--                                                <span class="text-center" style="color:#969696 ;font-family: 'Roboto Light'">{{$eforms_item->name}}</span>--}}
+{{--                                                </a>--}}
+{{--                                                <hr>--}}
+{{--                                            </div>--}}
+{{--                                            <!-- fix for small devices only -->--}}
+{{--                                            <div class="clearfix hidden-md-up"></div>--}}
                                             <!-- /.col -->
                                         @endif
-{{--                                    @endif--}}
                                 @endforeach
                             </div>
                             <!-- /.row -->
