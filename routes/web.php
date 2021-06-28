@@ -300,8 +300,7 @@ Route::group([
         });
 
         //petty cah routes
-        Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty-cash-home');
-//        Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty.cash.home');
+        Route::get('home', [App\Http\Controllers\EForms\PettyCash\HomeController::class, 'index'])->name('petty.cash.home');
         Route::get('list/{value}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'index'])->name('petty.cash.list');
         Route::get('create', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'create'])->name('petty.cash.create');
         Route::post('show/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'show'])->name('petty.cash.show');
