@@ -109,7 +109,7 @@ class PettyCashController extends Controller
                 ->orderBy('code')->paginate(50);
             $category = "Rejected";
         } else if ($value == config('constants.petty_cash_status.cancelled')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status. cancelled'))
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.cancelled'))
                 ->orderBy('code')->paginate(50);
             $category = "Cancelled";
         } else if ($value == config('constants.petty_cash_status.void')) {
@@ -895,8 +895,11 @@ class PettyCashController extends Controller
         ) {
             //cancel status
             $insert_reasons = true;
+            $cancelled = true;
             if ($request->approval == config('constants.approval.cancelled')) {
                 $new_status = config('constants.petty_cash_status.cancelled');
+                //Handle cancellation by expenditure
+                $cancelled = false;
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
                 $new_status = config('constants.petty_cash_status.rejected');
@@ -915,126 +918,128 @@ class PettyCashController extends Controller
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
-            //create records for the accounts associated with this petty cash transaction
-            for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
-                $des = "";
-                $des = $des . " " . $request->account_items[$i] . ",";
-                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
+            if ($cancelled) {
+                //create records for the accounts associated with this petty cash transaction
+                for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
+                    $des = "";
+                    $des = $des . " " . $request->account_items[$i] . ",";
+                    $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
 
-                //[1] CREDITED ACCOUNT
-                //[1A] - money
-                $formAccountModel = PettyCashAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => $request->credited_amount[$i],
-                        'account' => $request->credited_account[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        //'debitted_amount' => $request->debited_amount[$i],
-                        'eform_petty_cash_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.petty_cash_status.export_not_ready')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => $request->credited_amount[$i],
-                        'account' => $request->credited_account[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        //'debitted_amount' => $request->debited_amount[$i],
+                    //[1] CREDITED ACCOUNT
+                    //[1A] - money
+                    $formAccountModel = PettyCashAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+                            'creditted_amount' => $request->credited_amount[$i],
+                            'account' => $request->credited_account[$i],
+                            'debitted_account_id' => $request->debited_account[$i],
+                            //'debitted_amount' => $request->debited_amount[$i],
+                            'eform_petty_cash_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => $form->project->code ?? "",
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'status_id' => config('constants.petty_cash_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+                            'creditted_amount' => $request->credited_amount[$i],
+                            'account' => $request->credited_account[$i],
+                            'debitted_account_id' => $request->debited_account[$i],
+                            //'debitted_amount' => $request->debited_amount[$i],
 
-                        'eform_petty_cash_id' => $form->id,
-                        'petty_cash_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
+                            'eform_petty_cash_id' => $form->id,
+                            'petty_cash_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
 
-                        'hod_code' => $form->hod_code,
-                        'hod_unit' => $form->hod_unit,
-                        'ca_code' => $form->ca_code,
-                        'ca_unit' => $form->ca_unit,
-                        'hrm_code' => $form->hrm_code,
-                        'hrm_unit' => $form->hrm_unit,
-                        'expenditure_code' => $form->expenditure_code,
-                        'expenditure_unit' => $form->expenditure_unit,
-                        'security_code' => $form->security_code,
-                        'security_unit' => $form->security_unit,
-                        'audit_code' => $form->audit_code,
-                        'audit_unit' => $form->audit_unit,
+                            'hod_code' => $form->hod_code,
+                            'hod_unit' => $form->hod_unit,
+                            'ca_code' => $form->ca_code,
+                            'ca_unit' => $form->ca_unit,
+                            'hrm_code' => $form->hrm_code,
+                            'hrm_unit' => $form->hrm_unit,
+                            'expenditure_code' => $form->expenditure_code,
+                            'expenditure_unit' => $form->expenditure_unit,
+                            'security_code' => $form->security_code,
+                            'security_unit' => $form->security_unit,
+                            'audit_code' => $form->audit_code,
+                            'audit_unit' => $form->audit_unit,
 
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.petty_cash_status.export_not_ready')
-                    ]
-                );
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => $form->project->code ?? "",
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'description' => $des,
+                            'status_id' => config('constants.petty_cash_status.export_not_ready')
+                        ]
+                    );
 
-                //[2] DEBITED ACCOUNT
-                //[2A] - money
-                $formAccountModel = PettyCashAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        //'creditted_amount' => $request->credited_amount[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => $request->debited_amount[$i],
-                        'account' => $request->debited_account[$i],
-                        'eform_petty_cash_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.petty_cash_status.export_not_ready')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        //'creditted_amount' => $request->credited_amount[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => $request->debited_amount[$i],
-                        'account' => $request->debited_account[$i],
+                    //[2] DEBITED ACCOUNT
+                    //[2A] - money
+                    $formAccountModel = PettyCashAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+                            //'creditted_amount' => $request->credited_amount[$i],
+                            'debitted_account_id' => $request->debited_account[$i],
+                            'debitted_amount' => $request->debited_amount[$i],
+                            'account' => $request->debited_account[$i],
+                            'eform_petty_cash_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => $form->project->code ?? "",
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'status_id' => config('constants.petty_cash_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+                            //'creditted_amount' => $request->credited_amount[$i],
+                            'debitted_account_id' => $request->debited_account[$i],
+                            'debitted_amount' => $request->debited_amount[$i],
+                            'account' => $request->debited_account[$i],
 
-                        'eform_petty_cash_id' => $form->id,
-                        'petty_cash_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
-                        'hod_code' => $form->hod_code,
-                        'hod_unit' => $form->hod_unit,
-                        'ca_code' => $form->ca_code,
-                        'ca_unit' => $form->ca_unit,
-                        'hrm_code' => $form->hrm_code,
-                        'hrm_unit' => $form->hrm_unit,
-                        'expenditure_code' => $form->expenditure_code,
-                        'expenditure_unit' => $form->expenditure_unit,
-                        'security_code' => $form->security_code,
-                        'security_unit' => $form->security_unit,
-                        'audit_code' => $form->audit_code,
-                        'audit_unit' => $form->audit_unit,
+                            'eform_petty_cash_id' => $form->id,
+                            'petty_cash_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+                            'hod_code' => $form->hod_code,
+                            'hod_unit' => $form->hod_unit,
+                            'ca_code' => $form->ca_code,
+                            'ca_unit' => $form->ca_unit,
+                            'hrm_code' => $form->hrm_code,
+                            'hrm_unit' => $form->hrm_unit,
+                            'expenditure_code' => $form->expenditure_code,
+                            'expenditure_unit' => $form->expenditure_unit,
+                            'security_code' => $form->security_code,
+                            'security_unit' => $form->security_unit,
+                            'audit_code' => $form->audit_code,
+                            'audit_unit' => $form->audit_unit,
 
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.petty_cash_status.export_not_ready')
-                    ]
-                );
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => $form->project->code ?? "",
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'description' => $des,
+                            'status_id' => config('constants.petty_cash_status.export_not_ready')
+                        ]
+                    );
+                }
             }
 
         } //FOR CLAIMANT - ACKNOWLEDGEMENT
