@@ -19,7 +19,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('petty.cash.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Petty-Cash Accounts List</li>
                     </ol>
                 </div><!-- /.col -->
@@ -61,7 +61,7 @@
                     </button>
                 @endif
                 @if (Auth::user()->type_id == config('constants.user_types.developer') )
-                    <a class="btn btn-sm btn-default " href="{{route('petty.cash.report-export-unmark-exported-all')}}"
+                    <a class="btn btn-sm btn-default " href="{{route('petty.cash.report.export.unmark.exported.all')}}"
                        title="Only Chief Account and Expenditure Officers can Export">
                         Unmark the exported Records <i class="fa fa-rev"></i>
                     </a>
@@ -73,7 +73,7 @@
 {{--                       title="Only Chief Account and Expenditure Officers can Export">--}}
 {{--                        Remove Duplicates<i class="fa fa-rev"></i>--}}
 {{--                    </a>--}}
-                        <a  class="btn btn-tool" href="{{route('petty.cash.report-sync')}}"
+                        <a  class="btn btn-tool" href="{{route('petty.cash.report.sync')}}"
                             title="Sync Accounts">
                             <i class="fas fa-sync"></i></a>
 
@@ -127,7 +127,7 @@
                                 <td>{{$item->creditted_amount ?? ""}}</td>
                                 <td>{{$item->description ?? ""}}</td>
                                 @if (Auth::user()->type_id == config('constants.user_types.developer') )
-                                    <td><a href="{{route('petty.cash.accounts-duplicate-remove',$item->id)}}">Mark As Duplicate</a></td>
+                                    <td><a href="{{route('petty.cash.accounts.duplicate.remove',$item->id)}}">Mark As Duplicate</a></td>
                                 @endif
                                 {{--                                petty.cash.report-export-unmark-exported--}}
                             </tr>

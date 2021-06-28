@@ -19,7 +19,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Petty Cash</li>
                     </ol>
                 </div><!-- /.col -->
@@ -177,7 +177,7 @@
                                             </td>
                                             <td>{{$item->user_unit_code}} : {{$item->user_unit->user_unit_description}}</td>
                                             <td>{{$item->claimant_name}}</td>
-                                            <td>{{$item->total_payment}}</td>
+                                            <td>ZMW {{ number_format($item->total_payment  - $item->change, 2)}}</td>
                                             <td><span
                                                     class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>
                                             </td>
@@ -195,7 +195,6 @@
                                     @endforeach
                                     </tbody>
                                 </table>
-
                             </div>
                             <!-- /.table-responsive -->
                         </div>

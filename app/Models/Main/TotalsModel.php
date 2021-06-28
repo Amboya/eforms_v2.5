@@ -33,7 +33,7 @@ class TotalsModel extends Model
 
 
     protected $with = [
-        'eform',
+//        'eform',
     ];
 
 

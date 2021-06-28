@@ -19,8 +19,8 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{route('main-logs')}}">Logs</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.logs')}}">Logs</a></li>
                         <li class="breadcrumb-item active">Activity Details</li>
                     </ol>
                 </div><!-- /.col -->
@@ -241,7 +241,7 @@
                                     <td>
                                         <a class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
                                            title="Edit"
-                                           href="{{route('main-logs-show', ['id'=> $item->id])}}">
+                                           href="{{route('main.logs.show', ['id'=> $item->id])}}">
                                             <i class="fa fa-eye"></i>
                                         </a>
                                         <button class="btn btn-sm bg-gradient-gray float-left" style="margin: 1px"
@@ -289,7 +289,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-eforms-category-store')}}">
+                <form role="form" method="post" action="{{route('main.eforms.category.store')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -328,7 +328,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-eforms-category-update')}}">
+                <form role="form" method="post" action="{{route('main.eforms.category.update')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -367,7 +367,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('main-eforms-category-destroy', ['id' => $item->id])}}">
+                          action="{{route('main.eforms.category.destroy', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

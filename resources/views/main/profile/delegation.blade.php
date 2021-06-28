@@ -17,7 +17,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Profile Delegation</li>
                     </ol>
                 </div><!-- /.col -->
@@ -61,7 +61,7 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <!-- form start -->
-                    <form role="form-new" method="post" action="{{route('main-profile-delegation-store')}}">
+                    <form role="form-new" method="post" action="{{route('main.profile.delegation.store')}}">
                         @csrf
                         <div class="modal-body">
 
@@ -155,7 +155,7 @@
                 var profile = {!! json_encode($profiles->toArray()) !!};
                 var profile_form = profile[selected_index-1] ;
 
-                console.log(profile_form.form );
+               // console.log(profile_form.form );
                 responce =  "<option value=" + profile_form.form.id + "   > " + profile_form.form.name + "  </option> ";
 
                 $("#eform_select").html(responce);

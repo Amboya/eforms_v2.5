@@ -17,6 +17,7 @@ return [
     'none' => 0,
     'active_state' => 221,
     'non_active_state' => 222,
+    'percentage_reimbursement' => 80,
 
     'file_type' => [
         'quotation' => "1",
@@ -115,6 +116,7 @@ return [
         'EZESCO_014' => 22,
         'EZESCO_015' => 41,
     ],
+
     'config_totals' => [
         'directorate' => "directorate",
         'user_unit' => "user_unit",

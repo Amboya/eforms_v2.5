@@ -104,9 +104,9 @@ class PettyCashModel extends Model
     {
         //check if authenticated user
         if (auth()->check()) {
-            //get the profile for this user
-            $user = Auth::user();
 
+            //get the profile associated with petty cash, for this user
+            $user = Auth::user();
             //[1]  GET YOUR PROFILE
             $profile_assignement = ProfileAssigmentModel::
             where('eform_id', config('constants.eforms_id.petty_cash'))
@@ -119,7 +119,8 @@ class PettyCashModel extends Model
             $user->save();
 
             //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
-            $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.petty_cash'))
+            $profile_delegated = ProfileDelegatedModel::
+            where('eform_id', config('constants.eforms_id.petty_cash'))
                 ->where('delegated_to', $user->id)
                 ->where('config_status_id', config('constants.active_state'));
             if ($profile_delegated->exists()) {

@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Grade</li>
                     </ol>
                 </div><!-- /.col -->
@@ -65,7 +65,7 @@
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fas fa-minus"></i></button>
-                    <a  class="btn btn-tool" href="{{route('main-grade-sync')}}"
+                    <a  class="btn btn-tool" href="{{route('main.grade.sync')}}"
                         title="Sync Grades">
                         <i class="fas fa-sync"></i></a>
                 </div>
@@ -145,7 +145,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" method="post" action="{{route('main-grade-store')}}">
+                <form role="form-new" method="post" action="{{route('main.grade.store')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -254,7 +254,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-grade-update')}}">
+                <form role="form" method="post" action="{{route('main.grade.update')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -317,7 +317,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('main-grade-destroy', ['id' => $item->id])}}">
+                          action="{{route('main.grade.destroy', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

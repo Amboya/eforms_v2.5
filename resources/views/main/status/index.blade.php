@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">System Statuses</li>
                     </ol>
                 </div><!-- /.col -->
@@ -141,7 +141,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" method="post" action="{{route('main-status-store')}}">
+                <form role="form-new" method="post" action="{{route('main.status.store')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -315,7 +315,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-status-update')}}">
+                <form role="form" method="post" action="{{route('main.status.update')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -432,7 +432,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('main-status-destroy', ['id' => $item->id])}}">
+                          action="{{route('main.status.destroy', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

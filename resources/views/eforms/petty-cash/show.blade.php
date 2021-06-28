@@ -712,6 +712,10 @@
                                                     class="btn btn-outline-success mr-2 p-2  "
                                                     value='Approved'>FUNDS DISBURSED
                                             </button>
+                                            <button id="btnSubmit_approve" type="submit" name="approval"
+                                                    class="btn btn-outline-warning mr-2 p-2  "
+                                                    value='Cancelled'>CANCEL PETTY CASH
+                                            </button>
                                             <button style="display: none" id="btnSubmit_reject" type="submit"
                                                     name="approval"
                                                     class="btn btn-outline-success mr-2 p-2  "
@@ -1076,7 +1080,7 @@
                 </div>
                 <!-- form start -->
                 <form id="change_form" method="post"
-                      action="{{route('attached-file-change')}}"   enctype="multipart/form-data">
+                      action="{{route('attached.file.change')}}"   enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1125,7 +1129,7 @@
 
                 <!-- form start -->
                 <form id="qoutation_form" method="post"
-                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
+                      action="{{route('attached.file.add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1169,7 +1173,7 @@
                 </div>
                 <!-- form start -->
                 <form id="receipt_form"  method="post"
-                      action="{{route('attached-file-add2')}} "  enctype="multipart/form-data">
+                      action="{{route('attached.file.add2')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

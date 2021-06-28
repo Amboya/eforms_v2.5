@@ -17,7 +17,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Profile Delegation</li>
                     </ol>
                 </div><!-- /.col -->
@@ -124,7 +124,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('main-profile-delegation-end', ['id' => $item->id])}}">
+                          action="{{route('main.profile.delegation.end', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">
@@ -171,6 +171,25 @@
     <script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
 
     <!-- page script -->
+
+    <!-- page script -->
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
 
 
 @endpush

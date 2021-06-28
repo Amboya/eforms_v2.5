@@ -2,6 +2,7 @@
 
 namespace App\Models\EForms\PettyCash;
 
+use App\Models\Main\ConfigWorkFlow;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,5 +27,15 @@ class PettyCashFloat extends Model
         'created_by',
         'created_by_name',
     ];
+
+
+    protected $with = [
+        'user_unit',
+    ];
+
+    //RELATIONSHIP
+    public function user_unit(){
+        return $this->belongsTo(ConfigWorkFlow::class, 'user_unit_id', 'id');
+    }
 
 }

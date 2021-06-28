@@ -237,16 +237,17 @@ class ProfileController extends Controller
         $eforms = EFormModel::all();
         $users = User::orderBy('name')->get();
         $mine = Auth::user();
+        $users->load('user_profile');
+        $profiles = ProfileAssigmentModel::all() ;
 
         //data to send to the view
         $params = [
-            'profiles' => ProfileAssigmentModel::all(),
+            'profiles' => $profiles,
             'eforms' => $eforms,
             'users' => $users,
             'mine' => $mine,
         ];
 
-        //  dd($mine->user_profile);
 
         return view('main.profile.delegation_on_behalf')->with($params);
     }

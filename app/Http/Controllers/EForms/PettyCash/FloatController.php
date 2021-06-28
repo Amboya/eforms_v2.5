@@ -5,6 +5,7 @@ namespace App\Http\Controllers\EForms\PettyCash;
 use App\Http\Controllers\Controller;
 use App\Models\EForms\PettyCash\PettyCashFloat;
 use App\Models\EForms\PettyCash\PettyCashModel;
+use App\Models\EForms\PettyCash\PettyCashReimbursement;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
@@ -12,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class FloatController extends Controller
 {
@@ -23,16 +25,16 @@ class FloatController extends Controller
     public function index()
     {
 
-        //count new forms
-        $new_forms = PettyCashFloat:: count();
-
         $myUnits = ConfigWorkFlow:: Where(Auth::user()->code_column, Auth::user()->profile_job_code)
             ->Where(Auth::user()->unit_column, Auth::user()->profile_unit_code)
             ->get();
 
-        foreach ($myUnits as $unit){
+        $total_float = 0 ;
+        $total_utilised = 0 ;
+        $total_cash = 0 ;
 
-            $units[] = PettyCashFloat::firstOrUpdate(
+        foreach ($myUnits as $unit){
+            $model = PettyCashFloat::firstOrCreate(
                 [
                     'user_unit_id'=> $unit->id,
                     'user_unit_code'=> $unit->user_unit_code,
@@ -43,62 +45,33 @@ class FloatController extends Controller
                     'float' => 0 ,
                     'utilised' => 0 ,
                     'cash' => 0 ,
-                    'percentage'  => 80,
+                    'percentage'  => config('constants.percentage_reimbursement'),
                     'created_by'  => Auth::user()->id,
                     'created_by_name'  => Auth::user()->name,
                 ]
             );
+            $total_float =+ $model->float ;
+            $total_utilised =+ $model->utilised ;
+            $total_cash =+ $model->cash ;
+
+            $units[] = $model ;
         }
 
-        dd($units);
-
-
-        //
-
-        //count pending forms
-        $pending_forms = PettyCashFloat::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
-            ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
-            ->count();
-        //count closed forms
-        $closed_forms = PettyCashFloat::where('config_status_id', config('constants.petty_cash_status.closed'))
-            ->count();
-        //count rejected forms
-        $rejected_forms = PettyCashFloat::where('config_status_id', config('constants.petty_cash_status.rejected'))
-            ->count();
-
-
-
         //add to totals
-        $totals['total_units'] = $new_forms;
-        $totals['total_float'] = $pending_forms;
-        $totals['total_utilised'] = $closed_forms;
-        $totals['total_cash'] = $rejected_forms;
-
-        //list all that needs me
-        $get_profile = HomeController::getMyProfile();
+        $totals['total_units'] = sizeof($units);
+        $totals['total_float'] = $total_float;
+        $totals['total_utilised'] = $total_utilised;
+        $totals['total_cash'] = $total_cash;
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
-        //pending forms for me before i apply again
-        $pending = HomeController::pendingForMe();
-
-            $fromDate = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-            $tillDate = Carbon::now()->subMonth()->endOfMonth()->toDateString();
-
-        $list = PettyCashModel::
-        where('config_status_id', config('constants.petty_cash_status.closed'))
-            ->where('created_at', '>=', $fromDate)
-            ->orWhere('created_at', '<=', $tillDate)
-            ->paginate(5);
 
         //data to send to the view
         $params = [
             'totals_needs_me' => $totals_needs_me,
-            'list' => $list,
+            'list' => $units,
             'totals' => $totals,
-            'pending' => $pending,
-            'fromDate' => $fromDate,
-            'tillDate' => $tillDate,
+            'units' => $units,
         ];
 
         //return view
@@ -157,9 +130,14 @@ class FloatController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $model = PettyCashFloat::find($request->user_unit_field);
+        $model->float = $request->new_float ;
+        //IDEAL - CASH HAS TO INCREASE
+        $model->cash = ($request->new_float) -  ($model->utilised ?? 0) ;
+        $model->save();
+        return Redirect::back()->with('message', 'Submitted Successfully');
     }
 
     /**
@@ -174,6 +152,92 @@ class FloatController extends Controller
     }
 
 
+
+
+    public function reimbursementShow($id)
+    {
+        //get the details
+        $model = PettyCashFloat::find($id);
+        $myUnits = PettyCashModel:: Where('user_unit_code', $model->user_unit_code);
+
+        $total_payment = $myUnits->sum('total_payment');
+        $total_change = $myUnits->sum('change');
+        $total_amount = $total_payment - $total_change ;
+
+        //add to totals
+        $totals['total_units'] = sizeof($myUnits->get());
+        $totals['total_float'] = $model->float ;
+        $totals['total_utilised'] = $model->utilised ;;
+        $totals['total_cash'] = $model->cash ;;
+
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+
+        //data to send to the view
+        $params = [
+            'totals_needs_me' => $totals_needs_me,
+            'list' => $myUnits->get(),
+            'totals' => $totals,
+            'model' => $model,
+            'total_amount' =>$total_amount
+        ];
+
+        //return view
+        return view('eforms.petty-cash.float-management.list')->with($params);
+    }
+
+    public function reimbursementStore(Request $request){
+
+        $float_model =PettyCashFloat::find($request->user_unit_field);
+        $percentage = ($float_model->cash * 100) / $float_model->float ;
+
+        dd($request->date_from );
+        $user = Auth::user();
+        $reimbursement_float = PettyCashReimbursement::updateOrCreate(
+            [
+                'user_unit_id' => $float_model->user_unit_id ,
+                'user_unit_code' => $float_model->user_unit_code ,
+                'from' => $request->date_from ,
+                'to' => $request->date_to ,
+                'amount' => $request->float_given ,
+                'reason' => $request->reason ,
+                'name' => $user->name ,
+                'title' => $user->job_code ,
+                'profile' => $user->profile_id ,
+                'created_by' => $user->id,
+                'cash_percentage' => $percentage,
+            ],
+            [
+                'user_unit_id' => $float_model->user_unit_id  ,
+                'user_unit_code' => $float_model->user_unit_code ,
+                'from' => $request->date_from ,
+                'to' => $request->date_to ,
+                'amount' => $request->float_given ,
+                'reason' => $request->reason ,
+                'name' => $user->name ,
+                'title' => $user->job_code ,
+                'profile' => $user->profile_id ,
+                'created_by' => $user->id,
+                'cash_percentage' => $percentage,
+            ]
+        );
+
+        //IDEAL - CASH HAS TO INCREASE  AND UTILISED GOES DOWN
+        $float_model->cash = ($float_model->cash) +  ($request->float_given ?? 0) ;
+        $float_model->utilised = ($float_model->utilised) -  ($request->float_given ?? 0) ;
+        $float_model->save();
+
+        //FINALLY MOVE THE FORMS TO A NEW STATUS
+        PettyCashModel::where('user_unit_code',$float_model->user_unit_code )
+            ->update(
+                [
+//                    'config_status_id' => 1
+                    'region' => 1
+                ]
+            );
+
+        return Redirect::back()->with('message', 'Submitted Successfully');
+    }
 
 
 

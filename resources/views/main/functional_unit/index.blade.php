@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Functional Unit</li>
                     </ol>
                 </div><!-- /.col -->
@@ -59,7 +59,7 @@
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fas fa-minus"></i></button>
-                    <a class="btn btn-tool" href="{{route('main-functional-unit-sync')}}"
+                    <a class="btn btn-tool" href="{{route('main.functional.unit.sync')}}"
                        title="Sync Positions">
                         <i class="fas fa-sync"></i></a>
                 </div>
@@ -135,7 +135,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" method="post" action="{{route('main-functional-unit-store')}}">
+                <form role="form-new" method="post" action="{{route('main.functional.unit.store')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -227,7 +227,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-functional-unit-update')}}">
+                <form role="form" method="post" action="{{route('main.functional.unit.update')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -273,7 +273,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('main-functional-unit-destroy', ['id' => $item->id])}}">
+                          action="{{route('main.functional.unit.destroy', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

@@ -159,6 +159,10 @@ class DivisionsController extends Controller
         //get positions from phris
         $phirs_models = PhrisUserDetailsModel::select('directorate','pay_point')->groupBy('directorate','pay_point')->get();
 
+
+        dd($phirs_models);
+
+
         foreach ($phirs_models as $key => $item) {
 
             // Delimit by multiple spaces, hyphen, underscore, comma

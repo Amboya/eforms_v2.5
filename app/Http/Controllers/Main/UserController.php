@@ -46,15 +46,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //get all the categories
-        $list = User::all();
-        $user_types = UserTypeModel::all();
-        //data to send to the view
-        $params = [
-            'list' => $list,
-            'user_types' => $user_types,
-        ];
-        return view('main.users.index')->with($params);
+        $list = User::select('id','user_unit_id','positions_id','staff_no','user_unit_code','job_code','email','name','created_at','phone')
+            ->get();
+        return view('main.users.index')->with(compact('list'));
     }
 
     /**
@@ -89,33 +83,12 @@ class UserController extends Controller
         //get the user based on id
         $user = User::find($id);
         $user_types = UserTypeModel::all();
-       // $positions = PositionModel::all();
         $delegated_profiles = ProfileDelegatedModel::where('delegated_to', $user->id)
             ->where('config_status_id',  config('constants.active_state') )->get();
-       // $user_unit = UserUnitModel::all();
-        $regions = RegionsModel::all();
-        $divisions = DivisionsModel::all();
-       // $directorates = DirectoratesModel::all();
-      //  $positions_with_code_positions = PositionModel::whereNotNull('superior_code' )->
-       //     orderBy('code' )->get();
-        $user_unit_new = ConfigWorkFlow::select('*')->orderBy('user_unit_code')->get();
-
-        //prepare data to send to the view
-        $params = [
-            'user' => $user,
-            'user_unit_new' => $user_unit_new,
-            'user_types' => $user_types,
-            //'user_unit' => $user_unit,
-            'delegated_profiles' => $delegated_profiles,
-           // 'positions' => $positions,
-           // 'positions_with_code_positions' =>  $positions_with_code_positions ,
-           // 'directorates' => $directorates,
-            'divisions' => $divisions,
-            'regions' => $regions,
-        ];
+        $user_unit_new = ConfigWorkFlow::select('id', 'user_unit_description', 'user_unit_code')->orderBy('user_unit_code')->get();
 
         //return the view
-        return view('main.users.show')->with($params);
+        return view('main.users.show')->with(compact('user_unit_new', 'user', 'user_types', 'delegated_profiles'));
     }
 
     /**
@@ -260,7 +233,7 @@ class UserController extends Controller
 
             //update the model with the details from phris
             $model->name = $phirs_user_details->name;
-          //  $model->email = $phirs_user_details->staff_email ?? $model->email;
+            //  $model->email = $phirs_user_details->staff_email ?? $model->email;
             $model->nrc = $phirs_user_details->nrc;
             $model->contract_type = $phirs_user_details->contract_type;
             $model->con_st_code = $phirs_user_details->con_st_code;
@@ -317,14 +290,13 @@ class UserController extends Controller
         //get user unit
         $user_unit = ConfigWorkFlow::find($request->user_unit);
         $model = \Auth::user();
-      //  dd($model);
+        //  dd($model);
         $model->user_unit_id = $user_unit->id ;
         $model->user_unit_code = $user_unit->user_unit_code ;
         $model->save();
         //log the activity
         ActivityLogsController::store($request, "Updating of User's User-Unit", "update", " user's user-unit updated", $model->staff_no);
         return redirect()->back()->with('error', 'Thank you! your user-unit has been updated successfully.');
-
 
     }
 

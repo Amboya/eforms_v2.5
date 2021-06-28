@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Division</li>
                     </ol>
                 </div><!-- /.col -->
@@ -60,7 +60,7 @@
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fas fa-minus"></i></button>
-                    <a class="btn btn-tool" href="{{route('main-division-sync')}}"
+                    <a class="btn btn-tool" href="{{route('main.division.sync')}}"
                        title="Sync Positions">
                         <i class="fas fa-sync"></i></a>
                 </div>
@@ -73,10 +73,10 @@
                         <tr>
                             <th>id</th>
                             <th>Name</th>
-                            <th>Code</th>
+{{--                            <th>Code</th>--}}
                             <th>Directorate</th>
-                            <th>Created At</th>
-                            <th>Period</th>
+{{--                            <th>Created At</th>--}}
+{{--                            <th>Period</th>--}}
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -85,10 +85,10 @@
                             <tr>
                                 <td>{{++$key}}</td>
                                 <td>{{$item->name}} </td>
-                                <td>{{$item->code}} </td>
+{{--                                <td>{{$item->code}} </td>--}}
                                 <td>{{$item->directorate->name}} </td>
-                                <td>{{$item->created_at}}</td>
-                                <td>{{$item->created_at->diffForHumans()}}</td>
+{{--                                <td>{{$item->created_at}}</td>--}}
+{{--                                <td>{{$item->created_at->diffForHumans()}}</td>--}}
                                 <td>
                                     <button class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
                                             title="Edit"
@@ -138,7 +138,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form-new" method="post" action="{{route('main-division-store')}}">
+                <form role="form-new" method="post" action="{{route('main.division.store')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -242,7 +242,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-division-update')}}">
+                <form role="form" method="post" action="{{route('main.division.update')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -300,7 +300,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('main-division-destroy', ['id' => $item->id])}}">
+                          action="{{route('main.division.destroy', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

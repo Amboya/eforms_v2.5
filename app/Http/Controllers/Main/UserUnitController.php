@@ -73,20 +73,13 @@ class UserUnitController extends Controller
      */
     public function index()
     {
-
         //get all the categories
         $list = ConfigWorkFlow::orderBy('user_unit_code')
             ->where('user_unit_status', config('constants.user_unit_active'))->get();
-
-        $users = User::orderBy('name')->get();
-
+        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->where('profile_id','>', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
         //data to send to the view
-        $params = [
-            'list' => $list,
-            'users' => $users,
-        ];
+        return view('main.user_unit.index')->with(compact('list', 'users'));
 
-        return view('main.user_unit.index')->with($params);
     }
 
     /**

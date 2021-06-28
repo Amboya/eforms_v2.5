@@ -17,7 +17,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">User Profile</li>
                     </ol>
                 </div>
@@ -277,7 +277,7 @@
 
                                 <div class="tab-pane" id="settings">
                                     <form class="form-horizontal" method="post"
-                                          action="{{route('main-user-update', $user->id )}}">
+                                          action="{{route('main.user.update', $user->id )}}">
                                         @csrf
                                         <div class="form-group row">
                                             <label for="inputName" class="col-sm-2 col-form-label">Name</label>
@@ -330,37 +330,9 @@
                                                         @endif
                                                 </select>
 
-{{--                                                <input  list="user_unit_list" id="user_unit_new" class="form-control " name="user_unit_new">--}}
-
-{{--                                                <datalist id="user_unit_list" >--}}
-{{--                                                    @if( Auth::user()->id == $user->id || Auth::user()->type_id ==  config('constants.user_types.developer')  )--}}
-{{--                                                        @foreach($user_unit_new as $item)--}}
-{{--                                                            <option value="{{$item->id}}" >{{$item->code}} : {{$item->name}}</option>--}}
-{{--                                                        @endforeach--}}
-{{--                                                    @endif--}}
-{{--                                                </datalist>--}}
 
                                             </div>
                                         </div>
-
-{{--                                        <div class="form-group row">--}}
-{{--                                            <label for="user_position_id" class="col-sm-2 col-form-label">Code Position</label>--}}
-{{--                                            <div class="col-sm-10">--}}
-{{--                                                <input list="user_position_list" id="user_position_id" class="form-control " name="user_position_id"  >--}}
-{{--                                                    <datalist id="user_position_list"  >--}}
-{{--                                                    <option value="{{$user->position->id  ?? ""}} ">--}}
-{{--                                                        {{$user->position->code  ?? "Code"}} :--}}
-{{--                                                        {{$user->position->name  ?? "Please Select Users Code Position"}}--}}
-{{--                                                    </option>--}}
-{{--                                                    @if( Auth::user()->id == $user->id || Auth::user()->type_id ==  config('constants.user_types.developer')  )--}}
-{{--                                                    @foreach($positions_with_code_positions as $item)--}}
-{{--                                                        <option value="{{$item->id}}" >{{$item->code}} : {{$item->name}}</option>--}}
-{{--                                                    @endforeach--}}
-{{--                                                    @endif--}}
-{{--                                                </datalist>--}}
-
-{{--                                            </div>--}}
-{{--                                        </div>--}}
 
 
                                         <div class="form-group row">
@@ -371,33 +343,6 @@
                                                        placeholder="Staff No" value="{{$user->staff_no}}">
                                             </div>
                                         </div>
-
-
-{{--                                        <div class="form-group row">--}}
-{{--                                            <label for="inputExperience"--}}
-{{--                                                   class="col-sm-2 col-form-label">User Directorate</label>--}}
-{{--                                            <div class="col-sm-10">--}}
-{{--                                                <select disabled class="form-control" id="directorate_select"--}}
-{{--                                                        name="user_directorate_id">--}}
-{{--                                                    <option disabled>{{$user->directorate->name  ?? ""}}</option>--}}
-{{--                                                    @foreach($directorates as $item)--}}
-{{--                                                        <option value="{{$item->id}}">{{$item->name}}</option>--}}
-{{--                                                    @endforeach--}}
-{{--                                                </select>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-
-{{--                                        <div class="form-group row">--}}
-{{--                                            <label for="inputExperience"--}}
-{{--                                                   class="col-sm-2 col-form-label">User Unit</label>--}}
-{{--                                            <div class="col-sm-10">--}}
-{{--                                                <select disabled class="form-control" id="user_unit_select"--}}
-{{--                                                        name="user_unit_id">--}}
-{{--                                                    <option--}}
-{{--                                                        value="{{$user->user_unit->id  ?? ""}}  ">{{$user->user_unit->name  ?? ""}}  </option>--}}
-{{--                                                </select>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
 
                                         <div class="form-group row">
                                             <label for="inputExperience"
@@ -411,18 +356,6 @@
                                             </div>
                                         </div>
 
-{{--                                        <div class="form-group row">--}}
-{{--                                            <label for="inputExperience"--}}
-{{--                                                   class="col-sm-2 col-form-label">User Region</label>--}}
-{{--                                            <div class="col-sm-10">--}}
-{{--                                                <select disabled class="form-control" id="regions_select"--}}
-{{--                                                        name="user_region_id">--}}
-{{--                                                    <option--}}
-{{--                                                        value="{{$user->region->id  ?? ""}}  ">{{$user->region->name  ?? ""}}  </option>--}}
-{{--                                                    <option disabled value="">Select Region</option>--}}
-{{--                                                </select>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
 
                                         <div class="form-group row">
                                             @if( Auth::user()->id == $user->id || Auth::user()->type_id ==  config('constants.user_types.developer')  )
@@ -430,7 +363,7 @@
                                                     <button type="submit" class="btn btn-danger">Update</button>
                                                 </div>
                                                 <div class="offset-sm-5 col-sm-1" style="align-content: end">
-                                                    <a href="{{route('main-user-sync',$user->id )}}"
+                                                    <a href="{{route('main.user.sync',$user->id )}}"
                                                        class="btn btn-default"> Sync <i class="fas fa-sync"></i> </a>
                                                 </div>
                                             @endif
@@ -464,7 +397,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-user-avatar',$user->id)}}"
+                <form role="form" method="post" action="{{route('main.user.avatar',$user->id)}}"
                       enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
@@ -505,55 +438,4 @@
 
 @push('custom-scripts')
     <!--  -->
-    <script>
-        $(document).ready(function () {
-            $("#directorate_select").change(function () {
-                var selected_text = ''; // Selected text
-                var selected_value = ''; // Selected value
-                var selected_index = ''; // Selected index
-                // Get selected value
-                $('#directorate_select option:selected').each(function () {
-                    selected_text += $(this).text();
-                    selected_value += $(this).val();
-                    selected_index += $(this).index();
-                });
-                //
-                var division = {!! json_encode($divisions->toArray()) !!};
-                responce = " <option selected disabled=\"true\"  value=\"\"> Select Division</option>";
-                user_uni = " ";
-                $.each(division, function (index, value) {
-                    if (value.directorate_id == selected_value) {
-                        console.log(value.directorate.user_unit);
-                        user_uni = "<option value=" + value.directorate.user_unit.id + "    > " + value.directorate.user_unit.name + "  </option> ";
-                        responce += "<option value=" + value.id + "    > " + value.name + "  </option> ";
-                    }
-                });
-                $("#division_select").html(responce);
-                $("#user_unit_select").html(user_uni);
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            $("#division_select").change(function () {
-                var selected_text = ''; // Selected text
-                var selected_value = ''; // Selected value
-                var selected_index = ''; // Selected index
-                // Get selected value
-                $('#division_select option:selected').each(function () {
-                    selected_text += $(this).text();
-                    selected_value += $(this).val();
-                    selected_index += $(this).index();
-                });
-                var region = {!! json_encode($regions->toArray()) !!};
-                responce = " <option selected disabled=\"true\"  value=\"\"> Select Region</option>";
-                $.each(region, function (index, value) {
-                    if (value.division_id == selected_value) {
-                        responce += "<option value=" + value.id + "    > " + value.name + "  </option> ";
-                    }
-                });
-                $("#regions_select").html(responce);
-            });
-        });
-    </script>
 @endpush

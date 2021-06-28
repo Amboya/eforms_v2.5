@@ -284,9 +284,7 @@
                 var inp = inps[i];
                 total = total + parseFloat(inp.value || 0);
             }
-
             if (!isNaN(total)) {
-
                 //check if petty cash is below 2000
                 if (total > 2000) {
                     $('#submit_possible').hide();
