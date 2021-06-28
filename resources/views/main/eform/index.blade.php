@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">eForm</li>
                     </ol>
                 </div><!-- /.col -->
@@ -137,7 +137,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form1" method="post" action="{{route('main-eforms-store')}}">
+                <form role="form1" method="post" action="{{route('main.eforms.store')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -279,7 +279,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-eforms-update')}}">
+                <form role="form" method="post" action="{{route('main.eforms.update')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -379,7 +379,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('main-eforms-destroy', ['id' => $item->id])}}">
+                          action="{{route('main.eforms.destroy', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

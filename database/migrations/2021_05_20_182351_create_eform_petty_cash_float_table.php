@@ -23,6 +23,8 @@ class CreateEformPettyCashFloatTable extends Migration
             $table->integer('percentage')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('created_by_name')->nullable();
+            $table->string('profile_job_code')->nullable();
+            $table->string('profile_unit_code')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

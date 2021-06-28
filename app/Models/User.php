@@ -56,12 +56,14 @@ class User extends Authenticatable
 
         'unit_column',
         'code_column',
+        'profile_job_code',
+        'profile_unit_code',
 
         'type_id',
         'grade_id',
         'profile_id',
-        'user_unit_code',
         'job_code',
+        'user_unit_code',
         'user_unit_id',
         'positions_id',
         'user_region_id',
@@ -105,6 +107,15 @@ class User extends Authenticatable
         return $v->passes();
     }
 
+
+
+//    protected $with = [
+//        'user_unit',
+//        'user_profile',
+//        'delegated_profile',
+//        'user_type',
+//        'position',
+//    ];
 
 
     //RELATIONSHIP

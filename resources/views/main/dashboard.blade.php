@@ -28,7 +28,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">e-Forms Dashboard</li>
                     </ol>
                 </div><!-- /.col -->
@@ -82,8 +82,8 @@
 
                             <!-- Info boxes -->
                             <div class="row">
-                                @foreach($eforms as $eforms_item)
-                                    @if($eforms_item->category_id == $item->id)
+                                @foreach($item->eforms->where('category_id', $item->id ) as $eforms_item)
+{{--                                    @if($eforms_item->category_id == $item->id)--}}
                                         @if($eforms_item->id == config('constants.eforms_id.petty_cash') )
                                             <div class="col-12 col-sm-6   ">
                                                 <hr>
@@ -111,7 +111,7 @@
                                             <div class="clearfix hidden-md-up"></div>
                                             <!-- /.col -->
                                         @endif
-                                    @endif
+{{--                                    @endif--}}
                                 @endforeach
                             </div>
                             <!-- /.row -->
@@ -129,64 +129,6 @@
     <!-- /.content -->
 
 
-    <!-- /.POP UP MODEL TO FORCE USER TO CHANGE USER UNIT -->
-    <div class="modal fade" id="modal-change-unit">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header " >
-                    <h4 class="modal-title " style="text-align: center">Update User Unit</h4>
-                </div>
-                <!-- form start -->
-                <form method="POST" action="{{ route('main-user-change-unit') }}">
-                    @csrf
-                    <div class="p-4">
-                        <div class="row justify-content-center ">
-                            <img src="{{asset('dashboard/dist/img/ZESCO_removebg.png')}}" width="50%">
-                        </div>
-                        <div class="form-group row">
-                            <label for="user_unit" class="col-md-2 col-form-label text-md-right">{{ __('User Unit') }}</label>
-                            <div class="col-md-8">
-                                <select id="user_unit" class="form-control " name="user_unit"  >
-                                    <option value="" selected disabled >Select User Unit</option>
-                                    @foreach($user_unit as $item)
-                                        <option value="{{$item->id}}" >{{$item->user_unit_code}} : {{$item->user_unit_description}}</option>
-                                    @endforeach
-                                </select>
-                                <input list="user_unit_list" id="user_unit" class="form-control " name="user_unit" required >
-                                    <datalist id="user_unit_list"   >
-                                    <option value="" selected disabled >Select User Unit</option>
-                                    @foreach($user_unit as $item)
-                                        <option value="{{$item->id}}" >{{$item->user_unit_code}} : {{$item->user_unit_description}}</option>
-                                    @endforeach
-                                </datalist>
-
-                                @error('user_unit')
-                                <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Update User Unit') }}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.end modal -->
-
-
-
     <!-- /.POP UP MODEL TO FORCE USER TO CHANGE PASSWORD -->
     <div class="modal fade" id="modal-change-password">
         <div class="modal-dialog modal-lg">
@@ -195,7 +137,7 @@
                     <h4 class="modal-title text-center">Change Password</h4>
                 </div>
                 <!-- form start -->
-                <form method="POST" action="{{ route('main-user-change-password') }}">
+                <form method="POST" action="{{ route('main.user.change.password') }}">
                     @csrf
                     <div class="p-4">
                         <div class="row justify-content-center ">

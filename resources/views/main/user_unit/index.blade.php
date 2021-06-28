@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">User-Units Workflow</li>
                     </ol>
                 </div><!-- /.col -->
@@ -60,7 +60,7 @@
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fas fa-minus"></i></button>
-                    <a  class="btn btn-tool" href="{{route('main-user_unit-sync')}}"
+                    <a  class="btn btn-tool" href="{{route('main.user.unit.sync')}}"
                         title="Sync Grades">
                         <i class="fas fa-sync"></i></a>
                 </div>
@@ -72,6 +72,7 @@
                         <thead>
                         <tr>
 {{--                            <th>id</th>--}}
+                            <th>Division/Directorate</th>
                             <th>Name</th>
                             <th>Departmental User Unit</th>
                             <th>Business Unit Code</th>
@@ -102,6 +103,7 @@
 
                         @foreach($list as $key => $item)
                             <tr>
+                                <td>{{$item->division->name ?? "" }} </td>
                                 <td>{{$item->user_unit_description}} </td>
                                 <td>{{$item->user_unit_code}} </td>
                                 <td>{{$item->user_unit_bc_code}} </td>
@@ -166,7 +168,7 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form role="form" method="post" action="{{route('main-user_unit-update')}}">
+                <form role="form" method="post" action="{{route('main.user.unit.update')}}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -214,9 +216,9 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="dr_id">Director</label>
-                                    <input list="users_list1" type="text" class="form-control" id="dr_id" name="dr_id"
+                                    <input list="users_list" type="text" class="form-control" id="dr_id" name="dr_id"
                                            value=""  placeholder="Select Director Person">
-                                    <datalist id="users_list1">
+                                    <datalist id="users_list">
                                         @foreach($users as $item)
                                             <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
                                         @endforeach
@@ -270,7 +272,7 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="hod_id">HOD</label>
-                                    <input list="users_list1" type="text" class="form-control" id="hod_id" name="hod_id"
+                                    <input list="users_list" type="text" class="form-control" id="hod_id" name="hod_id"
                                            value=""  placeholder="Select Hod Person">
 {{--                                    <datalist id="users_list1">--}}
 {{--                                        @foreach($users as $item)--}}
@@ -326,7 +328,7 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="bm_id">BRANCH MANAGER</label>
-                                    <input list="users_list1" type="text" class="form-control" id="bm_id" name="bm_id"
+                                    <input list="users_list" type="text" class="form-control" id="bm_id" name="bm_id"
                                            placeholder="Select BRANCH MANAGER ">
 {{--                                    <datalist id="users_list2">--}}
 {{--                                        @foreach($users as $item)--}}
@@ -354,13 +356,13 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="ca_id">Chief Accountant</label>
-                                    <input list="users_list3" type="text" class="form-control" id="ca_id" name="ca_id"
+                                    <input list="users_list" type="text" class="form-control" id="ca_id" name="ca_id"
                                            placeholder="Select Chief Accountant Person">
-                                    <datalist id="users_list3">
-                                        @foreach($users as $item)
-                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
+{{--                                    <datalist id="users_list3">--}}
+{{--                                        @foreach($users as $item)--}}
+{{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </datalist>--}}
                                 </div>
                             </div>
                             <div class="col-3">
@@ -438,13 +440,13 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="hrm_id">HRM</label>
-                                    <input list="users_list2" type="text" class="form-control" id="hrm_id" name="hrm_id"
+                                    <input list="users_list" type="text" class="form-control" id="hrm_id" name="hrm_id"
                                            placeholder="Select HR Person">
-                                    <datalist id="users_list2">
-                                        @foreach($users as $item)
-                                            <option value=" {{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
+{{--                                    <datalist id="users_list2">--}}
+{{--                                        @foreach($users as $item)--}}
+{{--                                            <option value=" {{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </datalist>--}}
                                 </div>
                             </div>
                             <div class="col-3">
@@ -522,13 +524,13 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="audit_id">Audit Personal</label>
-                                    <input list="users_list6" type="text" class="form-control" id="audit_id" name="audit_id"
+                                    <input list="users_list" type="text" class="form-control" id="audit_id" name="audit_id"
                                            placeholder="Select Audit Personal Person">
-                                    <datalist id="users_list6">
-                                        @foreach($users as $item)
-                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
+{{--                                    <datalist id="users_list6">--}}
+{{--                                        @foreach($users as $item)--}}
+{{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </datalist>--}}
                                 </div>
                             </div>
                             <div class="col-3">
@@ -550,13 +552,13 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="expenditure_id">Expenditure Accountant</label>
-                                    <input list="users_list4" type="text" class="form-control" id="expenditure_id" name="expenditure_id"
+                                    <input list="users_list" type="text" class="form-control" id="expenditure_id" name="expenditure_id"
                                            placeholder="Select Expenditure Accountant Person">
-                                    <datalist id="users_list4">
-                                        @foreach($users as $item)
-                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
+{{--                                    <datalist id="users_list4">--}}
+{{--                                        @foreach($users as $item)--}}
+{{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </datalist>--}}
                                 </div>
                             </div>
                             <div class="col-3">
@@ -606,13 +608,13 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="security_id">Security Personal</label>
-                                    <input list="users_list5" type="text" class="form-control" id="security_id" name="security_id"
+                                    <input list="users_list" type="text" class="form-control" id="security_id" name="security_id"
                                            placeholder="Select Security Personal Person">
-                                    <datalist id="users_list5">
-                                        @foreach($users as $item)
-                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>
-                                        @endforeach
-                                    </datalist>
+{{--                                    <datalist id="users_list5">--}}
+{{--                                        @foreach($users as $item)--}}
+{{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </datalist>--}}
                                 </div>
                             </div>
                             <div class="col-3">
@@ -1092,13 +1094,11 @@
             });
             //payroll_id
             $("#payroll_id").change(function () {
-                var selected_text = ''; // Selected text
                 var selected_value = ''; // Selected value
-                var selected_index = ''; // Selected index
                 // Get selected value
                 selected_value += $(this).val();
                 //find the user from the selected array
-                var users = {!! json_encode($users->toArray()) !!};
+                var users = {!! json_encode( $users->toArray() ) !!};
                 unit = "";
                 code = "";
                 $.each(users, function (index, value) {

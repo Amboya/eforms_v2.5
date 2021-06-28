@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PositionRequest;
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\PositionModel;
 use App\Models\Main\UserUnitModel;
 use App\Models\PhrisUserDetailsModel;
@@ -36,7 +37,7 @@ class PositionController extends Controller
     {
         //get all the categories
         $list = PositionModel::all();
-        $user_units = UserUnitModel::all();
+        $user_units = ConfigWorkFlow::select('id', 'user_unit_description')->get();
 
         //data to send to the view
         $params = [

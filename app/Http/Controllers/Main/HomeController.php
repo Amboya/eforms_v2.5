@@ -34,27 +34,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-//        dd(666777);
-//        //get the list of categories
         $categories = EFormCategoryModel::all();
-        //get list of all eforms
-        $eforms = EFormModel::all();
-//        dd($eforms);
-        //count all
-        $totals= TotalsModel::where('eform_id', config('constants.eforms_id.main_dashboard'))->get();
-        //data to send to the view
-
-        $user_unit = ConfigWorkFlow::select('*')->orderBy('user_unit_code')->get();
-        $params = [
-            'eforms' => $eforms,
-            'categories' => $categories,
-            'totals' => $totals,
-            'user_unit' => $user_unit
-        ];
-
+        $categories->load('eforms');
         //return view
-        return view('main.dashboard')->with($params);
-
+        return view('main.dashboard')->with(compact('categories'));
     }
 
 

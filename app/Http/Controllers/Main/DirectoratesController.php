@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DirectoratesRequest;
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DirectoratesModel;
 use App\Models\Main\UserUnitModel;
 use App\Models\PhrisUserDetailsModel;
@@ -37,7 +38,7 @@ class DirectoratesController extends Controller
         //get all the Directorates
         $list = DirectoratesModel::all();
 
-        $user_units = UserUnitModel::all();
+        $user_units = ConfigWorkFlow::select('id', 'user_unit_description')->get();
 
         //data to send to the view
         $params = [

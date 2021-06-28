@@ -19,7 +19,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('petty.cash.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Petty-Cash : {{$category}}</li>
                     </ol>
                 </div><!-- /.col -->
@@ -88,7 +88,7 @@
                                                 </form>
                                             </td>
                                             <td>{{$item->claimant_name}}</td>
-                                            <td>{{$item->total_payment}}</td>
+                                            <td>ZMW {{ number_format($item->total_payment  - $item->change, 2)}}</td>
                                             <td><span
                                                     class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                             </td>

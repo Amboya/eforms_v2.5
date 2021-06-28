@@ -33,7 +33,7 @@ class ActivityLogsController extends Controller
     public function index(Request $request)
     {
         //get all logs
-        $list = ActivityLogsModel::all();
+        $list = ActivityLogsModel::orderBy('created_at', 'desc')->get();
         // dd($certs);
         $params = [
             'list' => $list
@@ -164,7 +164,7 @@ class ActivityLogsController extends Controller
             'activity_log' => $log ,
             'activity_logs' => $logs
         ];
-        
+
         return view('main.logs.view')->with($params);
     }
 
@@ -247,7 +247,7 @@ class ActivityLogsController extends Controller
 
                 'eform_code' => $request->session()->get('eform_code'),
                 'eform_id' => $request->session()->get('eform_id'),
-                
+
                 //request
                 'ip_address' => $ip_address,
                 'request_method' => $request->method(),

@@ -18,7 +18,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Activity Logs</li>
                     </ol>
                 </div><!-- /.col -->
@@ -89,7 +89,7 @@
                             <td>
                                 <a class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
                                         title="Edit"
-                                        href="{{route('main-logs-show', ['id'=> $item->id])}}">
+                                        href="{{route('main.logs.show', ['id'=> $item->id])}}">
                                     <i class="fa fa-eye"></i>
                                 </a>
                                 <button class="btn btn-sm bg-gradient-gray float-left" style="margin: 1px"
@@ -124,7 +124,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('main-eforms-category-destroy', ['id' => $item->id])}}">
+                          action="{{route('main.eforms.category.destroy', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

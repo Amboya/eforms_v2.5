@@ -27,7 +27,7 @@ class PettyCashReimbursement extends Model
             'title',
             'profile',
             'created_by',
-            'created_by_name',
+            'cash_percentage',
     ] ;
 
 

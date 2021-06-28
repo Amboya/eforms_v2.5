@@ -37,9 +37,9 @@ class EFormModel extends Model
     ] ;
 
     protected $with = [
-        'category',
+      //  'category',
       //  'user',
-        'status',
+      //  'status',
     ];
 
 

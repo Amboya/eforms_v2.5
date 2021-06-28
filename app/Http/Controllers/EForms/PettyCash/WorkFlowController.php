@@ -39,23 +39,14 @@ class WorkFlowController extends Controller
      */
     public function index()
     {
-        //get all the categories
-        $list = ConfigWorkFlow::orderBy('user_unit_code')
-            ->where('user_unit_status', config('constants.user_unit_active') )->get();
-
-        $users = User::orderBy('name')->get();
-
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
-
+        //get all the categories
+        $list = ConfigWorkFlow::orderBy('user_unit_code')
+            ->where('user_unit_status', config('constants.user_unit_active'))->get();
+        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->where('profile_id','>', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
         //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me ,
-            'users' => $users,
-            'list' => $list,
-        ];
-
-        return view('eforms.petty-cash.workflow')->with($params);
+        return view('eforms.petty-cash.workflow')->with(compact('list', 'users', 'totals_needs_me'));
     }
 
     /**
@@ -108,7 +99,7 @@ class WorkFlowController extends Controller
     public function show($id, $form_id)
     {
         $workflow = ConfigWorkFlow::find($id);
-        $users = User::where('profile_id','>', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
+        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->where('profile_id','>', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
