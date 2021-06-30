@@ -21,14 +21,14 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('kilometer.allowance.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Directorates Kilometer-Allowance Totals</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
-    <!-- /.content-header -->
+    <!-- /.content-header -->kilometer.allowance.home
 
 
     <!-- Main page content -->

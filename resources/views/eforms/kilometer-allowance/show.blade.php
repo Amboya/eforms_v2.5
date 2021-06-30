@@ -1181,7 +1181,7 @@
                 </div>
                 <!-- form start -->
                 <form id="change_form" method="post"
-                      action="{{route('attached-file-change')}}"   enctype="multipart/form-data">
+                      action="{{route('attached.file.change')}}"   enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1230,7 +1230,7 @@
 
                 <!-- form start -->
                 <form id="qoutation_form" method="post"
-                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
+                      action="{{route('attached.file.add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1274,7 +1274,7 @@
                 </div>
                 <!-- form start -->
                 <form id="receipt_form"  method="post"
-                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
+                      action="{{route('attached.file.add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

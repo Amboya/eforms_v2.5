@@ -5,7 +5,7 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{route('main-home')}}" class="nav-link">E-Forms Dashboard</a>
+            <a href="{{route('kilometer.allowance.home')}}" class="nav-link">E-Forms Dashboard</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="#" class="nav-link">Contact</a>
@@ -43,7 +43,7 @@
             <a class="nav-link" data-toggle="dropdown" href="#">
                 {{Auth::user()->name}}</a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <a href="{{ route('main-user-show',Auth::user()->id ) }}"  class="dropdown-item">
+                <a href="{{ route('main.user.show',Auth::user()->id ) }}"  class="dropdown-item">
                     <i class="fas fa-user-circle mr-2"></i> My Profile
                 </a>
                 <div class="dropdown-divider"></div>
