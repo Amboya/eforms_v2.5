@@ -51,102 +51,162 @@
 
     <!-- Default box -->
         <div class="card">
-            <!-- /.card-header -->
-            <div class="card-body">
-                <div class="table-responsive">
-                    <div class="row">
-                        <div class="col-6 offset-6">
-                        <input type="text" class="form-control m-2" id="myInput" onkeyup="myFunction()" placeholder="Search ..">
-                    </div>
-                    </div>
+            <form id="list_form"  action="{{route('petty.cash.approve.batch', $value)}}" method="post">
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        {{--                    <div class="row">--}}
+                        {{--                        <div class="col-6 offset-6">--}}
+                        {{--                        <input type="text" class="form-control m-2" id="myInput" onkeyup="myFunction()" placeholder="Search ..">--}}
+                        {{--                    </div>--}}
+                        {{--                    </div>--}}
 
-                @if(Auth::user()->type_id != config('constants.user_types.developer'))
-                        <table id="myTable" class="table m-0">
-                            @else
-                                <table id="example1" class="table m-0">
-                                    @endif
-                                    <thead>
-                                    <tr>
-                                        <th>Serial</th>
-                                        <th>Claimant</th>
-                                        <th>Payment</th>
-                                        <th>Status</th>
-                                        <th>Period</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach( $list as $item )
-                                        <tr>
-                                            <td><a href="{{ route('logout') }}" class="dropdown-item"
-                                                   onclick="event.preventDefault();
-                                                       document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
-                                                <form id="show-form{{$item->id}}"
-                                                      action="{{ route('petty.cash.show', $item->id) }}"
-                                                      method="POST" class="d-none">
-                                                    @csrf
-                                                </form>
-                                            </td>
-                                            <td>{{$item->claimant_name}}</td>
-                                            <td>ZMW {{ number_format($item->total_payment  - $item->change, 2)}}</td>
-                                            <td><span
-                                                    class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
-                                            </td>
-                                            <td>{{ $item->updated_at }}</td>
-                                            <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
-                                                   onclick="event.preventDefault();
-                                                       document.getElementById('show-form'+{{$item->id}}).submit();">
-                                                    View </a>
-                                                <form id="show-form{{$item->id}}"
-                                                      action="{{ route('petty.cash.show', $item->id) }}"
-                                                      method="POST" class="d-none">
-                                                    @csrf
-                                                </form>
+                        {{--                @if(Auth::user()->type_id != config('constants.user_types.developer'))--}}
+                        {{--                        <table id="myTable" class="table m-0">--}}
+                        {{--                            @else--}}
 
-                                                @if(Auth::user()->type_id == config('constants.user_types.developer'))
-                                                    <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
-                                                            title="Mark as Void."
-                                                            data-toggle="modal"
-                                                            data-target="#modal-void{{$item->id}}">
-                                                        <i class="fa fa-ban"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
-                                                            title="Reverse Form to the previous state."
-                                                            data-toggle="modal"
-                                                            data-target="#modal-reverse{{$item->id}}">
-                                                        <i class="fa fa-redo"></i>
-                                                    </button>
-                                                    <a class="btn btn-sm bg-gradient-gray "  href="{{route('petty.cash.sync', $item->id)}}"
-                                                       title="Sync Application Forms">
-                                                        <i class="fas fa-sync"></i>
-                                                    </a>
-                                                @endif
-                                            </td>
+                                                    <tr>
+                                                        <td>
+                                                            <input id="selectAll" type="checkbox"><label for='selectAll'>Select All</label>
+                                                        </td>
 
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
+                                                    </tr>
+                        <table id="example1" class="table m-0">
+                            {{--                                    @endif--}}
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Serial</th>
+                                <th>Claimant</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Date Created</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                                </table>
+                            @foreach( $list as $item )
+
+                                <tr>
+                                    <td>
+                                        <div class="icheck-warning d-inline">
+                                            <input type="checkbox" value="{{$item->id}}" id="forms[]"
+                                                   name="forms[]">
+                                        </div>
+                                    </td>
+                                    <td><a href="{{ route('logout') }}" class="dropdown-item"
+                                           onclick="event.preventDefault();
+                                               document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
+                                        <form id="show-form{{$item->id}}"
+                                              action="{{ route('petty.cash.show', $item->id) }}"
+                                              method="POST" class="d-none">
+                                            @csrf
+                                        </form>
+                                    </td>
+                                    <td>{{$item->claimant_name}}</td>
+                                    <td>ZMW {{ number_format($item->total_payment  - $item->change, 2)}}</td>
+                                    <td><span
+                                            class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                    </td>
+                                    <td>{{ $item->created_at }}</td>
+                                    <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
+                                           onclick="event.preventDefault();
+                                               document.getElementById('show-form'+{{$item->id}}).submit();">
+                                            View </a>
+                                        <form id="show-form{{$item->id}}"
+                                              action="{{ route('petty.cash.show', $item->id) }}"
+                                              method="POST" class="d-none">
+                                            @csrf
+                                        </form>
+
+                                        @if(Auth::user()->type_id == config('constants.user_types.developer'))
+                                            <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                                    title="Mark as Void."
+                                                    data-toggle="modal"
+                                                    data-target="#modal-void{{$item->id}}">
+                                                <i class="fa fa-ban"></i>
+                                            </button>
+                                            <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                                    title="Reverse Form to the previous state."
+                                                    data-toggle="modal"
+                                                    data-target="#modal-reverse{{$item->id}}">
+                                                <i class="fa fa-redo"></i>
+                                            </button>
+                                            <a class="btn btn-sm bg-gradient-gray "  href="{{route('petty.cash.sync', $item->id)}}"
+                                               title="Sync Application Forms">
+                                                <i class="fas fa-sync"></i>
+                                            </a>
+                                        @endif
+                                    </td>
+
+                                </tr>
+                            @endforeach
+                            </tbody>
+
+                        </table>
                         @if(Auth::user()->type_id != config('constants.user_types.developer'))
-                            {!! $list->links() !!}
+                            {{--                            {!! $list->links() !!}--}}
                         @else
 
                         @endif
+                    </div>
                 </div>
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer clearfix">
-                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
-                    @if($pending < 1)
-                        <a href="{{route('petty.cash.create')}}"
-                           class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
-                    @else
-                        <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
-                        <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
+                        @if($pending < 1)
+                            <a href="{{route('petty.cash.create')}}"
+                               class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
+                        @else
+                            <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
+                            <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
+                        @endif
                     @endif
-                @endif
-            </div>
+
+
+                    {{--  HAS RECEIPT - SEND TO AUDIT --}}
+                                        @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
+                                             &&  $value == config('constants.petty_cash_status.receipt_approved')
+                                            )
+                    <div class="">
+                        <hr>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <label class="form-control-label">Reason/Comment</label>
+                                    </div>
+                                    <div class="col-11">
+                                        <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2 text-center ">
+                                <div id="divSubmit_show">
+                                    <button id="btnSubmit_approve" type="submit" name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Resolve'>SEND TO AUDIT
+                                    </button>
+                                    <button style="display: none" id="btnSubmit_reject" type="submit"
+                                            name="approval"
+                                            class="btn btn-outline-success mr-2 p-2  "
+                                            value='Rejected'>SEND TO AUDIT1
+                                    </button>
+                                </div>
+                                <div id="divSubmit_hide">
+                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                            value='Approved'>Processing. Please wait...
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                                        @endif
+
+                </div>
+            </form>
         </div>
         <!-- /.card -->
     </section>
@@ -303,6 +363,29 @@
         }
     </script>
 
+    <script>
+        $(document).ready(function () {
+            $("#divSubmit_hide").hide();
+            //disable the submit button
+            $("#btnSubmit_approve").on('click', function () {
+                $("#show_form").submit(function (e) {
+                    //  e.preventDefault()
+                    //do something here
+                    $("#divSubmit_show").hide();
+                    $("#divSubmit_hide").show();
+                    //continue submitting
+                    e.currentTarget.submit();
+                });
+            });
+
+
+            //select all
+            $("#selectAll").click(function(){
+                $("input[type=checkbox]").prop('checked', $(this).prop('checked'));
+            });
+
+        });
+    </script>
 
 
 

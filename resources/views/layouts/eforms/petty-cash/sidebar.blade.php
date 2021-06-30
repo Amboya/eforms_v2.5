@@ -92,10 +92,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.audited') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.receipt_approved') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p> Audited
+                                <p> Have Receipts
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.audit_box') ) }}"
+                               class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p> Audit Box
                                 </p>
                             </a>
                         </li>
@@ -104,6 +112,34 @@
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Queried
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-file"></i>
+                        <p>
+                            Forward Batches
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.await_audit') ) }}"
+                               class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p> Awaiting Audit
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.audited') ) }}"
+                               class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p> Awaiting Reimbursement
                                 </p>
                             </a>
                         </li>

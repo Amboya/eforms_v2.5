@@ -441,8 +441,10 @@
 
                     </div>
                 </div>
+
                 <!-- /.card-body -->
                 <div class="card-footer">
+
                     {{--  CLAIMANT EDIT--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                          &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
@@ -971,6 +973,47 @@
                                             {{--                                                    value='Rejected'>CLOSE PETTY.CASH.-}}
                                             {{--                                            </button>--}}
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{--  CHIEF ACCOUNTANT AUDITING--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')
+                         &&  $form->config_status_id == config('constants.petty_cash_status.receipt_approved')
+                         &&  $form->user_unit->ca_code == $user->profile_job_code
+                         &&  $form->user_unit->ca_unit == $user->profile_unit_code
+                        )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success p-2   "
+                                                value='Approved'>AUDITED
+                                        </button>
+                                        <button id="btnSubmit_reject" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-danger p-2   "
+                                                value='Queried'>QUERIED
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
                                     </div>
                                 </div>
                             </div>

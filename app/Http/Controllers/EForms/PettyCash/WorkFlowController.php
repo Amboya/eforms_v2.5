@@ -151,51 +151,58 @@ class WorkFlowController extends Controller
         $model->audit_unit = $request->audit_unit ??  "" ;
         $model->save();
 
-        //[2] update the petty cash form
-        if($form_id != config('constants.all')){
-            $update_eform_petty_cash = DB::table('eform_petty_cash')
-                ->where('id', $form_id)
-                ->update([
-                    'cost_center' => $model->user_unit_cc_code,
-                    'business_unit_code' => $model->user_unit_bc_code,
-                    'user_unit_code' => $model->user_unit_code,
+//        //[2] update the petty cash form
+//        if($form_id != config('constants.all')){
+//            $update_eform_petty_cash = DB::table('eform_petty_cash')
+//                ->where('id', $form_id)
+//                ->update([
+//                    'cost_center' => $model->user_unit_cc_code,
+//                    'business_unit_code' => $model->user_unit_bc_code,
+//                    'user_unit_code' => $model->user_unit_code,
+//
+//                    'hod_code' => $model->hod_code,
+//                    'hod_unit' => $model->hod_unit,
+//                    'ca_code' => $model->ca_code,
+//                    'ca_unit' => $model->ca_unit,
+//                    'hrm_code' => $model->hrm_code,
+//                    'hrm_unit' => $model->hrm_unit,
+//                    'expenditure_code' => $model->expenditure_code,
+//                    'expenditure_unit' => $model->expenditure_unit,
+//                    'security_code' => $model->security_code,
+//                    'security_unit' => $model->security_unit,
+//                    'audit_code' => $model->audit_code,
+//                    'audit_unit' => $model->audit_unit
+//                ]);
+//
+//            //[3] update the petty cash account lines
+//            $update_eform_petty_cash_account = DB::table('eform_petty_cash_account')
+//                ->where('eform_petty_cash_id', $form_id)
+//                ->update([
+//                    'cost_center' => $model->user_unit_cc_code,
+//                    'business_unit_code' => $model->user_unit_bc_code,
+//                    'user_unit_code' => $model->user_unit_code,
+//
+//                    'hod_code' => $model->hod_code,
+//                    'hod_unit' => $model->hod_unit,
+//                    'ca_code' => $model->ca_code,
+//                    'ca_unit' => $model->ca_unit,
+//                    'hrm_code' => $model->hrm_code,
+//                    'hrm_unit' => $model->hrm_unit,
+//                    'expenditure_code' => $model->expenditure_code,
+//                    'expenditure_unit' => $model->expenditure_unit,
+//                    'security_code' => $model->security_code,
+//                    'security_unit' => $model->security_unit,
+//                    'audit_code' => $model->audit_code,
+//                    'audit_unit' => $model->audit_unit
+//                ]);
+//        }
+//        else{
+//
+//        }
 
-                    'hod_code' => $model->hod_code,
-                    'hod_unit' => $model->hod_unit,
-                    'ca_code' => $model->ca_code,
-                    'ca_unit' => $model->ca_unit,
-                    'hrm_code' => $model->hrm_code,
-                    'hrm_unit' => $model->hrm_unit,
-                    'expenditure_code' => $model->expenditure_code,
-                    'expenditure_unit' => $model->expenditure_unit,
-                    'security_code' => $model->security_code,
-                    'security_unit' => $model->security_unit,
-                    'audit_code' => $model->audit_code,
-                    'audit_unit' => $model->audit_unit
-                ]);
+        //sync all petty cash
+        $test = PettyCashController::syncAll($model) ;
 
-            //[3] update the petty cash account lines
-            $update_eform_petty_cash_account = DB::table('eform_petty_cash_account')
-                ->where('eform_petty_cash_id', $form_id)
-                ->update([
-                    'cost_center' => $model->user_unit_cc_code,
-                    'business_unit_code' => $model->user_unit_bc_code,
-                    'user_unit_code' => $model->user_unit_code,
-
-                    'hod_code' => $model->hod_code,
-                    'hod_unit' => $model->hod_unit,
-                    'ca_code' => $model->ca_code,
-                    'ca_unit' => $model->ca_unit,
-                    'hrm_code' => $model->hrm_code,
-                    'hrm_unit' => $model->hrm_unit,
-                    'expenditure_code' => $model->expenditure_code,
-                    'expenditure_unit' => $model->expenditure_unit,
-                    'security_code' => $model->security_code,
-                    'security_unit' => $model->security_unit,
-                    'audit_code' => $model->audit_code,
-                    'audit_unit' => $model->audit_unit
-                ]);
-        }
 
         //log the activity
         //  ActivityLogsController::store($request, "Updating of Petty Cash User Unit Workflow", "update", "petty cash unit user workflow updated", $model->id);

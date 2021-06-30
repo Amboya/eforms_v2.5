@@ -56,6 +56,9 @@
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fas fa-minus"></i></button>
+                    <a class="btn btn-tool" href="{{route('petty.cash.sync.all')}}"
+                       title="Sync All Petty Cash Files">
+                        <i class="fas fa-sync"></i></a>
                 </div>
             </div>
             <!-- /.card-header -->

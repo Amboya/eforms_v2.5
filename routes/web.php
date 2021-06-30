@@ -323,6 +323,8 @@ Route::group([
         Route::get('remove/duplicate/account/lines/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'markAccountLinesAsDuplicates'])->name('petty.cash.accounts.duplicate.remove');
         Route::get('show/form/{id}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'showForm'])->name('petty.cash.reports.show');
 
+        Route::get('sync', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'syncAllPettyCash'])->name('petty.cash.sync.all');
+        Route::post('approve/batch/{status}', [App\Http\Controllers\EForms\PettyCash\PettyCashController::class, 'approveBatch'])->name('petty.cash.approve.batch');
 
         //REPORTS
         Route::group([
