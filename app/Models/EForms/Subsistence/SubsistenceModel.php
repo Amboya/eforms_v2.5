@@ -165,18 +165,21 @@ class SubsistenceModel extends Model
             $profile_assignement = ProfileAssigmentModel::
             where('eform_id', config('constants.eforms_id.subsistence'))
                 ->where('user_id', $user->id)->first();
+
             //  use my profile - if i dont have one - give me the default
             $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
             $user->profile_id = $default_profile;
             $user->profile_unit_code = $user->user_unit_code;
             $user->profile_job_code = $user->job_code;
             $user->save();
+//            dd($user);
 
             //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
             $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.subsistence'))
                 ->where('delegated_to', $user->id)
-                ->where('config_status_id',  config('constants.active_state') );
-            if ($profile_delegated->exists()) {
+                ->where('config_status_id',  config('constants.active_state') )->get();
+
+            if (!$profile_delegated->isEmpty()) {
                 //
                 $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
                 $user->profile_id = $default_profile;
@@ -184,6 +187,7 @@ class SubsistenceModel extends Model
                 $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
                 $user->save();
             }
+
 
             //[1] REQUESTER
             //if you are just a requester, then only see your forms
@@ -195,7 +199,7 @@ class SubsistenceModel extends Model
                 //[2A] HOD
                 //see forms for the same work area and user unit
                 if ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-                    //  dd(Auth::user()->user_unit->code) ;
+//                      dd(Auth::user()->profile_job_code) ;
                     static::addGlobalScope('hod', function (Builder $builder) {
                         $builder->Where('hod_code', Auth::user()->profile_job_code);
                         $builder->where('hod_unit', Auth::user()->profile_unit_code);

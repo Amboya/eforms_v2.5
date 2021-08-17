@@ -74,30 +74,6 @@ class SubsistenceAccountModel extends Model
             //get the profile for this user
             $user = Auth::user();
 
-            //[1]  GET YOUR PROFILE
-            $profile_assignement = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('user_id', $user->id)->first();
-            //  use my profile - if i dont have one - give me the default
-            $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
-            $user->profile_id = $default_profile;
-            $user->profile_unit_code = $user->user_unit_code;
-            $user->profile_job_code = $user->job_code;
-            $user->save();
-
-            //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
-            $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('delegated_to', $user->id)
-                ->where('config_status_id',  config('constants.active_state'));
-            if ($profile_delegated->exists()) {
-                //
-                $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
-                $user->profile_id = $default_profile;
-                $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
-                $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
-                $user->save();
-            }
-
             //[1] REQUESTER
             //if you are just a requester, then only see your forms
             if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {

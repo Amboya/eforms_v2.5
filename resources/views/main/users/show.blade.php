@@ -193,9 +193,9 @@
                                                             Position:</b> {{$user->position->name  ?? ""}}  </p>
                                                     <p class="text-muted "><b class="text-orange ">Job
                                                             Code:</b> {{$user->job_code  ?? ""}}  </p>
-{{--                                                    <p class="text-muted"><b>--}}
-{{--                                                            Position Code:</b> {{$user->position->code  ?? ""}} ,--}}
-{{--                                                        Superior: {{$user->position->superior_code  ?? ""}}  </p>--}}
+                                                    <p class="text-muted"><b>
+                                                            Position Code:</b> {{$user->position->code  ?? ""}} ,
+                                                        Superior: {{$user->position->superior_code  ?? ""}}  </p>
                                                 </div>
                                             @endif
                                         </div>

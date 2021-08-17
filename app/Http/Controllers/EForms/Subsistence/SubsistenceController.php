@@ -10,8 +10,10 @@ use App\Models\EForms\Subsistence\SubsistenceAccountModel;
 use App\Models\EForms\Subsistence\SubsistenceModel;
 use App\Models\Main\AccountsChartModel;
 use App\Models\Main\AttachedFileModel;
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\EformApprovalsModel;
 use App\Models\Main\EFormModel;
+use App\Models\Main\GradesModel;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
 use App\Models\main\ProfileModel;
@@ -55,7 +57,7 @@ class SubsistenceController extends Controller
     public function index(Request $request, $value)
     {
 
-               //get list of all Subsistence forms for today
+        //get list of all Subsistence forms for today
         if ($value == "all") {
             $list = SubsistenceModel::orderBy('code')->paginate(50);
             $category = "All";
@@ -94,7 +96,7 @@ class SubsistenceController extends Controller
                 ->orderBy('code')->paginate(50);
             $category = "Queried";
         } else if ($value == "needs_me") {
-            $list  = HomeController::needsMeList();
+            $list = HomeController::needsMeList();
             $category = "Needs My Attention";
         } else if ($value == "admin") {
             $list = SubsistenceModel::where('config_status_id', 0)
@@ -134,11 +136,11 @@ class SubsistenceController extends Controller
         //get list of all Subsistence forms for today
         if ($value == "all") {
             $list = DB::table('eform_subsistence')
-                ->select('eform_subsistence.*', 'config_status.name as status_name ', 'config_status.html as html ' )
-                ->join('config_status' , 'eform_subsistence.config_status_id', '=', 'config_status.id')
+                ->select('eform_subsistence.*', 'config_status.name as status_name ', 'config_status.html as html ')
+                ->join('config_status', 'eform_subsistence.config_status_id', '=', 'config_status.id')
                 ->paginate(50);
             $category = "All Records";
-          //  dd($list);
+            //  dd($list);
         } else if ($value == "pending") {
             $list = SubsistenceModel::where('config_status_id', '>', config('constants.subsistence_status.new_application'))
                 ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
@@ -167,7 +169,7 @@ class SubsistenceController extends Controller
         }
 
         //count all
-     //   $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+        //   $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -179,7 +181,7 @@ class SubsistenceController extends Controller
         $params = [
             'totals_needs_me' => $totals_needs_me,
             'list' => $list,
-        //    'totals' => $totals,
+            //    'totals' => $totals,
             'pending' => $pending, 'reimbursement',
             'category' => $category,
         ];
@@ -266,17 +268,35 @@ class SubsistenceController extends Controller
     public function create()
     {
         $user = auth()->user();
+
+
         $projects = ProjectsModel::all();
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
+        $cost_centers = ConfigWorkFlow::orderBy('user_unit_description','ASC')->get();
+//        dd($cost_centers->first());
         //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'projects' => $projects,
-            'user' => $user
-        ];
+
+
+        $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.subsistence'))
+            ->where('delegated_to', $user->id)
+            ->where('config_status_id', config('constants.active_state'))->first();
+
+        if ($profile_delegated) {
+            $delegated_user = User::with(['grade'])->find($profile_delegated->created_by);
+
+            if ($profile_delegated->created_at->diffInDays(now()) > 14) {
+                $user->grade_id = $delegated_user->grade_id;
+            }
+        }
+
         //show the create form
-        return view('eforms.subsistence.create')->with($params);
+        return view('eforms.subsistence.create', compact(
+            'totals_needs_me',
+            'projects',
+            'user',
+            'cost_centers'
+        ));
     }
 
     /**
@@ -287,10 +307,13 @@ class SubsistenceController extends Controller
      */
     public function store(Request $request)
     {
+
         //[1]get the logged in user
         $user = Auth::user();   //superior_code
         $error = false;
 
+//        $cost_center = ConfigWorkFlow::find($request->cost_center);
+//dd(compact('user','cost_center'));
         //[1B] check pending forms for me before i apply again
         $pending = HomeController::pendingForMe();
         if ($pending >= 1) {
@@ -330,22 +353,23 @@ class SubsistenceController extends Controller
 
             $error = true;
             //return with error msg
-             }
+        }
 
         //what telling
-        $date = Carbon::parse( $request->absc_absent_from );
-        $now = Carbon::parse( $request->absc_absent_to );
+        $date = Carbon::parse($request->absc_absent_from);
+        $now = Carbon::parse($request->absc_absent_to);
         $diff = $date->diffInDays($now);
 
         //amount
-        $total_days = $diff ;
-        $total_amount  = $diff * $request->absc_allowance_per_night  ;
+        $total_days = $diff;
+        $total_amount = $diff * $request->absc_allowance_per_night;
 
-      //  dd($total_amount);
+        //  dd($total_amount);
 
         //generate the Subsistence unique code
         $code = self::randGenerator("SUB", 1);
 
+        $cost_center = ConfigWorkFlow::find($request->cost_center);
         //raise the voucher
         $formModel = SubsistenceModel::firstOrCreate(
             [
@@ -397,83 +421,87 @@ class SubsistenceController extends Controller
                 'profile' => Auth::user()->profile_id,
                 'code_superior' => $user->user_unit->user_unit_superior,
 
-                'hod_code' => $user->user_unit->hod_code,
-                'hod_unit' => $user->user_unit->hod_unit,
-                'ca_code' => $user->user_unit->ca_code,
-                'ca_unit' => $user->user_unit->ca_unit,
-                'hrm_code' => $user->user_unit->hrm_code,
-                'hrm_unit' => $user->user_unit->hrm_unit,
-                'expenditure_code' => $user->user_unit->expenditure_code,
-                'expenditure_unit' => $user->user_unit->expenditure_unit,
-                'security_code' => $user->user_unit->security_code,
-                'security_unit' => $user->user_unit->security_unit,
-                'audit_code' => $user->user_unit->audit_code,
-                'audit_unit' => $user->user_unit->audit_unit,
+                'hod_code' => $cost_center->hod_code,
+                'hod_unit' => $cost_center->hod_unit,
+                'ca_code' => $cost_center->ca_code,
+                'ca_unit' => $cost_center->ca_unit,
+                'hrm_code' => $cost_center->hrm_code,
+                'hrm_unit' => $cost_center->hrm_unit,
 
-                'cost_center' => $user->user_unit->user_unit_cc_code,
-                'business_unit_code' => $user->user_unit->user_unit_bc_code,
-                'user_unit_code' => $user->user_unit->user_unit_code,
-                'user_unit_id' => $user->user_unit->id,
+                'expenditure_code' => $cost_center->expenditure_code,
+                'expenditure_unit' => $cost_center->expenditure_unit,
+
+                'security_code' => $cost_center->security_code,
+                'security_unit' => $cost_center->security_unit,
+
+                'audit_code' => $cost_center->audit_code,
+                'audit_unit' => $cost_center->audit_unit,
+
+                'cost_center' => $cost_center->user_unit_cc_code,
+                'business_unit_code' => $cost_center->user_unit_bc_code,
+
+                'user_unit_code' => $cost_center->user_unit_code,
+                'user_unit_id' => $cost_center->id,
             ]);
 
-        // now we need to insert the Subsistence Claim items
-        for ($i = 0; $i < sizeof($request->amount); $i++) {
-            $formItemModel = PettyCashItemModel::updateOrCreate(
-                [
-                    'name' => $request->name[$i],
-                    'amount' => $request->amount[$i],
-                    'eform_subsistence_id' => $formModel->id,
-                    'created_by' => $user->id,
-                ],
-                [
-                    'name' => $request->name[$i],
-                    'amount' => $request->amount[$i],
-                    'eform_subsistence_id' => $formModel->id,
-                    'created_by' => $user->id,
-                ]
-            );
-        }
+//        // now we need to insert the Subsistence Claim items
+//        for ($i = 0; $i < sizeof($request->amount); $i++) {
+//            $formItemModel = PettyCashItemModel::updateOrCreate(
+//                [
+//                    'name' => $request->name[$i],
+//                    'amount' => $request->amount[$i],
+//                    'eform_subsistence_id' => $formModel->id,
+//                    'created_by' => $user->id,
+//                ],
+//                [
+//                    'name' => $request->name[$i],
+//                    'amount' => $request->amount[$i],
+//                    'eform_subsistence_id' => $formModel->id,
+//                    'created_by' => $user->id,
+//                ]
+//            );
+//        }
 
         /** upload quotation files */
         // upload the receipt files
-        $files = $request->file('quotation');
-        if ($request->hasFile('quotation')) {
-            foreach ($files as $file) {
-                $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
-                // Get just filename
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                //get size
-                $size = number_format($file->getSize() * 0.000001, 2);
-                // Get just ext
-                $extension = $file->getClientOriginalExtension();
-                // Filename to store
-                $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
-                // Upload File
-                $path = $file->storeAs('public/petty_cash_quotation', $fileNameToStore);
-
-                //upload the receipt
-                $file = AttachedFileModel::updateOrCreate(
-                    [
-                        'name' => $fileNameToStore,
-                        'location' => $path,
-                        'extension' => $extension,
-                        'file_size' => $size,
-                        'form_id' => $formModel->code,
-                        'form_type' => config('constants.eforms_id.subsistence'),
-                        'file_type' => config('constants.file_type.quotation')
-                    ],
-                    [
-                        'name' => $fileNameToStore,
-                        'location' => $path,
-                        'extension' => $extension,
-                        'file_size' => $size,
-                        'form_id' => $formModel->code,
-                        'form_type' => config('constants.eforms_id.subsistence'),
-                        'file_type' => config('constants.file_type.quotation')
-                    ]
-                );
-            }
-        }
+//        $files = $request->file('quotation');
+//        if ($request->hasFile('quotation')) {
+//            foreach ($files as $file) {
+//                $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
+//                // Get just filename
+//                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+//                //get size
+//                $size = number_format($file->getSize() * 0.000001, 2);
+//                // Get just ext
+//                $extension = $file->getClientOriginalExtension();
+//                // Filename to store
+//                $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
+//                // Upload File
+//                $path = $file->storeAs('public/petty_cash_quotation', $fileNameToStore);
+//
+//                //upload the receipt
+//                $file = AttachedFileModel::updateOrCreate(
+//                    [
+//                        'name' => $fileNameToStore,
+//                        'location' => $path,
+//                        'extension' => $extension,
+//                        'file_size' => $size,
+//                        'form_id' => $formModel->code,
+//                        'form_type' => config('constants.eforms_id.subsistence'),
+//                        'file_type' => config('constants.file_type.quotation')
+//                    ],
+//                    [
+//                        'name' => $fileNameToStore,
+//                        'location' => $path,
+//                        'extension' => $extension,
+//                        'file_size' => $size,
+//                        'form_id' => $formModel->code,
+//                        'form_type' => config('constants.eforms_id.subsistence'),
+//                        'file_type' => config('constants.file_type.quotation')
+//                    ]
+//                );
+//            }
+//        }
 
         /** send email to supervisor */
         //get team email addresses
@@ -664,13 +692,16 @@ class SubsistenceController extends Controller
      */
     public function show($id)
     {
-        //GET THE Subsistence MODEL if you are an admin
-        //  if (Auth::user()->type_id == config('constants.user_types.developer')) {
-        $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} ");
-        $form = SubsistenceModel::hydrate($list)->first();
+        $me = Auth::user();;
+//        dd($me);
+
+//        //GET THE Subsistence MODEL if you are an admin
+//          if (Auth::user()->type_id == config('constants.user_types.developer')) {
+//        $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} ");
+//        $form = SubsistenceModel::hydrate($list)->first();
 //        } else {
 //            //find the Subsistence with that id
-//            $form = SubsistenceModel::find($id);
+            $form = SubsistenceModel::findOrFail($id);
 //        }
 
         $receipts = AttachedFileModel::where('form_id', $form->code)
@@ -690,8 +721,11 @@ class SubsistenceController extends Controller
         $user = User::find($form->created_by);
         $user_array = self::findMyNextPerson($form->config_status_id, $user->user_unit, $user);
 
+        $me = Auth::user();;
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
+
+//       dd(  $form->config_status_id == config('constants.subsistence_status.new_application') );
 
         //data to send to the view
         $params = [
@@ -1389,7 +1423,7 @@ class SubsistenceController extends Controller
             $files = $request->file('receipt');
             if ($request->hasFile('receipt')) {
                 foreach ($files as $file) {
-                    $filenameWithExt =  preg_replace("/[^a-zA-Z]+/", "_",  $file->getClientOriginalName());
+                    $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
                     // Get just filename
                     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                     //get size
@@ -1656,7 +1690,7 @@ class SubsistenceController extends Controller
                 ->where('delegated_profile', $profile->code)
                 ->where('delegated_job_code', $superior_user_code)
                 ->where('delegated_user_unit', $superior_user_unit)
-                ->where('config_status_id',  config('constants.active_state'))
+                ->where('config_status_id', config('constants.active_state'))
                 ->get();
             //loop through delegated users
             foreach ($delegated_users as $item) {
@@ -2068,9 +2102,9 @@ class SubsistenceController extends Controller
                             ORDER BY eform_subsistence_id ASC ");
             $tasks = SubsistenceAccountModel::hydrate($tasks);
 
-            foreach ($tasks as $account){
+            foreach ($tasks as $account) {
                 //get associated Subsistence
-                $petty_cash_id = $account->eform_subsistence_id ;
+                $petty_cash_id = $account->eform_subsistence_id;
                 $tasks_pt = DB::select("SELECT * FROM eform_subsistence
                             WHERE id = {$petty_cash_id}  ");
                 $tasks_pt = SubsistenceModel::hydrate($tasks_pt)->first();
@@ -2083,10 +2117,10 @@ class SubsistenceController extends Controller
                         'business_unit_code' => $tasks_pt->business_unit_code,
                         'user_unit_code' => $tasks_pt->user_unit_code,
 
-                        'claimant_name'=> $tasks_pt->claimant_name,
-                        'claimant_staff_no'=> $tasks_pt->claimant_staff_no,
-                        'claim_date'=> $tasks_pt->claim_date,
-                        'petty_cash_code'=> $tasks_pt->code,
+                        'claimant_name' => $tasks_pt->claimant_name,
+                        'claimant_staff_no' => $tasks_pt->claimant_staff_no,
+                        'claim_date' => $tasks_pt->claim_date,
+                        'petty_cash_code' => $tasks_pt->code,
 
                         'hod_code' => $tasks_pt->hod_code,
                         'hod_unit' => $tasks_pt->hod_unit,

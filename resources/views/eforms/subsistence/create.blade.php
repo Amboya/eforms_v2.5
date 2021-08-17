@@ -82,7 +82,8 @@
                             <div class="row">
                                 <div class="col-6"><label>Date:</label></div>
                                 <div class="col-6">
-                                    <input value="{{ \Carbon\Carbon::now()->toFormattedDateString() }}" type="text" name="date" readonly
+                                    <input value="{{ \Carbon\Carbon::now()->toFormattedDateString() }}" type="text"
+                                           name="date" readonly
                                            class="form-control">
                                 </div>
                             </div>
@@ -118,8 +119,12 @@
                             <div class="row">
                                 <div class="col-6"><label>Cost Center:</label></div>
                                 <div class="col-6">
-                                    <input value="{{Auth::user()->user_unit->user_unit_cc_code }}" type="cost_center"
-                                           name="date" readonly class="form-control">
+                                    <select name="cost_center" class="form-control">
+                                        <option value="">--choose--</option>
+                                        @foreach($cost_centers as $cc)
+                                            <option value="{{$cc->id}}" {{auth()->user()->user_unit->user_unit_cc_code == $cc->user_unit_cc_code ? 'selected':''}}>{{$cc->user_unit_description}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -136,7 +141,7 @@
                             <div class="row">
                                 <div class="col-6"><label>Station:</label></div>
                                 <div class="col-6">
-                                    <input value="" type="text" name="station" class="form-control" required >
+                                    <input value="" type="text" name="station" class="form-control" required>
                                 </div>
                             </div>
                         </div>
@@ -153,7 +158,7 @@
                             <div class="row">
                                 <div class="col-6"><label>System Reference No.:</label></div>
                                 <div class="col-6">
-                                    <input value="" type="text" name="ref_no" readonly
+                                    <input value="" type="text" name="ref_no"
                                            class="form-control">
                                 </div>
                             </div>
@@ -170,17 +175,20 @@
                                 <td>Period of Absence Date</td>
                                 <td>From</td>
                                 <td><input id="absc_absent_from" name="absc_absent_from" class="form-control"
-                                           required  type="date" value="{{old('absc_absent_from')}}"></td>
+                                           required type="date" value="{{old('absc_absent_from')}}"></td>
                                 <td>To</td>
-                                <td><input required id="absc_absent_to" name="absc_absent_to" class="form-control" type="date" value="{{old('absc_absent_to')}}">
+                                <td><input required id="absc_absent_to" name="absc_absent_to" class="form-control"
+                                           type="date" value="{{old('absc_absent_to')}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Place visited and reason for journey</td>
                                 <td>Place</td>
-                                <td><textarea required name="absc_visited_place" class="form-control" >{{old('absc_visited_place')}}</textarea></td>
+                                <td><textarea required name="absc_visited_place"
+                                              class="form-control">{{old('absc_visited_place')}}</textarea></td>
                                 <td>Reason</td>
-                                <td><textarea required name="absc_visited_reason" class="form-control">{{old('absc_visited_reason')}}</textarea></td>
+                                <td><textarea required name="absc_visited_reason"
+                                              class="form-control">{{old('absc_visited_reason')}}</textarea></td>
                             </tr>
                             <tr>
                                 <td>Allowance Claim per Night</td>
@@ -190,61 +198,62 @@
                                            readonly></td>
 
                                 <td><strong>Total Amount</strong></td>
-                                <td>K <span id="total_amount">0</span> <input id="absc_amount" name="absc_amount" type="hidden"></td>
+                                <td>K <span id="total_amount">0</span> <input id="absc_amount" name="absc_amount"
+                                                                              type="hidden"></td>
 
                             </tr>
                         </table>
                     </div>
 
-                    <div class="row mb-1 mt-4">
-                        <div class="col-2">
-                            <label>Name of Claimant:</label>
-                        </div>
-                        <div class="col-3">
-                            <input type="text" name="claimant_name" class="form-control"
-                                   value="{{Auth::user()->name}}" readonly required></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"
-                                                  value="{{Auth::user()->staff_no}}" readonly required></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="Date" name="date_claimant" class="form-control"
-                                                  value="{{date('Y-m-d')}}" readonly required>
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>Claim Authorised by:</label></div>
-                        <div class="col-3"><input type="text" name="claim_authorised_by" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_authorised" readonly class="form-control">
-                        </div>
-                        <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="authorised_date" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>HR/Station Manager:</label></div>
-                        <div class="col-3"><input type="text" name="station_manager" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_station_manager" readonly
-                                                  class="form-control"></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="manager_date" readonly class="form-control"></div>
-                    </div>
-                    <div class="row mb-4">
-                        <div class="col-2"><label>Accountant:</label></div>
-                        <div class="col-3"><input type="text" name="accountant" readonly class="form-control"></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_accountant" readonly class="form-control">
-                        </div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="accountant_date" readonly class="form-control">
-                        </div>
-                    </div>
+{{--                    <div class="row mb-1 mt-4">--}}
+{{--                        <div class="col-2">--}}
+{{--                            <label>Name of Claimant:</label>--}}
+{{--                        </div>--}}
+{{--                        <div class="col-3">--}}
+{{--                            <input type="text" name="claimant_name" class="form-control"--}}
+{{--                                   value="{{Auth::user()->name}}" readonly required></div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"--}}
+{{--                                                  value="{{Auth::user()->staff_no}}" readonly required></div>--}}
+{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="Date" name="date_claimant" class="form-control"--}}
+{{--                                                  value="{{date('Y-m-d')}}" readonly required>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="row mb-1">--}}
+{{--                        <div class="col-2"><label>Claim Authorised by:</label></div>--}}
+{{--                        <div class="col-3"><input type="text" name="claim_authorised_by" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="sig_of_authorised" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-1  text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="authorised_date" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="row mb-1">--}}
+{{--                        <div class="col-2"><label>HR/Station Manager:</label></div>--}}
+{{--                        <div class="col-3"><input type="text" name="station_manager" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="sig_of_station_manager" readonly--}}
+{{--                                                  class="form-control"></div>--}}
+{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="manager_date" readonly class="form-control"></div>--}}
+{{--                    </div>--}}
+{{--                    <div class="row mb-4">--}}
+{{--                        <div class="col-2"><label>Accountant:</label></div>--}}
+{{--                        <div class="col-3"><input type="text" name="accountant" readonly class="form-control"></div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="sig_of_accountant" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="accountant_date" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
 
 
-                    <p><b>Note:</b> The system reference number is mandatory and is from
+                    <p><b>Note:</b> The system reference number is optional and is from
                         any of the systems at ZESCO such as a work request number from PEMS, Task
                         number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.
                         giving rise to the expenditure</p>
@@ -319,29 +328,29 @@
             var from = moment($('#absc_absent_from').val());
             var to = moment($('#absc_absent_to').val());
             var diff = to.diff(from, 'days');
-            if(diff > 0) {
+            if (diff > 0) {
                 var total = diff * absc_allowance_per_night;
                 $('#total_amount').html(numeral(total).format('0,0'));
                 $('absc_amount').val(total)
             }
 
-            console.log("To",$('absc_absent_from').val())
+            console.log("To", $('absc_absent_from').val())
 
-            console.log("from",from)
+            console.log("from", from)
             console.log("The difference is: ", diff);
 
             $("#absc_absent_from").change(function () {
                 var from = moment($(this).val());
                 var to = moment($('#absc_absent_to').val());
                 var diff = to.diff(from, 'days');
-                if(diff > 0) {
+                if (diff > 0) {
                     var total = diff * absc_allowance_per_night;
                     $('#total_amount').html(numeral(total).format('0,0'));
                     $('absc_amount').val(total)
                 }
-                console.log("To",to)
+                console.log("To", to)
 
-                console.log("from",from)
+                console.log("from", from)
                 console.log("The difference is: ", diff);
 
 
@@ -351,13 +360,13 @@
                 var from = moment($('#absc_absent_from').val());
                 var to = moment($(this).val());
                 var diff = to.diff(from, 'days');
-                if(diff > 0) {
+                if (diff > 0) {
                     var total = diff * absc_allowance_per_night;
                     $('#total_amount').html(numeral(total).format('0,0'));
                     $('absc_amount').val(total)
                 }
-                console.log("To",to)
-                console.log("From",from)
+                console.log("To", to)
+                console.log("From", from)
 
                 console.log("The difference is: ", diff);
             });

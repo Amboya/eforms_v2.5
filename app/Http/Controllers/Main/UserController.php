@@ -85,7 +85,9 @@ class UserController extends Controller
         $user_types = UserTypeModel::all();
         $delegated_profiles = ProfileDelegatedModel::where('delegated_to', $user->id)
             ->where('config_status_id',  config('constants.active_state') )->get();
+
         $user_unit_new = ConfigWorkFlow::select('id', 'user_unit_description', 'user_unit_code')->orderBy('user_unit_code')->get();
+//        dd($user_unit_new->first());
 
         //return the view
         return view('main.users.show')->with(compact('user_unit_new', 'user', 'user_types', 'delegated_profiles'));

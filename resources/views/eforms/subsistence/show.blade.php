@@ -202,78 +202,78 @@
                     </div>
 
 
-                    <div class="row mb-1 mt-4">
-                        <div class="col-2">
-                            <label>Name of Claimant:</label>
-                        </div>
-                        <div class="col-3">
-                            <input type="text" name="claimant_name" class="form-control"
-                                   value="{{$form->claimant_name}}" readonly required></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"
-                                                  value="{{$form->claimant_staff_no}}" readonly required></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="date_claimant" class="form-control"
-                                                  value="{{$form->claim_date}}" readonly required>
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>Claim Authorised by:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->authorised_by ?? "" }}"
-                                                  name="claim_authorised_by" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->authorised_staff_no  ?? "" }}"
-                                                  name="sig_of_authorised" readonly class="form-control">
-                        </div>
-                        <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->authorised_date ?? "" }}"
-                                                  name="authorised_date" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>Station Manager:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->station_manager ?? "" }}"
-                                                  name="claim_authorised_by" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->station_manager_staff_no  ?? "" }}"
-                                                  name="sig_of_authorised" readonly class="form-control">
-                        </div>
-                        <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->station_manager_date ?? "" }}"
-                                                  name="authorised_date" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>HR:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->hr_office ?? "" }}"
-                                                  name="station_manager" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->hr_office_staff_no ?? "" }}"
-                                                  name="sig_of_station_manager" readonly
-                                                  class="form-control"></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->hr_date ?? "" }}"
-                                                  name="manager_date" readonly class="form-control"></div>
-                    </div>
+{{--                    <div class="row mb-1 mt-4">--}}
+{{--                        <div class="col-2">--}}
+{{--                            <label>Name of Claimant:</label>--}}
+{{--                        </div>--}}
+{{--                        <div class="col-3">--}}
+{{--                            <input type="text" name="claimant_name" class="form-control"--}}
+{{--                                   value="{{$form->claimant_name}}" readonly required></div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"--}}
+{{--                                                  value="{{$form->claimant_staff_no}}" readonly required></div>--}}
+{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" name="date_claimant" class="form-control"--}}
+{{--                                                  value="{{$form->claim_date}}" readonly required>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="row mb-1">--}}
+{{--                        <div class="col-2"><label>Claim Authorised by:</label></div>--}}
+{{--                        <div class="col-3"><input type="text" value="{{$form->authorised_by ?? "" }}"--}}
+{{--                                                  name="claim_authorised_by" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" value="{{$form->authorised_staff_no  ?? "" }}"--}}
+{{--                                                  name="sig_of_authorised" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-1  text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" value="{{$form->authorised_date ?? "" }}"--}}
+{{--                                                  name="authorised_date" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="row mb-1">--}}
+{{--                        <div class="col-2"><label>Station Manager:</label></div>--}}
+{{--                        <div class="col-3"><input type="text" value="{{$form->station_manager ?? "" }}"--}}
+{{--                                                  name="claim_authorised_by" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" value="{{$form->station_manager_staff_no  ?? "" }}"--}}
+{{--                                                  name="sig_of_authorised" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-1  text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" value="{{$form->station_manager_date ?? "" }}"--}}
+{{--                                                  name="authorised_date" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="row mb-1">--}}
+{{--                        <div class="col-2"><label>HR:</label></div>--}}
+{{--                        <div class="col-3"><input type="text" value="{{$form->hr_office ?? "" }}"--}}
+{{--                                                  name="station_manager" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" value="{{$form->hr_office_staff_no ?? "" }}"--}}
+{{--                                                  name="sig_of_station_manager" readonly--}}
+{{--                                                  class="form-control"></div>--}}
+{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" value="{{$form->hr_date ?? "" }}"--}}
+{{--                                                  name="manager_date" readonly class="form-control"></div>--}}
+{{--                    </div>--}}
 
-                    <div class="row mb-4">
-                        <div class="col-2"><label>Accountant:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->chief_accountant ?? "" }}"
-                                                  name="accountant" readonly class="form-control"></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->chief_accountant_staff_no ?? "" }}"
-                                                  name="sig_of_accountant" readonly class="form-control">
-                        </div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->chief_accountant_date ?? "" }}"
-                                                  name="accountant_date" readonly class="form-control">
-                        </div>
-                    </div>
+{{--                    <div class="row mb-4">--}}
+{{--                        <div class="col-2"><label>Accountant:</label></div>--}}
+{{--                        <div class="col-3"><input type="text" value="{{$form->chief_accountant ?? "" }}"--}}
+{{--                                                  name="accountant" readonly class="form-control"></div>--}}
+{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" value="{{$form->chief_accountant_staff_no ?? "" }}"--}}
+{{--                                                  name="sig_of_accountant" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
+{{--                        <div class="col-2"><input type="text" value="{{$form->chief_accountant_date ?? "" }}"--}}
+{{--                                                  name="accountant_date" readonly class="form-control">--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
 
-                    <p><b>Note:</b> The system reference number is mandatory and is from
+                    <p><b>Note:</b> The system reference number is <span class="text-primary font-weight-bold"> optional</span> and is from
                         any of the systems at ZESCO such as a work request number from PEMS, Task
                         number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.
                         giving rise to the expenditure</p>
@@ -524,7 +524,7 @@
 
                     {{--  HOD APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
+                         &&  $form->config_status_id == config('constants.subsistence_status.new_application')
                          &&  $form->user_unit->hod_code == $user->profile_job_code
                          &&  $form->user_unit->hod_unit == $user->profile_unit_code
                       )
@@ -1117,7 +1117,7 @@
                 </div>
                 <!-- form start -->
                 <form id="change_form" method="post"
-                      action="{{route('attached-file-change')}}"   enctype="multipart/form-data">
+                      action="{{route('attached.file.change')}}"   enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1166,7 +1166,7 @@
 
                 <!-- form start -->
                 <form id="qoutation_form" method="post"
-                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
+                      action="{{route('attached.file.add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1210,7 +1210,7 @@
                 </div>
                 <!-- form start -->
                 <form id="receipt_form"  method="post"
-                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
+                      action="{{route('attached.file.add')}} "  enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

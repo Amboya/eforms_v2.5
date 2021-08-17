@@ -37,6 +37,7 @@ class DirectoratesModel extends Model
     }
     public function user_unit(){
         return $this->belongsTo(UserUnitModel::class, 'user_unit_id', 'id');
+        return $this->belongsTo(ConfigWorkFlow::class, 'user_unit_id', 'id');
     }
 
 }

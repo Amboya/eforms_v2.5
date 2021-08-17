@@ -168,6 +168,8 @@ class ProfileController extends Controller
 
     public function assignmentStore(Request $request)
     {
+
+      //  dd($request->all());
         $user = Auth::user();
         $model = ProfileAssigmentModel::updateOrCreate(
             [
