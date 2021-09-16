@@ -902,7 +902,7 @@ class SubsistenceController extends Controller
 
                 //update the totals open
                 $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.petty_cash_open'))
+                    ->where('id', config('constants.totals.subsistence_open'))
                     ->first();
                 $totals->value = $totals->value - 1;
                 $totals->save();
@@ -911,7 +911,7 @@ class SubsistenceController extends Controller
 
             } else if ($form->status->id == config('constants.subsistence_status.new_application')) {
                 $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.petty_cash_open'))
+                    ->where('id', config('constants.totals.subsistence_open'))
                     ->first();
                 $totals->value = $totals->value + 1;
                 $totals->save();
@@ -920,7 +920,7 @@ class SubsistenceController extends Controller
 
                 //update the totals new
                 $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.petty_cash_new'))
+                    ->where('id', config('constants.totals.subsistence_new'))
                     ->first();
                 $totals->value = $totals->value - 1;
                 $totals->save();
@@ -929,7 +929,7 @@ class SubsistenceController extends Controller
             } else if ($form->status->id == config('constants.subsistence_status.closed')) {
                 //update the totals closed
                 $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.petty_cash_closed'))
+                    ->where('id', config('constants.totals.subsistence_closed'))
                     ->first();
                 $totals->value = $totals->value - 1;
                 $totals->save();
@@ -944,7 +944,7 @@ class SubsistenceController extends Controller
             if ($form->status->id == config('constants.subsistence_status.closed')) {
                 //update the totals closed
                 $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.petty_cash_closed'))
+                    ->where('id', config('constants.totals.subsistence_closed'))
                     ->first();
                 $totals->value = $totals->value - 1;
                 $totals->save();
