@@ -29,10 +29,8 @@ return [
 
     'team_email_list' =>  [
         ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'],
-        ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapula Sikazwe'],
         ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'],
         ['email' => 'pmudenda@zesco.co.zm', 'name' => 'Peter Mudenda'],
-        ['email' => 'csinkamba@zesco.co.zm', 'name' => 'Chimwemwe Sinkamba'],
         ['email' => 'CCMoonde@zesco.co.zm', 'name' => 'Chimuka Moonde'],
         ['email' => 'CMMusonda@zesco.co.zm', 'name' => 'Musonda'],
         ['email' => 'GSibajene@zesco.co.zm', 'name' => 'Gilbert Sibajene'],
