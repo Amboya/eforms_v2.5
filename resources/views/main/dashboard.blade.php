@@ -83,7 +83,7 @@
                             <!-- Info boxes -->
                             <div class="row">
                                 @foreach($item->eforms->where('category_id', $item->id ) as $eform)
-                                        @if($eform->id == config('constants.eforms_id.petty_cash') )
+                                        @if($eform->id == config('constants.eforms_id.petty_cash') || $eform->id == config('constants.eforms_id.subsistence') )
                                             <div class="col-12 col-sm-6   ">
                                                 <hr>
                                                 <a href="{{ route($eform->test_url ?? 'main.home')}}">

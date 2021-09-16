@@ -185,7 +185,7 @@
                                 <td>Place</td>
                                 <td><textarea readonly name="absc_visited_place" class="form-control">{{$form->absc_visited_place}}</textarea></td>
                                 <td>Reason</td>
-                                <td><textarea readonly name="absc_visited_place_reason" class="form-control">{{$form->absc_visited_place_reason}}</textarea></td>
+                                <td><textarea readonly name="absc_visited_place_reason" class="form-control">{{$form->absc_visited_reason}}</textarea></td>
                             </tr>
                             <tr>
                                 <td>Allowance Claim per Night</td>
@@ -283,7 +283,7 @@
             <!-- /.card -->
 
             {{-- FINANCIAL POSTINGS  --}}
-            @if(  ($form->config_status_id >= config('constants.petty_cash_status.closed') )
+            @if(  ($form->config_status_id >= config('constants.subsistence_status.closed') )
                )
                 <div class="card">
                     <div class="card-header">
@@ -309,11 +309,11 @@
                                                            value="{{$item->account}}"
                                                            class="form-control amount" readonly>
                                                 </TD>
-                                                <TD><input type="number" id="credited_amount"
+                                                <TD><input type="text" id="credited_amount"
                                                            value="{{ number_format($item->creditted_amount ?? 0,2) }}"
                                                            class="form-control amount" readonly>
                                                 </TD>
-                                                <TD><input type="number" value="{{ number_format($item->debitted_amount ?? 0, 2) }}"
+                                                <TD><input type="text" value="{{ number_format($item->debitted_amount ?? 0, 2) }}"
                                                            class="form-control amount" readonly>
                                                 </TD>
                                             </TR>
@@ -331,7 +331,7 @@
                 </div>
             @endif
             {{-- NEXT PERSONS TO ACT --}}
-            @if(  $form->config_status_id != config('constants.petty_cash_status.closed')   )
+            @if(  $form->config_status_id != config('constants.subsistence_status.closed')   )
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Next Person/s to Act</h4>
@@ -351,7 +351,7 @@
                     </div>
                     <div class="card-footer">
                         <span class="font-weight-bold">Next Action:</span><span> {{$form->status->other}}</span>
-                        @if ($form->status->id == config('constants.petty_cash_status.security_approved'))
+                        @if ($form->status->id == config('constants.subsistence_status.security_approved'))
                             <span class="font-weight-bold text-red"> Note:</span><span class="text-red"> Export Data to Excel and Import in Oracle Financial's using ADI</span>
                         @endif
                     </div>
@@ -398,17 +398,17 @@
             </div>
 
             {{--  RECEIPT FILES - ONLY WHEN FORM HAS BEEN CLOSED--}}
-            @if(  $form->config_status_id == config('constants.petty_cash_status.closed')
-            ||  $form->config_status_id == config('constants.petty_cash_status.audited')
-            ||  $form->config_status_id == config('constants.petty_cash_status.queried')    )
+            @if(  $form->config_status_id == config('constants.subsistence_status.closed')
+            ||  $form->config_status_id == config('constants.subsistence_status.audited')
+            ||  $form->config_status_id == config('constants.subsistence_status.queried')    )
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Receipt Files</h4>
                         @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                 &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
               || ($user->type_id == config('constants.user_types.developer'))
-            &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
-            ($form->config_status_id == config('constants.petty_cash_status.closed')) ) )    )
+            &&  ( ($form->config_status_id == config('constants.subsistence_status.queried')) ||
+            ($form->config_status_id == config('constants.subsistence_status.closed')) ) )    )
                             <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
                                data-target="#modal-add-receipt">Add File</a>
                         @endif
@@ -427,8 +427,8 @@
                                     @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                              &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
                            || ($user->type_id == config('constants.user_types.developer'))  )
-                         &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
-                         ($form->config_status_id == config('constants.petty_cash_status.closed'))  )    )
+                         &&  ( ($form->config_status_id == config('constants.subsistence_status.queried')) ||
+                         ($form->config_status_id == config('constants.subsistence_status.closed'))  )    )
                                         <span> | </span>
                                         <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
                                            data-target="#modal-change">Edit</a>
@@ -473,7 +473,7 @@
                                     <TD>{{$item->action}}</TD>
                                     <TD>{{$item->from_status->name ?? ""}}</TD>
                                     <TD>{{$item->to_status->name ?? ""}}</TD>
-                                    <TD>{{$item->reason}}</TD>
+                                    <TD>{{$item->absc_visited_reason}}</TD>
                                     <TD>{{$item->created_at}}</TD>
                                     <TD>{{$form->created_at->diffAsCarbonInterval($item->created_at)}}</TD>
                                 </TR>
@@ -486,7 +486,7 @@
                 <div class="card-footer">
                     {{--  CLAIMANT EDIT--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
+                         &&  $form->config_status_id == config('constants.subsistence_status.new_application')
                          &&  $user->id  == $form->created_by)
                         <div class="">
                             <hr>
@@ -564,7 +564,7 @@
 
                     {{--  HR APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.hod_approved')
+                         &&  $form->config_status_id == config('constants.subsistence_status.hod_approved')
                          &&  $form->user_unit->hrm_code == $user->profile_job_code
                          &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                      )
@@ -604,7 +604,7 @@
 
                     {{--  CHIEF ACCOUNTANT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.hr_approved')
+                         &&  $form->config_status_id == config('constants.subsistence_status.hr_approved')
                          &&  $form->user_unit->ca_code == $user->profile_job_code
                          &&  $form->user_unit->ca_unit == $user->profile_unit_code
                         )
@@ -644,12 +644,12 @@
 
                     {{--  FUNDS DISBURSEMNET APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.chief_accountant')
+                         &&  $form->config_status_id == config('constants.subsistence_status.chief_accountant')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
                             <h5 class="text-center">Please Update the Accounts </h5>
-                            <h6 class="text-center">(Total Amount : ZMW {{$form->total_payment}}) </h6>
+                            <h6 class="text-center">(Total Amount : ZMW {{$form->absc_amount}}) </h6>
                             <div class="col-lg-12 grid-margin stretch-card">
                                 <div class="table-responsive">
                                     <div class="col-lg-12 ">
@@ -662,16 +662,17 @@
                                                             <div class="form-group">
                                                                 <input list="items_list1" type="text"
                                                                        name="account_items[]"
+                                                                       value="Place Visited: {{$form->absc_visited_place ?? ""}}. Reason: {{$form->absc_visited_reason ?? ""}}. Number of Days:{{$form->getNumdaysAttribute() ?? ""}} days. "
                                                                        class="form-control amount"
                                                                        placeholder="Select Item/s   "
                                                                        id="account_items1">
-                                                                <datalist id="items_list1">
-                                                                    @foreach($form->item as $item)
-                                                                        <option>{{$item->name}} : (ZMK {{$item->amount}}
-                                                                            )
-                                                                        </option>
-                                                                    @endforeach
-                                                                </datalist>
+{{--                                                                <datalist id="items_list1">--}}
+{{--                                                                    @foreach($form->reason as $item)--}}
+{{--                                                                        <option >{{$form->reason ?? ""}} : (ZMK {{$form->amount ?? ""}}--}}
+{{--                                                                            )--}}
+{{--                                                                        </option>--}}
+{{--                                                                    @endforeach--}}
+{{--                                                                </datalist>--}}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -684,7 +685,7 @@
                                                                     required
                                                                     class="form-control amount">
                                                                 @foreach($accounts as $account)
-                                                                    @if($account->id  ==  config('constants.petty_cash_account_id')  )
+                                                                    @if($account->id  ==  config('constants.subsistence_account_id')  )
                                                                         <option
                                                                             value="{{$account->code}}">{{$account->name}}
                                                                             :{{$account->code}}</option>
@@ -742,7 +743,7 @@
                                 <textarea hidden class="form-control" rows="2" name="reason" required> Funds Disbursement</textarea>
                                 <div id="submit_not_possible" class="col-12 text-center">
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
-                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
+                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->absc_amount}}
                                                 )</strong>
                                    </span>
                                 </div>
@@ -782,7 +783,7 @@
 
                     {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.funds_disbursement')
+                         &&  $form->config_status_id == config('constants.subsistence_status.funds_disbursement')
                          &&  $form->claimant_staff_no == $user->staff_no
                           )
                         <div class="">
@@ -828,7 +829,7 @@
 
                     {{--  SECURITY APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_013')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.funds_acknowledgement')
+                         &&  $form->config_status_id == config('constants.subsistence_status.funds_acknowledgement')
                          &&  $form->user_unit->security_unit == $user->profile_unit_code
                         )
                         <div class="">
@@ -881,7 +882,7 @@
 
                     {{--  RECEIPT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.security_approved')
+                         &&  $form->config_status_id == config('constants.subsistence_status.security_approved')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
@@ -1016,7 +1017,7 @@
 
                     {{--  AUDIT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
-                        &&  $form->config_status_id == config('constants.petty_cash_status.closed')
+                        &&  $form->config_status_id == config('constants.subsistence_status.closed')
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
@@ -1056,7 +1057,7 @@
 
                     {{--  QUERIED RESOLUTION--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.queried')
+                         &&  $form->config_status_id == config('constants.subsistence_status.queried')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                         )
                         <div class="">
@@ -1290,15 +1291,15 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var total_payment = {!! json_encode($form->total_payment) !!};
+            var absc_amount = {!! json_encode($form->absc_amount) !!};
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to total_payment
-                if (total == total_payment) {
+                //check if petty cash accounts is equal to absc_amount
+                if (total == absc_amount) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
-                } else if (total < total_payment) {
+                } else if (total < absc_amount) {
                     $('#submit_not_possible').show();
                     $('#submit_possible').hide();
                 } else {
@@ -1324,15 +1325,15 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var total_payment = {!! json_encode($form->total_payment) !!};
+            var absc_amount = {!! json_encode($form->absc_amount) !!};
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to total_payment
-                if (total == total_payment) {
+                //check if petty cash accounts is equal to absc_amount
+                if (total == absc_amount) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
-                } else if (total < total_payment) {
+                } else if (total < absc_amount) {
                     $('#submit_not_possible').show();
                     $('#submit_possible').hide();
                 } else {
@@ -1353,7 +1354,7 @@
 
                 var change_value_int = parseFloat(change_value);
 
-                //check if petty cash accounts is equal to total_payment
+                //check if petty cash accounts is equal to absc_amount
                 if (Number(change_value_int) > 0) {
                     $('#show_change').show();
                     //set value

@@ -4,6 +4,7 @@ return [
 
     'name' => env('APP_NAME', 'EZESCO'),
     'petty_cash_account_id' => "21",
+    'subsistence_account_id' => "82",
     'user_unit_active' => "00",
     'user_unit_not_active' => "01",
     'phris_user_active' => "ACT",

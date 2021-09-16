@@ -712,7 +712,12 @@ class SubsistenceController extends Controller
             ->where('form_type', config('constants.eforms_id.subsistence'))
             ->where('file_type', config('constants.file_type.quotation'))
             ->get();
-        $form_accounts = SubsistenceAccountModel::where('eform_subsistence_id', $id)->get();
+
+
+        $form_accounts = SubsistenceAccountModel::all();
+
+//        dd($form_accounts);
+
         $projects = ProjectsModel::all();
         $accounts = AccountsChartModel::all();
         $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.subsistence'))
@@ -1002,7 +1007,7 @@ class SubsistenceController extends Controller
             $form->authorised_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR CHIEF HR
+        } //FOR  HR
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_009')
             && $current_status == config('constants.subsistence_status.hod_approved')
@@ -1030,7 +1035,9 @@ class SubsistenceController extends Controller
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
-        } //FOR FOR CHIEF ACCOUNTANT
+        }
+
+        //FOR FOR CHIEF ACCOUNTANT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
             && $current_status == config('constants.subsistence_status.hr_approved')
         ) {
@@ -1050,12 +1057,39 @@ class SubsistenceController extends Controller
             }
             //update
             $form->config_status_id = $new_status;
-            $form->accountant = $user->name;
-            $form->accountant_staff_no = $user->staff_no;
-            $form->accountant_date = $request->sig_date;
+            $form->chief_accountant = $user->name;
+            $form->chief_accountant_staff_no = $user->staff_no;
+            $form->chief_accountant_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
-        } //FOR FOR EXPENDITURE OFFICE FUNDS
+        }
+//        //FOR FOR STATION MANAGER
+//        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
+//            && $current_status == config('constants.subsistence_status.hr_approved')
+//        ) {
+//            $insert_reasons = true;
+//            //cancel status
+//            if ($request->approval == config('constants.approval.cancelled')) {
+//                $new_status = config('constants.subsistence_status.cancelled');
+//            } //reject status
+//            elseif ($request->approval == config('constants.approval.reject')) {
+//                $new_status = config('constants.subsistence_status.rejected');
+//            }//approve status
+//            elseif ($request->approval == config('constants.approval.approve')) {
+//                $new_status = config('constants.subsistence_status.chief_accountant');
+//            } else {
+//                $new_status = config('constants.subsistence_status.hr_approved');
+//                $insert_reasons = false;
+//            }
+//            //update
+//            $form->config_status_id = $new_status;
+//            $form->chief_accountant = $user->name;
+//            $form->chief_accountant_staff_no = $user->staff_no;
+//            $form->chief_accountant_date = $request->sig_date;
+//            $form->profile = Auth::user()->profile_id;
+//            $form->save();
+//        }
+        //FOR FOR EXPENDITURE OFFICE FUNDS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
             && $current_status == config('constants.subsistence_status.chief_accountant')
         ) {
@@ -1075,9 +1109,9 @@ class SubsistenceController extends Controller
             }
             //update
             $form->config_status_id = $new_status;
-            $form->expenditure_office = $user->name;
-            $form->expenditure_office_staff_no = $user->staff_no;
-            $form->expenditure_date = $request->sig_date;
+//            $form->expenditure_office = $user->name;
+//            $form->expenditure_office_staff_no = $user->staff_no;
+//            $form->expenditure_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
@@ -1085,7 +1119,7 @@ class SubsistenceController extends Controller
             for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
                 $des = "";
                 $des = $des . " " . $request->account_items[$i] . ",";
-                $des = "Subsistence Claim Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
+                $des = "Subsistence Claim Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
 
                 //[1] CREDITED ACCOUNT
                 //[1A] - money
@@ -1100,7 +1134,7 @@ class SubsistenceController extends Controller
                         'created_by' => $user->id,
                         'company' => '01',
                         'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
+                        'project' => "",
                         'pems_project' => 'N',
                         'spare' => '0000',
                         'status_id' => config('constants.subsistence_status.export_not_ready')
@@ -1113,7 +1147,7 @@ class SubsistenceController extends Controller
                         //'debitted_amount' => $request->debited_amount[$i],
 
                         'eform_subsistence_id' => $form->id,
-                        'petty_cash_code' => $form->code,
+                        'subsistence_code' => $form->code,
                         'cost_center' => $form->cost_center,
                         'business_unit_code' => $form->business_unit_code,
                         'user_unit_code' => $form->user_unit_code,
@@ -1137,7 +1171,7 @@ class SubsistenceController extends Controller
                         'created_by' => $user->id,
                         'company' => '01',
                         'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
+                        'project' =>  "",
                         'pems_project' => 'N',
                         'spare' => '0000',
                         'description' => $des,
@@ -1158,7 +1192,7 @@ class SubsistenceController extends Controller
                         'created_by' => $user->id,
                         'company' => '01',
                         'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
+                        'project' => "",
                         'pems_project' => 'N',
                         'spare' => '0000',
                         'status_id' => config('constants.subsistence_status.export_not_ready')
@@ -1171,13 +1205,14 @@ class SubsistenceController extends Controller
                         'account' => $request->debited_account[$i],
 
                         'eform_subsistence_id' => $form->id,
-                        'petty_cash_code' => $form->code,
+                        'subsistence_code' => $form->code,
                         'cost_center' => $form->cost_center,
                         'business_unit_code' => $form->business_unit_code,
                         'user_unit_code' => $form->user_unit_code,
                         'claimant_name' => $form->claimant_name,
                         'claimant_staff_no' => $form->claimant_staff_no,
                         'claim_date' => $form->claim_date,
+
                         'hod_code' => $form->hod_code,
                         'hod_unit' => $form->hod_unit,
                         'ca_code' => $form->ca_code,
@@ -1194,7 +1229,7 @@ class SubsistenceController extends Controller
                         'created_by' => $user->id,
                         'company' => '01',
                         'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
+                        'project' =>  "",
                         'pems_project' => 'N',
                         'spare' => '0000',
                         'description' => $des,
@@ -1216,7 +1251,7 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.subsistence_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.funds_acknowledgement');
+                $new_status = config('constants.subsistence_status.closed');
             } else {
                 $new_status = config('constants.subsistence_status.funds_disbursement');
                 $insert_reasons = false;
@@ -1226,239 +1261,6 @@ class SubsistenceController extends Controller
 //          $form->profile = Auth::user()->profile_id;
             $form->profile = config('constants.user_profiles.EZESCO_007');
             $form->save();
-        } //FOR FOR SECURITY
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_013')
-            && $current_status == config('constants.subsistence_status.funds_acknowledgement')
-        ) {
-            //cancel status
-            $insert_reasons = true;
-            if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
-            } //reject status
-            elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
-            }//approve status
-            elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.security_approved');
-            } else {
-                $new_status = config('constants.subsistence_status.funds_acknowledgement');
-                $insert_reasons = false;
-            }
-            //update
-            $form->config_status_id = $new_status;
-            $form->security_name = $user->name;
-            $form->security_staff_no = $user->staff_no;
-            $form->security_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-        } //FOR FOR EXPENDITURE OFFICE - RECEIPT
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
-            && $current_status == config('constants.subsistence_status.security_approved')
-        ) {
-            //cancel status
-            $insert_reasons = true;
-            if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
-            } //reject status
-            elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
-            }//approve status
-            elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.receipt_approved');
-            } else {
-                $new_status = config('constants.subsistence_status.security_approved');
-                $insert_reasons = false;
-            }
-            //update the form
-            $form->config_status_id = $new_status;
-            $form->expenditure_office = $user->name;
-            $form->expenditure_office_staff_no = $user->staff_no;
-            $form->expenditure_date = $request->sig_date;
-            $form->change = $request->change;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-
-            //check if there is need to create an account
-            if ($request->change > 0) {
-                $des = "";
-                $des = $des . " " . $request->account_item . ",";
-                $des = "Subsistence Claim Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount . '.';
-
-                //[1] CREDITED ACCOUNT
-                //[1A] - money
-                $formAccountModel = SubsistenceAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        'creditted_amount' => $request->credited_amount,
-                        'account' => $request->credited_account,
-                        'debitted_account_id' => $request->debited_account,
-                        //'debitted_amount' => $request->debited_amount,
-                        'eform_subsistence_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        'creditted_amount' => $request->credited_amount,
-                        'account' => $request->credited_account,
-                        'debitted_account_id' => $request->debited_account,
-                        //'debitted_amount' => $request->debited_amount,
-
-                        'eform_subsistence_id' => $form->id,
-                        'petty_cash_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
-                        'hod_code' => $form->hod_code,
-                        'hod_unit' => $form->hod_unit,
-                        'ca_code' => $form->ca_code,
-                        'ca_unit' => $form->ca_unit,
-                        'hrm_code' => $form->hrm_code,
-                        'hrm_unit' => $form->hrm_unit,
-                        'expenditure_code' => $form->expenditure_code,
-                        'expenditure_unit' => $form->expenditure_unit,
-                        'security_code' => $form->security_code,
-                        'security_unit' => $form->security_unit,
-                        'audit_code' => $form->audit_code,
-                        'audit_unit' => $form->audit_unit,
-
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
-                    ]
-                );
-
-                //[2] DEBITED ACCOUNT
-                //[2A] - money
-                $formAccountModel = SubsistenceAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        //'creditted_amount' => $request->credited_amount,
-                        'debitted_account_id' => $request->debited_account,
-                        'debitted_amount' => $request->debited_amount,
-                        'account' => $request->debited_account,
-                        'eform_subsistence_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        //'creditted_amount' => $request->credited_amount,
-                        'debitted_account_id' => $request->debited_account,
-                        'debitted_amount' => $request->debited_amount,
-                        'account' => $request->debited_account,
-
-                        'eform_subsistence_id' => $form->id,
-                        'petty_cash_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
-                        'hod_code' => $form->hod_code,
-                        'hod_unit' => $form->hod_unit,
-                        'ca_code' => $form->ca_code,
-                        'ca_unit' => $form->ca_unit,
-                        'hrm_code' => $form->hrm_code,
-                        'hrm_unit' => $form->hrm_unit,
-                        'expenditure_code' => $form->expenditure_code,
-                        'expenditure_unit' => $form->expenditure_unit,
-                        'security_code' => $form->security_code,
-                        'security_unit' => $form->security_unit,
-                        'audit_code' => $form->audit_code,
-                        'audit_unit' => $form->audit_unit,
-
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.subsistence_status.export_not_ready')
-                    ]
-                );
-            }
-
-//            //update all accounts associated to this pettycash
-//            $formAccountModelList = SubsistenceAccountModel::where('eform_subsistence_id', $form->id)
-//                ->where('status_id', config('constants.subsistence_status.export_not_ready'))
-//                ->get();
-//            foreach ($formAccountModelList as $item) {
-//                $item->status_id = config('constants.subsistence_status.not_exported');
-//                $item->save();
-//            }
-
-            //Make the update on the Subsistence account
-            $export_not_ready = config('constants.subsistence_status.export_not_ready');
-            $not_exported = config('constants.subsistence_status.not_exported');
-            $id = $form->id;
-            $formAccountModelList = DB::table('eform_subsistence_account')
-                ->where('eform_subsistence_id', $id)
-                ->where('status_id', $export_not_ready)
-                ->update(
-                    ['status_id' => $not_exported]
-                );
-
-            // upload the receipt files
-            $files = $request->file('receipt');
-            if ($request->hasFile('receipt')) {
-                foreach ($files as $file) {
-                    $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
-                    // Get just filename
-                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                    //get size
-                    $size = number_format($file->getSize() * 0.0000001, 2);
-                    // Get just ext
-                    $extension = $file->getClientOriginalExtension();
-                    // Filename to store
-                    $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
-                    // Upload File
-                    $path = $file->storeAs('public/petty_cash_receipt', $fileNameToStore);
-
-                    //upload the receipt
-                    $file = AttachedFileModel::updateOrCreate(
-                        [
-                            'name' => $fileNameToStore,
-                            'location' => $path,
-                            'extension' => $extension,
-                            'file_size' => $size,
-                            'form_id' => $form->code,
-                            'form_type' => config('constants.eforms_id.subsistence'),
-                            'file_type' => config('constants.file_type.receipt')
-                        ],
-                        [
-                            'name' => $fileNameToStore,
-                            'location' => $path,
-                            'extension' => $extension,
-                            'file_size' => $size,
-                            'form_id' => $form->code,
-                            'form_type' => config('constants.eforms_id.subsistence'),
-                            'file_type' => config('constants.file_type.receipt')
-                        ]
-                    );
-                }
-            }
-
         }  //FOR AUDITING OFFICE
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.subsistence_status.closed')
@@ -1477,7 +1279,7 @@ class SubsistenceController extends Controller
             elseif ($request->approval == config('constants.approval.queried')) {
                 $new_status = config('constants.subsistence_status.queried');
             } else {
-                $new_status = config('constants.subsistence_status.closed');
+                $new_status = config('constants.subsistence_status.funds_acknowledgement');
                 $insert_reasons = false;
             }
             //update
