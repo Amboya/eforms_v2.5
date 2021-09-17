@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\EForms\PettyCash;
+namespace App\Http\Controllers\EForms\Trip;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Main\ActivityLogsController;
@@ -252,7 +252,7 @@ class TripController extends Controller
             'user' => $user
         ];
         //show the create form
-        return view('eforms.petty-cash.create')->with($params);
+        return view('eforms.trip.create')->with($params);
     }
 
     /**

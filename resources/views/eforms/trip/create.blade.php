@@ -15,12 +15,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">New Petty Cash</h1>
+                    <h1 class="m-0 text-dark">New Trip Form</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('trip-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">New Petty Cash</li>
+                        <li class="breadcrumb-item"><a href="{{route('trip.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">New Trip Form</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -57,7 +57,7 @@
 
         <!-- Default box -->
         <div class="card">
-            <form name="db1" action="{{route('trip-store')}}" method="post">
+            <form name="db1" action="{{route('trip.store')}}" method="post">
                 @csrf
                 <div class="card-body">
 
@@ -68,7 +68,7 @@
                             <th width="33%" colspan="1" class="text-center"><a href="#"><img
                                         src="{{ asset('dashboard/dist/img/zesco1.png')}}" title="ZESCO" alt="ZESCO"
                                         width="25%"></a></th>
-                            <th width="33%" colspan="4" class="text-center">Petty Cash Voucher</th>
+                            <th width="33%" colspan="4" class="text-center">Trip Form Voucher</th>
                             <th width="34%" colspan="1" class="p-3">Doc Number:<br>CO.14900.FORM.00165<br>Version: 3</th>
                         </tr>
                         </thead>
@@ -218,7 +218,7 @@
                                     &times;
                                 </button>
                                 <h5><i class="icon fas fa-ban"></i> Alert!</h5>
-                                Sorry, You can not submit <strong>petty cash above K2000</strong>
+                                Sorry, You can not submit <strong>Trip Form above K2000</strong>
                             </div>
                         </div>
                         <div id="submit_possible" class="col-12 text-center">
@@ -253,7 +253,7 @@
 
                 if (!isNaN(total)) {
 
-                    //check if petty cash is below 2000
+                    //check if Trip Form is below 2000
                     if (total > 2000) {
                         $('#submit_possible').hide();
                         $('#submit_not_possible').show();

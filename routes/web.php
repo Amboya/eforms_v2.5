@@ -555,7 +555,8 @@ Route::group([
 Route::group([
     'namespace' => 'subsistence_directors',
     'prefix' => 'subsistence_directors',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
     Route::get('home', [App\Http\Controllers\EForms\SubsistenceDirectors\HomeController::class, 'index'])->name('subsistence-directors-home');
     Route::get('list/{value}', [App\Http\Controllers\EForms\SubsistenceDirectors\SubsistenceDirectorsController::class, 'index'])->name('subsistence-directors-list');
@@ -584,7 +585,8 @@ Route::group([
 Route::group([
     'namespace' => 'temps_casuals',
     'prefix' => 'temps_casuals',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
 //    Route::get('home', [App\Http\Controllers\EForms\TempsCasuals\HomeController::class, 'index'])->name('temps-casuals-home');
     Route::get('list/{value}', [App\Http\Controllers\EForms\TempsCasuals\TempsCasualsController::class, 'index'])->name('temps-casuals-list');
@@ -613,7 +615,8 @@ Route::group([
 Route::group([
     'namespace' => 'user_records_request',
     'prefix' => 'user_records_request',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
     Route::get('home', [App\Http\Controllers\EForms\UserRecordsRequest\HomeController::class, 'index'])->name('user-records-request-home');
     Route::get('list/{value}', [App\Http\Controllers\EForms\UserRecordsRequest\UserRecordsRequestController::class, 'index'])->name('user-records-request-list');
@@ -699,7 +702,8 @@ Route::group([
 Route::group([
     'namespace' => 'virement',
     'prefix' => 'virement',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
     Route::get('home', [App\Http\Controllers\EForms\Virement\HomeController::class, 'index'])->name('virement.home');
     Route::get('list/{value}', [App\Http\Controllers\EForms\Virement\VirementController::class, 'index'])->name('virement.list');
@@ -728,7 +732,8 @@ Route::group([
 Route::group([
     'namespace' => 'datacenter_ca',
     'prefix' => 'datacenter_ca',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
     Route::get('home', [App\Http\Controllers\EForms\DataCenterCA\HomeController::class, 'index'])->name('datacenter.ca.home');
     Route::get('list/{value}', [App\Http\Controllers\EForms\DataCenterCA\DataCenterCAController::class, 'index'])->name('datacenter.ca.list');
@@ -758,7 +763,8 @@ Route::group([
 Route::group([
     'namespace' => 'trip',
     'prefix' => 'trip',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
     //petty cah routes
     Route::get('home', [App\Http\Controllers\EForms\Trip\HomeController::class, 'index'])->name('trip.home');
