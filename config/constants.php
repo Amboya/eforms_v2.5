@@ -252,6 +252,11 @@ return [
     ],
 
     'trip_status' => [
+        'new_trip' => "283",
+        'hod_approved_trip' => "284",
+        'hr_approved_trip' => "285",
+        'trip_authorised' => "286",
+        'trip_rejected' => "287",
         'new_application' => "21",
         'hod_approved' => "22",
         'hr_approved' => "23",

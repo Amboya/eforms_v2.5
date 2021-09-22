@@ -734,7 +734,7 @@ class PettyCashController extends Controller
         if ($total < 1) {
             return $random;
         } else {
-            self::randGenerator("PT", $value);
+            self::randGenerator($head, $value);
         }
     }
 

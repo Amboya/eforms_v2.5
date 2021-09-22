@@ -1,4 +1,4 @@
-@extends('layouts.eforms.petty-cash.master')
+@extends('layouts.eforms.trip.master')
 
 
 @push('custom-styles')
@@ -14,12 +14,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty-Cash : {{$category}}</h1>
+                    <h1 class="m-0 text-dark">Trip : {{$category}}</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Petty-Cash  : {{$category}}</li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">Trip  : {{$category}}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -53,54 +53,70 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="example1" class="table m-0">
+                    <table class="table m-0">
                         <thead>
                         <tr>
                             <th>Serial</th>
-                            <th>Claimant</th>
-                            <th>Payment</th>
+                            <th>Name</th>
+                            <th>Destination</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Members</th>
                             <th>Status</th>
                             <th>Period</th>
-                            <th>View</th>
+                            <td>View</td>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach( $list as $item )
                             <tr>
-                                <td><a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
-                                    <form id="show-form{{$item->id}}" action="{{ route('petty-cash-show', $item->id) }}"
+                                <td><a href="{{ route('logout') }}" class="dropdown-item"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
+                                    <form id="show-form{{$item->id}}"
+                                          action="{{ route('trip.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
                                 </td>
-                                <td>{{$item->claimant_name}}</td>
-                                <td>{{$item->total_payment}}</td>
-                                <td><span class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                <td>{{$item->name}}</td>
+                                <td>{{$item->destination}}</td>
+                                <td>{{$item->date_from}}</td>
+                                <td>{{$item->date_to}}</td>
+                                <td>Invited: {{$item->invited}}, Subscribed:{{sizeof($item->members) ?? "bra"}} </td>
+                                <td><span
+                                        class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>
                                 </td>
-                                <td>{{$item->updated_at->diffForHumans()}}</td>
-                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange" onclick="event.preventDefault();
-                                        document.getElementById('show-form'+{{$item->id}}).submit();"> View </a>
-                                    <form id="show-form{{$item->id}}" action="{{ route('petty-cash-show', $item->id) }}"
+                                <td>{{$item->created_at->diffForHumans()}}</td>
+                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
+                                    <form id="show-form{{$item->id}}"
+                                          action="{{ route('trip.show', $item->id) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
-                                </td>
                             </tr>
                         @endforeach
                         </tbody>
-
                     </table>
                 </div>
             </div>
             <!-- /.card-body -->
             <div class="card-footer clearfix">
-                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )
                     @if($pending < 1)
-                        <a href="{{route('petty-cash-create')}}"
-                           class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
+                        {{--                                    <a class="btn btn-sm bg-gradient-green float-left "--}}
+                        {{--                                       title="Create"--}}
+                        {{--                                       data-toggle="modal"--}}
+                        {{--                                       data-target="#modal-trip">--}}
+                        {{--                                         New Trip--}}
+                        {{--                                    </a>--}}
+
+                        <a href="{{route('trip.create')}}"
+                           class="btn btn-sm bg-gradient-green float-left">New Trip</a>
                     @else
-                        <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
+                        <a href="#" class="btn btn-sm btn-default float-left">New Trip Claim</a>
                         <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
                     @endif
                 @endif

@@ -94,6 +94,7 @@
                             <th>PAY</th>
                             <th>SEC</th>
                             <th>TRA</th>
+                            <th>SHEQ</th>
 
                             <th>Action</th>
                         </tr>
@@ -125,6 +126,7 @@
                                 <td>{{ $item->payroll_unit }} : {{ $item->payroll_code }} </td>
                                 <td>{{ $item->security_unit }} : {{ $item->security_code }} </td>
                                 <td>{{ $item->transport_unit }} : {{ $item->transport_code }} </td>
+                                <td>{{ $item->sheq_unit }} : {{ $item->sheq_code }} </td>
 
                                 <td>
                                     <button class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
@@ -244,9 +246,9 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="dm_id">Divisional Manager</label>
-                                    <input list="users_list1" type="text" class="form-control" id="dm_id" name="dm_id"
+                                    <input list="users_list" type="text" class="form-control" id="dm_id" name="dm_id"
                                            value=""  placeholder="Select Divisional Manager">
-                                    {{--                                    <datalist id="users_list1">--}}
+                                    {{--                                    <datalist id="users_list">--}}
                                     {{--                                        @foreach($users as $item)--}}
                                     {{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
                                     {{--                                        @endforeach--}}
@@ -274,7 +276,7 @@
                                     <label for="hod_id">HOD</label>
                                     <input list="users_list" type="text" class="form-control" id="hod_id" name="hod_id"
                                            value=""  placeholder="Select Hod Person">
-{{--                                    <datalist id="users_list1">--}}
+{{--                                    <datalist id="users_list">--}}
 {{--                                        @foreach($users as $item)--}}
 {{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
 {{--                                        @endforeach--}}
@@ -300,7 +302,7 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="arm_id">AREA MANAGER</label>
-                                    <input list="users_list1" type="text" class="form-control" id="arm_id" name="arm_id"
+                                    <input list="users_list" type="text" class="form-control" id="arm_id" name="arm_id"
                                            placeholder="Select Area Manager">
 {{--                                    <datalist id="users_list2">--}}
 {{--                                        @foreach($users as $item)--}}
@@ -384,7 +386,7 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="ma_id">Management Accountant</label>
-                                    <input list="users_list1" type="text" class="form-control" id="ma_id" name="ma_id"
+                                    <input list="users_list" type="text" class="form-control" id="ma_id" name="ma_id"
                                            placeholder="Select MA Person">
 {{--                                    <datalist id="users_list2">--}}
 {{--                                        @foreach($users as $item)--}}
@@ -412,9 +414,9 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="psa_id">PSA</label>
-                                    <input list="users_list1" type="text" class="form-control" id="psa_id" name="psa_id"
+                                    <input list="users_list" type="text" class="form-control" id="psa_id" name="psa_id"
                                            value=""  placeholder="Select PSA Person">
-{{--                                    <datalist id="users_list1">--}}
+{{--                                    <datalist id="users_list">--}}
 {{--                                        @foreach($users as $item)--}}
 {{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
 {{--                                        @endforeach--}}
@@ -468,9 +470,9 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="phro_id">PHRO</label>
-                                    <input list="users_list1" type="text" class="form-control" id="phro_id" name="phro_id"
+                                    <input list="users_list" type="text" class="form-control" id="phro_id" name="phro_id"
                                            value=""  placeholder="Select PHRO Person">
-{{--                                    <datalist id="users_list1">--}}
+{{--                                    <datalist id="users_list">--}}
 {{--                                        @foreach($users as $item)--}}
 {{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
 {{--                                        @endforeach--}}
@@ -496,7 +498,7 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="shro_id">SHRO</label>
-                                    <input list="users_list1" type="text" class="form-control" id="shro_id" name="shro_id"
+                                    <input list="users_list" type="text" class="form-control" id="shro_id" name="shro_id"
                                            placeholder="Select SHRO Person">
 {{--                                    <datalist id="users_list2">--}}
 {{--                                        @foreach($users as $item)--}}
@@ -580,13 +582,8 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="payroll_id">PAYROLL</label>
-                                    <input list="users_list1" type="text" class="form-control" id="payroll_id" name="payroll_id"
+                                    <input list="users_list" type="text" class="form-control" id="payroll_id" name="payroll_id"
                                            value=""  placeholder="Select PAYROLL Person">
-{{--                                    <datalist id="users_list1">--}}
-{{--                                        @foreach($users as $item)--}}
-{{--                                            <option value="{{$item->id}}" >  {{$item->staff_no}}:  {{$item->name}}</option>--}}
-{{--                                        @endforeach--}}
-{{--                                    </datalist>--}}
                                 </div>
                             </div>
                             <div class="col-3">
@@ -636,7 +633,7 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="transport_id">TRANSPORT</label>
-                                    <input list="users_list1" type="text" class="form-control" id="transport_id" name="transport_id"
+                                    <input list="users_list" type="text" class="form-control" id="transport_id" name="transport_id"
                                            placeholder="Select TRANSPORT Person">
 {{--                                    <datalist id="users_list2">--}}
 {{--                                        @foreach($users as $item)--}}
@@ -660,7 +657,29 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="sheq_id">SHEQ</label>
+                                    <input list="users_list" type="text" class="form-control" id="sheq_id" name="sheq_id"
+                                           placeholder="Select SHEQ Person">
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="sheq_code">SHEQ Code</label>
+                                    <input type="text" class="form-control" id="sheq_code" name="sheq_code"
+                                           placeholder="Enter SHEQ Code">
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="sheq_unit">SHEQ Unit</label>
+                                    <input type="text" class="form-control" id="sheq_unit" name="sheq_unit"
+                                           placeholder="Enter SHEQ Unit">
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -748,6 +767,8 @@
             $('#security_unit').val(recipient.security_unit);
             $('#transport_code').val(recipient.transport_code);
             $('#transport_unit').val(recipient.transport_unit);
+            $('#sheq_code').val(recipient.sheq_code);
+            $('#sheq_unit').val(recipient.sheq_unit);
 
 
         });
@@ -1092,6 +1113,7 @@
                 $("#transport_code").val(code);
                 $("#transport_unit").val(unit);
             });
+
             //payroll_id
             $("#payroll_id").change(function () {
                 var selected_value = ''; // Selected value
@@ -1109,6 +1131,25 @@
                 });
                 $("#payroll_code").val(code);
                 $("#payroll_unit").val(unit);
+            });
+
+            //sheq
+            $("#sheq_id").change(function () {
+                var selected_value = ''; // Selected value
+                // Get selected value
+                selected_value += $(this).val();
+                //find the user from the selected array
+                var users = {!! json_encode( $users->toArray() ) !!};
+                unit = "";
+                code = "";
+                $.each(users, function (index, value) {
+                    if (value.id == selected_value) {
+                        unit += value.user_unit_code ;
+                        code += value.job_code ;
+                    }
+                });
+                $("#sheq_code").val(code);
+                $("#sheq_unit").val(unit);
             });
 
         });

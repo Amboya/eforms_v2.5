@@ -188,6 +188,8 @@ class UserUnitController extends Controller
         $model->security_unit = $request->security_unit ?? $model->security_unit;
         $model->transport_code = $request->transport_code ?? $model->transport_code;
         $model->transport_unit = $request->transport_unit ?? $model->transport_unit;
+        $model->sheq_code = $request->sheq_code ?? $model->sheq_code;
+        $model->sheq_unit = $request->sheq_unit ?? $model->sheq_unit;
         $model->save();
 
         //log the activity

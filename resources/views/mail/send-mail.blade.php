@@ -349,7 +349,8 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td>
-                                        <h1>{!! $details['title'] !!}</h1>
+                                        <h3>{!! $details['title'] !!}</h3>
+                                        <hr>
                                         <p>Dear {!! $details['name'] !!},</p>
                                         <p>{!! $details['body'] !!}  </p>
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" >

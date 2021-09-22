@@ -89,6 +89,8 @@ class ConfigWorkFlowController extends Controller
                     "security_unit" => $item->security_unit,
                     "transport_code" => $item->transport_code,
                     "transport_unit" => $item->transport_unit,
+                    "sheq_code" => $item->sheq_code,
+                    "sheq_unit" => $item->sheq_unit,
                 ]
             );
 

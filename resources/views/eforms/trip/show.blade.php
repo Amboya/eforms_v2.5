@@ -1,4 +1,4 @@
-@extends('layouts.eforms.petty-cash.master')
+@extends('layouts.eforms.trip.master')
 
 
 @push('custom-styles')
@@ -16,12 +16,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty Cash Detail  [ {{ $form->code }} ]</h1>
+{{--                    <h1 class="m-0 text-dark">Trip Detail  [{{ $form->code }}]</h1>--}}
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('petty-cash-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Petty Cash Detail</li>
+                        <li class="breadcrumb-item"><a href="{{route('trip.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">Trip Detail</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -58,10 +58,29 @@
 
     <!-- Default box -->
         <div class="card">
-            <form name="db1" action="{{route('petty-cash-approve')}}" method="post" enctype="multipart/form-data">
+            <form name="db1" action="{{route('trip.approve')}}" method="post" enctype="multipart/form-data">
                 @csrf
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-sm-6 invoice-col">
+                            <b>TRIP CODE: {{ $form->code}}</b><br>
+                            <span class="badge badge-{{$form->status->html ?? "default"}}">{{$form->status->name ?? "none"}}</span><br>
+                            <b>Name:</b> {{ $form->name}}<br>
+                            <b>Date From:</b> {{ $form->date_from}}<br>
+                            <b>Date To:</b> {{ $form->date_to}}<br>
+                            <b>Members:</b> Invited {{ $form->invited}} and {{sizeof($form->members)}} have subscribed.<br>
+                        </div>
+                        <div class="col-sm-6 invoice-col">
+                            <br>
+                            <br>
+                            <b>Destination:</b> {{ $form->destination}}<br>
+                            <b>Description:</b>  {{ $form->description}} <br>
+                            <b class="text-sm">Created By:</b>  <span class="text-sm">{{ $form->initiator_name}}  </span> <br>
+                            <b class="text-sm">Created At:</b>  <span class="text-sm">{{ $form->created_at}} : that is {{ $form->created_at->diffForHumans()}} </span>
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
-                    <span class="badge badge-{{$form->status->html ?? "default"}}">{{$form->status->name ?? "none"}}</span>
                     <input type="hidden" name="id" value="{{ $form->id}}" readonly required>
                     <input type="hidden" name="sig_date" value=" {{date('Y-m-d H:i:s')}}" readonly required>
 
@@ -72,74 +91,35 @@
                             <th width="33%" colspan="1" class="text-center"><a href="#"><img
                                             src="{{ asset('dashboard/dist/img/zesco1.png')}}" title="ZESCO" alt="ZESCO"
                                             width="25%"></a></th>
-                            <th width="33%" colspan="4" class="text-center">Petty Cash Voucher</th>
-                            <th width="34%" colspan="1" class="p-3">Doc Number:<br>CO.14900.FORM.00165<br>Version: 3
+                            <th width="33%" colspan="4" class="text-center">TRIP FORM</th>
+                            <th width="34%" colspan="1" class="p-3">Doc Number:<br>CO.14900.FORM.00006<br>Version: 2
                             </th>
                         </tr>
                         </thead>
                     </table>
 
-                    <div class="row">
-                        <div class="row mt-2 mb-4 p-2">
-                            <div class="col-3">
-                                <div class="row">
-                                    <div class="col-12"><label>Date:</label></div>
-                                    <div class="col-12"><input value="{{  $form->claim_date }}" type="text"
-                                                               name="date"
-                                                               readonly class="form-control"></div>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="row">
-                                    <div class="col-12 "><label>Cost Center:</label></div>
-                                    <div class="col-12"><input type="text" name="cost_center" class="form-control"
-                                                               value="{{ $form->cost_center}}" readonly required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="row">
-                                    <div class="col-12"><label>HQMS No:</label></div>
-                                    <div class="col-12"><input type="text" value="{{$form->ref_no}}" name="ref_no"
-                                                               readonly required class="form-control"></div>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="row">
-                                    <div class="col-12"><label>Project Number:</label></div>
-                                    <div class="col-12"><input list="project_list" type="text" name="projects_id"
-                                                               readonly    value="{{$form->project->name ?? '' }}"
-                                                               class="form-control">
-                                        <datalist id="project_list">
-                                            @foreach($projects as $item)
-                                                <option value="{{$item->id}}">{{$item->name}}</option>
-                                            @endforeach
-                                        </datalist>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
-
-
                     <div class="col-lg-12 grid-margin stretch-card">
                         <div class="table-responsive">
                             <div class="col-lg-12 ">
-                                <table class="table bg-green">
-                                    <thead>
+                                <table >
+                                    <thead class="table bg-green">
                                     <tr>
                                         <th></th>
-                                        <th>DETAILS OF PAYMENT</th>
-                                        <th>AMOUNT</th>
+                                        <th>MAN NO</th>
+                                        <th>NAME</th>
+                                        <th>HOD SIGNATURE</th>
+                                        <th>DATE OF DEPARTURE</th>
+                                        <th>DAYS CLAIMED</th>
+                                        <th>M/V NUMBER</th>
+                                        <th>DESTINATION</th>
+                                        <th>DATE ARRIVED</th>
+                                        <th>ACTUAL DAYS TAKEN</th>
+                                        <th>DATE LEFT</th>
+                                        <th>REGIONAL, AREA, BRANCH OR LINE MANAGER’S SIGNATURE</th>
+                                        <th>EMPLOYEE’S SIGNATURE</th>
                                     </tr>
                                     </thead>
-                                </table>
-                            </div>
-                            <div class="col-lg-12 ">
-                                <TABLE id="dataTable1" class="table">
-                                    @foreach($form->item as $item)
+                                    @foreach($form->members as $item)
                                         <TR>
                                             <TD>
                                                 <textarea type="text" name="name[]" class="form-control amount"
@@ -152,88 +132,15 @@
                                     @endforeach
                                 </TABLE>
                             </div>
-                            <div class="col-lg-6 offset-6 ">
-                                <div class="row">
-                                    <div class="col-4 text-right">
-                                        TOTAL PAYMENT
-                                    </div>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control text-bold" readonly id="total-payment"
-                                               name="total_payment" value="ZMW {{$form->total_payment}}">
-                                    </div>
-                                </div>
-                            </div>
 
-                        </div>
-
-                    </div>
-
-
-                    <div class="row mb-1 mt-4">
-                        <div class="col-2">
-                            <label>Name of Claimant:</label>
-                        </div>
-                        <div class="col-3">
-                            <input type="text" name="claimant_name" class="form-control"
-                                   value="{{$form->claimant_name}}" readonly required></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"
-                                                  value="{{$form->claimant_staff_no}}" readonly required></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="date_claimant" class="form-control"
-                                                  value="{{$form->claim_date}}" readonly required>
                         </div>
                     </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>Claim Authorised by:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->authorised_by ?? "" }}"
-                                                  name="claim_authorised_by" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->authorised_staff_no  ?? "" }}"
-                                                  name="sig_of_authorised" readonly class="form-control">
-                        </div>
-                        <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->authorised_date ?? "" }}"
-                                                  name="authorised_date" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>HR/Station Manager:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->station_manager ?? "" }}"
-                                                  name="station_manager" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->station_manager_staff_no ?? "" }}"
-                                                  name="sig_of_station_manager" readonly
-                                                  class="form-control"></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->station_manager_date ?? "" }}"
-                                                  name="manager_date" readonly class="form-control"></div>
-                    </div>
-                    <div class="row mb-4">
-                        <div class="col-2"><label>Accountant:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->accountant ?? "" }}"
-                                                  name="accountant" readonly class="form-control"></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->accountant_staff_no ?? "" }}"
-                                                  name="sig_of_accountant" readonly class="form-control">
-                        </div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->accountant_date ?? "" }}"
-                                                  name="accountant_date" readonly class="form-control">
-                        </div>
-                    </div>
-
-
-                    <p><b>Note:</b> The system reference number is mandatory and is from
-                        any of the systems at ZESCO such as a work request number from PEMS, Task
-                        number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.
-                        giving rise to the expenditure</p>
 
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
+                    <p><b>Note:</b> TRIP FORM TO BE RETIRED TO EXPENDITURE OFFICE IMMEDIATELY UPON RETURN </p>
+
                     {{--  CLAIMANT EDIT--}}
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
                         <div class="row">
