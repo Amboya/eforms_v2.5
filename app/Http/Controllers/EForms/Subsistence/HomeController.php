@@ -56,7 +56,7 @@ class HomeController extends Controller
         $totals['rejected_forms'] = $rejected_forms;
 
         //list all that needs me
-        $get_profile = self::getMyProfile();
+     //   $get_profile = self::getMyProfile();
 
         //count all that needs me
         $totals_needs_me = self::needsMeCount();
@@ -91,19 +91,17 @@ class HomeController extends Controller
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-            $list = SubsistenceModel::
-            where('config_status_id', '=', config('constants.subsistence_status.new_application'))
+            $list = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.accepted'))
                 ->count();
         }
-
         //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
-                // ->where('code_superior', Auth::user()->position->code )
+            $list = SubsistenceModel::where('config_status_id', config('constants.trip_status.trip_authorised'))
                 ->count();
-
-        } //for the HR
+        }
+        //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hod_approved'))->count();
 
@@ -145,12 +143,12 @@ class HomeController extends Controller
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             $list = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.accepted'))
                 ->orderBy('code')->paginate(50);
             //   dd(2) ;
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
-                // ->where('code_superior', Auth::user()->position->code )
+            $list = SubsistenceModel::where('config_status_id', config('constants.trip_status.trip_authorised'))
                 ->orderBy('code')->paginate(50);
         } //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
@@ -195,8 +193,8 @@ class HomeController extends Controller
         //for the REQUESTER
         if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             //count pending applications
-            $pending = SubsistenceModel::where('config_status_id', '>=', config('constants.subsistence_status.new_application'))
-                ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
+            $pending = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.accepted'))
                 ->count();
         }
 
@@ -207,31 +205,33 @@ class HomeController extends Controller
 
     public static function getMyProfile()
     {
-        //get the profile associated with petty cash, for this user
         $user = Auth::user();
-        //[1]  GET YOUR PROFILE
-        $profile_assignement = ProfileAssigmentModel::
-        where('eform_id', config('constants.eforms_id.subsistence'))
-            ->where('user_id', $user->id)->first();
-        //  use my profile - if i dont have one - give me the default
-        $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
-        $user->profile_id = $default_profile;
-        $user->profile_unit_code = $user->user_unit_code;
-        $user->profile_job_code = $user->job_code;
-        $user->save();
-
-        //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
-        $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.subsistence'))
-            ->where('delegated_to', $user->id)
-            ->where('config_status_id',  config('constants.active_state') );
-        if ($profile_delegated->exists()) {
-            //
-            $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
-            $user->profile_id = $default_profile;
-            $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
-            $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
-            $user->save();
-        }
+      //  dd($user);
+//        //get the profile associated with petty cash, for this user
+//        $user = Auth::user();
+//        //[1]  GET YOUR PROFILE
+//        $profile_assignement = ProfileAssigmentModel::
+//        where('eform_id', config('constants.eforms_id.subsistence'))
+//            ->where('user_id', $user->id)->first();
+//        //  use my profile - if i dont have one - give me the default
+//        $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
+//        $user->profile_id = $default_profile;
+//        $user->profile_unit_code = $user->user_unit_code;
+//        $user->profile_job_code = $user->job_code;
+//        $user->save();
+//
+//        //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
+//        $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.subsistence'))
+//            ->where('delegated_to', $user->id)
+//            ->where('config_status_id',  config('constants.active_state') );
+//        if ($profile_delegated->exists()) {
+//
+//            $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
+//            $user->profile_id = $default_profile;
+//            $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
+//            $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
+//            $user->save();
+//        }
     }
 
 

@@ -15,7 +15,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column " data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="{{route('datacenter-ca-home')}}" class="nav-link ">
+                    <a href="{{route('datacenter.ca.home')}}" class="nav-link ">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -23,34 +23,34 @@
 
                 <li class="nav-header">DATA CENTER CA</li>
                 <li class="nav-item">
-                    <a href="{{route('datacenter-ca-list', 'all')}}" class="nav-link ">
+                    <a href="{{route('datacenter.ca.list', 'all')}}" class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> All</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route( 'datacenter-ca-list', config('constants.data_center_ca_status.new_submission') ) }}" class="nav-link ">
+                    <a href="{{route( 'datacenter.ca.list', config('constants.data_center_ca_status.new_submission') ) }}" class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> New
                         </p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('datacenter-ca-list', 'very_critical')}}" class="nav-link ">
+                    <a href="{{route('datacenter.ca.list', 'very_critical')}}" class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> Very Critical
                         </p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route( 'datacenter-ca-list', 'critical' ) }}" class="nav-link ">
+                    <a href="{{route( 'datacenter.ca.list', 'critical' ) }}" class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> Critical
                         </p>
                     </a>
                 </li>
 {{--                <li class="nav-item">--}}
-{{--                    <a href="{{route( 'datacenter-ca-list', config('constants.data_center_ca_status.reject_submission') ) }}" class="nav-link ">--}}
+{{--                    <a href="{{route( 'datacenter.ca.list', config('constants.data_center_ca_status.reject_submission') ) }}" class="nav-link ">--}}
 {{--                        <i class="nav-icon fas fa-file"></i>--}}
 {{--                        <p> Rejected--}}
 {{--                        </p>--}}
@@ -58,7 +58,7 @@
 {{--                </li>--}}
                 <li class="nav-header">REPORTS</li>
                 <li class="nav-item">
-                    <a href="{{route('datacenter-ca-report')}}" class="nav-link ">
+                    <a href="{{route('datacenter.ca.report')}}" class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> Reports Export
                         </p>
@@ -67,7 +67,7 @@
 
                 <li class="nav-header">CONFIG</li>
                 <li class="nav-item">
-                    <a href="{{route('main-profile-delegation')}}" class="nav-link ">
+                    <a href="{{route('main.profile.delegation')}}" class="nav-link ">
                         <i class="nav-icon fas fa-calendar-alt"></i>
                         <p> Profile Delegation </p>
                     </a>

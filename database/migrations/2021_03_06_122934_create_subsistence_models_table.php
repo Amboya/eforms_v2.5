@@ -29,6 +29,7 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('profile')->nullable();
             $table->string('code_superior')->nullable();
             $table->integer('type')->nullable();
+            $table->integer('trip_id')->nullable();
             //
             $table->string('grade')->nullable();
             $table->string('ext_no')->nullable();
@@ -51,6 +52,7 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('trex_total_claim_amount')->nullable();
             $table->string('trex_deduct_advance')->nullable();
             $table->string('trex_net_amount_paid')->nullable();
+            $table->string('allocation_code')->nullable();
             //
             $table->string('allocation_code')->nullable();
             $table->string('total_amount')->nullable();
@@ -80,18 +82,14 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('expenditure_office_staff_no')->nullable();
             $table->string('expenditure_date')->nullable();
             //
-            $table->string('hod_code')->nullable();
-            $table->string('hod_unit')->nullable();
-            $table->string('ca_code')->nullable();
-            $table->string('ca_unit')->nullable();
-            $table->string('hrm_code')->nullable();
-            $table->string('hrm_unit')->nullable();
-            $table->string('expenditure_code')->nullable();
-            $table->string('expenditure_unit')->nullable();
-            $table->string('dr_code')->nullable();
-            $table->string('dr_unit')->nullable();
-            $table->string('audit_code')->nullable();
-            $table->string('audit_unit')->nullable();
+            $table->string('initiator_name')->nullable();
+            $table->string('initiator_staff_no')->nullable();
+            $table->string('initiator_date')->nullable();
+
+            $table->string('closed_by_name')->nullable();
+            $table->string('closed_by_staff_no')->nullable();
+            $table->string('closed_by_date')->nullable();
+
 
             $table->integer('created_by');
             $table->timestamps();

@@ -15,7 +15,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty-Cash : {{$category}}</h1>
+                    <h1 class="m-0 text-dark text-orange text-uppercase">Petty-Cash : <span class="text-green">{{$category}}</span></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -52,6 +52,7 @@
     <!-- Default box -->
         <div class="card">
             <form id="list_form"  action="{{route('petty.cash.approve.batch', $value)}}" method="post">
+                @csrf
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -73,7 +74,7 @@
                                                     </tr>
                         <table id="example1" class="table m-0">
                             {{--                                    @endif--}}
-                            <thead>
+                            <thead class="table text-white text-bold text-uppercase bg-gradient-green ">
                             <tr>
                                 <th></th>
                                 <th>Serial</th>
@@ -104,7 +105,11 @@
                                             @csrf
                                         </form>
                                     </td>
-                                    <td>{{$item->claimant_name}}</td>
+                                    <td>
+                                        <a href="{{route('main.user.show',$item->created_by)}}" class="text-dark" style="margin: 1px">
+                                            {{$item->claimant_name}}
+                                        </a>
+                                    </td>
                                     <td>ZMW {{ number_format($item->total_payment  - $item->change, 2)}}</td>
                                     <td><span
                                             class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
@@ -143,7 +148,17 @@
                                 </tr>
                             @endforeach
                             </tbody>
-
+                            <tfoot class="bg-gray-light">
+                            <tr>
+                                <td><b> </b></td>
+                                <td><b>Count : {{ number_format(sizeof($list ))}}</b></td>
+                                <td><b></b></td>
+                                <td><b>ZMW {{number_format(($list->sum('total_payment')- ($list->sum('change'))), 2)}}</b></td>
+                                <td><b></b></td>
+                                <td><b></b></td>
+                                <td><b></b></td>
+                            </tr>
+                            </tfoot>
                         </table>
                         @if(Auth::user()->type_id != config('constants.user_types.developer'))
                             {{--                            {!! $list->links() !!}--}}

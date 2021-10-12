@@ -22,6 +22,8 @@ class PhrisUserDetailsModel extends Model
         'con_wet_date',
         'name',
         'nrc',
+        'sex',
+        'mobile_no',
         'group_type',
         'jb_title',
         'grade',
@@ -33,6 +35,8 @@ class PhrisUserDetailsModel extends Model
         'cc_code',
         'staff_email',
         'job_code',
+        'station',
+        'affiliated_union',
     ] ;
 
 //    protected $with = [

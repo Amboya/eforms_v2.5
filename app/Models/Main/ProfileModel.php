@@ -24,6 +24,8 @@ class ProfileModel extends Model
         'created_by',
         'created_at',
         'updated_at',
+        'code_column',
+        'unit_column',
         'deleted_at',
     ] ;
 //    protected $with = [

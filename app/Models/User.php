@@ -18,6 +18,7 @@ use App\Models\Main\UserTypeModel;
 use App\Models\Main\UserUnitModel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Validator;
@@ -25,6 +26,8 @@ use Illuminate\Support\Facades\Validator;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -69,6 +72,8 @@ class User extends Authenticatable
         'user_region_id',
         'user_division_id',
         'user_directorate_id',
+        'station',
+        'affiliated_union',
     ];
 
     /**

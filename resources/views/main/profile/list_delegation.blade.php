@@ -82,12 +82,12 @@
                                 <td>{{$item->user_unit->user_unit_code ?? ""}}: {{$item->user_unit->user_unit_description ?? ""}}  </td>
                                 <td>{{$item->delegated_job_code}}</td>
                                 <td>{{$item->profile->name}} </td>
-                                <td><span
-                                        class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                <td>
+                                    <span class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                 </td>
                                 <td>{{$item->created_at}}</td>
                                 <td>{{$item->created_at->diffForHumans()}}</td>
-                                <td>{{ \Carbon\Carbon::parse($item->delegation_end)->diffForHumans()}}</td>
+                                <td>{{ $item->delegation_end }}</td>
                                 <td>
                                     <button class="btn btn-sm bg-gradient-gray float-left" style="margin: 1px"
                                             title="Delete"

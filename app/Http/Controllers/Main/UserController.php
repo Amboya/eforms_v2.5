@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DirectoratesModel;
 use App\Models\Main\DivisionsModel;
+use App\Models\Main\EFormModel;
 use App\Models\main\FunctionalUnitModel;
 use App\Models\Main\GradesModel;
 use App\Models\main\LocationModel;
@@ -13,6 +14,7 @@ use App\Models\main\PaypointModel;
 use App\Models\Main\PositionModel;
 use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\ProfileModel;
+use App\Models\Main\ProfilePermissionsModel;
 use App\Models\Main\RegionsModel;
 use App\Models\Main\UserTypeModel;
 use App\Models\Main\UserUnitModel;
@@ -46,9 +48,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $list = User::select('id','user_unit_id','positions_id','staff_no','user_unit_code','job_code','email','name','created_at','phone')
+        $search = "All";
+        $list = User::select('id','user_unit_id','con_st_code','positions_id','staff_no','user_unit_code','job_code','email','name','created_at','phone')
             ->get();
-        return view('main.users.index')->with(compact('list'));
+        return view('main.users.index')->with(compact('list', 'search'));
     }
 
     /**
@@ -85,11 +88,35 @@ class UserController extends Controller
         $user_types = UserTypeModel::all();
         $delegated_profiles = ProfileDelegatedModel::where('delegated_to', $user->id)
             ->where('config_status_id',  config('constants.active_state') )->get();
-        $user_unit_new = ConfigWorkFlow::select('id', 'user_unit_description', 'user_unit_code')->orderBy('user_unit_code')->get();
+        $user_unit_new = ConfigWorkFlow::select('id', 'user_unit_description', 'user_unit_code', 'user_unit_bc_code', 'user_unit_cc_code')->orderBy('user_unit_code')->get();
+
+        $responsible_units = HomeController::getUserResponsibleUnits($user);
+
+        $profiles = ProfilePermissionsModel::all();
+        $eforms = EFormModel::all();
 
         //return the view
-        return view('main.users.show')->with(compact('user_unit_new', 'user', 'user_types', 'delegated_profiles'));
+        return view('main.users.show')->with(compact('responsible_units','profiles', 'eforms', 'user_unit_new', 'user', 'user_types', 'delegated_profiles'));
     }
+
+    public function search(Request $request)
+    {
+        $search = $request->search;
+        $list = User::select('id','user_unit_id','con_st_code','positions_id','staff_no','user_unit_code','job_code','email','name','created_at','phone')
+           ->where('email', 'LIKE', "%{$search}%")
+               ->orWhere('name', 'LIKE', "%{$search}%")
+               ->orWhere('nrc', 'LIKE', "%{$search}%")
+               ->orWhere('staff_no', 'LIKE', "%{$search}%")
+               ->orWhere('user_unit_code', 'LIKE', "%{$search}%")
+               ->orWhere('contract_type', 'LIKE', "%{$search}%")
+               ->orWhere('con_st_code', 'LIKE', "%{$search}%")
+            ->orWhere('job_code', 'LIKE', "%{$search}%")
+            ->orWhere('phone', 'LIKE', "%{$search}%")
+               ->get();
+        return view('main.users.index')->with(compact('list', 'search'));
+    }
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -116,6 +143,7 @@ class UserController extends Controller
         $model->email = $request->email;
         $model->phone = $request->phone;
         $model->type_id = $request->user_type_id;
+
 //        $model->staff_no = $request->staff_no;
 //        $model->user_unit_id = $request->user_unit_id;
 //        $model->positions_id = $request->user_position_id;
@@ -143,9 +171,14 @@ class UserController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        User::destroy($id);
+        //log the activity
+        ActivityLogsController::store($request, "Deleting of User", "delete user", " user has been deleted from the system", $user->id );
+//        return Redirect::route('main.user')->with('message', 'Details for ' . $user->name . ' have been Deleted successfully');
+
     }
 
 
@@ -214,7 +247,7 @@ class UserController extends Controller
 
             //get the phirs details for this user
             $phirs_user_details = PhrisUserDetailsModel::where('con_per_no', $model->staff_no)
-                ->where('con_st_code', config('constants.phris_user_active'))
+               // ->where('con_st_code', config('constants.phris_user_active'))
                 ->first();
 
             //get the details

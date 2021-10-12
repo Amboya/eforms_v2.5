@@ -19,7 +19,7 @@ class EformApprovalsModel extends Model
     protected $fillable = [
         'profile',
         'staff_no',
-        'title',
+        'claimant_staff_no',
         'name',
         'reason',
         'action',
@@ -27,6 +27,7 @@ class EformApprovalsModel extends Model
         'action_status_id',
         'config_eform_id',
         'eform_id',
+        'eform_code',
 
         'created_by',
         'created_at',

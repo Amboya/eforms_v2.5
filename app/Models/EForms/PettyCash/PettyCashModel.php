@@ -2,10 +2,9 @@
 
 namespace App\Models\EForms\PettyCash;
 
+use App\Http\Controllers\Main\HomeController;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DirectoratesModel;
-use App\Models\Main\ProfileAssigmentModel;
-use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
 use App\Models\User;
@@ -100,67 +99,91 @@ class PettyCashModel extends Model
         'item',
     ];
 
+
     protected static function booted()
     {
         //check if authenticated user
         if (auth()->check()) {
-
-            //get the profile associated with petty cash, for this user
             $user = Auth::user();
-            //[1]  GET YOUR PROFILE
-            $profile_assignement = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('user_id', $user->id)->first();
-            //  use my profile - if i dont have one - give me the default
-            $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
-            $user->profile_id = $default_profile;
-            $user->profile_unit_code = $user->user_unit_code;
-            $user->profile_job_code = $user->job_code;
-            $user->save();
-
-            //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
-            $profile_delegated = ProfileDelegatedModel::
-            where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('delegated_to', $user->id)
-                ->where('config_status_id', config('constants.active_state'));
-            if ($profile_delegated->exists()) {
-                //
-                $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
-                $user->profile_id = $default_profile;
-                $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
-                $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
-                $user->save();
-            }
-
-            //[1] REQUESTER
-            //if you are just a requester, then only see your forms
             if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
+                //if you are just a requester, then only see your forms
                 static::addGlobalScope('staff_number', function (Builder $builder) {
                     $builder->where('claimant_staff_no', Auth::user()->staff_no);
                 });
             } else {
+                static::addGlobalScope('hod', function (Builder $builder) {
+                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.petty_cash'));
+                    $mine = $fdsf->pluck('user_unit_code')->toArray();
+                    $builder->WhereIn('user_unit_code', $mine);
 
-                //see forms for the
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_007')
-                    || $user->profile_id == config('constants.user_profiles.EZESCO_009')
-                    || $user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-                    static::addGlobalScope('ca', function (Builder $builder) {
-                        $builder->Where(Auth::user()->code_column, Auth::user()->profile_job_code);
-                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
-                    });
-
-                } //see forms for the
-                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')
-                    || $user->profile_id == config('constants.user_profiles.EZESCO_013')
-                    || $user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-                    static::addGlobalScope('security', function (Builder $builder) {
-                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
-                    });
-                }
+                });
             }
         }
-
     }
+
+
+
+//    protected static function booted()
+//    {
+//        //check if authenticated user
+//        if (auth()->check()) {
+//
+////            //get the profile associated with petty cash, for this user
+//            $user = Auth::user();
+////            //[1]  GET YOUR PROFILE
+////            $profile_assignement = ProfileAssigmentModel::
+////            where('eform_id', config('constants.eforms_id.petty_cash'))
+////                ->where('user_id', $user->id)->first();
+////            //  use my profile - if i dont have one - give me the default
+////            $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
+////            $user->profile_id = $default_profile;
+////            $user->profile_unit_code = $user->user_unit_code;
+////            $user->profile_job_code = $user->job_code;
+////            $user->save();
+////
+////            //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
+////            $profile_delegated = ProfileDelegatedModel::
+////            where('eform_id', config('constants.eforms_id.petty_cash'))
+////                ->where('delegated_to', $user->id)
+////                ->where('config_status_id', config('constants.active_state'));
+////            if ($profile_delegated->exists()) {
+////                //
+////                $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
+////                $user->profile_id = $default_profile;
+////                $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
+////                $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
+////                $user->save();
+////            }
+//
+////            [1] REQUESTER
+////            if you are just a requester, then only see your forms
+//            if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
+//                static::addGlobalScope('staff_number', function (Builder $builder) {
+//                    $builder->where('claimant_staff_no', Auth::user()->staff_no);
+//                });
+//            } else {
+//
+//                //see forms for the
+//                if ($user->profile_id == config('constants.user_profiles.EZESCO_007')
+//                    || $user->profile_id == config('constants.user_profiles.EZESCO_009')
+//                    || $user->profile_id == config('constants.user_profiles.EZESCO_004')) {
+//                    static::addGlobalScope('ca', function (Builder $builder) {
+//                        $builder->Where(Auth::user()->code_column, Auth::user()->profile_job_code);
+//                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
+//                    });
+//
+//                } //see forms for the
+//                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')
+//                    || $user->profile_id == config('constants.user_profiles.EZESCO_013')
+//                    || $user->profile_id == config('constants.user_profiles.EZESCO_011')) {
+//                    static::addGlobalScope('security', function (Builder $builder) {
+//                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
+//                    });
+//                }
+//            }
+//        }
+//
+//    }
 
 
     //RELATIONSHIP
@@ -194,5 +217,6 @@ class PettyCashModel extends Model
     {
         return $this->hasMany(PettyCashItemModel::class, 'eform_petty_cash_id', 'id');
     }
+
 
 }

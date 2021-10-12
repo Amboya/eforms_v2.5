@@ -89,6 +89,8 @@ class ConfigWorkFlowController extends Controller
                     "security_unit" => $item->security_unit,
                     "transport_code" => $item->transport_code,
                     "transport_unit" => $item->transport_unit,
+                    "sheq_code" => $item->sheq_code,
+                    "sheq_unit" => $item->sheq_unit,
                 ]
             );
 
@@ -225,8 +227,6 @@ class ConfigWorkFlowController extends Controller
         //log the activity
         ActivityLogsController::store($request, "Creating of User Unit", "update", " user unit created", json_encode($model));
         return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Created successfully');
-
-
     }
 
     /**
@@ -235,9 +235,10 @@ class ConfigWorkFlowController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ConfigWorkFlow $configWorkFlow)
     {
-        //
+      //  dd($configWorkFlow);
+        return view('main.user_unit.show')->with(compact('configWorkFlow'));
     }
 
     /**

@@ -5,7 +5,7 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{route('main-home')}}" class="nav-link">E-Forms Dashboard</a>
+            <a href="{{route('main.home')}}" class="nav-link">E-Forms Dashboard</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="#" class="nav-link">Contact</a>
@@ -43,16 +43,16 @@
             <a class="nav-link" data-toggle="dropdown" href="#">
                 {{Auth::user()->name}}</a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <a href="{{ route('main-user-show',Auth::user()->id ) }}"  class="dropdown-item">
+                <a href="{{ route('main.user.show',Auth::user()->id ) }}"  class="dropdown-item">
                     <i class="fas fa-user-circle mr-2"></i> My Profile
                 </a>
                 <div class="dropdown-divider"></div>
                 <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                                     document.getElementById('logout-form_nav_bar').submit();">
                     <i class="fas fa-sign-out-alt mr-2"></i> Logout
                 </a>
 
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                <form id="logout-form_nav_bar" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
                 </form>
             </div>

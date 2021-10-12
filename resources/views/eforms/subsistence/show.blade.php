@@ -16,7 +16,17 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Subsistence Claim {{ $form->code }} </h1>
+                    <h1 class="m-0 text-dark text-orange text-uppercase">Subsistence Claim <span class="text-green">{{ $form->code }}</span> </h1>
+                    <a href="{{ route('logout') }}"
+                       onclick="event.preventDefault();
+                           document.getElementById('show-form'+{{$trip->id}}).submit();">
+                        <span class="text-orange text-bold">TRIP CODE :  <span class="text-green "> {{ $trip->code }}</span></span>
+                    </a>
+                    <form id="show-form{{$trip->id}}"
+                          action="{{ route('trip.show', $trip->id) }}"
+                          method="POST" class="d-none">
+                        @csrf
+                    </form>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -61,8 +71,8 @@
         <!-- Default box -->
             <div class="card">
                 <div class="card-body">
-
-                    <span class="badge badge-{{$form->status->html ?? "default"}}">{{$form->status->name ?? "none"}}</span>
+                    <span
+                        class="badge badge-{{$form->status->html ?? "default"}}">{{$form->status->name ?? "none"}}</span>
                     <input type="hidden" name="id" value="{{ $form->id}}" readonly required>
                     <input type="hidden" name="sig_date" value=" {{date('Y-m-d H:i:s')}}" readonly required>
 
@@ -124,7 +134,7 @@
                                 <div class="col-6"><label>Cost Center:</label></div>
                                 <div class="col-6">
                                     <input value="{{$form->cost_center }}" type="cost_center"
-                                           readonly  name="date" readonly class="form-control">
+                                           readonly name="date" readonly class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -141,7 +151,8 @@
                             <div class="row">
                                 <div class="col-6"><label>Station:</label></div>
                                 <div class="col-6">
-                                    <input value="{{$form->station }} " type="text" name="station" readonly class="form-control">
+                                    <input value="{{$form->station }} " type="text" name="station" readonly
+                                           class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -169,111 +180,125 @@
                         <table
                             class="table table-bordered mt-2 mb-4">
                             <tr style="text-align: center" width="w-100">
-                                <td width="w-100"><strong>A. ABSENCE CLAIM</strong></td>
+                                <td colspan="5" width="w-100"><strong class="text-orange">A. ABSENCE CLAIM</strong></td>
                             </tr>
                             <tr>
-                                <td>Period of Absence Date</td>
-                                <td>From</td>
+                                <td class="text-green text-bold ">Period of Absence Date</td>
+                                <td class="text-green">From</td>
                                 <td><input readonly id="absc_absent_from" name="absc_absent_from" class="form-control"
-                                           type="text" value="{{$form->absc_absent_from }}"></td>
-                                <td>To</td>
-                                <td><input readonly id="absc_absent_to" name="absc_absent_to" class="form-control" type="text" value="{{$form->absc_absent_to }}">
+                                           type="text"
+                                           value="{{ Carbon::parse(  $form->absc_absent_from )->isoFormat('Do MMM Y') }}">
+                                </td>
+                                <td class="text-green">To</td>
+                                <td><input readonly id="absc_absent_to" name="absc_absent_to" class="form-control"
+                                           type="text"
+                                           value="{{  Carbon::parse(  $form->absc_absent_to )->isoFormat('Do MMM Y')  }}">
                                 </td>
                             </tr>
                             <tr>
-                                <td>Place visited and reason for journey</td>
-                                <td>Place</td>
-                                <td><textarea readonly name="absc_visited_place" class="form-control">{{$form->absc_visited_place}}</textarea></td>
-                                <td>Reason</td>
-                                <td><textarea readonly name="absc_visited_place_reason" class="form-control">{{$form->absc_visited_place_reason}}</textarea></td>
+                                <td class="text-green  ">Place visited and reason for journey</td>
+                                <td class="text-green">Place</td>
+                                <td><textarea readonly name="absc_visited_place"
+                                              class="form-control">{{$form->absc_visited_place}}</textarea></td>
+                                <td class="text-green">Reason</td>
+                                <td><textarea readonly name="absc_visited_place_reason"
+                                              class="form-control">{{$form->absc_visited_reason}}</textarea></td>
                             </tr>
                             <tr>
-                                <td>Allowance Claim per Night</td>
-                                <td>ZMW</td>
+                                <td class="text-green  ">Allowance Claim per Night</td>
+                                <td class="text-green">ZMW</td>
                                 <td><input id="absc_allowance_per_night" name="absc_allowance_per_night"
                                            class="form-control" type="text" value="{{$form->absc_allowance_per_night}}"
                                            readonly></td>
 
-                                <td><strong>Total Amount</strong></td>
-                                <td>  <input readonly id="absc_amount1"  class="form-control" name="absc_amount" value="ZMW {{number_format($form->total,2)}}" type="text"></td>
+                                <td class="text-green"><strong>Total Amount</strong></td>
+                                <td class="text-green"><input readonly id="absc_amount1" class="form-control"
+                                                              name="absc_amount"
+                                                              value="ZMW {{number_format($form->total,2)}}" type="text">
+                                </td>
 
                             </tr>
                         </table>
                     </div>
 
+                    <div class="row">
+                        <table
+                            class="table table-bordered mt-2 mb-4">
+                            <tr style="text-align: center" width="w-100">
+                                <td colspan="2" width="w-100" class="text-orange"><strong> AMOUNT OF CLAIM FOR
+                                        SUBSISTENCE </strong></td>
+                            </tr>
+                            <tr style="text-align: center" width="w-100">
+                                <td colspan="2" width="w-100" class="text-orange"><strong>B. TRAVELLING
+                                        EXPENSE </strong></td>
+                            </tr>
+                            <tr>
+                                <td class="text-green text-bold "><strong>Total of Attached Claim (If Any) ZMW:</strong></td>
+                                <td>
+                                    <input readonly id="absc_absent_to" name="absc_absent_to" class="form-control"
+                                           type="text"
+                                           value="ZMW {{number_format($form->trex_total_attached_claim ?? 0,2) }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-green  ">Total Amount of Claim (A+B):</td>
+                                <td>
+                                    <input readonly id="absc_absent_to" name="absc_absent_to" class="form-control"
+                                           type="text"
+                                           value="ZMW {{number_format(($form->trex_total_attached_claim  + $form->total),2)}}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-green  ">Deduct any advance received against these expenses:</td>
+                                <td>
+                                    <input readonly id="absc_amount1" class="form-control" name="absc_amount"
+                                           value="ZMW {{number_format($form->trex_deduct_advance ?? 0,2)}}" type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-green  ">Net Amount to be paid:</td>
+                                <td>
+                                    <input readonly id="absc_amount1" class="form-control" name="absc_amount"
+                                           value="ZMW {{number_format( (($form->trex_total_attached_claim  + $form->total) - ($form->trex_deduct_advance ?? 0)),2)}}"
+                                           type="text">
+                                </td>
+                            </tr>
 
-                    <div class="row mb-1 mt-4">
-                        <div class="col-2">
-                            <label>Name of Claimant:</label>
-                        </div>
-                        <div class="col-3">
-                            <input type="text" name="claimant_name" class="form-control"
-                                   value="{{$form->claimant_name}}" readonly required></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"
-                                                  value="{{$form->claimant_staff_no}}" readonly required></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="date_claimant" class="form-control"
-                                                  value="{{$form->claim_date}}" readonly required>
-                        </div>
+                        </table>
                     </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>Claim Authorised by:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->authorised_by ?? "" }}"
-                                                  name="claim_authorised_by" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->authorised_staff_no  ?? "" }}"
-                                                  name="sig_of_authorised" readonly class="form-control">
-                        </div>
-                        <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->authorised_date ?? "" }}"
-                                                  name="authorised_date" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>Station Manager:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->station_manager ?? "" }}"
-                                                  name="claim_authorised_by" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->station_manager_staff_no  ?? "" }}"
-                                                  name="sig_of_authorised" readonly class="form-control">
-                        </div>
-                        <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->station_manager_date ?? "" }}"
-                                                  name="authorised_date" readonly class="form-control">
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>HR:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->hr_office ?? "" }}"
-                                                  name="station_manager" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->hr_office_staff_no ?? "" }}"
-                                                  name="sig_of_station_manager" readonly
-                                                  class="form-control"></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->hr_date ?? "" }}"
-                                                  name="manager_date" readonly class="form-control"></div>
+                    <div class="row">
+                        <table
+                            class="table table-bordered mt-2 mb-4">
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-3"><label class="text-green">Amount ZMW:</label></div>
+                                        <div class="col-9">
+                                            <input
+                                                value="ZMW {{ number_format( (($form->trex_total_attached_claim  + $form->total) - ($form->trex_deduct_advance ?? 0)),2)  }}"
+                                                type="text" name="date" readonly
+                                                class="form-control  text-bold ">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-3"><label class="text-green">Allocation Code:</label></div>
+                                        <div class="col-9">
+                                            <input value="{{$form->allocation_code ?? " " }}" type="text" name="date"
+                                                   readonly
+                                                   class="form-control  text-bold">
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
                     </div>
 
-                    <div class="row mb-4">
-                        <div class="col-2"><label>Accountant:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->chief_accountant ?? "" }}"
-                                                  name="accountant" readonly class="form-control"></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->chief_accountant_staff_no ?? "" }}"
-                                                  name="sig_of_accountant" readonly class="form-control">
-                        </div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->chief_accountant_date ?? "" }}"
-                                                  name="accountant_date" readonly class="form-control">
-                        </div>
-                    </div>
-
-                    <p><b>Note:</b> The system reference number is mandatory and is from
+                    <p><b>Note:</b> The system reference number is <span
+                            class="text-primary font-weight-bold">mandatory</span>
+                        and is from
                         any of the systems at ZESCO such as a work request number from PEMS, Task
                         number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.
                         giving rise to the expenditure</p>
@@ -283,11 +308,11 @@
             <!-- /.card -->
 
             {{-- FINANCIAL POSTINGS  --}}
-            @if(  ($form->config_status_id >= config('constants.petty_cash_status.closed') )
+            @if(  ($form->config_status_id == config('constants.subsistence_status.closed') )
                )
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-center">Financial Accounts Postings</h4>
+                        <h4 class="card-title text-bold text-orange text-capitalize">Financial Accounts Postings</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -295,7 +320,7 @@
                                 <div class="col-lg-12 ">
                                     <TABLE class="table">
                                         <thead>
-                                        <TR>
+                                        <TR class="text-green">
                                             <TD>Account</TD>
                                             <TD>Debited Amount</TD>
                                             <TD>Credited Amount</TD>
@@ -309,11 +334,12 @@
                                                            value="{{$item->account}}"
                                                            class="form-control amount" readonly>
                                                 </TD>
-                                                <TD><input type="number" id="credited_amount"
+                                                <TD><input type="text" id="credited_amount"
                                                            value="{{ number_format($item->creditted_amount ?? 0,2) }}"
                                                            class="form-control amount" readonly>
                                                 </TD>
-                                                <TD><input type="number" value="{{ number_format($item->debitted_amount ?? 0, 2) }}"
+                                                <TD><input type="text"
+                                                           value="{{ number_format($item->debitted_amount ?? 0, 2) }}"
                                                            class="form-control amount" readonly>
                                                 </TD>
                                             </TR>
@@ -331,10 +357,10 @@
                 </div>
             @endif
             {{-- NEXT PERSONS TO ACT --}}
-            @if(  $form->config_status_id != config('constants.petty_cash_status.closed')   )
+            @if(  $form->config_status_id != config('constants.subsistence_status.audited')   )
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Next Person/s to Act</h4>
+                        <h4 class="card-title text-bold text-orange text-capitalize">Next Person/s to Act</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -345,13 +371,14 @@
                                     <span class="font-weight-bold">Name:</span><span>{{$item->name}}</span><br>
                                     <span class="font-weight-bold">Phone:</span><span>{{$item->phone}}</span><br>
                                     <span class="font-weight-bold">Email:</span><span>{{$item->email}}</span><br>
+                                    <span class="font-weight-bold">Test:</span><span>{{$item->staff_no}}</span><br>
                                 </div>
                             @endforeach
                         </div>
                     </div>
                     <div class="card-footer">
                         <span class="font-weight-bold">Next Action:</span><span> {{$form->status->other}}</span>
-                        @if ($form->status->id == config('constants.petty_cash_status.security_approved'))
+                        @if ($form->status->id == config('constants.subsistence_status.security_approved'))
                             <span class="font-weight-bold text-red"> Note:</span><span class="text-red"> Export Data to Excel and Import in Oracle Financial's using ADI</span>
                         @endif
                     </div>
@@ -361,25 +388,26 @@
             {{--  QUOTATION FILES--}}
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Quotation Files</h4>
+                    <h4 class="card-title text-bold text-orange text-capitalize">Attached Files</h4>
                     @if( ($user->type_id == config('constants.user_types.developer')  || (
                                  $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                                &&  $user->id  == $form->created_by )
                              )
                                )
                         <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
-                           data-target="#modal-add-quotation">Add File</a>
+                           data-target="#modal-add-attached_file">Add File</a>
                     @endif
                 </div>
                 <div class="card-body" style="width:100%;  ">
                     <div class="row">
-                        @foreach($quotations as $item)
-                            <div class="col-12">
-                                <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_quotation/'.$item->name)}}"
-                                        style="width:100%; " title="{{$item->name}}"></iframe>
-                                <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
+                        @foreach($attached_files as $item)
+                            <div class="col-6">
+                                <iframe id="{{$item->id}}" src="{{asset('storage/subsistence_files/'.$item->name)}}"
+                                        style="width:100%; height: 1000px " title="{{$item->name}}">
+                                </iframe>
+                                <span >Size:{{number_format( $item->file_size, 2) }}MB  Name: {{$item->name}} </span>
                                 <span> | </span>
-                                <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}">View</a>
+                                <a href="{{asset('storage/subsistence_files/'.$item->name)}}">View</a>
                                 @if( ($user->type_id == config('constants.user_types.developer')  || (
                                     $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                                   &&  $user->id  == $form->created_by )
@@ -388,7 +416,17 @@
                                     <span> | </span>
                                     <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
                                        data-target="#modal-change">Edit</a>
+
                                 @endif
+{{--                                <span> | </span>--}}
+{{--                                <span  onclick="ZoomiframeScale() " >--}}
+{{--                                <i class="fa fa-plus" > </i>--}}
+{{--                                </span >--}}
+{{--                                <span> | </span>--}}
+{{--                                <span onclick="ZoomOutIframe() ">--}}
+{{--                                    <i class="fa fa-minus" > </i>--}}
+{{--                                </span>--}}
+
                             </div>
                         @endforeach
                     </div>
@@ -397,55 +435,11 @@
                 </div>
             </div>
 
-            {{--  RECEIPT FILES - ONLY WHEN FORM HAS BEEN CLOSED--}}
-            @if(  $form->config_status_id == config('constants.petty_cash_status.closed')
-            ||  $form->config_status_id == config('constants.petty_cash_status.audited')
-            ||  $form->config_status_id == config('constants.petty_cash_status.queried')    )
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Receipt Files</h4>
-                        @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
-              || ($user->type_id == config('constants.user_types.developer'))
-            &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
-            ($form->config_status_id == config('constants.petty_cash_status.closed')) ) )    )
-                            <a class="float-right" href="#" data-toggle="modal" data-sent_data="{{$form}}"
-                               data-target="#modal-add-receipt">Add File</a>
-                        @endif
-                    </div>
-                    <div class="card-body" style="width:100%;  ">
-                        <div class="row">
-                            @foreach($receipts as $item)
-                                <div class="col-12">
-                                    <iframe id="{{$item->id}}"
-                                            src="{{asset('storage/petty_cash_receipt/'.$item->name)}}"
-                                            style="width:100%; " title="{{$item->name}}"></iframe>
-                                    <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
-                                    <span> | </span>
-                                    <a href="{{asset('storage/petty_cash_receipt/'.$item->name)}}">View</a>
-
-                                    @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                             &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
-                           || ($user->type_id == config('constants.user_types.developer'))  )
-                         &&  ( ($form->config_status_id == config('constants.petty_cash_status.queried')) ||
-                         ($form->config_status_id == config('constants.petty_cash_status.closed'))  )    )
-                                        <span> | </span>
-                                        <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
-                                           data-target="#modal-change">Edit</a>
-                                    @endif
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                    </div>
-                </div>
-            @endif
 
             {{--  FORM PPROVALS--}}
             <div class="card ">
                 <div class="card-header">
-                    <h4 class="card-title">Approvals</h4>  <span
+                    <h4 class="card-title text-bold text-orange text-capitalize">Approvals</h4>  <span
                         class="badge badge-secondary right ml-2">{{$approvals->count()}}</span>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -456,7 +450,7 @@
                 <div class="card-body">
                     <div class="col-lg-12 ">
                         <TABLE id="dataTable" class="table">
-                            <TR bgcolor="#f5f5f5">
+                            <TR class="text-white text-bold text-uppercase bg-gradient-green">
                                 <TD>Name</TD>
                                 <TD>Man No</TD>
                                 <TD>Action</TD>
@@ -486,7 +480,7 @@
                 <div class="card-footer">
                     {{--  CLAIMANT EDIT--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
+                         &&  $form->config_status_id == config('constants.subsistence_status.new_application')
                          &&  $user->id  == $form->created_by)
                         <div class="">
                             <hr>
@@ -524,7 +518,7 @@
 
                     {{--  HOD APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.new_application')
+                         &&  $form->config_status_id == config('constants.trip_status.trip_authorised')
                          &&  $form->user_unit->hod_code == $user->profile_job_code
                          &&  $form->user_unit->hod_unit == $user->profile_unit_code
                       )
@@ -562,9 +556,52 @@
                         </div>
                     @endif
 
+                    @if($departmental)
+                        {{-- DEPARTMENTAL HR APPROVAL--}}
+                        @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
+                             &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')
+                             &&  $form->user_unit->hrm_code == $user->profile_job_code
+                             &&  $form->user_unit->hrm_unit == $user->profile_unit_code
+                         )
+                            <div class="">
+                                <hr>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="row">
+                                            <div class="col-1">
+                                                <label class="form-control-label">Reason</label>
+                                            </div>
+                                            <div class="col-11">
+                                                <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 text-center ">
+                                        <div id="divSubmit_show">
+                                            <button id="btnSubmit_approve" type="submit" name="approval"
+                                                    class="btn btn-outline-success mr-2 p-2  "
+                                                    value='Approved'>APPROVE
+                                            </button>
+                                            <button id="btnSubmit_reject" type="submit" name="approval"
+                                                    class="btn btn-outline-danger ml-2 p-2  "
+                                                    value='Rejected'>REJECT
+                                            </button>
+                                        </div>
+                                        <div id="divSubmit_hide">
+                                            <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                    value='Approved'>Processing. Please wait...
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+
+
                     {{--  HR APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.hod_approved')
+                         &&  $form->config_status_id == config('constants.subsistence_status.hod_approved')
                          &&  $form->user_unit->hrm_code == $user->profile_job_code
                          &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                      )
@@ -602,9 +639,50 @@
                         </div>
                     @endif
 
+
+                    {{--  SNR MANAGER--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
+                         &&  $form->config_status_id == config('constants.subsistence_status.hr_approved')
+                         &&  $form->user_unit->dm_code == $user->profile_job_code
+                         &&  $form->user_unit->dm_unit == $user->profile_unit_code
+                        )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>APPROVE
+                                        </button>
+                                        <button id="btnSubmit_reject" type="submit" name="approval"
+                                                class="btn btn-outline-danger ml-2 p-2  "
+                                                value='Rejected'>REJECT
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     {{--  CHIEF ACCOUNTANT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.hr_approved')
+                         &&  $form->config_status_id == config('constants.subsistence_status.hr_approved')
                          &&  $form->user_unit->ca_code == $user->profile_job_code
                          &&  $form->user_unit->ca_unit == $user->profile_unit_code
                         )
@@ -644,12 +722,24 @@
 
                     {{--  FUNDS DISBURSEMNET APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.chief_accountant')
+                         &&  $form->config_status_id == config('constants.subsistence_status.chief_accountant')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
+                            <div class="row">
+                                    <div class="col-1">
+                                        <label class="form-control-label">Allocation Code</label>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <input value=" " type="text" id="allocation_code"
+                                                   name="allocation_code"
+                                                   class="form-control text-orange text-bold">
+                                        </div>
+                                    </div>
+                                </div>
                             <h5 class="text-center">Please Update the Accounts </h5>
-                            <h6 class="text-center">(Total Amount : ZMW {{$form->total_payment}}) </h6>
+                            <h6 class="text-center">(Total Amount : ZMW {{$form->absc_amount}}) </h6>
                             <div class="col-lg-12 grid-margin stretch-card">
                                 <div class="table-responsive">
                                     <div class="col-lg-12 ">
@@ -662,42 +752,43 @@
                                                             <div class="form-group">
                                                                 <input list="items_list1" type="text"
                                                                        name="account_items[]"
+                                                                       value="Place Visited: {{$form->absc_visited_place ?? ""}}. Reason: {{$form->absc_visited_reason ?? ""}}. Number of Days:{{$form->getNumdaysAttribute() ?? ""}} days. "
                                                                        class="form-control amount"
                                                                        placeholder="Select Item/s   "
                                                                        id="account_items1">
-                                                                <datalist id="items_list1">
-                                                                    @foreach($form->item as $item)
-                                                                        <option>{{$item->name}} : (ZMK {{$item->amount}}
-                                                                            )
-                                                                        </option>
-                                                                    @endforeach
-                                                                </datalist>
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    {{--                                                </TD>--}}
-                                                    {{--                                                <TD>--}}
                                                     <div class="row">
                                                         <div class="col-3">
                                                             <select name="credited_account[]" id="credited_account"
                                                                     required
                                                                     class="form-control amount">
-                                                                @foreach($accounts as $account)
-                                                                    @if($account->id  ==  config('constants.petty_cash_account_id')  )
-                                                                        <option
-                                                                            value="{{$account->code}}">{{$account->name}}
-                                                                            :{{$account->code}}</option>
-                                                                    @endif
-                                                                @endforeach
+                                                                @if($form->user->affiliated_union  == null)
+                                                                    <option
+                                                                        value="{{$accounts->where('id', config('constants.non_rep_subsistence_account_id'))->first()->code}}">
+                                                                        {{$accounts->where('id', config('constants.non_rep_subsistence_account_id'))->first()->name}}
+                                                                        :{{$accounts->where('id', config('constants.non_rep_subsistence_account_id'))->first()->code}}
+                                                                    </option>
+                                                                @endif
+
+                                                                @if($form->user->affiliated_union  != null)
+                                                                    <option
+                                                                        value="{{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->code}}">
+                                                                        {{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->name}}
+                                                                        :{{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->code}}
+                                                                    </option>
+                                                                @endif
+
                                                             </select>
                                                         </div>
-                                                        {{--                                                </TD>--}}
-                                                        {{--                                                <TD>--}}
+
                                                         <div class="col-3">
                                                             <input type="number" id="credited_amount"
                                                                    name="credited_amount[]"
-                                                                   onchange="getvalues()" step="any" class="form-control amount"
+                                                                   onchange="getvalues()" step="any"
+                                                                   class="form-control amount"
                                                                    placeholder=" Amount [ZMK]" required>
                                                         </div>
                                                         {{--                                                </TD>--}}
@@ -742,7 +833,7 @@
                                 <textarea hidden class="form-control" rows="2" name="reason" required> Funds Disbursement</textarea>
                                 <div id="submit_not_possible" class="col-12 text-center">
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
-                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
+                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->absc_amount}}
                                                 )</strong>
                                    </span>
                                 </div>
@@ -753,24 +844,15 @@
                                                     class="btn btn-outline-success mr-2 p-2  "
                                                     value='Approved'>FUNDS DISBURSED
                                             </button>
-                                            <button style="display: none" id="btnSubmit_reject" type="submit"
-                                                    name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Rejected'>FUNDS DISBURSED
+                                            <button id="btnSubmit_reject" type="submit" name="approval"
+                                                    class="btn btn-outline-danger ml-2 p-2  "
+                                                    value='Rejected'>REJECT
                                             </button>
                                         </div>
                                         <div id="divSubmit_hide">
                                             <button disabled class="btn btn-outline-success mr-2 p-2  "
                                                     value='Approved'>Processing. Please wait...
                                             </button>
-                                            {{--                                            <button  disabled--}}
-                                            {{--                                                     class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                     value='Approved'>FUNDS DISBURSED--}}
-                                            {{--                                            </button>--}}
-                                            {{--                                            <button style="display: none" disabled--}}
-                                            {{--                                                    class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                    value='Rejected'>FUNDS DISBURSED--}}
-                                            {{--                                            </button>--}}
                                         </div>
 
                                     </div>
@@ -782,7 +864,7 @@
 
                     {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.funds_disbursement')
+                         &&  $form->config_status_id == config('constants.subsistence_status.funds_disbursement')
                          &&  $form->claimant_staff_no == $user->staff_no
                           )
                         <div class="">
@@ -792,11 +874,6 @@
                                           required> Funds Received</textarea>
 
                                 <div class="col-12 text-center ">
-                                    {{--                                    <button id="btnSubmit_approve" type="submit" name="approval"--}}
-                                    {{--                                            class="btn btn-outline-success mr-2 p-2  "--}}
-                                    {{--                                            value='Approved'>FUNDS RECEIVED--}}
-                                    {{--                                    </button>--}}
-
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
@@ -804,22 +881,14 @@
                                         </button>
                                         <button style="display: none" id="btnSubmit_reject" type="submit"
                                                 name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Rejected'>FUNDS RECEIVED
+                                                class="btn btn-outline-danger mr-2 p-2  "
+                                                value='Rejected'>FUNDS NOT RECEIVED
                                         </button>
                                     </div>
                                     <div id="divSubmit_hide">
                                         <button disabled class="btn btn-outline-success mr-2 p-2  "
                                                 value='Approved'>Processing. Please wait...
                                         </button>
-                                        {{--                                        <button  disabled--}}
-                                        {{--                                                 class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                 value='Approved'>FUNDS RECEIVED--}}
-                                        {{--                                        </button>--}}
-                                        {{--                                        <button style="display: none" disabled--}}
-                                        {{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                value='Rejected'>FUNDS RECEIVED--}}
-                                        {{--                                        </button>--}}
                                     </div>
                                 </div>
                             </div>
@@ -828,7 +897,7 @@
 
                     {{--  SECURITY APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_013')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.funds_acknowledgement')
+                         &&  $form->config_status_id == config('constants.subsistence_status.funds_acknowledgement')
                          &&  $form->user_unit->security_unit == $user->profile_unit_code
                         )
                         <div class="">
@@ -845,10 +914,6 @@
                                     </div>
                                 </div>
                                 <div class="col-2 text-center ">
-                                    {{--                                    <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
-                                    {{--                                            value='Approved'>APPROVE RECEIPTS--}}
-                                    {{--                                    </button>--}}
-
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
@@ -864,14 +929,6 @@
                                         <button disabled class="btn btn-outline-success mr-2 p-2  "
                                                 value='Approved'>Processing. Please wait...
                                         </button>
-                                        {{--                                        <button  disabled--}}
-                                        {{--                                                 class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                 value='Approved'>APPROVE RECEIPTS--}}
-                                        {{--                                        </button>--}}
-                                        {{--                                        <button style="display: none" disabled--}}
-                                        {{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                value='Rejected'>APPROVE RECEIPTS--}}
-                                        {{--                                        </button>--}}
                                     </div>
 
                                 </div>
@@ -881,7 +938,7 @@
 
                     {{--  RECEIPT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.security_approved')
+                         &&  $form->config_status_id == config('constants.subsistence_status.security_approved')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
@@ -894,7 +951,8 @@
                                         <div class="col-8">
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="number" step="any" onchange="showChange()" class="form-control"
+                                                    <input type="number" step="any" onchange="showChange()"
+                                                           class="form-control"
                                                            name="change" id="change" required>
                                                 </div>
                                             </div>
@@ -999,14 +1057,6 @@
                                             <button disabled class="btn btn-outline-success mr-2 p-2  "
                                                     value='Approved'>Processing. Please wait...
                                             </button>
-                                            {{--                                            <button  disabled--}}
-                                            {{--                                                     class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                     value='Approved'>CLOSE subsistence.-}}
-                                            {{--                                            </button>--}}
-                                            {{--                                            <button style="display: none" disabled--}}
-                                            {{--                                                    class="btn btn-outline-success mr-2 p-2  "--}}
-                                            {{--                                                    value='Rejected'>CLOSE subsistence.-}}
-                                            {{--                                            </button>--}}
                                         </div>
                                     </div>
                                 </div>
@@ -1016,7 +1066,7 @@
 
                     {{--  AUDIT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
-                        &&  $form->config_status_id == config('constants.petty_cash_status.closed')
+                        &&  $form->config_status_id == config('constants.subsistence_status.closed')
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
@@ -1056,7 +1106,7 @@
 
                     {{--  QUERIED RESOLUTION--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.petty_cash_status.queried')
+                         &&  $form->config_status_id == config('constants.subsistence_status.queried')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                         )
                         <div class="">
@@ -1117,7 +1167,7 @@
                 </div>
                 <!-- form start -->
                 <form id="change_form" method="post"
-                      action="{{route('attached-file-change')}}"   enctype="multipart/form-data">
+                      action="{{route('attached.file.change')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1154,7 +1204,7 @@
     <!-- /.CHANGE modal -->
 
     <!-- ADD MODAL-->
-    <div class="modal fade" id="modal-add-quotation">
+    <div class="modal fade" id="modal-add-attached_file">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1166,7 +1216,7 @@
 
                 <!-- form start -->
                 <form id="qoutation_form" method="post"
-                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
+                      action="{{route('attached.file.add')}} " enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1209,8 +1259,8 @@
                     </button>
                 </div>
                 <!-- form start -->
-                <form id="receipt_form"  method="post"
-                      action="{{route('attached-file-add')}} "  enctype="multipart/form-data">
+                <form id="receipt_form" method="post"
+                      action="{{route('attached.file.add')}} " enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -1220,7 +1270,7 @@
                                     <label>Add File</label>
                                     <input type="file" class="form-control" id="add_file2" name="add_file"
                                            placeholder="Enter profile name" required>
-                                    <input hidden  class="form-control" id="item_type2" name="file_type"
+                                    <input hidden class="form-control" id="item_type2" name="file_type"
                                            placeholder="Enter profile name" required>
                                     <input hidden class="form-control" id="form_type2" name="form_type"
                                            placeholder="Enter profile name" required>
@@ -1276,6 +1326,11 @@
         });
 
 
+        //ROUND OFF FUNCTION
+        Number.prototype.round = function(places) {
+            return +(Math.round(this + "e+" + places)  + "e-" + places);
+        }
+
         function getvalues() {
             var inps = document.getElementsByName('credited_amount[]');
             var debiteds = document.getElementsByName('debited_amount[]');
@@ -1283,6 +1338,7 @@
             for (var i = 0; i < inps.length; i++) {
                 var inp = inps[i];
                 total = total + parseFloat(inp.value || 0);
+                total =  total.round(2);
 
                 //get the related field
                 var debited = debiteds[i];
@@ -1290,15 +1346,15 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var total_payment = {!! json_encode($form->total_payment) !!};
+            var absc_amount = {!! json_encode($form->absc_amount) !!};
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to total_payment
-                if (total == total_payment) {
+                //check if petty cash accounts is equal to absc_amount
+                if (total == absc_amount) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
-                } else if (total < total_payment) {
+                } else if (total < absc_amount) {
                     $('#submit_not_possible').show();
                     $('#submit_possible').hide();
                 } else {
@@ -1317,6 +1373,7 @@
             for (var i = 0; i < inps.length; i++) {
                 var inp = inps[i];
                 total = total + parseFloat(inp.value || 0);
+                total =  total.round(2);
 
                 //get the related field
                 var debited = debiteds[i];
@@ -1324,15 +1381,15 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var total_payment = {!! json_encode($form->total_payment) !!};
+            var absc_amount = {!! json_encode($form->absc_amount) !!};
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to total_payment
-                if (total == total_payment) {
+                //check if petty cash accounts is equal to absc_amount
+                if (total == absc_amount) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
-                } else if (total < total_payment) {
+                } else if (total < absc_amount) {
                     $('#submit_not_possible').show();
                     $('#submit_possible').hide();
                 } else {
@@ -1353,7 +1410,7 @@
 
                 var change_value_int = parseFloat(change_value);
 
-                //check if petty cash accounts is equal to total_payment
+                //check if petty cash accounts is equal to absc_amount
                 if (Number(change_value_int) > 0) {
                     $('#show_change').show();
                     //set value
@@ -1446,8 +1503,8 @@
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
 
-            var url_start = '{{asset('storage/petty_cash_quotation')}}';
-            var path = "public/petty_cash_quotation";
+            var url_start = '{{asset('storage/subsistence_files')}}';
+            var path = "public/subsistence_files";
             var dds = recipient.file_type;
             if (dds == 0) {
                 url_start = '{{asset('storage/petty_cash_receipt')}}';
@@ -1469,13 +1526,13 @@
     </script>
 
     <script>
-        $('#modal-add-quotation').on('show.bs.modal', function (event) {
+        $('#modal-add-attached_file').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
 
-            var path = "public/petty_cash_quotation";
-            var type = {!! config('constants.file_type.quotation') !!};
-            var form_id = {!! config('constants.eforms_id.petty_cash') !!};
+            var path = "public/subsistence_files";
+            var type = {!! config('constants.file_type.subsistence') !!};
+            var form_id = {!! config('constants.eforms_id.subsistence') !!};
             var form_code = recipient.code;
 
             $('#item_type1').val(type);
@@ -1503,628 +1560,37 @@
         });
     </script>
 
+
+    <script>
+        function ZoomOutIframe(){
+            $('#iframe').css({
+                'height':'90%',
+                'width': '95%',
+                '-ms-zoom': '1',
+                '-moz-transform': 'scale(1)',
+                '-moz-transform-origin': '0 0',
+                '-o-transform': 'scale(1)',
+                '-o-transform-origin':' 0 0',
+                '-webkit-transform': 'scale(1)',
+                '-webkit-transform-origin': '0 0'
+            });
+        }
+        function ZoomiframeScale(){
+            $('#iframe').css({
+                'height':'280%',
+                'width': '300%',
+                '-ms-zoom': '0.3',
+                '-moz-transform': 'scale(0.3)',
+                '-moz-transform-origin': '0 0',
+                '-o-transform': 'scale(0.3)',
+                '-o-transform-origin':' 0 0',
+                '-webkit-transform': 'scale(0.3)',
+                '-webkit-transform-origin': '0 0'
+            });
+        }
+    </script>
+
 @endpush
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{{--@extends('layouts.eforms.subsistence.master')--}}
-
-
-{{--@push('custom-styles')--}}
-{{--    <!-- DataTables -->--}}
-{{--    <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">--}}
-{{--    <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">--}}
-{{--@endpush--}}
-
-
-{{--@section('content')--}}
-
-{{--    <!-- Content Header (Page header) -->--}}
-{{--    <div class="content-header">--}}
-{{--        <div class="container-fluid">--}}
-{{--            <div class="row mb-2">--}}
-{{--                <div class="col-sm-6">--}}
-{{--                    <h1 class="m-0 text-dark">Subsistence Claim {{$form->code }}</h1>--}}
-{{--                </div><!-- /.col -->--}}
-{{--                <div class="col-sm-6">--}}
-{{--                    <ol class="breadcrumb float-sm-right">--}}
-{{--                        <li class="breadcrumb-item"><a href="{{route('subsistence.home')}}">Home</a></li>--}}
-{{--                        <li class="breadcrumb-item active">Subsistence Claim</li>--}}
-{{--                    </ol>--}}
-{{--                </div><!-- /.col -->--}}
-{{--            </div><!-- /.row -->--}}
-{{--        </div><!-- /.container-fluid -->--}}
-{{--    </div>--}}
-{{--    <!-- /.content-header -->--}}
-
-
-{{--    <!-- Main page content -->--}}
-{{--    <section class="content">--}}
-
-
-{{--        @if(session()->has('message'))--}}
-{{--            <div class="alert alert-success alert-dismissible">--}}
-{{--                <p class="lead"> {{session()->get('message')}}</p>--}}
-{{--            </div>--}}
-{{--        @endif--}}
-{{--        @if(session()->has('error'))--}}
-{{--            <div class="alert alert-danger alert-dismissible">--}}
-{{--                <p class="lead"> {{session()->get('message')}}</p>--}}
-{{--            </div>--}}
-{{--        @endif--}}
-
-{{--        @if ($errors->any())--}}
-{{--            <div class="alert alert-danger">--}}
-{{--                <ul>--}}
-{{--                    @foreach ($errors->all() as $error)--}}
-{{--                        <li>{{ $error }}</li>--}}
-{{--                    @endforeach--}}
-{{--                </ul>--}}
-{{--            </div>--}}
-{{--    @endif--}}
-
-
-{{--    <!-- Default box -->--}}
-{{--        <div class="card">--}}
-{{--            <form enctype="multipart/form-data" name="db1" action="{{route('subsistence.approve')}}"--}}
-{{--                  method="post">--}}
-{{--                @csrf--}}
-{{--                <div class="card-body">--}}
-
-{{--                    <span class="badge badge-{{$form->status->html ?? "default"}}">{{$form->status->name ?? "none"}}</span>--}}
-{{--                    <input type="hidden" name="id" value="{{ $form->id}}" readonly required>--}}
-{{--                    <input type="hidden" name="sig_date" value=" {{date('Y-m-d H:i:s')}}" readonly required>--}}
-
-
-{{--                    <table border="1" width="100%" cellspacing="0" cellpadding="0" align="Centre"--}}
-{{--                           class="mt-2 mb-4">--}}
-{{--                        <thead>--}}
-{{--                        <tr>--}}
-{{--                            <th width="33%" class="text-center"><a href="#"><img--}}
-{{--                                        src="{{ asset('dashboard/dist/img/zesco1.png')}}" title="ZESCO" alt="ZESCO"--}}
-{{--                                        width="30%"></a></th>--}}
-{{--                            <th width="33%" colspan="4" class="text-center">CLAIM FOR SUBSISTENCE AND TRAVEL EXPENSES--}}
-{{--                            </th>--}}
-{{--                            <th width="34%" colspan="1" class="p-3">Doc Number:<br>CO.14900.FORM.00040<br>Version: 5--}}
-{{--                            </th>--}}
-{{--                        </tr>--}}
-{{--                        </thead>--}}
-{{--                    </table>--}}
-
-{{--                    <div class="row mt-2 mb-4">--}}
-{{--                        <div class="col-4 mb-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Date:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->claim_date }}" type="text" name="date" readonly--}}
-{{--                                           class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-4 mb-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Name of claimant:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->claimant_name }}" type="text" name="name" readonly--}}
-{{--                                           class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-4 mb-1 ">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Man No.:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->claimant_staff_no }}" type="text" name="employee_number"--}}
-{{--                                           readonly class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-4 mb-1 ">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Grade:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->grade }}" type="text" name="grade" readonly--}}
-{{--                                           class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-4 mb-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Cost Center:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->cost_center }}" type="cost_center"--}}
-{{--                                           readonly  name="date" readonly class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-4 mb-1 ">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Section:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->section }}" type="text" name="department"--}}
-{{--                                           readonly class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-4 mb-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Station:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->station }} " type="text" name="station" readonly class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-4 mb-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>Ext No.:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->ext_no }}" type="text" name="extension" readonly--}}
-{{--                                           class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-4 mb-1">--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-6"><label>System Reference No.:</label></div>--}}
-{{--                                <div class="col-6">--}}
-{{--                                    <input value="{{$form->ref_no }}" type="text" name="ref_no" readonly--}}
-{{--                                           class="form-control">--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-
-{{--                    <div class="row">--}}
-{{--                        <table--}}
-{{--                            class="table table-bordered mt-2 mb-4">--}}
-{{--                            <tr style="text-align: center" width="w-100">--}}
-{{--                                <td width="w-100"><strong>A. ABSENCE CLAIM</strong></td>--}}
-{{--                            </tr>--}}
-{{--                            <tr>--}}
-{{--                                <td>Period of Absence Date</td>--}}
-{{--                                <td>From</td>--}}
-{{--                                <td><input readonly id="absc_absent_from" name="absc_absent_from" class="form-control"--}}
-{{--                                           type="text" value="{{$form->absc_absent_from }}"></td>--}}
-{{--                                <td>To</td>--}}
-{{--                                <td><input readonly id="absc_absent_to" name="absc_absent_to" class="form-control" type="text" value="{{$form->absc_absent_to }}">--}}
-{{--                                </td>--}}
-{{--                            </tr>--}}
-{{--                            <tr>--}}
-{{--                                <td>Place visited and reason for journey</td>--}}
-{{--                                <td>Place</td>--}}
-{{--                                <td><textarea readonly name="absc_visited_place" class="form-control">{{$form->absc_visited_place}}</textarea></td>--}}
-{{--                                <td>Reason</td>--}}
-{{--                                <td><textarea readonly name="absc_visited_place_reason" class="form-control">{{$form->absc_visited_place_reason}}</textarea></td>--}}
-{{--                            </tr>--}}
-{{--                            <tr>--}}
-{{--                                <td>Allowance Claim per Night</td>--}}
-{{--                                <td>ZMW</td>--}}
-{{--                                <td><input id="absc_allowance_per_night" name="absc_allowance_per_night"--}}
-{{--                                           class="form-control" type="text" value="{{$form->absc_allowance_per_night}}"--}}
-{{--                                           readonly></td>--}}
-
-{{--                                <td><strong>Total Amount</strong></td>--}}
-{{--                                <td>  <input readonly id="absc_amount1"  class="form-control" name="absc_amount" value="ZMW {{number_format($form->total,2)}}" type="text"></td>--}}
-
-{{--                            </tr>--}}
-{{--                        </table>--}}
-{{--                    </div>--}}
-
-
-{{--                    <div class="row mb-1 mt-4">--}}
-{{--                        <div class="col-2">--}}
-{{--                            <label>Name of Claimant:</label>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-3">--}}
-{{--                            <input type="text" name="claimant_name" class="form-control"--}}
-{{--                                   value="{{$form->claimant_name}}" readonly required></div>--}}
-{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"--}}
-{{--                                                  value="{{$form->claimant_staff_no}}" readonly required></div>--}}
-{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" name="date_claimant" class="form-control"--}}
-{{--                                                  value="{{$form->claim_date}}" readonly required>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                    <div class="row mb-1">--}}
-{{--                        <div class="col-2"><label>Claim Authorised by:</label></div>--}}
-{{--                        <div class="col-3"><input type="text" value="{{$form->authorised_by ?? "" }}"--}}
-{{--                                                  name="claim_authorised_by" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" value="{{$form->authorised_staff_no  ?? "" }}"--}}
-{{--                                                  name="sig_of_authorised" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                        <div class="col-1  text-center"><label>Date:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" value="{{$form->authorised_date ?? "" }}"--}}
-{{--                                                  name="authorised_date" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                    <div class="row mb-1">--}}
-{{--                        <div class="col-2"><label>Station Manager:</label></div>--}}
-{{--                        <div class="col-3"><input type="text" value="{{$form->station_manager ?? "" }}"--}}
-{{--                                                  name="claim_authorised_by" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" value="{{$form->station_manager_staff_no  ?? "" }}"--}}
-{{--                                                  name="sig_of_authorised" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                        <div class="col-1  text-center"><label>Date:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" value="{{$form->station_manager_date ?? "" }}"--}}
-{{--                                                  name="authorised_date" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                    <div class="row mb-1">--}}
-{{--                        <div class="col-2"><label>HR:</label></div>--}}
-{{--                        <div class="col-3"><input type="text" value="{{$form->hr_office ?? "" }}"--}}
-{{--                                                  name="station_manager" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" value="{{$form->hr_office_staff_no ?? "" }}"--}}
-{{--                                                  name="sig_of_station_manager" readonly--}}
-{{--                                                  class="form-control"></div>--}}
-{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" value="{{$form->hr_date ?? "" }}"--}}
-{{--                                                  name="manager_date" readonly class="form-control"></div>--}}
-{{--                    </div>--}}
-
-{{--                    <div class="row mb-4">--}}
-{{--                        <div class="col-2"><label>Accountant:</label></div>--}}
-{{--                        <div class="col-3"><input type="text" value="{{$form->chief_accountant ?? "" }}"--}}
-{{--                                                  name="accountant" readonly class="form-control"></div>--}}
-{{--                        <div class="col-2 text-center"><label>Signature:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" value="{{$form->chief_accountant_staff_no ?? "" }}"--}}
-{{--                                                  name="sig_of_accountant" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                        <div class="col-1 text-center"><label>Date:</label></div>--}}
-{{--                        <div class="col-2"><input type="text" value="{{$form->chief_accountant_date ?? "" }}"--}}
-{{--                                                  name="accountant_date" readonly class="form-control">--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-
-{{--                    <p><b>Note:</b> The system reference number is mandatory and is from--}}
-{{--                        any of the systems at ZESCO such as a work request number from PEMS, Task--}}
-{{--                        number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.--}}
-{{--                        giving rise to the expenditure</p>--}}
-
-{{--                </div>--}}
-{{--                <!-- /.card-body -->--}}
-{{--                <div class="card-footer">--}}
-
-{{--                    --}}{{--  HOD APPROVAL--}}
-{{--                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')--}}
-{{--                         &&  $form->config_status_id == config('constants.subsistence_status.new_application')   )--}}
-{{--                        <div class="">--}}
-{{--                            <hr>--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-10">--}}
-{{--                                    <div class="row">--}}
-{{--                                        <div class="col-1">--}}
-{{--                                            <label class="form-control-label">Reason</label>--}}
-{{--                                        </div>--}}
-{{--                                        <div class="col-11">--}}
-{{--                                            <textarea class="form-control" rows="2" name="reason" required></textarea>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-2 text-center ">--}}
-{{--                                    <button type="submit" id="hod_approval" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
-{{--                                            value='Approved'>APPROVE--}}
-{{--                                    </button>--}}
-{{--                                    <button type="submit" id="hod_reject" name="approval" class="btn btn-outline-danger ml-2 p-2  "--}}
-{{--                                            value='Rejected'>REJECT--}}
-{{--                                    </button>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    @endif--}}
-
-{{--                    --}}{{--  STATION MANAGER APPROVAL--}}
-{{--                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_015')--}}
-{{--                         &&  $form->config_status_id == config('constants.subsistence_status.hod_approved')   )--}}
-{{--                        <div class="">--}}
-{{--                            <hr>--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-10">--}}
-{{--                                    <div class="row">--}}
-{{--                                        <div class="col-1">--}}
-{{--                                            <label class="form-control-label">Reason</label>--}}
-{{--                                        </div>--}}
-{{--                                        <div class="col-11">--}}
-{{--                                            <textarea class="form-control" rows="2" name="reason" required></textarea>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-2 text-center ">--}}
-{{--                                    <button type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
-{{--                                            value='Approved'>APPROVE--}}
-{{--                                    </button>--}}
-{{--                                    <button type="submit" name="approval" class="btn btn-outline-danger ml-2 p-2  "--}}
-{{--                                            value='Rejected'>REJECT--}}
-{{--                                    </button>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    @endif--}}
-
-
-
-{{--                </div>--}}
-{{--                <!-- /.card-footer-->--}}
-
-
-
-{{--                --}}{{-- NEXT PERSON TO ACT--}}
-{{--                @if(  $form->config_status_id != config('constants.subsistence_status.closed')   )--}}
-{{--                    <div class="card">--}}
-{{--                        <div class="card-header">--}}
-{{--                            <h4 class="card-title">Next Person/s to Act</h4>--}}
-{{--                        </div>--}}
-{{--                        <div class="card-body">--}}
-{{--                            <div class="row">--}}
-{{--                                @foreach($user_array as $item)--}}
-{{--                                    <div class="col-4 text-red ">--}}
-{{--                                        <span class="font-weight-bold" >Position:</span><span >{{$item->position->name}}</span><br>--}}
-{{--                                        <span class="font-weight-bold">Name:</span><span >{{$item->name}}</span><br>--}}
-{{--                                        <span class="font-weight-bold">Phone:</span><span >{{$item->phone}}</span><br>--}}
-{{--                                        <span class="font-weight-bold">Email:</span><span >{{$item->email}}</span><br>--}}
-{{--                                    </div>--}}
-{{--                                @endforeach--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="card-footer">--}}
-{{--                            <span class="font-weight-bold">Next Action:</span><span > {{$form->status->other}}</span>--}}
-{{--                            @if ($form->status->id == config('constants.subsistence_status.security_approved'))--}}
-{{--                                <span class="font-weight-bold text-red"> Note:</span><span class="text-red"> Export Data to Excel and Import in Oracle Financial's using ADI</span>--}}
-{{--                            @endif--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                @endif--}}
-
-
-
-{{--                --}}{{--  FORM PPROVALS--}}
-{{--                <div class="card collapsed-card">--}}
-{{--                    <div class="card-header">--}}
-{{--                        <h4 class="card-title">Approvals</h4>  <span--}}
-{{--                            class="badge badge-secondary right ml-2">{{$approvals->count()}}</span>--}}
-{{--                        <div class="card-tools">--}}
-{{--                            <button type="button" class="btn btn-tool" data-card-widget="collapse">--}}
-{{--                                <i class="fas fa-plus"></i>--}}
-{{--                            </button>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                    <div style="display: none;" class="card-body">--}}
-{{--                        <div class="col-lg-12 ">--}}
-{{--                            <TABLE id="dataTable" class="table">--}}
-{{--                                <TR bgcolor="#f5f5f5">--}}
-{{--                                    <TD>Name</TD>--}}
-{{--                                    <TD>Man No</TD>--}}
-{{--                                    <TD>Action</TD>--}}
-{{--                                    <TD>Status From</TD>--}}
-{{--                                    <TD>Status To</TD>--}}
-{{--                                    <TD>Reason</TD>--}}
-{{--                                    <TD>Date</TD>--}}
-{{--                                </TR>--}}
-{{--                                @foreach($approvals as $item)--}}
-{{--                                    <TR>--}}
-{{--                                        <TD>{{$item->name}}</TD>--}}
-{{--                                        <TD>{{$item->staff_no}}</TD>--}}
-{{--                                        <TD>{{$item->action}}</TD>--}}
-{{--                                        <TD>{{$item->from_status->name ?? ""}}</TD>--}}
-{{--                                        <TD>{{$item->to_status->name ?? ""}}</TD>--}}
-{{--                                        <TD>{{$item->reason}}</TD>--}}
-{{--                                        <TD>{{$item->created_at}}</TD>--}}
-{{--                                    </TR>--}}
-{{--                                @endforeach--}}
-{{--                            </TABLE>--}}
-
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                    <div class="card-footer">--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-
-
-{{--            </form>--}}
-{{--        </div>--}}
-{{--        <!-- /.card -->--}}
-{{--    </section>--}}
-{{--    <!-- /.content -->--}}
-{{--@endsection--}}
-
-
-{{--@push('custom-scripts')--}}
-{{--    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"--}}
-{{--            integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="--}}
-{{--            crossorigin="anonymous"></script>--}}
-{{--    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>--}}
-
-{{--    <script type="text/javascript">--}}
-
-{{--        function getvalues() {--}}
-{{--            var inps = document.getElementsByName('amount[]');--}}
-{{--            var total = 0;--}}
-{{--            for (var i = 0; i < inps.length; i++) {--}}
-{{--                var inp = inps[i];--}}
-{{--                total = total + parseFloat(inp.value || 0);--}}
-{{--            }--}}
-
-{{--            if (!isNaN(total)) {--}}
-
-{{--                //check if petty cash is below 2000--}}
-{{--                if (total > 2000) {--}}
-{{--                    $('#submit_possible').hide();--}}
-{{--                    $('#submit_not_possible').show();--}}
-{{--                } else if (total == 0) {--}}
-{{--                    $('#submit_not_possible').hide();--}}
-{{--                    $('#submit_possible').hide();--}}
-{{--                } else {--}}
-{{--                    $('#submit_not_possible').hide();--}}
-{{--                    $('#submit_possible').show();--}}
-{{--                }--}}
-{{--                //set value--}}
-{{--                document.getElementById('total-payment').value = total;--}}
-{{--            }--}}
-{{--        }--}}
-
-
-{{--        // Navigation Script Starts Here--}}
-{{--        $(document).ready(function () {--}}
-
-{{--            //first hide the buttons--}}
-{{--            $('#submit_possible').hide();--}}
-{{--            $('#submit_not_possible').hide();--}}
-
-{{--            // var to = moment($('absc_absent_to'));--}}
-{{--            //--}}
-{{--            // var diff = from.diff(to);--}}
-{{--            var absc_allowance_per_night = $('#absc_allowance_per_night').val();--}}
-
-{{--            var from = moment($('#absc_absent_from').val());--}}
-{{--            var to = moment($('#absc_absent_to').val());--}}
-{{--            var diff = to.diff(from, 'days');--}}
-{{--            if(diff > 0) {--}}
-{{--                var total = diff * absc_allowance_per_night;--}}
-{{--                $('#total_amount').html(numeral(total).format('0,0'));--}}
-{{--                $('absc_amount').val(total)--}}
-{{--            }--}}
-
-{{--            console.log("To",$('absc_absent_from').val())--}}
-
-{{--            console.log("from",from)--}}
-{{--            console.log("The difference is: ", diff);--}}
-
-{{--            $("#absc_absent_from").change(function () {--}}
-{{--                var from = moment($(this).val());--}}
-{{--                var to = moment($('#absc_absent_to').val());--}}
-{{--                var diff = to.diff(from, 'days');--}}
-{{--                if(diff > 0) {--}}
-{{--                    var total = diff * absc_allowance_per_night;--}}
-{{--                    $('#total_amount').html(numeral(total).format('0,0'));--}}
-{{--                    $('absc_amount').val(total)--}}
-{{--                }--}}
-{{--                console.log("To",to)--}}
-
-{{--                console.log("from",from)--}}
-{{--                console.log("The difference is: ", diff);--}}
-
-
-{{--            });--}}
-
-{{--            $("#absc_absent_to").change(function () {--}}
-{{--                var from = moment($('#absc_absent_from').val());--}}
-{{--                var to = moment($(this).val());--}}
-{{--                var diff = to.diff(from, 'days');--}}
-{{--                if(diff > 0) {--}}
-{{--                    var total = diff * absc_allowance_per_night;--}}
-{{--                    $('#total_amount').html(numeral(total).format('0,0'));--}}
-{{--                    $('absc_amount').val(total)--}}
-{{--                }--}}
-{{--                console.log("To",to)--}}
-{{--                console.log("From",from)--}}
-
-{{--                console.log("The difference is: ", diff);--}}
-{{--            });--}}
-
-
-{{--        });--}}
-
-{{--    </script>--}}
-
-
-{{--    <SCRIPT language="javascript">--}}
-{{--        function addRow(tableID) {--}}
-
-{{--            var table = document.getElementById(tableID);--}}
-
-{{--            var rowCount = table.rows.length;--}}
-{{--            var row = table.insertRow(rowCount);--}}
-
-{{--            var colCount = table.rows[0].cells.length;--}}
-
-{{--            for (var i = 0; i < colCount; i++) {--}}
-
-{{--                var newcell = row.insertCell(i);--}}
-
-{{--                newcell.innerHTML = table.rows[0].cells[i].innerHTML;--}}
-{{--                //alert(newcell.childNodes);--}}
-{{--                switch (newcell.childNodes[0].type) {--}}
-{{--                    case "text":--}}
-{{--                        newcell.childNodes[0].value = "";--}}
-{{--                        break;--}}
-{{--                    case "checkbox":--}}
-{{--                        newcell.childNodes[0].checked = false;--}}
-{{--                        break;--}}
-{{--                    case "select-one":--}}
-{{--                        newcell.childNodes[0].selectedIndex = 0;--}}
-{{--                        break;--}}
-{{--                }--}}
-{{--            }--}}
-{{--        }--}}
-
-{{--        function deleteRow(tableID) {--}}
-{{--            try {--}}
-{{--                var table = document.getElementById(tableID);--}}
-{{--                var rowCount = table.rows.length;--}}
-
-{{--                for (var i = 0; i < rowCount; i++) {--}}
-{{--                    var row = table.rows[i];--}}
-{{--                    var chkbox = row.cells[0].childNodes[0];--}}
-{{--                    if (null != chkbox && true == chkbox.checked) {--}}
-{{--                        if (rowCount <= 1) {--}}
-{{--                            alert("Cannot delete all the rows.");--}}
-{{--                            break;--}}
-{{--                        }--}}
-{{--                        table.deleteRow(i);--}}
-{{--                        rowCount--;--}}
-{{--                        i--;--}}
-{{--                    }--}}
-{{--                }--}}
-{{--                getvalues();--}}
-{{--            } catch (e) {--}}
-{{--                alert(e);--}}
-{{--            }--}}
-{{--        }--}}
-
-{{--        // git remote add origin https://github.com/ZESCOISD/eforms.git--}}
-{{--        // git branch -M main--}}
-{{--        //  git push -u origin mai--}}
-
-{{--    </SCRIPT>--}}
-
-{{--    <script type="text/javascript">--}}
-{{--        var hod_approval = document.getElementById('hod_approval')--}}
-{{--        hod_approval.addEventListener('click',hideshow,false);--}}
-
-{{--        var hod_reject = document.getElementById('hod_reject')--}}
-{{--        hod_reject.addEventListener('click',hideshow,false);--}}
-
-{{--        function hideshow() {--}}
-{{--            document.getElementById('hidden-div').style.display = 'block';--}}
-{{--            this.style.display = 'none'--}}
-{{--        }--}}
-{{--        --}}
-{{--    </script>--}}
-
-
-{{--@endpush--}}

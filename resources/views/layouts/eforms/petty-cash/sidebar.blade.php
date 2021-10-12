@@ -166,14 +166,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                {{--                        <a href="{{route('petty.cash.report', config('constants.all'))}}" class="nav-link ">--}}
-                                {{--                            <i class="nav-icon fas fa-file"></i>--}}
-                                {{--                            <p> All Reports--}}
-                                {{--                            </p>--}}
-                                {{--                        </a>--}}
-                            </li>
-                            <li class="nav-item">
+                             <li class="nav-item">
                                 <a href="{{route('petty.cash.report', config('constants.petty_cash_status.exported'))}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
@@ -199,6 +192,33 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-file-download"></i>
+                            <p>
+                                Integration
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('petty.cash.finance.index')}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Invoice Header
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('petty.cash.finance.index')}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Invoice Details
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     @if (Auth::user()->type_id == config('constants.user_types.developer'))
                         <li class="nav-item">
                             <a href="{{route('petty.cash.record','all')}}" class="nav-link ">
@@ -210,6 +230,47 @@
                     @endif
                 @endif
 
+
+                <li class="nav-header">SUMMARIES</li>
+                @if (Auth::user()->type_id == config('constants.user_types.developer') ||
+                               Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007') ||
+                               Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-file-download"></i>
+                            <p>
+                                INVOICES
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('petty.cash.invoices.units',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> User-Units
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('petty.cash.invoices.directorates',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Directorates
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('petty.cash.invoices.business.units',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Business Units
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
 
 
                 <li class="nav-header">MANAGEMENT</li>
@@ -360,7 +421,7 @@
 </aside>
 
 
-<!-- SEARCH MODAL-->
+<!-- SEARCH UNIT MODAL-->
 <div class="modal fade" id="modal-search">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -394,6 +455,6 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<!-- /.NEW modal -->
+
 
 

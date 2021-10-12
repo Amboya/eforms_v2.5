@@ -15,7 +15,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty-Cash Accounts Line List : [{{$title}}]</h1>
+                    <h1 class="m-0 text-dark text-orange text-uppercase">Petty-Cash Accounts Lines: <span class="text-green">{{$title}}</span></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">

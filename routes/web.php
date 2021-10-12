@@ -46,14 +46,16 @@ Route::group([
     'middleware' => 'auth'],
     function () {
 
+        Route::get('home_new', [App\Http\Controllers\Main\HomeController::class, 'index'])->name('main-home');
         Route::get('home', [App\Http\Controllers\Main\HomeController::class, 'index'])->name('main.home');
-        Route::get('back', [App\Http\Controllers\HomeController::class, 'back'])->name('main.back');
+        Route::get('back', [App\Http\Controllers\Main\HomeController::class, 'back'])->name('main.back');
 
         //user
         Route::group([
             'prefix' => 'user'], function () {
             Route::get('list', [App\Http\Controllers\Main\UserController::class, 'index'])->name('main.user');
             Route::get('show/{id}', [App\Http\Controllers\Main\UserController::class, 'show'])->name('main.user.show');
+            Route::post('search', [App\Http\Controllers\Main\UserController::class, 'search'])->name('main.user.search');
             Route::post('store', [App\Http\Controllers\Main\UserController::class, 'store'])->name('main.user.store');
             Route::post('update/{id}', [App\Http\Controllers\Main\UserController::class, 'update'])->name('main.user.update');
             Route::post('destroy/{id}', [App\Http\Controllers\Main\UserController::class, 'destroy'])->name('main.user.destroy');
@@ -111,12 +113,18 @@ Route::group([
             Route::post('destroy/{id}', [App\Http\Controllers\Main\ProfileController::class, 'destroy'])->name('main.profile.destroy');
             Route::get('assignment', [App\Http\Controllers\Main\ProfileController::class, 'assignmentCreate'])->name('main.profile.assignment');
             Route::post('assignment/store', [App\Http\Controllers\Main\ProfileController::class, 'assignmentStore'])->name('main.profile.assignment.store');
+            Route::post('assignment/store/single', [App\Http\Controllers\Main\ProfileController::class, 'assignmentStoreSingle'])->name('main.profile.assignment.store.single');
             Route::get('delegation', [App\Http\Controllers\Main\ProfileController::class, 'delegationCreate'])->name('main.profile.delegation');
             Route::get('delegation/list', [App\Http\Controllers\Main\ProfileController::class, 'delegationList'])->name('main.profile.delegation.list');
             Route::get('delegation/show/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationShowOnBehalf'])->name('main.profile.delegation.show.on.behalf');
             Route::post('delegation/store/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationStoreOnBehalf'])->name('main.profile.delegation.store.on.behalf');
             Route::post('delegation/store', [App\Http\Controllers\Main\ProfileController::class, 'delegationStore'])->name('main.profile.delegation.store');
             Route::post('delegation/end/{id}', [App\Http\Controllers\Main\ProfileController::class, 'delegationEnd'])->name('main.profile.delegation.end');
+            Route::post('delegation/remove', [App\Http\Controllers\Main\ProfileController::class, 'removeDelegation'])->name('main.profile.delegation.remove');
+            Route::get('transfer/', [App\Http\Controllers\Main\ProfileController::class, 'transfer'])->name('main.profile.transfer');
+            Route::post('transfer/create', [App\Http\Controllers\Main\ProfileController::class, 'transferCreate'])->name('main.profile.transfer.create');
+            Route::get('remove/', [App\Http\Controllers\Main\ProfileController::class, 'remove'])->name('main.profile.remove');
+            Route::post('remove/create', [App\Http\Controllers\Main\ProfileController::class, 'removeCreate'])->name('main.profile.remove.create');
 
         });
         //profile Permissions
@@ -142,8 +150,12 @@ Route::group([
             Route::get('list', [App\Http\Controllers\Main\UserUnitController::class, 'index'])->name('main.user.unit');
             Route::post('store', [App\Http\Controllers\Main\UserUnitController::class, 'store'])->name('main.user.unit.store');
             Route::post('update', [App\Http\Controllers\Main\UserUnitController::class, 'update'])->name('main.user.unit.update');
-            Route::post('destroy/{id}', [App\Http\Controllers\Main\UserUnitController::class, 'destroy'])->name('main.user.unit.destroy');
+            Route::post('destroy', [App\Http\Controllers\Main\UserUnitController::class, 'destroy'])->name('main.user.unit.destroy');
             Route::get('sync', [App\Http\Controllers\Main\UserUnitController::class, 'sync'])->name('main.user.unit.sync');
+            Route::post('search', [App\Http\Controllers\Main\UserUnitController::class, 'search'])->name('main.user.unit.search');
+            Route::post('search/{id}', [App\Http\Controllers\Main\UserUnitController::class, 'searchId'])->name('main.user.unit.search.profile');
+            Route::get('users/{unit}/{profile}', [App\Http\Controllers\Main\HomeController::class, 'getMySuperiorAPI'])->name('main.user.unit.search.id');
+            Route::post('assign', [App\Http\Controllers\Main\UserUnitController::class, 'assign'])->name('main.user.unit.assign');
         });
         //Directorate
         Route::group([
@@ -267,9 +279,9 @@ Route::group([
         //Files
         Route::group([
             'prefix' => 'files'], function () {
-            Route::post('change', [App\Http\Controllers\HomeController::class, 'changeFile'])->name('attached.file.change');
-            Route::post('add', [App\Http\Controllers\HomeController::class, 'addFile'])->name('attached.file.add');
-            Route::post('add2', [App\Http\Controllers\HomeController::class, 'addFile2'])->name('attached.file.add2');
+            Route::post('change', [App\Http\Controllers\Main\HomeController::class, 'changeFile'])->name('attached.file.change');
+            Route::post('add', [App\Http\Controllers\Main\HomeController::class, 'addFile'])->name('attached.file.add');
+            Route::post('add2', [App\Http\Controllers\Main\HomeController::class, 'addFile2'])->name('attached.file.add2');
         });
 
 
@@ -365,6 +377,15 @@ Route::group([
             Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\FloatController::class, 'destroy'])->name('petty.cash.float.reimbursement.delete');
         });
 
+        //REPORTS
+        Route::group([
+            'prefix' => 'finance'
+        ], function () {
+            Route::get('index', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'index'])->name('petty.cash.finance.index');
+            Route::get('send', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'send'])->name('petty.cash.finance.send');
+//            Route::get('sync/directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncDirectorates'])->name('petty.cash.reports.sync.directorates');
+//            Route::get('sync/user/units', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncUserUnits'])->name('petty.cash.reports.sync.units');
+        });
 
     });
 
@@ -382,7 +403,8 @@ Route::group([
 Route::group([
     'namespace' => 'gifts_benefits',
     'prefix' => 'gifts_benefits',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
     Route::get('home', [App\Http\Controllers\EForms\GiftBenefitsRegister\HomeController::class, 'index'])->name('gifts-benefits-home');
     Route::get('list/{value}', [App\Http\Controllers\EForms\GiftBenefitsRegister\GiftBenefitsRegisterController::class, 'index'])->name('gifts-benefits-list');
@@ -501,9 +523,9 @@ Route::group([
         //subsistence routes
         Route::get('home', [App\Http\Controllers\EForms\Subsistence\HomeController::class, 'index'])->name('subsistence.home');
         Route::get('list/{value}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'index'])->name('subsistence.list');
-        Route::get('create', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'create'])->name('subsistence.create');
+        Route::post('create/{trip}/{invitation}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'create'])->name('subsistence.subscribe');
         Route::post('show/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'show'])->name('subsistence.show');
-        Route::post('store', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'store'])->name('subsistence.store');
+        Route::post('store/{trip}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'store'])->name('subsistence.store');
         Route::post('approve', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'approve'])->name('subsistence.approve');
         Route::post('update', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'update'])->name('subsistence.update');
         Route::post('destroy/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'destroy'])->name('subsistence.destroy');
@@ -758,26 +780,29 @@ Route::group([
 Route::group([
     'namespace' => 'trip',
     'prefix' => 'trip',
-    'middleware' => 'auth'], function () {
+    'middleware' => 'auth'],
+    function () {
 
-    //petty cah routes
-    Route::get('home', [App\Http\Controllers\EForms\Trip\HomeController::class, 'index'])->name('trip.home');
-    Route::get('list/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'index'])->name('trip.list');
-    Route::get('create', [App\Http\Controllers\EForms\Trip\TripController::class, 'create'])->name('trip.create');
-    Route::post('show/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'show'])->name('trip.show');
-    Route::post('store', [App\Http\Controllers\EForms\Trip\TripController::class, 'store'])->name('trip.store');
-    Route::post('approve', [App\Http\Controllers\EForms\Trip\TripController::class, 'approve'])->name('trip.approve');
-    Route::post('update', [App\Http\Controllers\EForms\Trip\TripController::class, 'update'])->name('trip.update');
-    Route::post('destroy/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'destroy'])->name('trip.destroy');
-    Route::get('reports', [App\Http\Controllers\EForms\Trip\TripController::class, 'reports'])->name('trip.report');
-    Route::get('reportExport', [App\Http\Controllers\EForms\Trip\TripController::class, 'reportsExport'])->name('trip.report-export');
+        //petty cah routes
+        Route::get('home', [App\Http\Controllers\EForms\Trip\HomeController::class, 'index'])->name('trip.home');
+        Route::get('list/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'index'])->name('trip.list');
+        Route::get('create', [App\Http\Controllers\EForms\Trip\TripController::class, 'create'])->name('trip.create');
+        Route::post('show/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'show'])->name('trip.show');
+        Route::post('store', [App\Http\Controllers\EForms\Trip\TripController::class, 'store'])->name('trip.store');
+        Route::post('approve', [App\Http\Controllers\EForms\Trip\TripController::class, 'approve'])->name('trip.approve');
+        Route::post('approve/{trip}', [App\Http\Controllers\EForms\Trip\TripController::class, 'membershipApprove'])->name('trip.approve.membership');
+        Route::post('update', [App\Http\Controllers\EForms\Trip\TripController::class, 'update'])->name('trip.update');
+        Route::post('destroy/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'destroy'])->name('trip.destroy');
+        Route::get('reports', [App\Http\Controllers\EForms\Trip\TripController::class, 'reports'])->name('trip.report');
+        Route::get('reportExport', [App\Http\Controllers\EForms\Trip\TripController::class, 'reportsExport'])->name('trip.report-export');
 
-    Route::get('records/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'records'])->name('trip.record');
-    Route::post('void/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'void'])->name('trip.void');
+        Route::get('records/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'records'])->name('trip.record');
+        Route::post('void/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'void'])->name('trip.void');
 
-    Route::get('charts', [App\Http\Controllers\EForms\Trip\TripController::class, 'charts'])->name('trip.charts');
+        Route::get('charts', [App\Http\Controllers\EForms\Trip\TripController::class, 'charts'])->name('trip.charts');
 
-});
+    });
+
 
 
 //config_work_flow
@@ -785,6 +810,8 @@ Route::group([
     'prefix' => 'work_flow'], function () {
     //sync all
     Route::get('sync', [App\Http\Controllers\Main\ConfigWorkFlowController::class, 'syncFromConfigUserUnits'])->name('workflow.sync');
+    Route::post('details/{configWorkFlow}', [App\Http\Controllers\Main\ConfigWorkFlowController::class, 'show'])->name('workflow.show');
+
 
     //config_work_flow for petty cash
     Route::group([
@@ -794,8 +821,20 @@ Route::group([
         Route::post('update/{code}', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'update'])->name('petty.cash.workflow.update');
         Route::post('destroy/{id}', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'destroy'])->name('petty.cash.workflow.destroy');
         Route::post('search', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'search'])->name('petty.cash.workflow.search');
+        Route::post('search2/{id}', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'search2'])->name('petty.cash.workflow.search2');
         Route::get('show/{id}/{code}', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'show'])->name('petty.cash.workflow.show');
         Route::get('sync', [App\Http\Controllers\EForms\PettyCash\WorkFlowController::class, 'sync'])->name('petty.cash.workflow.sync');
+    });
+
+    //config_work_flow for petty cash
+    Route::group([
+        'prefix' => 'petty-cash/invoices'], function () {
+        Route::get('units/{status}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'units'])->name('petty.cash.invoices.units');
+        Route::post('units', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'unitsSearch'])->name('petty.cash.invoices.units.search');
+        Route::get('directorates/{status}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'directorates'])->name('petty.cash.invoices.directorates');
+        Route::post('directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'directoratesSearch'])->name('petty.cash.invoices.directorates.search');
+        Route::get('business/units/{status}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'businessUnits'])->name('petty.cash.invoices.business.units');
+        Route::post('business/units', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'businessUnitsSearch'])->name('petty.cash.invoices.business.units.search');
     });
 
 //    //config_work_flow for accommodation

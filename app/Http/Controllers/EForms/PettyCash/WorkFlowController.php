@@ -115,16 +115,6 @@ class WorkFlowController extends Controller
         return view('eforms.petty-cash.showworkflow')->with($params);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -232,7 +222,7 @@ class WorkFlowController extends Controller
         $user_unit = strtoupper($request->user_unit_code);
         $form_id = 0;
         $workflow = ConfigWorkFlow::where('user_unit_code', $user_unit)
-             ->where('user_unit_status', config('constants.user_unit_active') );
+            ->where('user_unit_status', config('constants.user_unit_active') );
 
 
 
@@ -251,6 +241,34 @@ class WorkFlowController extends Controller
             'users' => $users,
             'form_id' => $form_id,
             'workflow' => $workflow->first(),
+        ];
+
+        return view('eforms.petty-cash.showworkflow')->with($params);
+    }
+
+
+
+    public function search2( $id){
+
+        //capitalise
+//        $user_unit = strtoupper($request->user_unit_code);
+        $form_id = 0;
+        $workflow = ConfigWorkFlow::find($id);
+           // ->where('user_unit_status', config('constants.user_unit_active') );
+        if($workflow->exists()){
+            $users = User::orderBy('name')->get();
+        }else{
+            return Redirect::back()->with('error', 'Details for ' . $workflow->user_unit_code. ' could not be found');
+        }
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+
+        //data to send to the view
+        $params = [
+            'totals_needs_me' => $totals_needs_me ,
+            'users' => $users,
+            'form_id' => $form_id,
+            'workflow' => $workflow,
         ];
 
         return view('eforms.petty-cash.showworkflow')->with($params);

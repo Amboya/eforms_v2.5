@@ -31,11 +31,6 @@ class ProfileAssigmentModel extends Model
         'deleted_at',
     ] ;
 
-    protected $with = [
-        'profiles',
-        'form',
-    ];
-
     //RELATIONSHIP
     public function profiles(){
         return $this->belongsTo(ProfileModel::class, 'profile', 'code');

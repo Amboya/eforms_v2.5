@@ -20,7 +20,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('petty-cash-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('petty.cash.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Data Center Critical Assets Form Details</li>
                     </ol>
                 </div><!-- /.col -->

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\PhrisUserDetailsModel;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -165,9 +166,32 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
+        //then get the user details in phris
+        $phirs_user = PhrisUserDetailsModel::where('con_per_no', $request->staff_no)->first() ;
+        //update user
+        $user->name = $phirs_user->name ?? "" ;
+        $user->email = $phirs_user->staff_email  ?? "";
+        $user->phone = $phirs_user->mobile_no ?? "" ;
+        $user->nrc = $phirs_user->nrc ?? "";
+        $user->contract_type = $phirs_user->contract_type ?? "" ;
+        $user->con_st_code = $phirs_user->con_st_code ?? "";
+        $user->con_wef_date = $phirs_user->con_wef_date ?? "" ;
+        $user->con_wet_date = $phirs_user->con_wet_date ?? "" ;
+        $user->job_code = $phirs_user->job_code ?? "";
+        $user->station = $phirs_user->station ?? "";
+        $user->affiliated_union = $phirs_user->affiliated_union  ?? "";
+
         //count the users login times
         $user->total_login = 1+($user->total_login);
         $user->save();
+
+        //check if phris has you activated or not  //
+        if($phirs_user->contract_type == config('constants.phris_user_not_active') ){
+            Auth::logout();
+            return back()->withErrors([
+                'staff_no' => ['The provided credentials (Man Number) is no longer active in PHRIS.']
+            ]);
+        }
     }
 
     /**

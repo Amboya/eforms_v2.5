@@ -15,7 +15,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty-Cash : {{$category}}</h1>
+                    <h1 class="m-0 text-dark text-orange text-uppercase">Petty-Cash : <span class="text-green">{{$category}}</span></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -95,7 +95,7 @@
                                 <td>{{$item->claimant_name}}</td>
                                 <td>ZMW {{ number_format($item->total_payment  - $item->change, 2)}}</td>
                                 <td><span
-                                        class="badge badge-{{$item->html ?? "default"}}">{{$item->status_name  ?? "none"}}</span>
+                                        class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name  ?? "none"}}</span>
                                 </td>
                                 <td>{{$item->updated_at}}</td>
                                 <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"

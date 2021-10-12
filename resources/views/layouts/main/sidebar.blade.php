@@ -24,11 +24,18 @@
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-cogs"></i>
-                        <p> Profile Delegation
+                        <p> Profiles
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('main.profile.delegation.list')}}" class="nav-link ">
+                                <i class="nav-icon far fa-circle"></i>
+                                <p> List
+                                </p>
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="{{route('main.profile.delegation')}}" class="nav-link ">
                                 <i class="nav-icon far fa-circle"></i>
@@ -44,39 +51,67 @@
                                     </p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{route('main.profile.assignment')}}" class="nav-link ">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p> Assign
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('main.profile.transfer')}}" class="nav-link ">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p> Transfer
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('main.profile.remove')}}" class="nav-link ">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p> Remove
+                                    </p>
+                                </a>
+                            </li>
                         @endif
-                        <li class="nav-item">
-                            <a href="{{route('main.profile.delegation.list')}}" class="nav-link ">
-                                <i class="nav-icon far fa-circle"></i>
-                                <p> List
-                                </p>
-                            </a>
-                        </li>
+
                     </ul>
                 </li>
 
-                @if( Auth::user()->type_id == config('constants.user_types.developer'))
-                    <li class="nav-item">
-                        <a href="{{route('main.profile.assignment')}}" class="nav-link ">
-                            <i class="nav-icon fas fa-user-cog"></i>
-                            <p> Profile Assignments</p>
-                        </a>
-                    </li>
-                    @endif
+
+            @if( Auth::user()->type_id == config('constants.user_types.developer'))
 
 
-
-                @if( Auth::user()->type_id == config('constants.user_types.developer'))
 
                     <li class="nav-header">SYSTEM USERS</li>
+
                     <li class="nav-item">
-                        <a href="{{route('main.user')}}" class="nav-link ">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>
-                                Users
-                            </p>
-                        </a>
-                    </li>
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-cogs"></i>
+                                <p> System Users
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a class="nav-link "
+                                       title="Search"
+                                       data-toggle="modal"
+                                       data-target="#modal-search-user">
+                                        <i class="nav-icon fas fa-search"></i>
+                                        <p> Search Users
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('main.user')}}" class="nav-link ">
+                                        <i class="nav-icon far fa-circle"></i>
+                                        <p> All System Users
+                                        </p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
 
 
                     <li class="nav-header">CONFIG</li>
@@ -116,11 +151,38 @@
                             <p> Profiles Permissions </p>
                         </a>
                     </li>
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="{{route('main.user.unit')}}" class="nav-link ">--}}
+{{--                            <i class="nav-icon fas fa-calendar-alt"></i>--}}
+{{--                            <p> User.Units Workflow </p>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
                     <li class="nav-item">
-                        <a href="{{route('main.user.unit')}}" class="nav-link ">
-                            <i class="nav-icon fas fa-calendar-alt"></i>
-                            <p> User.Units Workflow </p>
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p> System Work Flow
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a class="nav-link "
+                                   title="Search"
+                                   data-toggle="modal"
+                                   data-target="#modal-search">
+                                    <i class="nav-icon fas fa-search"></i>
+                                    <p> Search Work Flow
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('main.user.unit')}}" class="nav-link ">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p> All Work Flows
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a href="{{route('main.user.type')}}" class="nav-link ">
@@ -210,3 +272,73 @@
     <!-- /.sidebar -->
 
 </aside>
+
+
+<!-- SEARCH USER MODAL-->
+<div class="modal fade" id="modal-search-user">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center">User Search</h4>
+            </div>
+            <!-- form start -->
+            <form role="form-new" method="post" action="{{route('main.user.search')}}">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="code">Enter Search Term <span class="text-sm text-gray">(Case Sensitive)</span></label>
+                                <input type="text" class="form-control " id="search_user" name="search"
+                                       placeholder="Enter ManNo/Name/Email/NRC/Unit/JobCode/Phone">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<!-- SEARCH UNIT MODAL-->
+<div class="modal fade" id="modal-search">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Search User Unit Work Flow</h4>
+                {{--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">--}}
+                {{--                    <span aria-hidden="true">&times;</span>--}}
+                {{--                </button>--}}
+            </div>
+            <!-- form start -->
+            <form role="form-new" method="post" action="{{route('main.user.unit.search')}}">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="code">Enter User Unit Code</label>
+                                <input type="text" class="form-control " id="user_unit_code" name="user_unit_code"
+                                       placeholder="Enter user unit code e.g C1931">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+

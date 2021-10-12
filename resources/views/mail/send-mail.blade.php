@@ -145,6 +145,9 @@
             text-decoration: underline;
         }
 
+
+
+
         /* -------------------------------------
             BUTTONS
         ------------------------------------- */
@@ -186,6 +189,32 @@
             border-color: #f59c32;/*3498db */
             color: #ffffff;
         }
+
+
+        .btnStack {
+            border: solid 1px #f59c32; /*3498db */
+            border-radius: 5px;
+            box-sizing: border-box;
+            color: #f59c32; /*3498db */
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+            padding: 12px 25px;
+            text-decoration: none;
+            text-transform: capitalize;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        a.btnStack:hover {
+            background-color: #000;
+        }
+
 
         /* -------------------------------------
             OTHER STYLES THAT MIGHT BE USEFUL
@@ -349,7 +378,10 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td>
-                                        <h1>{!! $details['title'] !!}</h1>
+                                        <div style="background: #42b142 ; color: #de7f1a;  padding: 5px ; padding-bottom: 5px; padding-top: 5px">
+                                            <h3 >{!! $details['title'] !!}</h3>
+                                        </div>
+                                        <hr>
                                         <p>Dear {!! $details['name'] !!},</p>
                                         <p>{!! $details['body'] !!}  </p>
                                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" >
@@ -359,7 +391,7 @@
                                                     <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                                         <tbody>
                                                         <tr>
-                                                            <td> <a href="{{route($details['url'])}}" target="_blank">Login</a> </td>
+                                                            <td> <a class="btnStack"  href="{{route($details['url'])}}" target="_blank">Login</a> </td>
                                                         </tr>
                                                         </tbody>
                                                     </table>
@@ -368,7 +400,7 @@
                                             </tbody>
                                         </table>
                                         {{--                                        <p>This is a reaient to cli.</p>--}}
-                                        <p>Kind Regards.</p>
+                                       <br> <p>Kind Regards.</p>
                                     </td>
                                 </tr>
                             </table>

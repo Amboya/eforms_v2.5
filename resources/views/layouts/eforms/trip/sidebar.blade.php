@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-light bg-gradient-dark  elevation-4">
 
     <!-- Brand Logo -->
-    <a href="{{route('main-home')}}" class="brand-link mt 3 p 3 bg-gradient-orange ">
+    <a href="{{route('main.home')}}" class="brand-link mt 3 p 3 bg-gradient-orange ">
         <img src="{{ asset('dashboard/dist/img/zesco1.png')}}" alt="Zesco Logo"
              class="brand-image img-rounded elevation-3"
              style="opacity: .8">
@@ -16,7 +16,7 @@
                 data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="{{route('trip-home')}}" class="nav-link ">
+                    <a href="{{route('trip.home')}}" class="nav-link ">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -24,19 +24,19 @@
 
                 <li class="nav-header">TRIP CLAIM</li>
                 <li class="nav-item">
-                    <a href="{{route('trip-list', 'all')}}" class="nav-link ">
+                    <a href="{{route('trip.list', 'all')}}" class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> All</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('trip-list', 'needs_me')}}" class="nav-link ">
+                    <a href="{{route('trip.list', 'needs_me')}}" class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> Needs You</p><span class="badge badge-success right ml-2">{{$totals_needs_me}}</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route( 'trip-list', config('constants.petty_cash_status.new_application') ) }}"
+                    <a href="{{route( 'trip.list', config('constants.petty_cash_status.new_application') ) }}"
                        class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> New
@@ -44,14 +44,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('trip-list', 'pending')}}" class="nav-link ">
+                    <a href="{{route('trip.list', 'pending')}}" class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> Open
                         </p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route( 'trip-list', config('constants.petty_cash_status.closed') ) }}"
+                    <a href="{{route( 'trip.list', config('constants.petty_cash_status.closed') ) }}"
                        class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> Closed
@@ -59,7 +59,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route( 'trip-list', config('constants.petty_cash_status.rejected') ) }}"
+                    <a href="{{route( 'trip.list', config('constants.petty_cash_status.rejected') ) }}"
                        class="nav-link ">
                         <i class="nav-icon fas fa-file"></i>
                         <p> Rejected
@@ -71,7 +71,7 @@ Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007') ||
 Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
                     <li class="nav-header">REPORTS</li>
                     <li class="nav-item">
-                        <a href="{{route('trip-report')}}" class="nav-link ">
+                        <a href="{{route('trip.report')}}" class="nav-link ">
                             <i class="nav-icon fas fa-file"></i>
                             <p> Reports Export
                             </p>
@@ -79,7 +79,7 @@ Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
                     </li>
                     @if (Auth::user()->type_id == config('constants.user_types.developer'))
                         <li class="nav-item">
-                            <a href="{{route('trip-record','all')}}" class="nav-link ">
+                            <a href="{{route('trip.record','all')}}" class="nav-link ">
                                 <i class="nav-icon fas fa-file"></i>
                                 <p> Petty Cash Records
                                 </p>
@@ -90,7 +90,7 @@ Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
 
                 <li class="nav-header">CONFIG</li>
                 <li class="nav-item">
-                    <a href="{{route('main-profile-delegation')}}" class="nav-link ">
+                    <a href="{{route('main.profile.delegation')}}" class="nav-link ">
                         <i class="nav-icon fas fa-calendar-alt"></i>
                         <p> Profile Delegation </p>
                     </a>

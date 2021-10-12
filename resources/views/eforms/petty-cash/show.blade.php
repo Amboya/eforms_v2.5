@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty Cash Voucher {{ $form->code }} </h1>
+                    <h1 class="m-0 text-dark text-uppercase text-orange ">Petty Cash Voucher <span class="text-green">{{ $form->code }}</span> </h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -293,7 +293,7 @@
             @if(  $form->config_status_id != config('constants.petty_cash_status.closed')   )
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Next Person/s to Act</h4>
+                        <h4 class="card-title text-bold text-orange">Next Person/s to Act</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -320,7 +320,7 @@
             {{--  QUOTATION FILES--}}
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Quotation Files</h4>
+                    <h4 class="card-title text-bold text-orange">Quotation Files</h4>
                     @if( ($user->type_id == config('constants.user_types.developer')  || (
                                  $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                                &&  $user->id  == $form->created_by )
@@ -333,10 +333,10 @@
                 <div class="card-body" style="width:100%;  ">
                     <div class="row">
                         @foreach($quotations as $item)
-                            <div class="col-12">
+                            <div class="col-6 mb-3">
                                 <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_quotation/'.$item->name)}}"
-                                        style="width:100%; " title="{{$item->name}}"></iframe>
-                                <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
+                                        style="width:100%; height: 1000px " title="{{$item->name}}"></iframe>
+                                <span >Size:{{number_format( $item->file_size, 2) }}MB  Name: {{$item->name}} </span>
                                 <span> | </span>
                                 <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}" target="_blank">View</a>
                                 @if( ($user->type_id == config('constants.user_types.developer')  || (
@@ -362,7 +362,7 @@
             ||  $form->config_status_id == config('constants.petty_cash_status.queried')    )
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Receipt Files</h4>
+                        <h4 class="card-title text-bold text-orange">Receipt Files</h4>
                         @if( (($user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                 &&  $form->user_unit->expenditure_unit == $user->profile_unit_code)
               || ($user->type_id == config('constants.user_types.developer'))
@@ -375,10 +375,10 @@
                     <div class="card-body" style="width:100%;  ">
                         <div class="row">
                             @foreach($receipts as $item)
-                                <div class="col-12">
+                                <div class="col-6">
                                     <iframe id="{{$item->id}}"
                                             src="{{asset('storage/petty_cash_receipt/'.$item->name)}}"
-                                            style="width:100%; " title="{{$item->name}}"></iframe>
+                                            style="width:100%; height: 1000px" title="{{$item->name}}"></iframe>
                                     <span>{{number_format( $item->file_size, 2) }}MB {{$item->name}} </span>
                                     <span> | </span>
                                     <a href="{{asset('storage/petty_cash_receipt/'.$item->name)}}" target="_blank">View</a>
@@ -404,7 +404,7 @@
             {{--  FORM PPROVALS--}}
             <div class="card ">
                 <div class="card-header">
-                    <h4 class="card-title">Approvals</h4>  <span
+                    <h4 class="card-title text-bold text-orange">Approvals</h4>  <span
                         class="badge badge-secondary right ml-2">{{$approvals->count()}}</span>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -415,7 +415,7 @@
                 <div class="card-body">
                     <div class="col-lg-12 ">
                         <TABLE id="dataTable" class="table">
-                            <TR bgcolor="#f5f5f5">
+                            <TR class="table text-white text-bold text-uppercase bg-gradient-green ">
                                 <TD>Name</TD>
                                 <TD>Man No</TD>
                                 <TD>Action</TD>
@@ -423,7 +423,7 @@
                                 <TD>Status To</TD>
                                 <TD>Reason</TD>
                                 <TD>Date</TD>
-                                <TD>From Form <br>Submission</TD>
+                                <TD>Submission - Action</TD>
                             </TR>
                             @foreach($approvals as $item)
                                 <TR>
@@ -1066,6 +1066,85 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                         )
                         <div class="">
+                            <div class="row">
+                            <div class="col-lg-10 p-2 mt-3 ">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <label class="form-control-label">Total Change</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="number" step="any" onchange="showChange()" class="form-control"
+                                                       name="change" id="change" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 grid-margin stretch-card" id="show_change">
+                                <h6 class="text-left p-2">Select Account to Retire Change</h6>
+                                <div class="table-responsive">
+                                    <div class="col-lg-12 ">
+                                        <TABLE class="table">
+                                            <tbody>
+                                            <TR>
+
+                                                <TD>
+                                                    <div class="form-group">
+                                                        <input list="items_list" type="text" name="account_item"
+                                                               class="form-control amount"
+                                                               placeholder="Select Item/s   " id="account_item1">
+                                                        <datalist id="items_list">
+                                                            @foreach($form->item as $item)
+                                                                <option>{{$item->name}}</option>
+                                                            @endforeach
+                                                        </datalist>
+                                                    </div>
+                                                </TD>
+                                                <TD>
+                                                    <select name="credited_account" id="credited_account1"
+                                                            class="form-control amount">
+                                                        <option value="">Select Account To Credit</option>
+                                                        @foreach($accounts as $account)
+                                                            <option
+                                                                value="{{$account->code}}">{{$account->name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </TD>
+                                                <TD><input type="number" name="credited_amount"
+                                                           id="credited_amount1" class="form-control amount"
+                                                           placeholder=" Credited Amount [ZMK]" readonly>
+                                                </TD>
+                                                <TD>
+                                                    <select name="debited_account" id="debited_account1"
+                                                            class="form-control amount">
+                                                        @foreach($accounts as $account)
+                                                            @if($account->id  ==  config('constants.petty_cash_account_id')  )
+                                                                <option
+                                                                    value="{{$account->code}}">{{$account->name}}
+                                                                    :{{$account->code}}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </TD>
+                                                <TD><input type="number" name="debited_amount"
+                                                           class="form-control amount" id="debited_amount1"
+                                                           placeholder="Amount [ZMK]" readonly>
+                                                </TD>
+                                            </TR>
+                                            </tbody>
+                                            <datalist id="accounts_list">
+                                                @foreach($accounts as $account)
+                                                    <option value="{{$account->code}}">{{$account->name}}</option>
+                                                @endforeach
+                                            </datalist>
+
+                                        </TABLE>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -1282,6 +1361,12 @@
         });
 
 
+        //ROUND OFF FUNCTION
+        Number.prototype.round = function(places) {
+            return +(Math.round(this + "e+" + places)  + "e-" + places);
+        }
+
+
         function getvalues() {
             var inps = document.getElementsByName('credited_amount[]');
             var debiteds = document.getElementsByName('debited_amount[]');
@@ -1289,6 +1374,7 @@
             for (var i = 0; i < inps.length; i++) {
                 var inp = inps[i];
                 total = total + parseFloat(inp.value || 0);
+                total =  total.round(2);
 
                 //get the related field
                 var debited = debiteds[i];
@@ -1323,6 +1409,7 @@
             for (var i = 0; i < inps.length; i++) {
                 var inp = inps[i];
                 total = total + parseFloat(inp.value || 0);
+                total =  total.round(2);
 
                 //get the related field
                 var debited = debiteds[i];

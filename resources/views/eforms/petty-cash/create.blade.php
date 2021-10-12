@@ -276,6 +276,10 @@
     <!--  -->
     <script type="text/javascript">
 
+        //ROUND OFF FUNCTION
+        Number.prototype.round = function(places) {
+            return +(Math.round(this + "e+" + places)  + "e-" + places);
+        }
 
         function getvalues() {
             var inps = document.getElementsByName('amount[]');
@@ -284,6 +288,8 @@
                 var inp = inps[i];
                 total = total + parseFloat(inp.value || 0);
             }
+            total =  total.round(2);
+
             if (!isNaN(total)) {
                 //check if petty cash is below 2000
                 if (total > 2000) {

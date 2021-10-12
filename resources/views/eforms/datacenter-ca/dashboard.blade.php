@@ -17,7 +17,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('datacenter-ca-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Data Center Critical Assets Register</li>
                     </ol>
                 </div><!-- /.col -->
@@ -58,7 +58,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'datacenter-ca-list', config('constants.data_center_ca_status.new_submission') ) }}">
+                           href="{{route( 'datacenter.ca.list', config('constants.data_center_ca_status.new_submission') ) }}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -73,7 +73,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'datacenter-ca-list', 'pending')}}">
+                           href="{{route( 'datacenter.ca.list', 'pending')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -89,7 +89,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'datacenter-ca-list', 'pending')}}">
+                           href="{{route( 'datacenter.ca.list', 'pending')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -103,7 +103,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'datacenter-ca-list', 'pending')}}">
+                           href="{{route( 'datacenter.ca.list', 'pending')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -159,7 +159,7 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('datacenter-ca-show', $item->id) }}"
+                                                      action="{{ route('datacenter.ca.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
@@ -173,7 +173,7 @@
                                                    onclick="event.preventDefault();
                                                        document.getElementById('show-form'+{{$item->id}}).submit();"> View</a>
                                                 <form id="show-form{{$item->id}}"
-                                                      action="{{ route('datacenter-ca-show', $item->id) }}"
+                                                      action="{{ route('datacenter.ca.show', $item->id) }}"
                                                       method="POST" class="d-none">
                                                     @csrf
                                                 </form>
@@ -188,7 +188,7 @@
                         <!-- /.card-body -->
                         <div class="card-footer clearfix">
                             @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_008'))
-                                    <a href="{{route('datacenter-ca-create')}}"
+                                    <a href="{{route('datacenter.ca.create')}}"
                                        class="btn btn-sm bg-gradient-green float-left">New Data Center Critical Asset Form</a>
                             @endif
                         </div>

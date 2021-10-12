@@ -1,26 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\EForms\PettyCash;
+namespace App\Http\Controllers\EForms\Trip;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Main\ActivityLogsController;
+use App\Http\Controllers\EForms\Subsistence\SubsistenceController;
 use App\Mail\SendMail;
 use App\Models\EForms\PettyCash\PettyCashAccountModel;
-use App\Models\EForms\PettyCash\PettyCashItemModel;
-use App\Models\EForms\PettyCash\PettyCashModel;
-use App\Models\Main\AccountsChartModel;
+use App\Models\EForms\Subsistence\SubsistenceModel;
+use App\Models\EForms\Trip\Destinations;
+use App\Models\EForms\Trip\Invitation;
+use App\Models\EForms\Trip\Trip;
+use App\Models\EForms\Trip\TripMembers;
 use App\Models\Main\AttachedFileModel;
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\EformApprovalsModel;
 use App\Models\Main\EFormModel;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
 use App\Models\main\ProfileModel;
-use App\Models\Main\ProfilePermissionsModel;
-use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
 use App\Models\main\TotalsModel;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -39,38 +42,38 @@ class TripController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.petty_cash')]);
-        session(['eform_code' => config('constants.eforms_name.petty_cash')]);
+        session(['eform_id' => config('constants.eforms_id.trip')]);
+        session(['eform_code' => config('constants.eforms_name.trip')]);
     }
 
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(Request $request, $value)
     {
-
-        //get list of all petty cash forms for today
+        //get list of all Trip forms for today
         if ($value == "all") {
-            $list = PettyCashModel::all();
+            $list = Trip::all();
             $category = "All";
         } else if ($value == "pending") {
-            $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
-                ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
+            $list = Trip::where('config_status_id', '>', config('constants.trip_status.new_trip'))
+                ->where('config_status_id', '<', config('constants.trip_status.closed'))
                 ->get();
+
             $category = "Opened";
-        } else if ($value == config('constants.petty_cash_status.new_application')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
+        } else if ($value == config('constants.trip_status.new_trip')) {
+            $list = Trip::where('config_status_id', config('constants.trip_status.new_trip'))
                 ->get();
             $category = "New Application";
-        } else if ($value == config('constants.petty_cash_status.closed')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
+        } else if ($value == config('constants.trip_status.closed')) {
+            $list = Trip::where('config_status_id', config('constants.trip_status.closed'))
                 ->get();
             $category = "Closed";
-        } else if ($value == config('constants.petty_cash_status.rejected')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
+        } else if ($value == config('constants.trip_status.rejected')) {
+            $list = Trip::where('config_status_id', config('constants.trip_status.rejected'))
                 ->get();
             $category = "Rejected";
         } else if ($value == "needs_me") {
@@ -82,7 +85,7 @@ class TripController extends Controller
 
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.trip'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -99,7 +102,7 @@ class TripController extends Controller
         ];
 
         //return view
-        return view('eforms.petty-cash.list')->with($params);
+        return view('eforms.trip.list')->with($params);
 
     }
 
@@ -107,32 +110,32 @@ class TripController extends Controller
     /**
      * Display a listing of the resource for the admin.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function records(Request $request, $value)
     {
 
-        //get list of all petty cash forms for today
+        //get list of all Trip forms for today
         if ($value == "all") {
-            $list = DB::select("SELECT * FROM eform_petty_cash ");
-            $list = PettyCashModel::hydrate($list);
+            $list = DB::select("SELECT * FROM eform_trip ");
+            $list = Trip::hydrate($list);
 
             $category = "All Records";
         } else if ($value == "pending") {
-            $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
-                ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
+            $list = Trip::where('config_status_id', '>', config('constants.trip_status.new_trip'))
+                ->where('config_status_id', '<', config('constants.trip_status.closed'))
                 ->get();
             $category = "Opened";
-        } else if ($value == config('constants.petty_cash_status.new_application')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
+        } else if ($value == config('constants.trip_status.new_trip')) {
+            $list = Trip::where('config_status_id', config('constants.trip_status.new_trip'))
                 ->get();
             $category = "New Application";
-        } else if ($value == config('constants.petty_cash_status.closed')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
+        } else if ($value == config('constants.trip_status.closed')) {
+            $list = Trip::where('config_status_id', config('constants.trip_status.closed'))
                 ->get();
             $category = "Closed";
-        } else if ($value == config('constants.petty_cash_status.rejected')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
+        } else if ($value == config('constants.trip_status.rejected')) {
+            $list = Trip::where('config_status_id', config('constants.trip_status.rejected'))
                 ->get();
             $category = "Rejected";
         } else if ($value == "needs_me") {
@@ -144,7 +147,7 @@ class TripController extends Controller
 
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.trip'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -161,33 +164,33 @@ class TripController extends Controller
         ];
 
         //return view
-        return view('eforms.petty-cash.records')->with($params);
+        return view('eforms.trip.records')->with($params);
 
     }
 
     /**
      * Mark the form as void.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function void(Request $request, $id)
     {
-        //GET THE PETTY CASH MODEL
-        $list = DB::select("SELECT * FROM eform_petty_cash where id = {$id} ");
-        $form = PettyCashModel::hydrate($list)->first();
+        //GET THE Trip MODEL
+        $list = DB::select("SELECT * FROM eform_trip where id = {$id} ");
+        $form = Trip::hydrate($list)->first();
         //get the status
         $current_status = $form->status->id;
         $new_status = 0;
         $user = Auth::user();
         //get the form type
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
+        $eform_pettycash = EFormModel::find(config('constants.eforms_id.trip'));
 
         //HANDLE VOID REQUEST
-        $new_status = config('constants.petty_cash_status.void');
+        $new_status = config('constants.trip_status.void');
 
         //update the totals rejected
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('id', config('constants.totals.petty_cash_reject'))
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.trip'))
+            ->where('id', config('constants.totals.trip_reject'))
             ->first();
         $totals->value = $totals->value + 1;
         $totals->save();
@@ -195,8 +198,8 @@ class TripController extends Controller
         $eform_pettycash->save();
 
         //update the totals open
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('id', config('constants.totals.petty_cash_open'))
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.trip'))
+            ->where('id', config('constants.totals.trip_open'))
             ->first();
         $totals->value = $totals->value - 1;
         $totals->save();
@@ -205,7 +208,7 @@ class TripController extends Controller
 
         //get status id
         $status_model = StatusModel::where('id', $new_status)
-            ->where('eform_id', config('constants.eforms_id.petty_cash'))->first();
+            ->where('eform_id', config('constants.eforms_id.trip'))->first();
         $new_status = $status_model->id;
 
         //update the form status
@@ -216,20 +219,20 @@ class TripController extends Controller
         $reason = EformApprovalsModel::Create(
             [
                 'profile' => $user->profile_id,
-                'title' => $user->profile_id,
+                'claimant_staff_no' => $user->staff_no,
                 'name' => $user->name,
                 'staff_no' => $user->staff_no,
                 'reason' => $request->reason,
                 'action' => $request->approval,
                 'current_status_id' => $current_status,
                 'action_status_id' => $new_status,
-                'config_eform_id' => config('constants.eforms_id.petty_cash'),
+                'config_eform_id' => config('constants.eforms_id.trip'),
                 'eform_id' => $form->id,
                 'created_by' => $user->id,
             ]);
 
         //redirect home
-        return Redirect::back()->with('message', 'Petty Cash ' . $form->code . ' for has been marked as Void successfully');
+        return Redirect::back()->with('message', 'Trip ' . $form->code . ' for has been marked as Void successfully');
 
     }
 
@@ -237,149 +240,227 @@ class TripController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
         $user = auth()->user();
-        $projects = ProjectsModel::all();
+        $units = \App\Http\Controllers\Main\HomeController::getMyViisbleUserUnits();
+        $units->load('users_list');
+        $destination_units = ConfigWorkFlow::select('id', 'user_unit_description', 'user_unit_code', 'user_unit_bc_code', 'user_unit_cc_code')
+            ->where('user_unit_status' ,  config('constants.user_unit_active') )
+            ->get();
+        // dd($units);
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
-        //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'projects' => $projects,
-            'user' => $user
-        ];
+
+        // dd($units);
         //show the create form
-        return view('eforms.petty-cash.create')->with($params);
+        return view('eforms.trip.create')->with(compact('destination_units','units', 'user', 'totals_needs_me'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
-        //[1]get the logged in user
-        $user = Auth::user();   //superior_code
 
-        //[2A] find my code superior
-        $my_hods = self::myHODs($user);
-
-        if (empty($my_hods)) {
-            //prepare details
-            $details = [
-                'name' => "Team",
-                'url' => 'subsistence-home',
-                'subject' => "Subsistence-Voucher Configuration Needs Your Attention",
-                'title' => "Code Superior Not Defined for {$user->name}",
-                'body' => "Please note that {$user->name} with Staff Number {$user->staff_no}, failed to submit or raise new petty-cash voucher.
-                      <br>This could be as a result of <br><br>
-                   1: The superior has not registered in the system. Make sure the superior to {$user->name} is registered. <br>
-                   2: The superior has not been assigned the correct profile. Please assign the right profile. <br>
-                   3: The code superior for {$user->position->code} is empty. Please assign the correct code superior. <br>
-                <br>You can update the code superior by clicking on 'Positions' menu, then search for {$user->position->code}
-                <br> and 'Edit' to update the correct 'code superior' ."
-            ];
-
-            //send emails
-            $to = config('constants.team_email_list');
-            $mail_to_is = Mail::to($to)->send(new SendMail($details));
-
-            //return with error msg
-            return Redirect::route('petty-cash-home')->with('error', 'Sorry!, The superior who is supposed to approve your petty cash,
-                       <br> has not registered or not fully configured yet, Please, <b>try first contacting your superior</b> so as to make sure he/she has registered in the system,
-                       then you can contact eZESCO Admins to configure your superior. Your petty-cash voucher has not been saved.');
+        //check if members were invited
+        if ($request->destination_units == null) {
+            return Redirect::back()->with('error', 'Please select the destination user-unit or user-units');
         }
 
-        //generate the petty cash unique code
-        $code = self::randGenerator("PT");
-        $formModel = PettyCashModel::updateOrCreate(
+        //get team email addresses
+        $to = [];
+        $names = "";
+        //check if members were invited
+        if ($request->users == null) {
+            return Redirect::back()->with('error', 'Please Invite some members to subscribe to the trip');
+        }
+
+        $invited = sizeof($request->users);
+
+        //[1]get the logged in user
+        $user = Auth::user();   //superior_code
+        //generate the Trip unique code
+        $code = self::randGenerator("TR", 1);
+        $formModel = Trip::updateOrCreate(
             [
-                'total_payment' => $request->total_payment,
-                'claim_date' => $request->date,
-                'claimant_name' => $request->claimant_name,
-                'claimant_staff_no' => $request->sig_of_claimant,
+                'date_from' => $request->date_from,
+                'date_to' => $request->date_to,
+                'name' => $request->name,
+                'destination' => $request->destination,
             ],
             [
-                'cost_center' => $user->user_unit->cost_center_code,
-                'business_unit_code' => $user->user_unit->business_unit_code,
-                'user_unit_code' => $user->user_unit->code,
-                'user_unit_id' => $user->user_unit->id,
-                'pay_point_id' => $user->pay_point_id,
-                'location_id' => $user->location_id,
-                'division_id' => $user->user_division_id,
-                'region_id' => $user->user_region_id,
-                'directorate_id' => $user->user_directorate_id,
-                'projects_id' => $request->projects_id,
+                'date_from' => $request->date_from,
+                'date_to' => $request->date_to,
+                'hod_code' => $user->profile_job_code,
+                'hod_unit' => $user->profile_unit_code,
 
-                'total_payment' => $request->total_payment,
                 'code' => $code,
-                'ref_no' => $request->ref_no,
-                'config_status_id' => config('constants.petty_cash_status.new_application'),
+                'name' => $request->name,
+                'description' => $request->description,
+                'destination' => $request->destination,
+                'config_status_id' => config('constants.trip_status.new_trip'),
 
-                'claimant_name' => $request->claimant_name,
-                'claimant_staff_no' => $request->sig_of_claimant,
-                'claim_date' => $request->date,
+                'initiator_name' => $user->name,
+                'initiator_staff_no' => $user->staff_no,
+                'initiator_date' => $user->id,
+                'invited' => $invited,
 
                 'created_by' => $user->id,
-                'profile' => Auth::user()->profile_id,
-                'code_superior' => Auth::user()->position->superior_code,
+
             ]);
 
 
-        // now we need to insert the petty-cash items
-        for ($i = 0; $i < sizeof($request->amount); $i++) {
-            $formItemModel = PettyCashItemModel::Create(
-                [
-                    'name' => $request->name[$i],
-                    'amount' => $request->amount[$i],
-                    'eform_petty_cash_id' => $formModel->id,
-                    'created_by' => $user->id,
-                ]);
-        }
-
-        /** update the totals */
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('id', config('constants.totals.petty_cash_new'))
-            ->first();
-        $totals->value = $totals->value + 1;
-        $totals->save();
-
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
-        $eform_pettycash->total_new = $totals->value;
-        $eform_pettycash->save();
-
-        /** send email to supervisor */
-        //get team email addresses
-        $to = config('constants.team_email_list');
-        $names = "";
+        /** send email to the invited */
         //add hods email addresses
-        foreach ($my_hods as $item) {
-            $to[] = ['email' => $item->email, 'name' => $item->name];
-            $names = $names . '<br>' . $item->name;
+        foreach ($request->users as $item) {
+            $userObj = json_decode($item);
+            $to[] = ['email' => $userObj->email, 'name' => $userObj->name];
+            $names = $names . '<br>' . $userObj->name;
+
+            // insert into invitations table
+            $invitation = Invitation::UpdateOrCreate(
+                [
+                    'man_no' => $userObj->staff_no,
+                    'trip_code' => $formModel->code,
+                    'date_from' => $formModel->date_from,
+                    'date_to' => $formModel->date_to,
+                ],
+                [
+                    'man_no' => $userObj->staff_no,
+                    'trip_code' => $formModel->code,
+                    'date_from' => $formModel->date_from,
+                    'date_to' => $formModel->date_to,
+                    'type' => config('constants.trip_status.pending'),
+                ]
+            );
         }
+
+        /** save user units destinations */
+        //add hods email addresses
+        foreach ($request->destination_units as $destination_unit) {
+
+            // insert into invitations table
+            $dest = Destinations::UpdateOrCreate(
+                [
+                    'user_unit_code' => $destination_unit,
+                    'trip_code' => $formModel->code,
+                    'trip_id' => $formModel->id,
+                    'date_from' => $formModel->date_from,
+                    'date_to' => $formModel->date_to,
+                ],
+                [
+                    'user_unit_code' => $destination_unit,
+                    'trip_code' => $formModel->code,
+                    'trip_id' => $formModel->id,
+                    'date_from' => $formModel->date_from,
+                    'date_to' => $formModel->date_to,
+                ]
+            );
+        }
+
+        /** upload attached files */
+        //upload the receipt files
+        $files = $request->file('trip_files');
+        if ($request->hasFile('trip_files')) {
+            foreach ($files as $file) {
+                $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
+                // Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                //get size
+                $size = number_format($file->getSize() * 0.000001, 2);
+                // Get just ext
+                $extension = $file->getClientOriginalExtension();
+                // Filename to store
+                $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
+                // Upload File
+                $path = $file->storeAs('public/trip_files', $fileNameToStore);
+
+                //upload the receipt
+                $file = AttachedFileModel::updateOrCreate(
+                    [
+                        'name' => $fileNameToStore,
+                        'location' => $path,
+                        'extension' => $extension,
+                        'file_size' => $size,
+                        'form_id' => $formModel->code,
+                        'form_type' => config('constants.eforms_id.trip'),
+                        'file_type' => config('constants.file_type.trip')
+                    ],
+                    [
+                        'name' => $fileNameToStore,
+                        'location' => $path,
+                        'extension' => $extension,
+                        'file_size' => $size,
+                        'form_id' => $formModel->code,
+                        'form_type' => config('constants.eforms_id.trip'),
+                        'file_type' => config('constants.file_type.trip')
+                    ]
+                );
+            }
+        }
+
+
         //prepare details
         $details = [
             'name' => $names,
-            'url' => 'petty-cash-home',
-            'subject' => "New Petty-Cash Voucher Needs Your Attention",
-            'title' => "New Petty-Cash Voucher Needs Your Attention {$user->name}",
-            'body' => "Please note that {$user->name} with Staff Number {$user->staff_no} has successfully raised a petty-cash voucher with
-                   <br> serial: {$formModel->code}  <br> reference: {$formModel->ref_no} and <br> Status: {$formModel}</br>. <br>
-            This voucher now needs your approval, kindly click on the button below to login to E-ZESCO and take action on the voucher.<br> regards. "
+            'url' => 'trip.home',
+            'subject' => "New Trip To {$request->destination}",
+            'title' => "New Trip Needs Your Attention",
+            'body' => "Please note that {$user->name} has successfully created a Trip to {$request->destination} with the following details:
+                    <pre>&nbsp;&nbsp;serial: {$formModel->code}</pre>
+                    <pre>&nbsp;&nbsp;destination: {$formModel->destination}</pre>
+                    <pre>&nbsp;&nbsp;from: {$formModel->date_from}</pre>
+                    <pre>&nbsp;&nbsp;to: {$formModel->date_to}</pre>
+                    <pre>&nbsp;&nbsp;description: {$formModel->description} and</pre>
+                    <pre>&nbsp;&nbsp;Status:{$formModel->status->name}.</pre>  <br>
+            To subscribe to this trip, kindly click on the button below to login to E-ZESCO and raise subsistence for the trip.
+            <br><br> "
         ];
         //send mail
         $mail_to_is = Mail::to($to)->send(new SendMail($details));
 
         //log the activity
-        ActivityLogsController::store($request, "Creating of Petty Cash", "update", " pay point created", $formModel->id);
+//        ActivityLogsController::store($request, "Creating of Trip", "create", " trip created", $formModel->id);
         //return the view
-        return Redirect::route('petty-cash-home')->with('message', 'Petty Cash Details for ' . $formModel->code . ' have been Created successfully');
+        return Redirect::route('trip.home')->with('message', 'Trip Details for ' . $formModel->code . ' have been Created successfully');
 
+    }
+
+    /**
+     * Generate Voucher Code
+     * @param $head
+     * @return string
+     */
+    public function randGenerator($head, $value)
+    {
+        // use the total number of petty cash in the system
+        $count = DB::select("SELECT count(id) as total FROM eform_trip ");
+
+        //random number
+        // $random = rand(1, 9999999);
+        $random = $count[0]->total;  // count total and begin again
+        // $random = $size->total ;  // oracle sequence
+        $random = sprintf("%07d", ($random + $value));
+        $random = $head . $random;
+
+        $count_existing_forms = DB::select("SELECT count(id) as total FROM eform_trip WHERE code = '{$random}'");
+        try {
+            $total = $count_existing_forms[0]->total;
+        } catch (Exception $exception) {
+            $total = 0;
+        }
+
+        if ($total < 1) {
+            return $random;
+        } else {
+            self::randGenerator($head, $value);
+        }
     }
 
     /**
@@ -399,7 +480,7 @@ class TripController extends Controller
         //[2] find my hod base
         foreach ($my_user_unit_users as $item) {
             //[A]check if the users in my user unit have this assigned profile
-            $hods_assigned = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.petty_cash'))
+            $hods_assigned = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.trip'))
                 ->where('profile', $hod_profile->code)
                 ->where('user_id', $item->id);
             if ($hods_assigned->exists()) {
@@ -407,7 +488,7 @@ class TripController extends Controller
             } else {
 
                 //[B]check if the users in my user unit have this delegated profile
-                $hods_assigned = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.petty_cash'))
+                $hods_assigned = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.trip'))
                     ->where('delegated_profile', $hod_profile->code)
                     ->where('delegated_to', $item->id)
                     ->where('delegated_user_unit', $item->user_unit_id)
@@ -429,76 +510,38 @@ class TripController extends Controller
     }
 
     /**
-     * Generate Voucher Code
-     * @param $head
-     * @return string
-     */
-    public function randGenerator($head)
-    {
-        // use the total number of petty cash in the system
-        $count = DB::select("SELECT count(id) as total FROM eform_petty_cash");
-
-        // use of oracle sequence
-//          $count = DB::select("SELECT id as total  FROM eform_petty_cash  ");
-//          $size = sizeof($count);
-//          $size = $count[$size - 1 ];
-
-        //random number
-        // $random = rand(1, 9999999);
-        $random = $count[0]->total;  // count total and begin again
-        // $random = $size->total ;  // oracle sequence
-        $random = sprintf("%07d", $random);
-        $random = $head . $random;
-
-        //  dd($random);
-        $check = PettyCashModel::where('code', $random)->get();
-
-        if ($check->isEmpty()) {
-            return $random;
-        } else {
-            self::randGenerator("PT");
-        }
-    }
-
-
-    /**
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
-        //GET THE PETTY CASH MODEL if you are an admin
+        $user = Auth::user();
+        //GET THE Trip MODEL if you are an admin
         if (Auth::user()->type_id == config('constants.user_types.developer')) {
-            $list = DB::select("SELECT * FROM eform_petty_cash where id = {$id} ");
-            $form = PettyCashModel::hydrate($list)->first();
+            $list = DB::select("SELECT * FROM eform_trip where id = {$id} ");
+            $form = Trip::hydrate($list)->first();
         } else {
-            //find the petty cash with that id
-            $form = PettyCashModel::find($id);
+            //find the Trip with that id
+            $form = Trip::find($id);
         }
-
-        $projects = ProjectsModel::all();
-        $accounts = AccountsChartModel::all();
-        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.petty_cash'))->get();
-
+        $form->load('members', 'members.user');
+        $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.trip'))->get();
 
         //get the list of users who are supposed to work on the form
-        $user_array = self::nextUsers($form);
+        $user_array = self::findMyNextPerson($form, Auth::user()->user_unit, Auth::user());
+        $list_inv = Invitation::where('man_no', $user->staff_no)
+            ->where('trip_code', $form->code)
+            ->first();
+
+       // dd($form);
+
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
-        //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'form' => $form,
-            'projects' => $projects,
-            'user_array' => $user_array,
-            'approvals' => $approvals,
-            'accounts' => $accounts
-        ];
         //return view
-        return view('eforms.petty-cash.show')->with($params);
+        return view('eforms.trip.show')->with(compact('list_inv', 'user', 'user_array', 'totals_needs_me', 'form', 'approvals'));
 
     }
 
@@ -509,167 +552,103 @@ class TripController extends Controller
      * @param $claimant_man_no
      * @return array
      */
-    public function nextUsers($form)
+    public function findMyNextPerson($form, $user_unit, $claimant)
     {
-        //get claimant details
-        $user_array = [];
-        $user_claimant = User::where('staff_no', $form->claimant_staff_no)->get()->first();
+        $users_array = [];
+        $not_claimant = true;
 
-        //[1]
-        //THE LAST PROFILE
-        $last_profile_who_worked = ProfileModel::find($form->profile);
-        //get the next profiles to work from the last profile  PROFILE Permissions
-        $last_profile_who_worked_profilePermission = ProfilePermissionsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('profile', $last_profile_who_worked->code)
-            ->first();
+        //CLAIMANT TO HOD
+        if ($form->config_status_id == config('constants.trip_status.new_trip')) {
 
-        //[2]
-        //THE NEXT PROFILE
-        $next_profile_to_work = $last_profile_who_worked_profilePermission->profiles_next;
-        //get the profile permissions associated with this next_profile_to_work
-        $profileAssignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('profile', $next_profile_to_work->code)
-            ->get();
+            //  dd($user_unit);
+            $superior_user_unit = $form->hod_unit;
+            $superior_user_code = $form->hod_code;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
 
-        //[3]
-        //THE USERS
-        //check if this next profile is for a claimant and if the Petty-Cash needs Acknowledgement
-        if ($next_profile_to_work->id == config('constants.user_profiles.EZESCO_002') &&
-            $form->config_status_id == config('constants.petty_cash_status.security_approved')) {
-            $user = User::where('staff_no', $form->claimant_staff_no)
-                ->first();
-            $user_array[] = $user;
-        } //check if this next profile is for a claimant and if the Petty-Cash is closed
-        else if ($next_profile_to_work->id == config('constants.user_profiles.EZESCO_002') &&
-            $form->config_status_id == config('constants.petty_cash_status.closed')) {
-            //get user
-            $user = User::where('staff_no', $form->claimant_staff_no)->first();
-            $user_array[] = $user;
-        } //check if the Petty-Cash is closed
-        else if ($form->config_status_id == config('constants.petty_cash_status.closed')) {
-            //get no user
-            $user_array = [];
-        } //check if the Petty-Cash is closed
-        else if ($form->config_status_id == config('constants.petty_cash_status.rejected')) {
-            //get no user
-            $user_array = [];
-        } // other wise get the users
-        else {
-            foreach ($profileAssignement as $item) {
-                //get user who is the next person
-                $user = User::find($item->user_id);
+        } //HOD TO HR
+        elseif ($form->config_status_id == config('constants.trip_status.hod_approved')) {
+            $superior_user_code = $user_unit->hrm_code;
+            $superior_user_unit = $user_unit->hrm_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
 
-                // FILTER: based on user unit  if the form is a New Application
-                if ($form->status->id == config('constants.petty_cash_status.new_application')) {
-                    if (
-//                        ($user->user_unit_id == $form->user_unit->id)
-//                        &&
-                    ($user_claimant->position->superior_code == $user->position->code)) {
-                        /* FILTER: Here now use the post code to figure out the code your superior */
-                        //  $user_array[] = $user;
-                        $user_array = self::myHODs($user);
+        } //HR TO CA
+        elseif ($form->config_status_id == config('constants.trip_status.hr_approved')) {
+            $superior_user_code = $user_unit->ca_code;
+            $superior_user_unit = $user_unit->ca_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
+
+        } //CA-TO-EXPENDITURE
+        elseif ($form->config_status_id == config('constants.trip_status.chief_accountant')) {
+            $superior_user_unit = $user_unit->expenditure_unit;
+            $superior_user_code = $user_unit->expenditure_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
+        } else {
+            //no one
+            $superior_user_unit = "0";
+            $superior_user_code = "0";
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_002'));
+        }
+
+        if ($not_claimant) {
+            //SELECT USERS
+            //[A]check for any users who have this assigned profile
+            $assigned_users = ProfileAssigmentModel::
+            where('eform_id', config('constants.eforms_id.trip'))
+                ->where('profile', $profile->code)
+                ->get();
+            //loop through assigned users
+            foreach ($assigned_users as $item) {
+                if ($profile->id == config('constants.user_profiles.EZESCO_014') ||
+                    $profile->id == config('constants.user_profiles.EZESCO_011') ||
+                    $profile->id == config('constants.user_profiles.EZESCO_013')) {
+                    //expenditure, audit and security
+                    $my_superiors = User::where('user_unit_code', $superior_user_unit)
+                        ->where('id', $item->user_id)
+                        ->get();
+                    foreach ($my_superiors as $item) {
+                        $users_array[] = $item;
                     }
                 } else {
-                    //use the pay point
-                    if ($user->pay_point_id == $form->pay_point_id) {
-                        $user_array[] = $user;
+                    //hod, hr, ca
+                    $my_superiors = User::where('user_unit_code', $superior_user_unit)
+                        ->where('job_code', $superior_user_code)
+                        ->where('id', $item->user_id)
+                        ->get();
+                    foreach ($my_superiors as $item) {
+                        $users_array[] = $item;
                     }
                 }
+
             }
-        }
-
-        //[4]
-        //return the list of users
-        return $user_array;
-
-    }
-
-
-    public function nextUsers1($last_profile, $current_status, $claimant_man_no)
-    {
-
-        $user_array = [];
-        $user = Auth::user();
-
-        //[1]
-        //THE LAST PROFILE
-        $last_profile_who_worked = ProfileModel::find($last_profile);
-        //get the next profiles to work from the last profile  PROFILE Permissions
-        $last_profile_who_worked_profilePermission = ProfilePermissionsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('profile', $last_profile_who_worked->code)
-            ->first();
-
-        //[2]
-        //THE NEXT PROFILE
-        $next_profile_to_work = $last_profile_who_worked_profilePermission->profiles_next;
-        //get the profile permissions associated with this next_profile_to_work
-        $profileAssignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('profile', $next_profile_to_work->code)
-            ->get();
-
-        //If it is you who is actually supposed to work on the form, then find the next users who are supposed to work after me
-        if ($user->profile_id == $next_profile_to_work->id) {
-            //[1A]
-            //THE LAST PROFILE
-            $last_profile_who_worked = ProfileModel::find($user->profile_id);
-            //get the next profiles to work from the last profile  PROFILE Permissions
-            $last_profile_who_worked_profilePermission = ProfilePermissionsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('profile', $last_profile_who_worked->code)
-                ->first();
-            //[2B]
-            //THE NEXT PROFILE
-            $next_profile_to_work = $last_profile_who_worked_profilePermission->profiles_next;
-            //get the profile permissions associated with this next_profile_to_work
-            $profileAssignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('profile', $next_profile_to_work->code)
+            //[B]check if one the users with the profile have this delegated profile
+            $delegated_users = ProfileDelegatedModel::
+            where('eform_id', config('constants.eforms_id.trip'))
+                ->where('delegated_profile', $profile->id)
+                ->where('delegated_job_code', $superior_user_code)
+                ->where('delegated_user_unit', $superior_user_unit)
+                ->where('config_status_id', config('constants.active_state'))
                 ->get();
-        }
 
-        //[3]
-        //THE USERS
-        //check if this next profile is for a claimant and if the Petty-Cash needs Acknowledgement
-        if ($current_status == config('constants.petty_cash_status.security_approved')) {
-            $user = User::where('staff_no', $claimant_man_no)->first();
-            // $user_array[] = $user;
-            $user_array = [];
-        } //check if this next profile is for a claimant and if the Petty-Cash is needs closed
-        else if ($next_profile_to_work->id == config('constants.user_profiles.EZESCO_002') &&
-            $current_status == config('constants.petty_cash_status.closed')) {
-            //get user
-            $user = User::where('staff_no', $claimant_man_no)->first();
-            $user_array[] = $user;
-        } //check if this next profile is for a claimant and if the Petty-Cash is needs closed
-        else if ($current_status == config('constants.petty_cash_status.chief_accountant')) {
-            //get user
-            $user = User::where('staff_no', $claimant_man_no)->first();
-            $user_array[] = $user;
-
-        } //check if the Petty-Cash is closed
-        else if ($current_status == config('constants.petty_cash_status.closed')) {
-            //get no user
-            $user_array = [];
-        }
-        //check if status is cheif approved
-        // other wise get the users
-        else {
-            foreach ($profileAssignement as $item) {
-                //get user
-                $user = User::find($item->user_id);
-                $user_array[] = $user;
+//            dd( $profile->code  );
+            //loop through delegated users
+            foreach ($delegated_users as $item) {
+                $user = User::find($item->delegated_to);
+                $users_array[] = $user;
             }
+
+        } else {
+            $users_array[] = $claimant;
         }
 
-        //[4]
-        //return the list of users
-        return $user_array;
-
+        //[3] return the list of users
+        return $users_array;
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -679,9 +658,9 @@ class TripController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -692,7 +671,7 @@ class TripController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
@@ -701,322 +680,165 @@ class TripController extends Controller
 
     public function approve(Request $request)
     {
-        //GET THE PETTY CASH MODEL
-        $form = PettyCashModel::find($request->id);
-        $current_status = $form->status->id;
+        //GET THE Trip MODEL
+        $trip = Trip::find($request->id);
+        $current_status = $trip->status->id;
         $new_status = 0;
         $user = Auth::user();
 
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.petty_cash'));
-
-        //HANDLE REJECTION
-        if ($request->approval == config('constants.approval.reject')) {
-            $new_status = config('constants.petty_cash_status.rejected');
-
-            //update the totals rejected
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('id', config('constants.totals.petty_cash_reject'))
-                ->first();
-            $totals->value = $totals->value + 1;
-            $totals->save();
-            $eform_pettycash->total_rejected = $totals->value;
-            $eform_pettycash->save();
-
-            //update the totals open
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('id', config('constants.totals.petty_cash_open'))
-                ->first();
-            $totals->value = $totals->value - 1;
-            $totals->save();
-            $eform_pettycash->total_pending = $totals->value;
-            $eform_pettycash->save();
-
-            //get status id
-            $status_model = StatusModel::where('id', $new_status)
-                ->where('eform_id', config('constants.eforms_id.petty_cash'))->first();
-            $new_status = $status_model->id;
+        //HANDLE SUBSCRIPTION
+        if ($request->approval == config('constants.approval.subscribe')) {
+            return SubsistenceController::create($trip);
         }
-
-        //HANDLE APPROVAL
-        if ($request->approval == config('constants.approval.approve')) {
-            $new_status = $form->status->status_next;
-
-            if ($form->status->id == config('constants.petty_cash_status.security_approved')) {
-
-                //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_closed'))
-                    ->first();
-                $totals->value = $totals->value + 1;
-                $totals->save();
-                $eform_pettycash->total_closed = $totals->value;
-                $eform_pettycash->save();
-
-                //update the totals open
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_open'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_pending = $totals->value;
-                $eform_pettycash->save();
-
-            } else if ($form->status->id == config('constants.petty_cash_status.new_application')) {
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_open'))
-                    ->first();
-                $totals->value = $totals->value + 1;
-                $totals->save();
-                $eform_pettycash->total_pending = $totals->value;
-                $eform_pettycash->save();
-
-                //update the totals new
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-                    ->where('id', config('constants.totals.petty_cash_new'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_new = $totals->value;
-                $eform_pettycash->save();
-            }
-
-            //get status id
-            $status_model = StatusModel::where('status', $new_status)
-                ->where('eform_id', config('constants.eforms_id.petty_cash'))->first();
-            $new_status = $status_model->id;
-        }
-
-
-        //FOR HOD
-        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')) {
-            //update
-            $form->config_status_id = $new_status;
-            $form->authorised_by = $user->name;
-            $form->authorised_staff_no = $user->staff_no;
-            $form->authorised_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-        }
-
-        //FOR FOR CHIEF HR
-        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_009')) {
-            //update
-            $form->config_status_id = $new_status;
-            $form->station_manager = $user->name;
-            $form->station_manager_staff_no = $user->staff_no;
-            $form->station_manager_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-        }
-
-        //FOR FOR CHIEF ACCOUNTANT
-        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')) {
-
-            //update
-            $form->config_status_id = $new_status;
-            $form->accountant = $user->name;
-            $form->accountant_staff_no = $user->staff_no;
-            $form->accountant_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-        }
-
-        //FOR FOR EXPENDITURE OFFICE FUNDS
-        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014') && $current_status == config('constants.petty_cash_status.chief_accountant')) {
-
-            //update
-            $form->config_status_id = $new_status;
-            $form->expenditure_office = $user->name;
-            $form->expenditure_office_staff_no = $user->staff_no;
-            $form->expenditure_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-
-            //create records for the accounts associated with this petty cash transaction
-            for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
-                $des = "";
-                $des = $des . " " . $request->account_items[$i] . ",";
-                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
-
-                //[1] CREDITED ACCOUNT
-                //[1A] - money
-                $formAccountModel = PettyCashAccountModel::Create(
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => $request->credited_amount[$i],
-                        'account' => $request->credited_account[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        //'debitted_amount' => $request->debited_amount[$i],
-                        'eform_petty_cash_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                    ]);
-
-                //[2] DEBITED ACCOUNT
-                //[2A] - money
-                $formAccountModel = PettyCashAccountModel::Create(
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        //'creditted_amount' => $request->credited_amount[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => $request->debited_amount[$i],
-                        'account' => $request->debited_account[$i],
-                        'eform_petty_cash_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                    ]);
-            }
-        }
-
-        //FOR CLAIMANT - ACKNOWLEDGEMENT
-        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_002') && $current_status == config('constants.petty_cash_status.funds_disbursement')) {
-            //update
-            $form->config_status_id = $new_status;
-//          $form->profile = Auth::user()->profile_id;
-            $form->profile = config('constants.user_profiles.EZESCO_007');
-            $form->save();
-        }
-
-        //FOR FOR SECURITY
-        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_013')) {
-            //update
-            $form->config_status_id = $new_status;
-            $form->security_name = $user->name;
-            $form->security_staff_no = $user->staff_no;
-            $form->security_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-        }
-
-        //FOR FOR EXPENDITURE OFFICE - RECEIPT
-        if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014') && $current_status == config('constants.petty_cash_status.security_approved')) {
-
-            //update
-            $form->config_status_id = $new_status;
-            $form->expenditure_office = $user->name;
-            $form->expenditure_office_staff_no = $user->staff_no;
-            $form->expenditure_date = $request->sig_date;
-            $form->change = $request->change;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-
-            //check if there is need to create an account
-            if ($request->change > 0) {
-                $des = "";
-                $des = $des . " " . $request->account_item . ",";
-                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . $request->credited_amount . '.';
-
-
-                //[1] CREDITED ACCOUNT
-                //[1A] - money
-                $formAccountModel = PettyCashAccountModel::Create(
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        'creditted_amount' => $request->credited_amount,
-                        'account' => $request->credited_account,
-                        'debitted_account_id' => $request->debited_account,
-                        //'debitted_amount' => $request->debited_amount,
-                        'eform_petty_cash_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                    ]);
-
-                //[2] DEBITED ACCOUNT
-                //[2A] - money
-                $formAccountModel = PettyCashAccountModel::Create(
-                    [
-                        'creditted_account_id' => $request->credited_account,
-                        //'creditted_amount' => $request->credited_amount,
-                        'debitted_account_id' => $request->debited_account,
-                        'debitted_amount' => $request->debited_amount,
-                        'account' => $request->debited_account,
-                        'eform_petty_cash_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => $form->project->code ?? "",
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                    ]);
-            }
-
-            //update all accounts associated to this pettycash
-            $formAccountModelList = PettyCashAccountModel::where('eform_petty_cash_id', $form->id)->get();
-            foreach ($formAccountModelList as $item) {
-                $item->status_id = config('constants.petty_cash_status.not_exported');
-                $item->save();
-            }
-
-// upload the receipt files
-            $files = $request->file('receipt');
-            if ($request->hasFile('receipt')) {
-                foreach ($files as $file) {
-                    $filenameWithExt = $file->getClientOriginalName();
-                    // Get just filename
-                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                    //get size
-                    $size = number_format($file->getSize() * 0.000001, 2);
-                    // Get just ext
-                    $extension = $file->getClientOriginalExtension();
-                    // Filename to store
-                    $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
-                    // Upload File
-                    $path = $file->storeAs('public/petty_cash_receipt', $fileNameToStore);
-
-                    //upload the receipt
-                    $file = AttachedFileModel::Create(
-                        [
-                            'name' => $fileNameToStore,
-                            'location' => $path,
-                            'extension' => $extension,
-                            'file_size' => $size,
-                            'form_id' => $form->code,
-                            'form_type' => config('constants.eforms_id.petty_cash'),
-                        ]);
-                }
-            }
-        }
-
-
-        //save reason
-        $reason = EformApprovalsModel::Create(
-            [
-                'profile' => $user->profile_id,
-                'title' => $user->profile_id,
-                'name' => $user->name,
-                'staff_no' => $user->staff_no,
-                'reason' => $request->reason,
-                'action' => $request->approval,
-                'current_status_id' => $current_status,
-                'action_status_id' => $new_status,
-                'config_eform_id' => config('constants.eforms_id.petty_cash'),
-                'eform_id' => $form->id,
-                'created_by' => $user->id,
-            ]);
-
-        //send the email
-        self::nextUsersSendMail($user->profile_id, $new_status, $form);
-
-        //redirect home
-        return Redirect::route('petty-cash-home')->with('message', 'Petty Cash ' . $form->code . ' for has been ' . $request->approval . ' successfully');
 
     }
+
+    public function membershipApprove(Request $request, Trip $trip)
+    {
+        $subsistence = SubsistenceModel::find($request->membership);
+        $current_status = $subsistence->config_status_id;
+        $new_status = 0;
+        $insert_reasons = true;
+        $user = Auth::user();
+        $profile = " ";
+        $member = User::find($subsistence->created_by);
+
+
+        //FOR APPROVE
+        if (
+            $user->profile_id == config('constants.user_profiles.EZESCO_004')
+            && $current_status == config('constants.trip_status.accepted')
+        ) {
+
+            $insert_reasons = true;
+            //cancel status
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.trip_status.cancelled');
+                $profile = config('constants.owner');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.trip_status.trip_rejected');
+                $profile = config('constants.owner');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.trip_status.hod_approved_trip');
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+            } else {
+                $new_status = config('constants.trip_status.accepted');
+                $insert_reasons = false;
+            }
+            //update
+            $subsistence->config_status_id = $new_status;
+            $subsistence->initiator_name = $user->name;
+            $subsistence->initiator_staff_no = $user->staff_no;
+            $subsistence->initiator_date = $request->sig_date;
+            $subsistence->save();
+        }
+
+        //FOR HR
+        if (
+            $user->profile_id == config('constants.user_profiles.EZESCO_009')
+            && $current_status == config('constants.trip_status.hod_approved_trip')
+        ) {
+            $insert_reasons = true;
+            //cancel status
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.trip_status.cancelled');
+                $profile = config('constants.owner');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.trip_status.trip_rejected');
+                $profile = config('constants.owner');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.trip_status.hr_approved_trip');
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
+            } else {
+                $new_status = config('constants.trip_status.hod_approved_trip');
+                $insert_reasons = false;
+            }
+            //update
+            $subsistence->config_status_id = $new_status;
+//            $membership->hrm_name = $user->name;
+//            $membership->hrm_staff_no = $user->staff_no;
+//            $membership->hrm_date = $request->sig_date;
+            $subsistence->save();
+        } //FOR AUTHORIZER
+        elseif (
+            $user->profile_id == config('constants.user_profiles.EZESCO_015')
+            && $current_status == config('constants.trip_status.hr_approved_trip')
+        ) {
+            $insert_reasons = true;
+            //cancel status
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.trip_status.cancelled');
+                $profile = config('constants.owner');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.trip_status.trip_rejected');
+                $profile = config('constants.owner');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.trip_status.trip_authorised');
+                $profile = config('constants.owner');
+            } else {
+                $new_status = config('constants.trip_status.hr_approved_trip');
+                $insert_reasons = false;
+            }
+            //update
+
+            $subsistence->config_status_id = $new_status;
+            $subsistence->closed_by_name = $user->name;
+            $subsistence->closed_by_staff_no = $user->staff_no;
+            $subsistence->closed_by_date = $request->sig_date;
+            $subsistence->save();
+
+        }
+
+        //save reason
+        if ($insert_reasons) {
+            $reason = EformApprovalsModel::Create(
+                [
+                    'profile' => $user->profile_id,
+                    'claimant_staff_no' => $subsistence->claimant_staff_no,
+                    'name' => $user->name,
+                    'staff_no' => $user->staff_no,
+                    'reason' => $request->reason,
+                    'action' => $request->approval,
+                    'current_status_id' => $current_status,
+                    'action_status_id' => $new_status,
+                    'config_eform_id' => config('constants.eforms_id.trip'),
+                    'eform_id' => $trip->id,
+                    'eform_code' => $trip->code,
+                    'created_by' => $user->id,
+                ]);
+
+            //record approval in
+            $subsistence->config_status_id = $new_status;
+            $reason2 = EformApprovalsModel::Create(
+                [
+                    'profile' => $user->profile_id,
+                    'claimant_staff_no' => $subsistence->claimant_staff_no,
+                    'name' => $user->name,
+                    'staff_no' => $user->staff_no,
+                    'reason' => $request->reason,
+                    'action' => $request->approval,
+                    'current_status_id' => $current_status,
+                    'action_status_id' => $new_status,
+                    'config_eform_id' => config('constants.eforms_id.subsistence'),
+                    'eform_id' => $subsistence->id,
+                    'eform_code' => $subsistence->code,
+                    'created_by' => $user->id,
+                ]);
+            $subsistence->save();
+            //send the email
+            self::nextUserSendMail($new_status,$subsistence->user_unit_code, $profile, $subsistence);
+        }
+
+        //redirect home
+        return Redirect::route('trip.home')->with('message', 'Trip Form to ' . $subsistence->absc_visited_place . ' for ' . $subsistence->claimant_name . ' has been ' . $request->approval . ' successfully');
+    }
+
 
     /**
      * Send Email to the Next Person/s who are supposed to work on the form next
@@ -1025,130 +847,77 @@ class TripController extends Controller
      * @param $claim_staff
      */
 
-    public function nextUsersSendMail($last_profile, $new_status, $form)
+    public function nextUserSendMail($new_status,$user_unit_code, $profile, $form)
     {
-        $user_array = [];
+        $form->load('trip');
+        $names = "";
         $claimant_details = User::find($form->created_by);
 
-        //message details
-        $subject = 'Petty-Cash Voucher Needs Your Attention';
-        $title = 'Petty-Cash Voucher Needs Your Attention';
-        $message = 'This is to notify you that there is a petty-cash voucher (' . $form->code . ') that needs your attention.
-            Please login to e-ZESCO by clicking on the button below to take action on the voucher.';
+        if($profile == config('constants.owner')){
+            $user_array = User::where('id', $form->created_by)->get();
+        }else{
+            $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit_code, $profile);
+        }
 
-        //[1]
-        //THE LAST PROFILE
-        $last_profile_who_worked = ProfileModel::find($last_profile);
-        //get the next profiles to work from the last profile  PROFILE Permissions
-        $last_profile_who_worked_profilePermission = ProfilePermissionsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('profile', $last_profile_who_worked->code)
-            ->first();
-
-
-        //[2]
-        //THE NEXT PROFILE
-        $next_profile_to_work = $last_profile_who_worked_profilePermission->profiles_next;
-        //get the profile permissions associated with this next_profile_to_work
-        $profileAssignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-            ->where('profile', $next_profile_to_work->code)
-            ->get();
-
-//        //If it is me who is actually supposed to work on the form, then find the next users who are supposed to work after me
-//        if($user->profile_id ==  $next_profile_to_work->id ){
-//            //[1A]
-//            //THE LAST PROFILE
-//            $last_profile_who_worked = ProfileModel::find($user->profile_id);
-//            //get the next profiles to work from the last profile  PROFILE Permissions
-//            $last_profile_who_worked_profilePermission = ProfilePermissionsModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-//                ->where('profile', $last_profile_who_worked->code)
-//                ->first();
-//            //[2B]
-//            //THE NEXT PROFILE
-//            $next_profile_to_work = $last_profile_who_worked_profilePermission->profiles_next ;
-//            //get the profile permissions associated with this next_profile_to_work
-//            $profileAssignement = ProfileAssigmentModel::where('eform_id', config('constants.eforms_id.petty_cash'))
-//                ->where('profile', $next_profile_to_work->code)
-//                ->get();
-//        }
-
-        //[3]
-        //THE USERS
-        //check if this next profile is for a claimant and if the Petty-Cash needs Acknowledgement
-        if ($next_profile_to_work->id == config('constants.user_profiles.EZESCO_002') &&
-            $new_status == config('constants.petty_cash_status.security_approved')) {
-            $user = User::where('staff_no', $form->claimant_man_no)->first();
-            $user_array[] = $user;
-
+        //check if this next profile is for a claimant and if the Trip needs Acknowledgement
+        if ($new_status == config('constants.trip_status.accepted')
+            || $new_status == config('constants.trip_status.hod_approved_trip')
+            || $new_status == config('constants.trip_status.hr_approved_trip')
+            || $new_status == config('constants.trip_status.trip_authorised')
+        ) {
             //message details
-            $subject = 'Petty-Cash Voucher Needs Your Attention';
-            $title = 'Petty-Cash Voucher Needs Your Attention';
-            $message = 'This is to notify you that there is a petty-cash voucher (' . $form->code . ') that needs your attention.
-            Please login to e-ZESCO by clicking on the button below to take action on the voucher.';
-        } //check if this next profile is for a claimant and if the Petty-Cash is closed
-        else if ($next_profile_to_work->id == config('constants.user_profiles.EZESCO_002') &&
-            $new_status == config('constants.petty_cash_status.closed')) {
-            //get user
-            $user = User::where('staff_no', $form->claimant_man_no)->first();
-            $user_array[] = $user;
-
+            $subject = 'Trip Form Needs Your Attention';
+            $title = 'Trip to '.$form->trip->name;
+            $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', that needs your attention.
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>' ;
+        } //check if this next profile is for a claimant and if the Trip is closed
+        else if ($new_status == config('constants.trip_status.closed')) {
+            $names = $names . '<br>' . $claimant_details->name;
             //message details
-            $subject = 'Petty-Cash Voucher Closed Successfully';
-            $title = 'Petty-Cash Voucher Closed Successfully';
-            $message = ' Congratulation! This is to notify you that petty-cash voucher ' . $form->code . ' has been closed successfully .
-            Please login to e-ZESCO by clicking on the button below to view the voucher.';
+            $subject = 'Trip Form Closed Successfully';
+            $title = 'Trip to '.$form->trip->name;
+            $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', has been closed successfully.
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>' ;
+
         } // other wise get the users
         else {
-            foreach ($profileAssignement as $item) {
-                //get user
-                $user = User::find($item->user_id);
-                $user_array[] = $user;
-            }
+            //message details
+            $subject = 'Trip Form Needs Your Attention';
+            $title = 'Trip to '.$form->trip->name;
+            $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', has been closed successfully.
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>' ;
         }
 
-        //[4]
         /** send email to supervisor */
-        try {
-            //get team email addresses
-            $to = config('constants.team_email_list');
-            $names = "";
-            //add hods email addresses
-            foreach ($user_array as $item) {
-                $to[] = ['email' => $item->email, 'name' => $item->name];
-                $to[] = ['email' => $claimant_details->email, 'name' => $claimant_details->name];
-                $names = $names . '<br>' . $item->name;
-            }
-            //prepare details
-            $details = [
-                'name' => $user->name,
-                'url' => 'subsistence-home',
-                'subject' => $subject,
-                'title' => $title,
-                'body' => $message
-            ];
-            //send mail
-            $mail_to_is = Mail::to($to)->send(new SendMail($details));
-
-            if (Mail::failures()) {
-                return response()->Fail('Sorry! Please try again latter');
-            } else {
-                return response()->success('Great! Successfully send in your mail');
-            }
-
-            //get user details
-        } catch (\Exception $exe) {
-
+        $to = [];
+        //add hods email addresses
+        foreach ($user_array as $item) {
+            //use the pay point
+//            $to[] = ['email' => $item->email, 'name' => $item->name];
+//            $to[] = ['email' => $claimant_details->email, 'name' => $claimant_details->name];
+            $names = $names . '<br>' . $item->name;
         }
 
-        //[5] return the list of users
-        return $user_array;
+        //  dd($user_array);
+        $to[] = ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'];
 
+        //prepare details
+        $details = [
+            'name' => $names,
+            'url' => 'trip.home',
+            'subject' => $subject,
+            'title' => $title,
+            'body' => $message
+        ];
+        //send mail
+        $mail_to_is = Mail::to($to)->send(new SendMail($details));
     }
 
 
     public function reports(Request $request)
     {
         //get the accounts
-        $list = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
+        $list = PettyCashAccountModel::where('status_id', config('constants.trip_status.not_exported'))->get();
 
         //
         //count all that needs me
@@ -1159,7 +928,7 @@ class TripController extends Controller
             'list' => $list
         ];
         //  dd($list);
-        return view('eforms.petty-cash.report')->with($params);
+        return view('eforms.trip.report')->with($params);
     }
 
 
@@ -1167,7 +936,7 @@ class TripController extends Controller
     {
 
         $fileName = 'PettyCash_Accounts.csv';
-        $tasks = PettyCashAccountModel::where('status_id', config('constants.petty_cash_status.not_exported'))->get();
+        $tasks = PettyCashAccountModel::where('status_id', config('constants.trip_status.not_exported'))->get();
 
         $headers = array(
             "Content-type" => "text/csv",
@@ -1200,16 +969,16 @@ class TripController extends Controller
             foreach ($tasks as $item) {
 
                 //mark the item as exported
-                $item->status_id = config('constants.petty_cash_status.exported');
+                $item->status_id = config('constants.trip_status.exported');
                 $item->save();
 
 
-                $row['Code'] = $item->petty_cash->code;
-                $row['Claimant'] = $item->petty_cash->claimant_name;
-                $row['Claim Date'] = $item->petty_cash->claim_date;
+                $row['Code'] = $item->trip->code;
+                $row['Claimant'] = $item->trip->claimant_name;
+                $row['Claim Date'] = $item->trip->claim_date;
                 $row['Company'] = $item->company;
-                $row['Business Unit'] = $item->petty_cash->business_unit_code;
-                $row['Cost Center'] = $item->petty_cash->cost_center;
+                $row['Business Unit'] = $item->trip->business_unit_code;
+                $row['Cost Center'] = $item->trip->cost_center;
                 $row['Account'] = $item->account;
                 $row['Project'] = $item->project;
                 $row['Intra-Company'] = $item->intra_company;
@@ -1250,7 +1019,7 @@ class TripController extends Controller
     public function charts(Request $request)
     {
         //get the accounts
-        $list = PettyCashModel:: select(DB::raw('cost_centre, name_of_claimant, count(id) as total_forms , sum(total_payment) as forms_sum '))
+        $list = Trip:: select(DB::raw('cost_centre, name_of_claimant, count(id) as total_forms , sum(total_payment) as forms_sum '))
             //->where('status', '<>', 1)
             ->groupBy('sig_of_claimant', 'name_of_claimant', 'cost_centre')
             ->get();
@@ -1265,7 +1034,7 @@ class TripController extends Controller
             'totals_needs_me' => $totals_needs_me,
             'list' => $list
         ];
-        return view('eforms.petty-cash.chart')->with($params);
+        return view('eforms.trip.chart')->with($params);
         //  dd($request);
     }
 

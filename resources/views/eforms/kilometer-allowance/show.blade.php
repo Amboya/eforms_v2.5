@@ -856,7 +856,7 @@
                         </div>
                     @endif
 
-                    {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
+                    {{-- FUNDS ACKNOWELEDGMENT APPROVAL --}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                          &&  $form->config_status_id == config('constants.kilometer_allowance_status.funds_disbursement')
                          &&  $form->staff_no == $user->staff_no
@@ -902,7 +902,7 @@
                         </div>
                     @endif
 
-                    {{--  SECURITY APPROVAL--}}
+                    {{-- SECURITY APPROVAL --}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_013')
                          &&  $form->config_status_id == config('constants.kilometer_allowance_status.funds_acknowledgement')
                          &&  $form->user_unit->security_unit == $user->profile_unit_code
@@ -955,7 +955,7 @@
                         </div>
                     @endif
 
-                    {{--  RECEIPT UPLOAD--}}
+                    {{-- RECEIPT UPLOAD --}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                          &&  $form->config_status_id == config('constants.kilometer_allowance_status.security_approved')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
@@ -1078,7 +1078,7 @@
                         </div>
                     @endif
 
-                    {{--  AUDIT APPROVAL--}}
+                    {{-- AUDIT APPROVAL --}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
                         &&  $form->config_status_id == config('constants.kilometer_allowance_status.chief_accountant')
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code

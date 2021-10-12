@@ -3,6 +3,8 @@
 return [
 
     'name' => env('APP_NAME', 'EZESCO'),
+    'rep_subsistence_account_id' => "81",
+    'non_rep_subsistence_account_id' => "82",
     'petty_cash_account_id' => "21",
     'user_unit_active' => "00",
     'user_unit_not_active' => "01",
@@ -13,17 +15,28 @@ return [
     'version' => "2.1.0",
     'password_not_changed' => 0 ,
     'password_changed' => 1 ,
-    'all' => "all",
+    'all' => "All",
+    'owner' => "Owner",
+    'money_given' => "Money Given",
+    'money_pending' => "Money Pending",
+    'money_rejected' => "Money Rejected",
+    'money_queried' => "Money Queried",
     'none' => 0,
     'active_state' => 221,
     'non_active_state' => 222,
     'percentage_reimbursement' => 80,
+
+    'company' => "01",
 
     'file_type' => [
         'quotation' => "1",
         'receipt' => "0",
         'directors' => 1,
         'general' => 0,
+        'subsistence' => 2,
+    ],
+    'transaction_type' => [
+        'petty_cash' => "PETTYCASH",
     ],
 
     'team_email_list' =>  [
@@ -65,6 +78,7 @@ return [
     ],
 
     'approval' => [
+        'subscribe' => "Subscribe",
         'approve' => "Approved",
         'reject' => "Rejected",
         'cancelled' => "Cancelled",
@@ -117,6 +131,10 @@ return [
         'EZESCO_013' => 13,
         'EZESCO_014' => 22,
         'EZESCO_015' => 41,
+        'EZESCO_016' => 42,
+        'EZESCO_017' => 43,
+        'EZESCO_018' => 62,
+
     ],
 
     'config_totals' => [
@@ -193,6 +211,7 @@ return [
         'reimbursement_box' => "234",
         'await_audit' => "233",
         'audit_box' => "233",
+        'audit_rejected' => "1111111111111111111111",
         'rejected' => "30",
         'export_not_ready' => "141",
         'not_exported' => "41",
@@ -201,6 +220,9 @@ return [
         'void' => "101",
         'cancelled' => "161",
         'queried' => "201",
+        'processed' => 'Y',
+        'unprocessed' => 'N',
+
     ],
     'kilometer_allowance_status' => [
         'new_application' => "61",
@@ -241,6 +263,7 @@ return [
         'audit_approved' => "126",
         'funds_disbursement' => "127",
         'funds_acknowledgement' => "128",
+
         'closed' => "129",
         'rejected' => "130",
         'not_exported' => "41",
@@ -250,9 +273,19 @@ return [
         'cancelled' => "161",
         'queried' => "201",
         'audited' => "29",
+        'await_audit' => "233",
+        'audit_box' => "233",
+
     ],
 
     'trip_status' => [
+        'pending' => "294",
+        'accepted' => "293",
+        'new_trip' => "283",
+        'hod_approved_trip' => "284",
+        'hr_approved_trip' => "285",
+        'trip_authorised' => "286",
+        'trip_rejected' => "287",
         'new_application' => "21",
         'hod_approved' => "22",
         'hr_approved' => "23",
@@ -267,6 +300,7 @@ return [
         'exported' => "42",
         'export_failed' => "43",
         'void' => "101",
+        'cancelled' => "161",
     ],
 
     'hotel_accommodation_status' => [

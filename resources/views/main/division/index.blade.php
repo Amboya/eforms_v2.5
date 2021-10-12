@@ -83,7 +83,7 @@
                         <tbody>
                         @foreach($list as $key => $item)
                             <tr>
-                                <td>{{++$key}}</td>
+                                <td>{{$item->id}}</td>
                                 <td>{{$item->name}} </td>
 {{--                                <td>{{$item->code}} </td>--}}
                                 <td>{{$item->directorate->name}} </td>

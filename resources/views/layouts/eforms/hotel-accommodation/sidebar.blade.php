@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-light bg-gradient-dark  elevation-4">
 
     <!-- Brand Logo -->
-    <a href="{{route('main-home')}}" class="brand-link mt 3 p 3 bg-gradient-orange ">
+    <a href="{{route('main.home')}}" class="brand-link mt 3 p 3 bg-gradient-orange ">
         <img src="{{ asset('dashboard/dist/img/zesco1.png')}}" alt="Zesco Logo"
              class="brand-image img-rounded elevation-3"
              style="opacity: .8">
@@ -177,7 +177,7 @@
                 <li class="nav-header">CONFIGURATIONS</li>
 
                 <li class="nav-item">
-                    <a href="{{route('main-profile-delegation')}}" class="nav-link ">
+                    <a href="{{route('main.profile.delegation')}}" class="nav-link ">
                         <i class="fas fa-cog nav-icon"></i>
                         <p> Profile Delegation </p>
                     </a>

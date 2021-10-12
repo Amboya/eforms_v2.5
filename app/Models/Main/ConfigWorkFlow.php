@@ -2,6 +2,7 @@
 
 namespace App\Models\Main;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -72,8 +73,17 @@ class ConfigWorkFlow extends Model
         'transport_code',
         'transport_unit',
 
+        'sheq_code',
+        'sheq_unit',
+
         'created_at',
         'updated_at',
 
     ];
+
+    public function users_list()
+    {
+        return $this->hasMany(User::class,
+            'user_unit_code', 'user_unit_code');
+    }
 }

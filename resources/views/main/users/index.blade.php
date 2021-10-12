@@ -51,7 +51,7 @@
     <!-- Default box -->
         <div class="card">
             <div class="card-header">
-
+                <span class="text-gray">Search term : {{$search}}</span>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -71,7 +71,7 @@
                             <th>Job Code</th>
                             <th>Email</th>
                             <th>Phone</th>
-{{--                            <th>Position</th>--}}
+                            <th>Status</th>
 {{--                            <th>Type</th>--}}
 {{--                            <th>Created At</th>--}}
                             <th>Period</th>
@@ -88,8 +88,7 @@
                                 <td class="text-orange" >{{$item->job_code ?? ""}} </td>
                                 <td>{{$item->email ?? ""}} </td>
                                 <td>{{$item->phone ?? ""}} </td>
-
-{{--                                <td> {{$item->position->name ?? ""}} </td>--}}
+                                <td> {{$item->con_st_code ?? " "}} </td>
 {{--                                <td>{{$item->user_type->name ?? ""}} </td>--}}
 {{--                                <td>{{$item->created_at ?? ""}}</td>--}}
                                 <td>{{$item->created_at->diffForHumans()}}</td>

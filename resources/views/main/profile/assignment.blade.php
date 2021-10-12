@@ -13,12 +13,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Profile Assignment</h1>
+                    <h1 class="m-0 text-dark">Profile Assignment To Units</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Profile Assignment</li>
+                        <li class="breadcrumb-item active">Profile Assignment To Units</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -34,6 +34,11 @@
         @if(session()->has('message'))
             <div class="alert alert-success alert-dismissible">
                 <p class="lead"> {{session()->get('message')}}</p>
+            </div>
+        @endif
+        @if(session()->has('error'))
+            <div class="alert alert-danger alert-dismissible">
+                <p class="lead"> {{session()->get('error')}}</p>
             </div>
         @endif
 
@@ -64,59 +69,109 @@
                 <div class="modal-body">
 
                     <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label>Select User</label>
-{{--                                <select class="form-control select2" id="user_select" name="user_id" required--}}
-{{--                                        style="width: 100%;">--}}
-{{--                                    <option value="" selected>Select User</option>--}}
-{{--                                    @foreach($users as $user)--}}
-{{--                                        @if($user->id  != \Auth::user()->id)--}}
-{{--                                            <option--}}
-{{--                                                value="{{$user->id}}"> {{$user->name}} :  {{$user->staff_no}} </option>--}}
-{{--                                        @endif--}}
-{{--                                    @endforeach--}}
-{{--                                </select>--}}
-                                <input list="user_list1" class="form-control " id="user_select" name="user_id" required
-                                        style="width: 100%;">
-                                <datalist id="user_list1">
-                                    <option value="" selected>Select User</option>
-                                    @foreach($users as $user)
-                                        @if($user->id  != \Auth::user()->id)
-                                            <option
-                                                value="{{$user->id}}"> {{$user->name}} :  {{$user->staff_no}} </option>
-                                        @endif
-                                    @endforeach
-                                </datalist>
-                            </div>
-                            <!-- /.form-group -->
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label>Select E-Form</label>
-                                <select class="form-control select2" id="eform_select" name="eform_id" required
-                                        style="width: 100%;">
-                                    <option value="" selected>Select E-Form</option>
-                                    @foreach($eforms as $eform)
-                                        <option
-                                            value="{{$eform->id}}"> {{$eform->name}} </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                        </div>
-                        <div class="col-6 offset-6">
-                            <div class="form-group">
-                                <label>Select User Profile</label>
-                                <select class="form-control select2" id="profile_select" name="profile" required
-                                        style="width: 100%;">
-                                    <option value="" selected>Assign Profile</option>
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-                        </div>
 
+                        <div class="col-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="text-uppercase mb-2 text-green" >Select User</label>
+                                        <input list="user_list1" class="form-control " id="user_select" name="user_id" required
+                                               style="width: 100%;">
+                                        <datalist id="user_list1">
+                                            <option value="" selected>Select User</option>
+                                            @foreach($users as $user)
+                                                @if($user->id  != \Auth::user()->id)
+                                                    <option
+                                                        value="{{$user->id}}"> {{$user->name}} :  {{$user->staff_no}} </option>
+                                                @endif
+                                            @endforeach
+                                        </datalist>
+                                    </div>
+                                    <!-- /.form-group -->
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="text-uppercase mb-2 text-green" >Select E-Form</label>
+                                        <select class="form-control select2" id="eform_select" name="eform_id" required
+                                                style="width: 100%;">
+                                            <option value="" selected>Select E-Form</option>
+                                            @foreach($eforms as $eform)
+                                                <option
+                                                    value="{{$eform->id}}"> {{$eform->name}} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <!-- /.form-group -->
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="text-uppercase mb-2 text-green" >Select User Profile</label>
+                                        <select class="form-control select2" id="profile_select" name="profile" required
+                                                style="width: 100%;">
+                                            <option value="" selected>Assign Profile</option>
+                                        </select>
+                                    </div>
+                                    <!-- /.form-group -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="text-uppercase mb-2 text-green" for="code">Select User Units</label><br>
+                                    <div class="col-12">
+                                        <input class="form-control" id="myInput" type="text" placeholder="Search..">
+                                    </div>
+                                    <div class="col-12">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Code</th>
+                                                <th>Name</th>
+                                                <th>BU</th>
+                                                <th>CC</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="myTable">
+                                            @foreach($user_units as $item)
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group clearfix">
+                                                            <div class="icheck-warning d-inline">
+                                                                <input type="checkbox"
+                                                                       value="{{$item->id}}"
+                                                                       id="units[]" name="units[]">
+
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td><span for="accounts"> <span
+                                                                class="text-gray">{{$item->user_unit_code}}</span>  </span>
+                                                    </td>
+                                                    <td><span for="accounts"> <span
+                                                                class="text-gray">{{$item->user_unit_description}}</span>  </span>
+                                                    </td>
+                                                    <td><span for="accounts"> <span
+                                                                class="text-gray">{{$item->user_unit_bc_code}}</span>  </span>
+                                                    </td>
+                                                    <td><span for="accounts"> <span
+                                                                class="text-gray">{{$item->user_unit_cc_code}}</span> </span>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                        <div class="pagination-sm">
+{{--                                            {!! $user_units->links() !!}--}}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -169,5 +224,18 @@
             });
         });
     </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
 
 @endpush

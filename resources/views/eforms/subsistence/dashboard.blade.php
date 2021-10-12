@@ -13,11 +13,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Subsistence Claim</h1>
+                    <h1 class="m-0 text-dark text-uppercase text-green ">Subsistence Claim</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('main.home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Subsistence Claim</li>
                     </ol>
                 </div><!-- /.col -->
@@ -124,6 +124,12 @@
 
             <!-- Main row -->
             <div class="row">
+                <div class="col-md-12" >
+                    <a class="btn  bg-green float-left mb-2"
+                       href="{{route('trip.home')}}"
+                       title="Go to trips">
+                        Trips  <i class="fas fa-arrow-right"></i></a>
+                </div>
                 <!-- Left col -->
                 <div class="col-md-12">
                     <!-- TABLE: LATEST ORDERS -->
@@ -192,15 +198,7 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer clearfix">
-{{--                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )--}}
-                                @if($pending < 1)
-                                    <a href="{{route('subsistence.create')}}"
-                                       class="btn btn-sm bg-gradient-green float-left">New Subsistence Claim</a>
-                                @else
-                                    <a href="#" class="btn btn-sm btn-default float-left">New Subsistence Claim</a>
-                                    <span class="text-danger m-3"> Sorry, You can not raise a new Subsistence because you already have an open Subsistence.</span>
-                                @endif
-{{--                            @endif--}}
+
                         </div>
                         <!-- /.card-footer -->
                     </div>

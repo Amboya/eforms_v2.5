@@ -15,7 +15,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Petty Cash</h1>
+                    <h1 class="m-0 text-dark text-uppercase text-green ">Petty Cash Voucher</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -176,7 +176,11 @@
                                                 </form>
                                             </td>
                                             <td>{{$item->user_unit_code}} : {{$item->user_unit->user_unit_description}}</td>
-                                            <td>{{$item->claimant_name}}</td>
+                                            <td>
+                                                <a href="{{route('main.user.show',$item->created_by)}}" class="text-dark" style="margin: 1px">
+                                                {{$item->claimant_name}}
+                                                </a>
+                                            </td>
                                             <td>ZMW {{ number_format($item->total_payment  - $item->change, 2)}}</td>
                                             <td><span
                                                     class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>

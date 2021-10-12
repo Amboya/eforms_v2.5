@@ -27,9 +27,11 @@ class PettyCashAccountModel extends Model
         'eform_petty_cash_id',
 
         'petty_cash_code',
+        'user_unit_code',
 
         'status_id',
         'account',
+        'amount',
         'company',
         'intra_company',
         'project',
@@ -95,6 +97,11 @@ class PettyCashAccountModel extends Model
     public function status()
     {
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
+    }
+
+    public function form()
+    {
+        return $this->belongsTo(PettyCashModel::class, 'petty_cash_code', 'code');
     }
 
 }

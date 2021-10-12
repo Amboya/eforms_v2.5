@@ -33,14 +33,13 @@
     <section class="content">
 
 
-        @if(session()->has('message'))
-            <div class="alert alert-success alert-dismissible">
-                <p class="lead"> {{session()->get('message')}}</p>
-            </div>
-        @endif
+        <div class="alert alert-success alert-dismissible">
+            <p class="lead"> {{$message}}</p>
+        </div>
+
         @if(session()->has('error'))
             <div class="alert alert-danger alert-dismissible">
-                <p class="lead"> {{session()->get('message')}}</p>
+                <p class="lead"> {{session()->get('error')}}</p>
             </div>
         @endif
 
@@ -57,7 +56,7 @@
 
     <!-- Default box -->
         <div class="card">
-            <form enctype="multipart/form-data" name="db1" action="{{route('subsistence.store')}}"
+            <form enctype="multipart/form-data" id="create_form" name="create_form" action="{{route('subsistence.store', compact('trip'))}}"
                   method="post">
                 @csrf
                 <div class="card-body">
@@ -82,7 +81,8 @@
                             <div class="row">
                                 <div class="col-6"><label>Date:</label></div>
                                 <div class="col-6">
-                                    <input value="{{ \Carbon\Carbon::now()->toFormattedDateString() }}" type="text" name="date" readonly
+                                    <input value="{{ date('d M Y') }}" type="text"
+                                           name="date" readonly
                                            class="form-control">
                                 </div>
                             </div>
@@ -118,8 +118,13 @@
                             <div class="row">
                                 <div class="col-6"><label>Cost Center:</label></div>
                                 <div class="col-6">
-                                    <input value="{{Auth::user()->user_unit->user_unit_cc_code }}" type="cost_center"
-                                           name="date" readonly class="form-control">
+                                    <select name="cost_center" required class="form-control is-warning">
+                                        <option value="">--choose--</option>
+                                        @foreach($cost_centers as $cc)
+                                            <option
+                                                value="{{$cc->id}}" {{auth()->user()->user_unit->user_unit_cc_code == $cc->user_unit_cc_code ? 'selected':''}}>{{$cc->user_unit_description}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -136,7 +141,8 @@
                             <div class="row">
                                 <div class="col-6"><label>Station:</label></div>
                                 <div class="col-6">
-                                    <input value="" type="text" name="station" class="form-control" required >
+                                    <input value="{{Auth::user()->station ?? "" }}" type="text" name="station"
+                                           class="form-control" required>
                                 </div>
                             </div>
                         </div>
@@ -153,7 +159,7 @@
                             <div class="row">
                                 <div class="col-6"><label>System Reference No.:</label></div>
                                 <div class="col-6">
-                                    <input value="" type="text" name="ref_no" readonly
+                                    <input value="" type="text" name="ref_no" required
                                            class="form-control">
                                 </div>
                             </div>
@@ -164,87 +170,129 @@
                         <table
                             class="table table-bordered mt-2 mb-4">
                             <tr style="text-align: center" width="w-100">
-                                <td width="w-100"><strong>A. ABSENCE CLAIM</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Period of Absence Date</td>
-                                <td>From</td>
-                                <td><input id="absc_absent_from" name="absc_absent_from" class="form-control"
-                                           required  type="date" value="{{old('absc_absent_from')}}"></td>
-                                <td>To</td>
-                                <td><input required id="absc_absent_to" name="absc_absent_to" class="form-control" type="date" value="{{old('absc_absent_to')}}">
+                                <td colspan="5" class="text-orange" ><strong>A. ABSENCE CLAIM</strong>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Place visited and reason for journey</td>
-                                <td>Place</td>
-                                <td><textarea required name="absc_visited_place" class="form-control" >{{old('absc_visited_place')}}</textarea></td>
-                                <td>Reason</td>
-                                <td><textarea required name="absc_visited_reason" class="form-control">{{old('absc_visited_reason')}}</textarea></td>
+                                <td class="text-green">Period of Absence Date</td>
+                                <td class="text-green">From</td>
+                                <td><input id="absc_absent_from" name="absc_absent_from" class="form-control"
+                                           required  type="text" value="{{$trip->date_from}}" >
+                                </td>
+                                <td class="text-green">To</td>
+                                <td><input required  id="absc_absent_to" name="absc_absent_to" class="form-control"
+                                           type="text"  value="{{$trip->date_to}}">
+                                </td>
                             </tr>
                             <tr>
-                                <td>Allowance Claim per Night</td>
-                                <td>ZMW</td>
+                                <td class="text-green">Place visited and reason for journey</td>
+                                <td class="text-green">Place</td>
+                                <td><textarea required name="absc_visited_place"
+                                              class="form-control">{{$trip->destination}}</textarea></td>
+                                <td class="text-green">Reason</td>
+                                <td><textarea required name="absc_visited_reason"
+                                              class="form-control">{{$trip->description}}</textarea></td>
+                            </tr>
+                            <tr>
+                                <td class="text-green">Allowance Claim per Night</td>
+                                <td class="text-green">ZMW</td>
                                 <td><input id="absc_allowance_per_night" name="absc_allowance_per_night"
                                            class="form-control" type="text" value="{{Auth::user()->grade->sub_rate}}"
                                            readonly></td>
 
-                                <td><strong>Total Amount</strong></td>
-                                <td>K <span id="total_amount">0</span> <input id="absc_amount" name="absc_amount" type="hidden"></td>
-
+                                <td><strong class="text-green">Total Amount</strong></td>
+                                <td>K <span id="total_amount">0</span> <input id="absc_amount" name="absc_amount"
+                                                                              type="hidden"></td>
                             </tr>
                         </table>
                     </div>
+                    <div class="row">
+                        <table
+                            class="table table-bordered mt-2 mb-4" border="3" style="border-color: rgba(255,140,0,0.8)">
+                            <tr style="text-align: center" width="w-100">
+                                <td colspan="2" class="text-orange" width="w-100"><strong> AMOUNT OF
+                                        CLAIM FOR SUBSISTENCE </strong></td>
+                            </tr>
+                            <tr style="text-align: center" width="w-100">
+                                <td colspan="2" class="text-orange" width="w-100"><strong>B. TRAVELLING
+                                        EXPENSE </strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong class="text-green">Total of Attached Claim (If Any) ZMW:</strong></td>
+                                <td>
+                                    <input required id="trex_total_attached_claim" name="trex_total_attached_claim"
+                                           class="form-control" type="number">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-green">Total Amount of Claim (A+B):</td>
+                                <td>
+                                    <input readonly id="trex_total_amount_claim" name="trex_total_amount_claim"
+                                           class="form-control" type="text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-green">Deduct any advance received against these expenses:</td>
+                                <td>
+                                    <input required id="trex_deduct_advance" class="form-control"
+                                           name="trex_deduct_advance" type="number">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-green">Net Amount to be paid:</td>
+                                <td>
+                                    <input readonly id="net_amount_paid" class="form-control" name="net_amount_paid"
+                                           type="text">
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="row">
+                        <table
+                            class="table table-bordered mt-2 mb-4">
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-3"><label>Amount ZMW:</label></div>
+                                        <div class="col-9">
+                                            <input value="  " type="text" id="final" name="final" readonly
+                                                   class="form-control text-orange text-bold ">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-3"><label>Allocation Code:</label></div>
+                                        <div class="col-9">
+                                            <input value=" " type="text" id="allocation_code" name="allocation_code"
+                                                   class="form-control text-orange text-bold">
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
 
                     <div class="row mb-1 mt-4">
-                        <div class="col-2">
-                            <label>Name of Claimant:</label>
-                        </div>
-                        <div class="col-3">
-                            <input type="text" name="claimant_name" class="form-control"
-                                   value="{{Auth::user()->name}}" readonly required></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"
-                                                  value="{{Auth::user()->staff_no}}" readonly required></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="Date" name="date_claimant" class="form-control"
-                                                  value="{{date('Y-m-d')}}" readonly required>
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>Claim Authorised by:</label></div>
-                        <div class="col-3"><input type="text" name="claim_authorised_by" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_authorised" readonly class="form-control">
-                        </div>
-                        <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="authorised_date" readonly class="form-control">
+                        <div class="col-lg-12 mb-4">
+                            <div class="row">
+                                <div class="col-2 ">
+                                    <label class="form-control-label">Attach Files (optional)</label>
+                                </div>
+                                <div class="col-4">
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" multiple name="subsistence[]"
+                                               id="subsistence" title="Upload Files (Optional)">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-1">
-                        <div class="col-2"><label>HR/Station Manager:</label></div>
-                        <div class="col-3"><input type="text" name="station_manager" readonly class="form-control">
-                        </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_station_manager" readonly
-                                                  class="form-control"></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="manager_date" readonly class="form-control"></div>
-                    </div>
-                    <div class="row mb-4">
-                        <div class="col-2"><label>Accountant:</label></div>
-                        <div class="col-3"><input type="text" name="accountant" readonly class="form-control"></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_accountant" readonly class="form-control">
-                        </div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="accountant_date" readonly class="form-control">
-                        </div>
-                    </div>
+                    <hr>
 
-
-                    <p><b>Note:</b> The system reference number is mandatory and is from
+                    <p><b>Note:</b> The system reference number is optional and is from
                         any of the systems at ZESCO such as a work request number from PEMS, Task
                         number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.
                         giving rise to the expenditure</p>
@@ -253,10 +301,17 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                     <div class="row">
-                        <div id="possible8" class="col-12 text-center">
-                            <input class="btn btn-lg btn-success" type="submit"
-                                   value="Submit Claim"
-                                   name="submit_form" class="form-control">
+                        <div id="submit_possible1" class="col-12 text-center">
+                            <div id="divSubmit_show">
+                                <input class="btn btn-lg btn-success" type="submit"
+                                       value="Submit Subsistence " id="btnSubmit"
+                                       name="submit_form">
+                            </div>
+                            <div id="divSubmit_hide">
+                                <input class="btn btn-lg btn-success"
+                                       value="Submitting. Please wait..." disabled
+                                       name="submit_form">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -277,35 +332,29 @@
 
     <script type="text/javascript">
 
-        function getvalues() {
-            var inps = document.getElementsByName('amount[]');
-            var total = 0;
-            for (var i = 0; i < inps.length; i++) {
-                var inp = inps[i];
-                total = total + parseFloat(inp.value || 0);
-            }
 
-            if (!isNaN(total)) {
-
-                //check if petty cash is below 2000
-                if (total > 2000) {
-                    $('#submit_possible').hide();
-                    $('#submit_not_possible').show();
-                } else if (total == 0) {
-                    $('#submit_not_possible').hide();
-                    $('#submit_possible').hide();
-                } else {
-                    $('#submit_not_possible').hide();
-                    $('#submit_possible').show();
-                }
-                //set value
-                document.getElementById('total-payment').value = total;
-            }
+        //ROUND OFF FUNCTION
+        Number.prototype.round = function(places) {
+            return +(Math.round(this + "e+" + places)  + "e-" + places);
         }
 
 
         // Navigation Script Starts Here
         $(document).ready(function () {
+
+                $("#divSubmit_hide").hide();
+                //disable the submit button
+                $("#btnSubmit").on('click', function () {
+                    $("create_form").submit(function (e) {
+                        e.preventDefault()
+                        //do something here
+                        $("#divSubmit_show").hide();
+                        $("#divSubmit_hide").show();
+                        //continue submitting
+                        e.currentTarget.submit();
+                    });
+                });
+
 
             //first hide the buttons
             $('#submit_possible').hide();
@@ -319,47 +368,60 @@
             var from = moment($('#absc_absent_from').val());
             var to = moment($('#absc_absent_to').val());
             var diff = to.diff(from, 'days');
-            if(diff > 0) {
+            if (diff > 0) {
                 var total = diff * absc_allowance_per_night;
+                total =  total.round(2);
+
                 $('#total_amount').html(numeral(total).format('0,0'));
-                $('absc_amount').val(total)
+                $('#absc_amount').val(total);
             }
-
-            console.log("To",$('absc_absent_from').val())
-
-            console.log("from",from)
-            console.log("The difference is: ", diff);
 
             $("#absc_absent_from").change(function () {
                 var from = moment($(this).val());
                 var to = moment($('#absc_absent_to').val());
                 var diff = to.diff(from, 'days');
-                if(diff > 0) {
+                if (diff > 0) {
                     var total = diff * absc_allowance_per_night;
+                    total =  total.round(2);
                     $('#total_amount').html(numeral(total).format('0,0'));
-                    $('absc_amount').val(total)
+                    $('absc_amount').val(total);
                 }
-                console.log("To",to)
-
-                console.log("from",from)
-                console.log("The difference is: ", diff);
-
-
             });
 
             $("#absc_absent_to").change(function () {
                 var from = moment($('#absc_absent_from').val());
                 var to = moment($(this).val());
                 var diff = to.diff(from, 'days');
-                if(diff > 0) {
+                if (diff > 0) {
                     var total = diff * absc_allowance_per_night;
+                    total =  total.round(2);
                     $('#total_amount').html(numeral(total).format('0,0'));
-                    $('absc_amount').val(total)
+                    $('#absc_amount').val(total);
                 }
-                console.log("To",to)
-                console.log("From",from)
+            });
 
-                console.log("The difference is: ", diff);
+            //calculate trex_total_attached_claim
+            $("#trex_total_attached_claim").change(function () {
+                var absc_amount = $('#absc_amount').val();
+                var attached_claim = $(this).val();
+                // if (diff > 0) {
+                var total = parseFloat(absc_amount) + parseFloat(attached_claim);
+                total =  total.round(2);
+                $('#trex_total_amount_claim').val(total);
+                // }
+            });
+
+            //calculate final amount after deductions
+            $("#trex_deduct_advance").change(function () {
+                var attached_claim = $('#trex_total_amount_claim').val();
+                var trex_deduct_advance = $(this).val();
+                // if (diff > 0) {
+                var total = parseFloat(attached_claim) - parseFloat(trex_deduct_advance);
+                total =  total.round(2);
+                $('#net_amount_paid').val(total);
+                $('#final').val("ZMW " + total);
+
+                // }
             });
 
 
