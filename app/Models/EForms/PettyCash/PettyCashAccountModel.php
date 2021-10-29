@@ -101,7 +101,7 @@ class PettyCashAccountModel extends Model
 
     public function form()
     {
-        return $this->belongsTo(PettyCashModel::class, 'petty_cash_code', 'code');
+        return $this->belongsTo(PettyCashModel::class, 'eform_petty_cash_id', 'id');
     }
 
 }

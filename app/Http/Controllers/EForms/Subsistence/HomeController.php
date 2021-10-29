@@ -94,6 +94,7 @@ class HomeController extends Controller
             $list = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
                 ->orWhere('config_status_id', '=', config('constants.trip_status.accepted'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
                 ->count();
         }
         //for the HOD
@@ -144,6 +145,7 @@ class HomeController extends Controller
             $list = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
                 ->orWhere('config_status_id', '=', config('constants.trip_status.accepted'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
                 ->orderBy('code')->paginate(50);
             //   dd(2) ;
         } //for the HOD
@@ -167,7 +169,7 @@ class HomeController extends Controller
                 ->orWhere('config_status_id', config('constants.subsistence_status.security_approved'))
                 ->orderBy('code')->paginate(50);
 
-        } //for the SECURITY
+        } //for the APPROVALS
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.funds_acknowledgement'))
                 ->orderBy('code')->paginate(50);
@@ -195,6 +197,7 @@ class HomeController extends Controller
             //count pending applications
             $pending = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.trip_status.accepted'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
                 ->count();
         }
 

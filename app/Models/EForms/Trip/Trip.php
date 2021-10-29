@@ -77,15 +77,15 @@ class Trip extends Model
             if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
                 //if you are just a requester, then only see your forms
                 static::addGlobalScope('staff_number', function (Builder $builder) {
-                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.trip'));
+                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
                     $mine = $fdsf->pluck('user_unit_code')->toArray();
 //                    $builder->where('claimant_staff_no', Auth::user()->staff_no);
                 });
             } else {
                 //see forms for the same work area and user unit
                static::addGlobalScope('hod', function (Builder $builder) {
-//                        $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-//                        $mine = $fdsf->pluck('user_unit_code')->toArray();
+                        $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+                        $mine = $fdsf->pluck('user_unit_code')->toArray();
 //                        $builder->WhereIn('user_unit_code', $mine);
                     });
 
@@ -100,7 +100,7 @@ class Trip extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
     public function status()
@@ -117,6 +117,8 @@ class Trip extends Model
     {
         return $this->hasMany(TripMembers::class, 'trip_id', 'id');
     }
+
+
 
 
 }

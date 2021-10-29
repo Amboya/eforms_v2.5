@@ -42,14 +42,14 @@ class TestMail extends Command
         $code  = 'PT1212(TEST)';
         $details = [
             'name' => 'ISD',
-            'url' => 'petty-cash-home',
+            'url' => 'petty.cash.home',
             'subject' => '(TEST-MAIL) Petty-Cash Voucher Needs Your Attention',
             'title' => '(TEST-MAIL) Petty-Cash Voucher Needs Your Attention',
             'body' => 'This is to notify you that there is a petty-cash voucher ('.$code.') that needs your attention. Please login to ezesco by clicking on the button below to take action on the form.'
         ];
         //call the mail function
 
-            $mail = Mail::to('bchisulo@zesco.co.zm')->send(new SendMail($details));
+            $mail = Mail::to('nshubart@zesco.co.zm')->send(new SendMail($details));
          dd($mail);
             //get user details
 

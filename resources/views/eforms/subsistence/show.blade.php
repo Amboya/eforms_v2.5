@@ -77,10 +77,10 @@
                     <input type="hidden" name="sig_date" value=" {{date('Y-m-d H:i:s')}}" readonly required>
 
 
-                    <table border="1" width="100%" cellspacing="0" cellpadding="0" align="Centre"
-                           class="mt-2 mb-4">
+                    <table border="1" width="100%" data-height="100px" cellspacing="0" cellpadding="0" align="Centre"
+                           class=" mt-4 mb-4 ">
                         <thead>
-                        <tr>
+                        <tr class="border-success">
                             <th width="33%" class="text-center"><a href="#"><img
                                         src="{{ asset('dashboard/dist/img/zesco1.png')}}" title="ZESCO" alt="ZESCO"
                                         width="30%"></a></th>
@@ -214,7 +214,7 @@
                                 <td class="text-green"><strong>Total Amount</strong></td>
                                 <td class="text-green"><input readonly id="absc_amount1" class="form-control"
                                                               name="absc_amount"
-                                                              value="ZMW {{number_format($form->total,2)}}" type="text">
+                                                              value="ZMW {{number_format($form->total_night_allowance,)}}" type="text">
                                 </td>
 
                             </tr>
@@ -245,21 +245,21 @@
                                 <td>
                                     <input readonly id="absc_absent_to" name="absc_absent_to" class="form-control"
                                            type="text"
-                                           value="ZMW {{number_format(($form->trex_total_attached_claim  + $form->total),2)}}">
+                                           value="ZMW {{number_format(($form->total_claim_amount),2)}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td class="text-green  ">Deduct any advance received against these expenses:</td>
                                 <td>
                                     <input readonly id="absc_amount1" class="form-control" name="absc_amount"
-                                           value="ZMW {{number_format($form->trex_deduct_advance ?? 0,2)}}" type="text">
+                                           value="ZMW {{number_format($form->deduct_advance_amount ?? 0,2)}}" type="text">
                                 </td>
                             </tr>
                             <tr>
                                 <td class="text-green  ">Net Amount to be paid:</td>
                                 <td>
                                     <input readonly id="absc_amount1" class="form-control" name="absc_amount"
-                                           value="ZMW {{number_format( (($form->trex_total_attached_claim  + $form->total) - ($form->trex_deduct_advance ?? 0)),2)}}"
+                                           value="ZMW {{number_format( (($form->net_amount_paid ?? 0)),2)}}"
                                            type="text">
                                 </td>
                             </tr>
@@ -275,7 +275,7 @@
                                         <div class="col-3"><label class="text-green">Amount ZMW:</label></div>
                                         <div class="col-9">
                                             <input
-                                                value="ZMW {{ number_format( (($form->trex_total_attached_claim  + $form->total) - ($form->trex_deduct_advance ?? 0)),2)  }}"
+                                                value="ZMW {{ number_format( (($form->net_amount_paid ?? 0)),2)  }}"
                                                 type="text" name="date" readonly
                                                 class="form-control  text-bold ">
                                         </div>
@@ -308,7 +308,9 @@
             <!-- /.card -->
 
             {{-- FINANCIAL POSTINGS  --}}
-            @if(  ($form->config_status_id == config('constants.subsistence_status.closed') )
+            @if(  ($form->config_status_id == config('constants.subsistence_status.closed')
+|| ($form->config_status_id == config('constants.subsistence_status.audited') )
+)
                )
                 <div class="card">
                     <div class="card-header">
@@ -596,10 +598,89 @@
                                 </div>
                             </div>
                         @endif
+
+                        {{-- SNR MANAGER--}}
+                        @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
+                             &&  $form->config_status_id == config('constants.trip_status.hr_approved_trip')
+                             &&  $form->user_unit->dm_code == $user->profile_job_code
+                             &&  $form->user_unit->dm_unit == $user->profile_unit_code
+                            )
+                            <div class="">
+                                <hr>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="row">
+                                            <div class="col-1">
+                                                <label class="form-control-label">Reason</label>
+                                            </div>
+                                            <div class="col-11">
+                                                <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 text-center ">
+                                        <div id="divSubmit_show">
+                                            <button id="btnSubmit_approve" type="submit" name="approval"
+                                                    class="btn btn-outline-success mr-2 p-2  "
+                                                    value='Approved'>APPROVE
+                                            </button>
+                                            <button id="btnSubmit_reject" type="submit" name="approval"
+                                                    class="btn btn-outline-danger ml-2 p-2  "
+                                                    value='Rejected'>REJECT
+                                            </button>
+                                        </div>
+                                        <div id="divSubmit_hide">
+                                            <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                    value='Approved'>Processing. Please wait...
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- CHIEF ACCOUNTANT APPROVAL--}}
+                        @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')
+                             &&  $form->config_status_id == config('constants.subsistence_status.station_mgr_approved')
+                             &&  $form->user_unit->ca_code == $user->profile_job_code
+                             &&  $form->user_unit->ca_unit == $user->profile_unit_code
+                            )
+                            <div class="">
+                                <hr>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="row">
+                                            <div class="col-1">
+                                                <label class="form-control-label">Reason</label>
+                                            </div>
+                                            <div class="col-11">
+                                                <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 text-center ">
+                                        <div id="divSubmit_show">
+                                            <button id="btnSubmit_approve" type="submit" name="approval"
+                                                    class="btn btn-outline-success mr-2 p-2  "
+                                                    value='Approved'>APPROVE
+                                            </button>
+                                            <button id="btnSubmit_reject" type="submit" name="approval"
+                                                    class="btn btn-outline-danger ml-2 p-2  "
+                                                    value='Rejected'>REJECT
+                                            </button>
+                                        </div>
+                                        <div id="divSubmit_hide">
+                                            <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                    value='Approved'>Processing. Please wait...
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @endif
 
-
-                    {{--  HR APPROVAL--}}
+                    {{-- HR APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
                          &&  $form->config_status_id == config('constants.subsistence_status.hod_approved')
                          &&  $form->user_unit->hrm_code == $user->profile_job_code
@@ -639,8 +720,7 @@
                         </div>
                     @endif
 
-
-                    {{--  SNR MANAGER--}}
+                    {{-- SNR MANAGER--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
                          &&  $form->config_status_id == config('constants.subsistence_status.hr_approved')
                          &&  $form->user_unit->dm_code == $user->profile_job_code
@@ -680,7 +760,7 @@
                         </div>
                     @endif
 
-                    {{--  CHIEF ACCOUNTANT APPROVAL--}}
+                    {{-- CHIEF ACCOUNTANT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')
                          &&  $form->config_status_id == config('constants.subsistence_status.hr_approved')
                          &&  $form->user_unit->ca_code == $user->profile_job_code
@@ -720,9 +800,48 @@
                         </div>
                     @endif
 
-                    {{--  FUNDS DISBURSEMNET APPROVAL--}}
+                    {{-- PRE-AUDIT APPROVAL--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
+                        &&  $form->config_status_id == config('constants.subsistence_status.chief_accountant')
+                        &&  $form->user_unit->audit_unit == $user->profile_unit_code
+                          )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>APPROVE
+                                        </button>
+                                        <button id="btnSubmit_reject" type="submit" name="approval"
+                                                class="btn btn-outline-danger ml-2 p-2  "
+                                                value='Rejected'>REJECT
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- FUNDS DISBURSEMNET APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.subsistence_status.chief_accountant')
+                         &&  $form->config_status_id == config('constants.subsistence_status.pre_audited')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
@@ -739,7 +858,7 @@
                                     </div>
                                 </div>
                             <h5 class="text-center">Please Update the Accounts </h5>
-                            <h6 class="text-center">(Total Amount : ZMW {{$form->absc_amount}}) </h6>
+                            <h6 class="text-center">(Total Amount : ZMW {{$form->net_amount_paid}}) </h6>
                             <div class="col-lg-12 grid-margin stretch-card">
                                 <div class="table-responsive">
                                     <div class="col-lg-12 ">
@@ -780,6 +899,10 @@
                                                                         :{{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->code}}
                                                                     </option>
                                                                 @endif
+                                                                    @foreach($accounts as $account)
+                                                                        <option
+                                                                            value="{{$account->code}}">{{$account->name}}</option>
+                                                                    @endforeach
 
                                                             </select>
                                                         </div>
@@ -833,7 +956,7 @@
                                 <textarea hidden class="form-control" rows="2" name="reason" required> Funds Disbursement</textarea>
                                 <div id="submit_not_possible" class="col-12 text-center">
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
-                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->absc_amount}}
+                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->net_amount_paid}}
                                                 )</strong>
                                    </span>
                                 </div>
@@ -862,7 +985,7 @@
                         </div>
                     @endif
 
-                    {{--  FUNDS ACKNOWELEDGMENT APPROVAL--}}
+                    {{-- FUNDS ACKNOWELEDGMENT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                          &&  $form->config_status_id == config('constants.subsistence_status.funds_disbursement')
                          &&  $form->claimant_staff_no == $user->staff_no
@@ -872,8 +995,29 @@
                             <div class="row">
                                 <textarea hidden class="form-control" rows="2" name="reason"
                                           required> Funds Received</textarea>
-
-                                <div class="col-12 text-center ">
+                                <div class="col-9">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <label class="form-control-label text-right">Confirmation File</label>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="input-group">
+                                                <input type="file" title="Confirmation of money received e.g Screenshot of money receipt message" class="form-control" multiple name="confirmation[]"
+                                                       id="confirmation" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-1">
+                                            <label class="form-control-label text-right">Paid Account</label>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="input-group">
+                                                <input type="text" title="Confirmation of account number which received the funds" class="form-control" placeholder="Enter Account Number" name="account_number"
+                                                       id="account_number" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3 text-left ">
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
@@ -895,178 +1039,9 @@
                         </div>
                     @endif
 
-                    {{--  SECURITY APPROVAL--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_013')
-                         &&  $form->config_status_id == config('constants.subsistence_status.funds_acknowledgement')
-                         &&  $form->user_unit->security_unit == $user->profile_unit_code
-                        )
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>APPROVE RECEIPTS
-                                        </button>
-                                        <button style="display: none" id="btnSubmit_reject" type="submit"
-                                                name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Rejected'>APPROVE RECEIPTS
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{--  RECEIPT APPROVAL--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.subsistence_status.security_approved')
-                         &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
-                       )
-                        <div class="">
-                            <div class="card">
-                                <div class="col-lg-10 p-2 mt-3 ">
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <label class="form-control-label">Total Change</label>
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="number" step="any" onchange="showChange()"
-                                                           class="form-control"
-                                                           name="change" id="change" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 grid-margin stretch-card" id="show_change">
-                                    <h6 class="text-left p-2">Select Account to Retire Change</h6>
-                                    <div class="table-responsive">
-                                        <div class="col-lg-12 ">
-                                            <TABLE class="table">
-                                                <tbody>
-                                                <TR>
-
-                                                    <TD>
-                                                        <div class="form-group">
-                                                            <input list="items_list" type="text" name="account_item"
-                                                                   class="form-control amount"
-                                                                   placeholder="Select Item/s   " id="account_item1">
-                                                            <datalist id="items_list">
-                                                                @foreach($form->item as $item)
-                                                                    <option>{{$item->name}}</option>
-                                                                @endforeach
-                                                            </datalist>
-                                                        </div>
-                                                    </TD>
-                                                    <TD>
-                                                        <select name="credited_account" id="credited_account1"
-                                                                class="form-control amount">
-                                                            <option value="">Select Account To Credit</option>
-                                                            @foreach($accounts as $account)
-                                                                <option
-                                                                    value="{{$account->code}}">{{$account->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </TD>
-                                                    <TD><input type="number" name="credited_amount"
-                                                               id="credited_amount1" class="form-control amount"
-                                                               placeholder=" Credited Amount [ZMK]" readonly>
-                                                    </TD>
-                                                    <TD>
-                                                        <select name="debited_account" id="debited_account1"
-                                                                class="form-control amount">
-                                                            @foreach($accounts as $account)
-                                                                @if($account->id  ==  config('constants.petty_cash_account_id')  )
-                                                                    <option
-                                                                        value="{{$account->code}}">{{$account->name}}
-                                                                        :{{$account->code}}</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </TD>
-                                                    <TD><input type="number" name="debited_amount"
-                                                               class="form-control amount" id="debited_amount1"
-                                                               placeholder="Amount [ZMK]" readonly>
-                                                    </TD>
-                                                </TR>
-                                                </tbody>
-                                                <datalist id="accounts_list">
-                                                    @foreach($accounts as $account)
-                                                        <option value="{{$account->code}}">{{$account->name}}</option>
-                                                    @endforeach
-                                                </datalist>
-
-                                            </TABLE>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row p-2">
-                                    <div class="col-10">
-                                        <div class="row">
-                                            <div class="col-2">
-                                                <label class="form-control-label">Receipt Files</label>
-                                            </div>
-                                            <div class="col-8">
-                                                <div class="input-group">
-                                                    <input type="file" class="form-control" multiple name="receipt[]"
-                                                           id="receipt" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <textarea hidden class="form-control" rows="2" name="reason" required> Closing of petty cash</textarea>
-                                    <div class="col-2 text-center ">
-                                        {{--                                        <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
-                                        {{--                                                value='Approved'>CLOSE subsistence.-}}
-                                        {{--                                        </button>--}}
-
-                                        <div id="divSubmit_show">
-                                            <button id="btnSubmit_approve" type="submit" name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Approved'>CLOSE PETTY-CASH
-                                            </button>
-                                            <button style="display: none" id="btnSubmit_reject" type="submit"
-                                                    name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Rejected'>CLOSE PETTY-CASH
-                                            </button>
-                                        </div>
-                                        <div id="divSubmit_hide">
-                                            <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                    value='Approved'>Processing. Please wait...
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{--  AUDIT APPROVAL--}}
+                    {{-- AUDIT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
-                        &&  $form->config_status_id == config('constants.subsistence_status.closed')
+                        &&  $form->config_status_id == config('constants.subsistence_status.await_audit')
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
@@ -1104,7 +1079,7 @@
                         </div>
                     @endif
 
-                    {{--  QUERIED RESOLUTION--}}
+                    {{-- QUERIED RESOLUTION--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                          &&  $form->config_status_id == config('constants.subsistence_status.queried')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
@@ -1346,15 +1321,15 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var absc_amount = {!! json_encode($form->absc_amount) !!};
+            var net_amount_paid = {!! json_encode($form->net_amount_paid) !!};
 
             if (!isNaN(total)) {
 
                 //check if petty cash accounts is equal to absc_amount
-                if (total == absc_amount) {
+                if (total == net_amount_paid) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
-                } else if (total < absc_amount) {
+                } else if (total < net_amount_paid) {
                     $('#submit_not_possible').show();
                     $('#submit_possible').hide();
                 } else {
@@ -1381,15 +1356,15 @@
                 debited.value = parseFloat(inp.value || 0);
             }
 
-            var absc_amount = {!! json_encode($form->absc_amount) !!};
+            var net_amount_paid = {!! json_encode($form->net_amount_paid) !!};
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to absc_amount
-                if (total == absc_amount) {
+                //check if petty cash accounts is equal to net_amount_paid
+                if (total == net_amount_paid) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
-                } else if (total < absc_amount) {
+                } else if (total < net_amount_paid) {
                     $('#submit_not_possible').show();
                     $('#submit_possible').hide();
                 } else {

@@ -46,17 +46,11 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('absc_visited_place')->nullable();
             $table->string('absc_visited_reason')->nullable();
             $table->string('absc_allowance_per_night')->nullable();
-            $table->string('absc_amount')->nullable();
             //
             $table->string('trex_total_attached_claim')->nullable();
-            $table->string('trex_total_claim_amount')->nullable();
-            $table->string('trex_deduct_advance')->nullable();
-            $table->string('trex_net_amount_paid')->nullable();
+            $table->string('date_left')->nullable();
+            $table->string('date_arrived')->nullable();
             $table->string('allocation_code')->nullable();
-            //
-            $table->string('allocation_code')->nullable();
-            $table->string('total_amount')->nullable();
-            $table->string('total_days')->nullable();
             //
             $table->string('authorised_by')->nullable();
             $table->string('authorised_staff_no')->nullable();

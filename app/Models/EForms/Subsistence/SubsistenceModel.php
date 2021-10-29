@@ -3,6 +3,7 @@
 namespace App\Models\EForms\Subsistence;
 
 use App\Http\Controllers\Main\HomeController;
+use App\Models\EForms\Trip\DestinationsApprovals;
 use App\Models\EForms\Trip\Trip;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\StatusModel;
@@ -19,10 +20,10 @@ class SubsistenceModel extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $appends = ['numdays', 'total'];
+    protected $appends = ['num_days', 'actual_days', 'total_night_allowance', 'net_amount_paid', 'total_claim_amount', 'deduct_advance_amount'];
 
     protected $dates = [
-        'absc_absent_to', 'absc_absent_from'
+        'absc_absent_to', 'absc_absent_from', 'date_arrived', 'date_left'
     ];
 
     protected $casts = [
@@ -64,16 +65,11 @@ class SubsistenceModel extends Model
         'absc_visited_place',
         'absc_visited_reason',
         'absc_allowance_per_night',
-        'absc_amount',
 
         'trex_total_attached_claim',
-        'trex_total_claim_amount',
-        'trex_deduct_advance',
-        'trex_net_amount_paid',
-
+        'date_left',
+        'date_arrived',
         'allocation_code',
-        'total_amount',
-        'total_days',
 
         'authorised_by',
         'authorised_staff_no',
@@ -141,17 +137,39 @@ class SubsistenceModel extends Model
     }
 
 
-    //RELATIONSHIPS
-
-    public function getNumdaysAttribute()
+    //ATTRIBUTES
+    public function getNumDaysAttribute()
     {
         return $this->absc_absent_from->diffInDays($this->absc_absent_to);
     }
-
-    public function getTotalAttribute()
+    public function getActualDaysAttribute()
     {
-        return $this->numdays * $this->absc_allowance_per_night;
+        return ($this->date_to ?? $this->created_at)->diffInDays( $this->date_arrived ?? $this->created_at );
     }
+
+    public function getTotalNightAllowanceAttribute()
+    {
+        return ($this->num_days * $this->absc_allowance_per_night ) ;
+    }
+
+    public function getDeductAdvanceAmountAttribute()
+    {
+        return ($this->actual_days * $this->absc_allowance_per_night ) ;
+    }
+
+    public function getTotalClaimAmountAttribute()
+    {
+        return ($this->num_days * $this->absc_allowance_per_night ) + $this->trex_total_attached_claim  ;
+    }
+
+    public function getNetAmountPaidAttribute()
+    {
+        return  ( ($this->num_days * $this->absc_allowance_per_night ) + $this->trex_total_attached_claim ) - ($this->actual_days * $this->absc_allowance_per_night )   ;
+    }
+
+
+
+    //RELATIONSHIPS
 
     public function user_unit()
     {
@@ -171,6 +189,11 @@ class SubsistenceModel extends Model
     public function trip()
     {
         return $this->belongsTo(Trip::class, 'trip_id', 'id');
+    }
+
+    public function destinations()
+    {
+        return $this->hasMany(DestinationsApprovals::class, 'subsistence_id', 'id');
     }
 
 

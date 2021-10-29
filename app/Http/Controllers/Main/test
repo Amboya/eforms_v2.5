@@ -1,4 +1,11 @@
-'code as trip_code', 'id as trip_id_a '', 'date_to as trip_date_to', 'date_from as trip_date_from', 'hod_code as trip_hod_code',
-        'hod_unit as trip_hod_unit', 'name as trip_name', 'description as trip_description', 'destination as trip_destination',
-        'config_status_id as trip_status_id', 'initiator_name', 'initiator_staff_no', 'initiator_date', 'closed_by_name',
-        'closed_by_staff_no', 'closed_by_date'
+   <a href='{{ route('logout') }}  title='Open subsistence form'
+                                                   class='btn btn-sm bg-{{$item->status->html ?? default'}}
+                                                   onclick='event.preventDefault();
+                                                       document.getElementById('show-form1'+{{$item->id}}).submit();'>
+                                                    <i class='fa fa-file'></i>
+                                                </a>
+                                            <form id='show-form1{{$item->id}}
+                                                  action='{{ route('subsistence.show', $item->id) }}
+                                                  method='POST' class='d-none'>
+                                                @csrf
+                                            </form>

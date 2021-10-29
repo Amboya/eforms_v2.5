@@ -22,15 +22,16 @@ class Destinations extends Model
     //fields fillable
     protected $fillable = [
         'user_unit_code',
+        'trip_id',
         'trip_code',
         'date_from',
         'date_to',
         'deleted_at',
     ];
 
-    protected $with = [
-        'trips',
-    ];
+//    protected $with = [
+//        'trips',
+//    ];
 
     public function trips()
     {

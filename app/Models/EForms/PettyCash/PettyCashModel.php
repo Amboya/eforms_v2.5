@@ -19,6 +19,8 @@ class PettyCashModel extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $appends = ['total'] ;
+
     //table name
     protected $table = 'eform_petty_cash';
     //primary key
@@ -98,6 +100,11 @@ class PettyCashModel extends Model
         'project',
         'item',
     ];
+
+
+    public function getTotalAttribute(){
+        return   $this->total_payment -   $this->change   ;
+    }
 
 
     protected static function booted()

@@ -261,6 +261,14 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{route('petty.cash.invoices.duplicates',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Duplicates
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{route('petty.cash.invoices.business.units',0)}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>

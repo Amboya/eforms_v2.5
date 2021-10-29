@@ -20,7 +20,7 @@ class CreateViewTripMembership extends Migration
         a.code as trip_code, a.id as trip_id_a , a.date_to as trip_date_to, a.date_from as trip_date_from, a.hod_code as trip_hod_code,
         a.hod_unit as trip_hod_unit, a.name as trip_name, a.description as trip_description, a.destination as trip_destination,
         a.config_status_id as trip_status_id, a.initiator_name as trip_initiator_name, a.initiator_staff_no as trip_initiator_staff_no, a.initiator_date as trip_initiator_date
-        FROM eform_trip a JOIN eform_subsistence b ON a.id = b.trip_id
+        FROM eform_trip a LEFT JOIN eform_subsistence b ON a.id = b.trip_id
         )
         ");
     }

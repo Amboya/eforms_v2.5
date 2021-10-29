@@ -22,6 +22,7 @@ class Invitation extends Model
     //fields fillable
     protected $fillable = [
         'man_no',
+        'trip_id',
         'trip_code',
         'date_from',
         'date_to',

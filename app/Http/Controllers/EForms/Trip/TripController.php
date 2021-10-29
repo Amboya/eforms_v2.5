@@ -10,7 +10,6 @@ use App\Models\EForms\Subsistence\SubsistenceModel;
 use App\Models\EForms\Trip\Destinations;
 use App\Models\EForms\Trip\Invitation;
 use App\Models\EForms\Trip\Trip;
-use App\Models\EForms\Trip\TripMembers;
 use App\Models\Main\AttachedFileModel;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\EformApprovalsModel;
@@ -248,15 +247,16 @@ class TripController extends Controller
         $units = \App\Http\Controllers\Main\HomeController::getMyViisbleUserUnits();
         $units->load('users_list');
         $destination_units = ConfigWorkFlow::select('id', 'user_unit_description', 'user_unit_code', 'user_unit_bc_code', 'user_unit_cc_code')
-            ->where('user_unit_status' ,  config('constants.user_unit_active') )
+            ->where('user_unit_status', config('constants.user_unit_active'))
             ->get();
         // dd($units);
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
 
-        // dd($units);
+       // dd($units);
+
         //show the create form
-        return view('eforms.trip.create')->with(compact('destination_units','units', 'user', 'totals_needs_me'));
+        return view('eforms.trip.create')->with(compact('destination_units', 'units', 'user', 'totals_needs_me'));
     }
 
     /**
@@ -333,6 +333,7 @@ class TripController extends Controller
                 ],
                 [
                     'man_no' => $userObj->staff_no,
+                    'trip_id' => $formModel->id,
                     'trip_code' => $formModel->code,
                     'date_from' => $formModel->date_from,
                     'date_to' => $formModel->date_to,
@@ -526,7 +527,8 @@ class TripController extends Controller
             //find the Trip with that id
             $form = Trip::find($id);
         }
-        $form->load('members', 'members.user');
+        $form->load('members', 'members.user', 'members.destinations');
+
         $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.trip'))->get();
 
         //get the list of users who are supposed to work on the form
@@ -535,7 +537,7 @@ class TripController extends Controller
             ->where('trip_code', $form->code)
             ->first();
 
-       // dd($form);
+        // dd($form);
 
 
         //count all that needs me
@@ -695,7 +697,10 @@ class TripController extends Controller
 
     public function membershipApprove(Request $request, Trip $trip)
     {
-        $subsistence = SubsistenceModel::find($request->membership);
+        $id = $request->membership;
+        $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} ");
+        $subsistence = SubsistenceModel::hydrate($list)->first();
+        //
         $current_status = $subsistence->config_status_id;
         $new_status = 0;
         $insert_reasons = true;
@@ -788,10 +793,72 @@ class TripController extends Controller
             //update
 
             $subsistence->config_status_id = $new_status;
-            $subsistence->closed_by_name = $user->name;
-            $subsistence->closed_by_staff_no = $user->staff_no;
-            $subsistence->closed_by_date = $request->sig_date;
             $subsistence->save();
+
+        } //FOR AUTHORIZER
+        elseif (
+            $user->profile_id == config('constants.user_profiles.EZESCO_004')
+            && $current_status == config('constants.subsistence_status.destination_approval')
+        ) {
+
+            //find which unit am approving on this subsistence destination approvals
+            //my user units
+            $my_units = \App\Http\Controllers\Main\HomeController::getUserResponsibleUnits($user)->pluck('user_unit_code')->toArray();
+            //check for the one in destination approvals
+            $subsistence->load('destinations');
+            $destinations_approvals = $subsistence->destinations;
+            $approvals_lists = $destinations_approvals->whereIn('user_unit_code', $my_units);
+            //loop through and approve them
+            foreach ($approvals_lists as $approvals_list) {
+                $approvals_list->created_by = $user->id;
+                $approvals_list->dest_comment = $request->reason;
+                $approvals_list->date_from = $request->date_from;
+                $approvals_list->date_to = $request->date_to;
+                $approvals_list->save();
+            }
+
+            //reason
+            $request->reason = "Arrived on " . $request->date_from . "  and Left on  " . $request->date_to . " , Reasons/Comment : " . $request->reason;
+            $insert_reasons = true;
+
+            //status
+            if ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.subsistence_status.destination_approval');
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
+            } else {
+                $new_status = config('constants.subsistence_status.destination_approval');
+                $insert_reasons = false;
+                $profile = config('constants.owner');
+            }
+
+            //update
+            $count_dest_approvals = $destinations_approvals->whereNull("created_by");
+
+            //dd($count_dest_approvals);
+
+            //choose to update the
+            if (($count_dest_approvals->count()) == 0) {
+                //highest date
+                $highest_from_date = $count_dest_approvals->latest('date_from')->first();
+                $highest_to_date = $count_dest_approvals->latest('date_to')->first();
+
+                $new_status = config('constants.subsistence_status.await_audit');
+                $subsistence->config_status_id = $new_status;
+                $subsistence->date_left = $highest_from_date->date_from ;
+                $subsistence->date_arrived = $highest_to_date->date_to ;
+                //replace with the latest
+                $subsistence->closed_by_name = $user->name;
+                $subsistence->closed_by_staff_no = $user->staff_no;
+                $subsistence->closed_by_date = $request->sig_date;
+                //
+                $profile = config('constants.owner');
+            } else {
+                foreach ($count_dest_approvals as $count_dest_approval) {
+                    //send the email
+                    self::nextUserSendMail($new_status, $count_dest_approval->user_unit_code, $profile, $subsistence);
+                }
+            }
+
 
         }
 
@@ -814,7 +881,6 @@ class TripController extends Controller
                 ]);
 
             //record approval in
-            $subsistence->config_status_id = $new_status;
             $reason2 = EformApprovalsModel::Create(
                 [
                     'profile' => $user->profile_id,
@@ -830,9 +896,17 @@ class TripController extends Controller
                     'eform_code' => $subsistence->code,
                     'created_by' => $user->id,
                 ]);
+
+            $subsistence->config_status_id = $new_status;
             $subsistence->save();
-            //send the email
-            self::nextUserSendMail($new_status,$subsistence->user_unit_code, $profile, $subsistence);
+
+            if ($current_status == config('constants.subsistence_status.destination_approval')) {
+
+            } else {
+                //send the email
+                self::nextUserSendMail($new_status, $subsistence->user_unit_code, $profile, $subsistence);
+            }
+
         }
 
         //redirect home
@@ -847,15 +921,15 @@ class TripController extends Controller
      * @param $claim_staff
      */
 
-    public function nextUserSendMail($new_status,$user_unit_code, $profile, $form)
+    public function nextUserSendMail($new_status, $user_unit_code, $profile, $form)
     {
         $form->load('trip');
         $names = "";
         $claimant_details = User::find($form->created_by);
 
-        if($profile == config('constants.owner')){
+        if ($profile == config('constants.owner')) {
             $user_array = User::where('id', $form->created_by)->get();
-        }else{
+        } else {
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit_code, $profile);
         }
 
@@ -867,25 +941,25 @@ class TripController extends Controller
         ) {
             //message details
             $subject = 'Trip Form Needs Your Attention';
-            $title = 'Trip to '.$form->trip->name;
+            $title = 'Trip to ' . $form->trip->name;
             $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', that needs your attention.
-            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>' ;
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>';
         } //check if this next profile is for a claimant and if the Trip is closed
         else if ($new_status == config('constants.trip_status.closed')) {
             $names = $names . '<br>' . $claimant_details->name;
             //message details
             $subject = 'Trip Form Closed Successfully';
-            $title = 'Trip to '.$form->trip->name;
+            $title = 'Trip to ' . $form->trip->name;
             $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', has been closed successfully.
-            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>' ;
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>';
 
         } // other wise get the users
         else {
             //message details
             $subject = 'Trip Form Needs Your Attention';
-            $title = 'Trip to '.$form->trip->name;
+            $title = 'Trip to ' . $form->trip->name;
             $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', has been closed successfully.
-            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>' ;
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form->status->name . ' stage </em>';
         }
 
         /** send email to supervisor */

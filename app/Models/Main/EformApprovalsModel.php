@@ -2,14 +2,14 @@
 
 namespace App\Models\Main;
 
+use App\Models\Main\StatusModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Main\StatusModel;
 
 class EformApprovalsModel extends Model
 {
     use HasFactory;
-
 
     //table name
     protected $table = 'config_eform_approvals';
@@ -48,6 +48,12 @@ class EformApprovalsModel extends Model
     public function to_status()
     {
         return $this->belongsTo(StatusModel::class, 'action_status_id', 'id');
+    }
+
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
 }

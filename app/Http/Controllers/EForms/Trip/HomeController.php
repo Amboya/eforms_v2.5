@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\EForms\Trip;
 
 use App\Http\Controllers\Controller;
+use App\Models\EForms\Trip\Destinations;
 use App\Models\EForms\Trip\Invitation;
 use App\Models\EForms\Trip\Trip;
-use App\Models\Main\ConfigWorkFlow;
-use App\Models\Main\ProfileAssigmentModel;
-use App\Models\Main\ProfileDelegatedModel;
-use Carbon;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Facades\Auth;
 
@@ -80,8 +77,7 @@ class HomeController extends Controller
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
             $list = Trip::whereDate('updated_at', Carbon::today())->count();
 
-        }
-        //for REQUESTER
+        } //for REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             $list_inv = Invitation::where('man_no', $user->staff_no)->orderBy('trip_code')->get();
             $mine = [];
@@ -90,32 +86,36 @@ class HomeController extends Controller
             }
             $list = Trip::whereIn('code', $mine)
                 ->count();
-        }
-        //for the HOD
+        } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
             $list_inv = Invitation::where('man_no', $user->staff_no)->orderBy('trip_code')->get();
             $mine = [];
             foreach ($list_inv as $item) {
-                $mine[] = $item->trip_code;
+             //   $mine[] = $item->trip_code;
             }
-            $list = Trip::whereIn('code', $mine)
+            //get the my list
+            $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+            $my_units = $fdsf->pluck('user_unit_code')->toArray();
+
+            //get the destination approvals
+            $dest = Destinations::whereIn('user_unit_code',$my_units )->get();
+            foreach ($dest as $des) {
+                $mine[] = $des->trip_code;
+            }
+
+            //get the trips
+            $list = Trip::whereIn('code', array_unique($mine))
                 ->orWhere('hod_code', $user->profile_job_code)
                 ->where('hod_unit', $user->profile_unit_code)
                 ->count();
-        } //for the HRM
-        elseif (  $user->profile_id == config('constants.user_profiles.EZESCO_009')) {
-            $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-            $my_units = $fdsf->pluck('user_unit_code')->toArray();
-            $list_inv = Invitation::where('man_no', $user->staff_no)->orderBy('trip_code')->get();
-            $mine = [];
-            foreach ($list_inv as $item) {
-                $mine[] = $item->trip_code;
-            }
-            $list = Trip::whereIn('code', $mine)
-                ->orWhereIn('hod_unit', $my_units)
-                ->count();
-        }  //for the SNR MANAGER
-        elseif (  $user->profile_id == config('constants.user_profiles.EZESCO_015')) {
+        }
+        //FOR HRM //for the SNR MANAGER  // CHIEF ACC // AUDIT // EXPENDITURE
+        elseif (($user->profile_id == config('constants.user_profiles.EZESCO_009'))
+            || ($user->profile_id == config('constants.user_profiles.EZESCO_015'))
+            || ($user->profile_id == config('constants.user_profiles.EZESCO_011'))
+            || ($user->profile_id == config('constants.user_profiles.EZESCO_007'))
+            || ($user->profile_id == config('constants.user_profiles.EZESCO_014'))
+        ) {
             $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
             $my_units = $fdsf->pluck('user_unit_code')->toArray();
             $list_inv = Invitation::where('man_no', $user->staff_no)->orderBy('trip_code')->get();
@@ -145,15 +145,6 @@ class HomeController extends Controller
         $user = Auth::user();
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-//            $list_inv = Invitation::where('man_no',$user->staff_no )->orderBy('trip_code')->get();
-//            $mine = [] ;
-//            foreach ($list_inv as $item){
-//                $mine[] = $item->trip_code ;
-//            }
-//            $list = Trip::whereIn('code',$mine )
-//                ->orWhere('hod_code', $user->profile_job_code )
-//                ->where('hod_unit', $user->profile_unit_code )
-//                ->orderBy('code')->get();
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
@@ -171,28 +162,33 @@ class HomeController extends Controller
             foreach ($list_inv as $item) {
                 $mine[] = $item->trip_code;
             }
-            $list = Trip::whereIn('code', $mine)
+
+            //get the my list
+            $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+            $my_units = $fdsf->pluck('user_unit_code')->toArray();
+
+            //get the destination approvals
+            $dest = Destinations::whereIn('user_unit_code',$my_units )->get();
+            foreach ($dest as $des) {
+                $mine[] = $des->trip_code;
+            }
+
+            //get the trips
+            $list = Trip::whereIn('code', array_unique($mine))
                 ->orWhere('hod_code', $user->profile_job_code)
                 ->where('hod_unit', $user->profile_unit_code)
-                ->orderBy('code')->get();
+                ->get();
+
+
         } //for the HRM
-        elseif ( $user->profile_id == config('constants.user_profiles.EZESCO_009')) {
+        elseif (($user->profile_id == config('constants.user_profiles.EZESCO_009'))
+            || ($user->profile_id == config('constants.user_profiles.EZESCO_015'))
+            || ($user->profile_id == config('constants.user_profiles.EZESCO_011'))
+            || ($user->profile_id == config('constants.user_profiles.EZESCO_014'))
+            || ($user->profile_id == config('constants.user_profiles.EZESCO_007'))
+        ) {
             $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
             $my_units = $fdsf->pluck('user_unit_code')->toArray();
-            $list_inv = Invitation::where('man_no', $user->staff_no)->orderBy('trip_code')->get();
-            $mine = [];
-            foreach ($list_inv as $item) {
-                $mine[] = $item->trip_code;
-            }
-            $list = Trip::whereIn('code', $mine)
-                ->orWhereIn('hod_unit', $my_units)
-                ->orderBy('code')->get();
-        } //for the SNR MANAGER
-        elseif (  $user->profile_id == config('constants.user_profiles.EZESCO_015')) {
-            $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-            $my_units = $fdsf->pluck('user_unit_code')->toArray();
-
-           // dd($my_units);
 
             $list_inv = Invitation::where('man_no', $user->staff_no)->orderBy('trip_code')->get();
             $mine = [];
@@ -202,6 +198,7 @@ class HomeController extends Controller
             $list = Trip::whereIn('code', $mine)
                 ->orWhereIn('hod_unit', $my_units)
                 ->orderBy('code')->get();
+
         } //for ANYONE ELSE
         else {
             $list_inv = Invitation::where('man_no', $user->staff_no)->orderBy('trip_code')->get();

@@ -16,7 +16,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark text-uppercase text-orange ">TRIP CODE <span class="text-green ">{{ $form->code }}</span> </h1>
+                    <h1 class="m-0 text-dark text-uppercase text-orange ">TRIP CODE <span
+                            class="text-green ">{{ $form->code }}</span></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -53,7 +54,7 @@
                     @endforeach
                 </ul>
             </div>
-        @endif
+    @endif
 
 
     <!-- Default box -->
@@ -64,21 +65,22 @@
                     <div class="col-sm-6 invoice-col">
                         <span
                             class="badge badge-{{$form->status->html ?? "default"}}">{{$form->status->name ?? "none"}}</span><br>
-                        <b  class='text-orange'>Name:</b> <span class='text-green'>{{ $form->name}}</span><br>
-                        <b  class='text-orange'>Date From:</b> <span class='text-green'>{{ $form->date_from}}</span><br>
-                        <b  class='text-orange'>Date To:</b> <span class='text-green'>{{ $form->date_to}}</span><br>
-                        <b  class='text-orange'>Members:</b> <span class='text-green'>Invited {{ $form->invited}} and {{sizeof($form->members)}} have
+                        <b class='text-orange'>Name:</b> <span class='text-green'>{{ $form->name}}</span><br>
+                        <b class='text-orange'>Date From:</b> <span class='text-green'>{{ $form->date_from}}</span><br>
+                        <b class='text-orange'>Date To:</b> <span class='text-green'>{{ $form->date_to}}</span><br>
+                        <b class='text-orange'>Members:</b> <span class='text-green'>Invited {{ $form->invited}} and {{sizeof($form->members)}} have
                         subscribed.</span><br>
                     </div>
                     <div class="col-sm-6 invoice-col">
                         <br>
                         <br>
-                        <b class='text-orange' >Destination:</b><span class='text-green'> {{ $form->destination}} </span><br>
-                        <b  class='text-orange'>Description:</b><span class='text-green'>  {{ $form->description}} </span><br>
-                        <b  class='text-orange'>Created By:</b> <span
+                        <b class='text-orange'>Destination:</b><span class='text-green'> {{ $form->destination}} </span><br>
+                        <b class='text-orange'>Description:</b><span
+                            class='text-green'>  {{ $form->description}} </span><br>
+                        <b class='text-orange'>Created By:</b> <span
                             class=" text-green">{{ $form->initiator_name}}  </span>
                         <br>
-                        <b  class='text-orange'>Created At:</b> <span
+                        <b class='text-orange'>Created At:</b> <span
                             class=" text-green">{{ $form->created_at}} : that is {{ $form->created_at->diffForHumans()}} </span>
                     </div>
                 </div>
@@ -87,10 +89,10 @@
                 <input type="hidden" name="id" value="{{ $form->id}}" readonly required>
                 <input type="hidden" name="sig_date" value=" {{date('Y-m-d H:i:s')}}" readonly required>
 
-                <table border="1" width="100%" cellspacing="0" cellpadding="0" align="Centre"
-                       class="mt-2 mb-4">
+                <table border="1" width="98.5%" cellspacing="0" cellpadding="0" align="Centre"
+                       class=" m-3 mr-3 ">
                     <thead>
-                    <tr>
+                    <tr class="border-success">
                         <th width="33%" colspan="1" class="text-center"><a href="#"><img
                                     src="{{ asset('dashboard/dist/img/zesco1.png')}}" title="ZESCO" alt="ZESCO"
                                     width="25%"></a></th>
@@ -106,7 +108,7 @@
                         <div class="col-lg-12 ">
                             <table class="table table-striped">
                                 <thead class="table text-white text-bold text-uppercase bg-gradient-green ">
-                                <tr >
+                                <tr>
                                     <th></th>
                                     <th>MAN NO</th>
                                     <th>NAME</th>
@@ -115,10 +117,11 @@
                                     <th>DAYS CLAIMED</th>
                                     <th>M/V NUMBER</th>
                                     <th>DESTINATION</th>
-                                    <th>DATE ARRIVED</th>
                                     <th>ACTUAL DAYS TAKEN</th>
-                                    <th>DATE LEFT</th>
-                                    <th>REGIONAL, AREA, BRANCH OR LINE MANAGER’S SIGNATURE</th>
+                                    <th>
+                                        DESTINATION APPROVALS
+                                    </th>
+
                                     <th>STATUS</th>
                                     <th>ACTION</th>
                                 </tr>
@@ -127,94 +130,141 @@
                                     <TR>
                                         <td></td>
                                         <td>{{$item->claimant_staff_no ?? ""}}</td>
-                                        <td >
-                                            <a href=""  data-toggle="modal"
+                                        <td>
+                                            <a href="" data-toggle="modal"
                                                data-sent_data="{{$item}}"
-                                               data-target="#modal-approve-member" >
+                                               data-target="#modal-approve-member">
                                                 {{$item->claimant_name ?? ""}}
                                             </a>
 
-                                           </td>
-                                        <td>{{$item->initiator_name ?? ""}} <br> {{$item->initiator_staff_no ?? ""}}</td>
-                                        <td>{{$item->absc_absent_from ?? ""}}</td>
+                                        </td>
+                                        <td>{{$item->initiator_name ?? ""}} <br> {{$item->initiator_staff_no ?? ""}}
+                                        </td>
+                                        <td>{{ Carbon::parse(  $form->absc_absent_from )->isoFormat('Do MMM Y') }}</td>
                                         <td>{{$item->total_days ?? ""}}</td>
                                         <td>{{$item->m_v_number ?? "" }}</td>
                                         <td>{{$item->absc_visited_place ?? "" }}</td>
-                                        <td>{{$item->date_arrived ?? ""}}</td>
-                                        <td>{{$item->date_arrived ?? "" }}</td>
-                                        <td>{{$item->date_left}}</td>
-                                        <td>{{$item->closed_by_name }} <br> {{$item->closed_by_staff_no ?? ""}}</td>
-                                        {{--                                        <td>{{$item->man_no ?? ""}}</td>--}}
                                         <td>
-                                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
-                                                @if(Auth::user()->staff_no ==  $item->claimant_staff_no)
-                                            <a href="{{ route('logout') }}"  title="Open subsistence form"
-                                               class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
-                                               onclick="event.preventDefault();
-                                                   document.getElementById('show-form1'+{{$item->id}}).submit();">
-                                                    <span
-                                                        class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
-                                            </a>
-                                                @else
-                                                    <a  class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
-                                                    <span title="This is not your subsistence form - you cannot open it"
-                                                        class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
-                                                    </a>
-                                                @endif
-                                            @else
-                                                <a href="{{ route('logout') }}" title="Open subsistence form"
-                                                   class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
-                                                   onclick="event.preventDefault();
-                                                       document.getElementById('show-form1'+{{$item->id}}).submit();">
-                                                    <span
-                                                        class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
-                                                </a>
-                                            @endif
-                                            <form id="show-form1{{$item->id}}"
-                                                  action="{{ route('subsistence.show', $item->id) }}"
-                                                  method="POST" class="d-none">
-                                                @csrf
-                                            </form>
+                                            {{$item->actual_days ?? "" }}
                                         </td>
                                         <td>
-                                            <button
-                                                class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
-                                                title="Trip Approvals List"
-                                                data-toggle="modal"
-                                                data-sent_data="{{$item}}"
-                                                data-target="#modal-approve-member">
-                                                <i class="fa fa-check"></i>
-                                            </button>
+                                            <table class="table-sm" border="0">
+                                                <tr>
+                                                    <th>DATE ARRIVED</th>
+                                                    <th>DATE LEFT</th>
+                                                    <th>REGIONAL, AREA, BRANCH OR LINE MANAGER’S SIGNATURE</th>
+                                                </tr>
+                                                @foreach($item->destinations as $dest_app)
+                                                    <tr>
+                                                        <td>
+                                                            @if( $dest_app->date_from == null)
+                                                                - {{$dest_app->user_unit->user_unit_description}} <br>
+                                                            @else
+                                                                {{ Carbon::parse(  $dest_app->date_from )->isoFormat('Do MMM Y') }}
+                                                                <br>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if( $dest_app->date_from == null)
+                                                                - {{$dest_app->user_unit->user_unit_code}} <br>
+                                                            @else
+                                                                {{ Carbon::parse(  $dest_app->date_from )->isoFormat('Do MMM Y') }}
+                                                                <br>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            {{$dest_app->approver->name  ?? "" }}
+                                                            - {{$dest_app->approver->job_code  ?? "" }} <br>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <div class="row">
+                                                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
+                                                    <div class="col-sm-12 mt-2">
+                                                        @if(Auth::user()->staff_no ==  $item->claimant_staff_no)
+                                                            <a href="{{ route('logout') }}"
+                                                               title="Open subsistence form"
+                                                               class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+                                                               onclick="event.preventDefault();
+                                                                   document.getElementById('show-form1'+{{$item->id}}).submit();">
+                                                    <span
+                                                        class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                                            </a>
+                                                        @else
+                                                            <a class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
+                                                    <span title="No Access to this subsistence form"
+                                                          class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                                            </a>
+                                                        @endif
+                                                        @else
+                                                            <a href="{{ route('logout') }}"
+                                                               title="Open subsistence form"
+                                                               class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+                                                               onclick="event.preventDefault();
+                                                                   document.getElementById('show-form1'+{{$item->id}}).submit();">
+                                                    <span
+                                                        class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                    <form id="show-form1{{$item->id}}"
+                                                          action="{{ route('subsistence.show', $item->id) }}"
+                                                          method="POST" class="d-none">
+                                                        @csrf
+                                                    </form>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-sm-12 mt-2">
+                                                    <button
+                                                        class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+                                                        title="Trip Approvals List"
+                                                        data-toggle="modal"
+                                                        data-sent_data="{{$item}}"
+                                                        data-target="#modal-approve-member">
+                                                        <i class="fa fa-check"></i> Sign
+                                                    </button>
+                                                </div>
 
-
-                                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
-                                                @if(Auth::user()->staff_no ==  $item->claimant_staff_no)
-                                                    <a href="{{ route('logout') }}" title="Open subsistence form"
-                                                       class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
-                                                       onclick="event.preventDefault();
-                                                           document.getElementById('show-form1'+{{$item->id}}).submit();">
-                                                        <i class="fa fa-file"></i>
-                                                    </a>
+                                                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
+                                                    @if(Auth::user()->staff_no ==  $item->claimant_staff_no)
+                                                        <div class="col-sm-12 mt-2">
+                                                            <a href="{{ route('logout') }}"
+                                                               title="Open subsistence form"
+                                                               class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+                                                               onclick="event.preventDefault();
+                                                                   document.getElementById('show-form1'+{{$item->id}}).submit();">
+                                                                <i class="fa fa-file"></i> Open
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <div class="col-sm-12 mt-2">
+                                                            <a title="No Access to this subsistence form"
+                                                               class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
+                                                                <i class="fa fa-file"></i> Open
+                                                            </a>
+                                                        </div>
+                                                    @endif
                                                 @else
-                                                    <a  title="This is not your subsistence form - you cannot open it"
-                                                        class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
-                                                        <i class="fa fa-file"></i>
-                                                    </a>
+                                                    <div class="col-sm-12 mt-2">
+                                                        <a href="{{ route('logout') }}" title="Open subsistence form"
+                                                           class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+                                                           onclick="event.preventDefault();
+                                                               document.getElementById('show-form1'+{{$item->id}}).submit();">
+                                                            <i class="fa fa-file"></i> Open
+                                                        </a>
+                                                    </div>
                                                 @endif
-                                            @else
-                                                <a href="{{ route('logout') }}"  title="Open subsistence form"
-                                                   class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
-                                                   onclick="event.preventDefault();
-                                                       document.getElementById('show-form1'+{{$item->id}}).submit();">
-                                                    <i class="fa fa-file"></i>
-                                                </a>
-                                            @endif
-                                            <form id="show-form1{{$item->id}}"
-                                                  action="{{ route('subsistence.show', $item->id) }}"
-                                                  method="POST" class="d-none">
-                                                @csrf
-                                            </form>
-
+                                                <form id="show-form1{{$item->id}}"
+                                                      action="{{ route('subsistence.show', $item->id) }}"
+                                                      method="POST" class="d-none">
+                                                    @csrf
+                                                </form>
+                                            </div>
                                         </td>
                                     </TR>
                                 @endforeach
@@ -243,13 +293,13 @@
                         </form>
                     @else
                         <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
-                                title="Sorry you cannot subscribe to this trip because you haven't been invited"
+                                title="You cannot subscribe to this trip"
                                 value='Subscribe'>Raise Subsistence
                         </button>
                     @endif
                 @else
                     <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
-                            title="Sorry you cannot subscribe to this trip because you haven't been invited"
+                            title="You cannot subscribe to this trip"
                             value='Subscribe'>Raise Subsistence
                     </button>
                 @endif
@@ -299,6 +349,9 @@
                                 <div class="" id="div_hod">
 
                                 </div>
+                                <div class="" id="div_dest">
+
+                                </div>
                             @endif
                             {{--  HR--}}
                             @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_009')     )
@@ -312,6 +365,15 @@
 
                                 </div>
                             @endif
+                            {{--  CHIEF ACC--}}
+                            @if( ( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')  )
+                               ||  ( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_011')  )
+                               ||  ( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')  ) )
+                                <div class="" id="div_cac">
+
+                                </div>
+                            @endif
+
 
                         </div>
                     </form>
@@ -513,12 +575,12 @@
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
 
-            console.log(recipient);
-
             //01 - SET HEADER
-            var header = "<h4 class='modal-title text-center'>COMMENTS FOR " + recipient.claimant_name + "'S TRIP FORM</h4>   <span class='btn btn-sm bg-"+ recipient.status.html + "'> "+ recipient.status.name + "  </span>" +
+            var header = "<h4 class='modal-title text-center'>COMMENTS FOR " + recipient.claimant_name + "'S TRIP FORM</h4>   <span class='btn btn-sm bg-" + recipient.status.html + "'> " + recipient.status.name + "  </span>" +
                 "<input hidden value='" + recipient.id + "' id='membership' name='membership'>"
             $('#details_0').html(header);
+
+            console.log(recipient);
 
             //02 - SET DETAILS
             var details_1 = "<div class='row'>" +
@@ -535,7 +597,7 @@
                 "<span class='text-green' ><label class='text-orange'> Reason :</label> " + recipient.absc_visited_reason + "  </span>  <br> " +
                 "<span class='text-green' ><label class='text-orange'> Date From :  </label> " + recipient.absc_absent_from + "  </span>  <br>  " +
                 "<span class='text-green' ><label class='text-orange'> Date To : </label> " + recipient.absc_absent_to + " </span>  <br> " +
-                "<span class='text-green' ><label class='text-orange'> Days Claimed : </label> " + recipient.total_days + " </span>  <br> " +
+                "<span class='text-green' ><label class='text-orange'> Days Claimed : </label> " + recipient.num_days + " Days </span>  <br> " +
                 "</div>" +
                 "<div class='col-12'>" +
                 "<label> Trip Approvals </label> <br>" +
@@ -556,14 +618,14 @@
             var approvals = recipient.approvals;
             $.each(approvals, function (index, value) {
 
-                if(value.claimant_staff_no == recipient.claimant_staff_no){
+                if (value.claimant_staff_no == recipient.claimant_staff_no) {
                     details_1B +=
                         "<TR>" +
                         "<TD>" + value.name + "</TD>" +
                         "<TD>" + value.staff_no + "</TD>" +
                         "<TD>" + value.action + "</TD>" +
                         "<TD>" + value.from_status.name + "</TD>" +
-                        "<TD>" + value.to_status.name  + "</TD>" +
+                        "<TD>" + value.to_status.name + "</TD>" +
                         "<TD>" + value.reason + "</TD>" +
                         "<TD>" + value.created_at + "</TD>" +
                         "</TR> ";
@@ -602,31 +664,174 @@
                 "</div> " +
                 "</div>";
 
+            //04 - CHIEF ACC
+            var chif_acc_profile = "  <div class='row ''> " +
+                "<div class='col-12'> " +
+                "<label class='form-control-label'>To Approve or Reject this one, you need to open the subsistence form</label> " +
+                "</div> " +
+
+                "</div>";
+
+            console.log(recipient);
+
+            var date_from = Date.parse(recipient.absc_absent_from);
+            var date_to = Date.parse(recipient.absc_absent_to);
+
+            function format(date_1) {
+                date_1 = new Date(date_1);
+                var day = ('0' + date_1.getDate()).slice(-2);
+                var month = ('0' + (date_1.getMonth() + 1)).slice(-2);
+                var year = date_1.getFullYear();
+                return year + '-' + month + '-' + day;
+            }
+
+
+            //05
+            var dest_profile = "  <div class='row ''> " +
+
+                "<div class='col-6'> " +
+                "<label class='form-control-label'>Reason</label> " +
+                "<textarea class='form-control' rows='2' name='reason' required></textarea> " +
+                "</div>" +
+                "" +
+                "<div class='col-2'>" +
+                "<label class='form-control-label'>Date Arrived</label> " +
+                "<input class='form-control' min='" + format(date_from) + "'   max='" + format(date_to) + "'  required type='date' id='date_from' name='date_from'>" +
+                "</div>" +
+                " " +
+                "" +
+                "<div class='col-2'>" +
+                "<label class='form-control-label'>Date Left</label> " +
+                "<input class='form-control'  min='" + format(date_from) + "'   required type='date' id='date_to' name='date_to'>" +
+                "</div>" +
+                " " +
+                "<div class='col-2 text-center'> " +
+                "<label class='form-control-label '>Trip Approval</label> " +
+                "<div id='divSubmit_show'> " +
+                "<button id='btnSubmit_approve' type='submit' name='approval'" +
+                "class='btn btn-outline-success mr-2 p-2  '" +
+                "value='Approved'>CONFIRMED " +
+                "</button> " +
+                "<button style='display: none' id='btnSubmit_reject' type='submit' name='approval'" +
+                "class='btn btn-outline-success mr-2 p-2  '" +
+                "value='Rejected'>REJECT </button> " +
+                "</div> " +
+                "<div id='divSubmit_hide'> " +
+                "<button disabled class='btn btn-outline-success mr-2 p-2  '" +
+                "value='Approved'>Processing. Please wait... " +
+                "</button> " +
+                "</div> " +
+                "</div> " +
+                "</div>";
+
+
             //STATUS
             var accepted = {!!  json_encode(config('constants.trip_status.accepted')) !!};
             var hod_approved_trip = {!!  json_encode(config('constants.trip_status.hod_approved_trip')) !!};
             var trip_authorised = {!!  json_encode(config('constants.trip_status.trip_authorised')) !!};
             var hr_approved_trip = {!!  json_encode(config('constants.trip_status.hr_approved_trip')) !!};
+            var station_mgr_approved = {!!  json_encode(config('constants.subsistence_status.station_mgr_approved')) !!};
+            var chief_accountant = {!!  json_encode(config('constants.subsistence_status.chief_accountant')) !!};
+            var audit = {!!  json_encode(config('constants.subsistence_status.pre_audited')) !!};
+            var funds_disbursement = {!!  json_encode(config('constants.subsistence_status.funds_disbursement')) !!};
+            var destination_approvals = {!!  json_encode(config('constants.subsistence_status.destination_approval')) !!};
+            var await_audit = {!!  json_encode(config('constants.subsistence_status.await_audit')) !!};
             var next_profile = "";
+            var user_unit = recipient.user_unit_code;
+            var route_back = '{{url('main/user/unit/users')}}';
+
 
             //HOD
             if ((recipient.config_status_id == accepted)) {
                 $('#div_hod').html(hod_profile);
-                next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
             }
 
             //HR
             else if ((recipient.config_status_id == hod_approved_trip)) {
                 $('#div_hr').html(hod_profile);
-                next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
             }
 
             //SNR MANAGER
             else if ((recipient.config_status_id == hr_approved_trip)) {
                 $('#div_snr').html(hod_profile);
-                next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
             }
 
+
+            //CHIEF ACCOUNTANT
+            else if ((recipient.config_status_id == station_mgr_approved)) {
+                $('#div_cac').html(chif_acc_profile);
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_007')) !!};
+            }
+
+
+            //AUDIT
+            else if ((recipient.config_status_id == chief_accountant)) {
+                $('#div_cac').html(chif_acc_profile);
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_011')) !!};
+            }
+
+            //EXPENDITURE
+            else if ((recipient.config_status_id == audit)) {
+                $('#div_cac').html(chif_acc_profile);
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_014')) !!};
+            }
+
+
+            //DESTINATION APPROVALS
+            else if ((recipient.config_status_id == destination_approvals)) {
+                $('#div_dest').html(dest_profile);
+                next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
+                route_back = '{{url('main/user/unit/many/users')}}';
+                var a = recipient.destinations;
+                user_unit = a.map(a => a.user_unit_code);
+
+                //
+                var url = '';
+                for (var i = 0; i < user_unit.length; ++i) {
+                    if (url.indexOf('?') === -1) {
+                        url = url + '?array[]=' + user_unit[i];
+                    } else {
+                        url = url + '&array[]=' + user_unit[i];
+                    }
+                }
+
+                //inter-change
+                user_unit = next_profile;
+                next_profile = url;
+
+            }
+
+
+            //USER
+            else if ((recipient.config_status_id == funds_disbursement)) {
+                $('#div_cac').html(chif_acc_profile);
+                next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_002')) !!};
+                //HANDLE WHO'S NEXT
+                var whos_next1 = "<div class='row'> ";
+                var whos_next2 = " ";
+                whos_next2 += "" +
+                    "<div class='col-4 '> " +
+                    "<span class='font-weight-bold text-orange'>Test : </span><span class='text-green'>" + recipient.user.staff_no + "</span><br> " +
+                    "<span class='font-weight-bold text-orange'>Position : </span><span class='text-green'>" + recipient.user.job_code + "</span><br> " +
+                    "<span class='font-weight-bold text-orange'>Name : </span><span class='text-green'>" + recipient.user.name + "</span><br> " +
+                    "<span class='font-weight-bold text-orange'>Phone : </span><span class='text-green'>" + recipient.user.phone + "</span><br> " +
+                    "<span class='font-weight-bold text-orange'>Email : </span><span class='text-green'>" + recipient.user.email + "</span><br> " +
+                    "</div>";
+                var whos_next3 = "</div>" +
+                    "";
+                $("#details_3").html(whos_next1 + whos_next2 + whos_next3);
+            }
+
+
+
+            //AWAIT AUDIT
+            else if ((recipient.config_status_id == await_audit)) {
+                $('#div_cac').html(chif_acc_profile);
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_011')) !!};
+            }
 
             //APPROVED
             else if ((recipient.config_status_id == trip_authorised)) {
@@ -634,6 +839,7 @@
                 {{--$('#div_snr').html(hod_profile);--}}
                 {{--next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};--}}
             }
+
 
             //HANDLE BUTTON SUBMISSIONS
             $("#divSubmit_hide").hide();
@@ -649,15 +855,18 @@
                 });
             });
 
-            getNextUsers(recipient.user_unit_code, next_profile ) ;
+            getNextUsers(route_back, user_unit, next_profile);
         });
     </script>
 
     <script>
 
         //GET ARTICLE FROM DB
-        function getNextUsers(unit, profile) {
-            var route = '{{url('main/user/unit/users')}}' + '/' + unit + '/' +profile;
+        function getNextUsers(route_back, user_unit, profile) {
+            var route = route_back + '/' + user_unit + profile;
+
+            console.log(route);
+
             /* AJAX */
             $.ajaxSetup({
                 headers: {
@@ -676,13 +885,13 @@
                     //HANDLE WHO'S NEXT
                     var whos_next1 = "<div class='row'> ";
                     var whos_next2 = " ";
-                    for(i=0; i< obj.length ; i++){
+                    for (i = 0; i < obj.length; i++) {
                         whos_next2 += "<div class='col-4 '> " +
                             "<span class='font-weight-bold text-orange'>test : </span><span class='text-green'>" + obj[i].staff_no + "</span><br> " +
                             "<span class='font-weight-bold text-orange'>Position : </span><span class='text-green'>" + obj[i].job_code + "</span><br> " +
                             "<span class='font-weight-bold text-orange'>Name : </span><span class='text-green'>" + obj[i].name + "</span><br> " +
                             "<span class='font-weight-bold text-orange'>Phone : </span><span class='text-green'>" + obj[i].phone + "</span><br> " +
-                            "<span class='font-weight-bold text-orange'>Email : </span><span class='text-green'>" + obj[i].email + "</span><br> " +
+                            "<span class='font-weight-bold text-orange'>Email : </span><span class='text-green'>" + obj[i].email + "</span><br><br> " +
                             " </div>";
                     }
                     var whos_next3 = "</div>" +
@@ -690,7 +899,7 @@
                     $("#details_3").html(whos_next1 + whos_next2 + whos_next3);
                 },
                 complete: function (response_data) {
-                   // Hide image container
+                    // Hide image container
                     $("#loader").hide();
                 }
             });

@@ -123,7 +123,9 @@
                                 </td>
                                 <td>
                                     @foreach( $list->where('directorate_id', $dir->id) as $item )
-                                        {{ number_format($item->amount ?? 0 , 2)}}  @endforeach
+{{--                                        {{ number_format($item->amount ?? 0 , 2)}}  --}}
+                                        @money($item->net)
+                                    @endforeach
                                 </td>
                                 <td><span
                                         class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? $category }}</span>
@@ -138,7 +140,7 @@
                             <td><b>{{$total_num}}</b></td>
                             <td><b></b></td>
                             <td><b>{{$list->sum('total')}}</b></td>
-                            <td><b>{{ number_format($list->sum('amount') , 2)}}</b></td>
+                            <td><b> @money($list->sum('net')) </b></td>
                             <td><b></b></td>
                         </tr>
                         </tfoot>

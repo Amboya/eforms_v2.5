@@ -60,11 +60,10 @@
                   method="post">
                 @csrf
                 <div class="card-body">
-
-                    <table border="1" width="100%" cellspacing="0" cellpadding="0" align="Centre"
-                           class="mt-2 mb-4">
+                    <table border="1" width="100%"  cellspacing="0" cellpadding="0" align="Centre"
+                           class=" mt-4 mb-4 ">
                         <thead>
-                        <tr>
+                        <tr class="border-success">
                             <th width="33%" class="text-center"><a href="#"><img
                                         src="{{ asset('dashboard/dist/img/zesco1.png')}}" title="ZESCO" alt="ZESCO"
                                         width="30%"></a></th>
@@ -120,9 +119,9 @@
                                 <div class="col-6">
                                     <select name="cost_center" required class="form-control is-warning">
                                         <option value="">--choose--</option>
-                                        @foreach($cost_centers as $cc)
-                                            <option
-                                                value="{{$cc->id}}" {{auth()->user()->user_unit->user_unit_cc_code == $cc->user_unit_cc_code ? 'selected':''}}>{{$cc->user_unit_description}}</option>
+                                        <option class="text-gray" value="{{auth()->user()->user_unit->id}} "  > {{auth()->user()->user_unit->user_unit_code}}  -  {{auth()->user()->user_unit->user_unit_cc_code}}  -   {{auth()->user()->user_unit->user_unit_description}} </option>
+                                    @foreach($cost_centers as $cc)
+                                            <option value=" {{$cc->id}} "  > {{$cc->user_unit_code}}  -  {{$cc->user_unit_cc_code}}  -   {{$cc->user_unit_description}} </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -235,7 +234,7 @@
                                 <td class="text-green">Deduct any advance received against these expenses:</td>
                                 <td>
                                     <input required id="trex_deduct_advance" class="form-control"
-                                           name="trex_deduct_advance" type="number">
+                                           name="trex_deduct_advance" readonly value="{{$previous_subsistence->deduct_advance_amount ?? 0}}"  type="number">
                                 </td>
                             </tr>
                             <tr>
@@ -345,7 +344,7 @@
                 $("#divSubmit_hide").hide();
                 //disable the submit button
                 $("#btnSubmit").on('click', function () {
-                    $("create_form").submit(function (e) {
+                    $("#create_form").submit(function (e) {
                         e.preventDefault()
                         //do something here
                         $("#divSubmit_show").hide();
@@ -357,8 +356,8 @@
 
 
             //first hide the buttons
-            $('#submit_possible').hide();
-            $('#submit_not_possible').hide();
+            // $('#submit_possible').hide();
+            // $('#submit_not_possible').hide();
 
             // var to = moment($('absc_absent_to'));
             //
@@ -409,10 +408,10 @@
                 total =  total.round(2);
                 $('#trex_total_amount_claim').val(total);
                 // }
-            });
-
-            //calculate final amount after deductions
-            $("#trex_deduct_advance").change(function () {
+            // });
+            //
+            // //calculate final amount after deductions
+            // $("#trex_deduct_advance").change(function () {
                 var attached_claim = $('#trex_total_amount_claim').val();
                 var trex_deduct_advance = $(this).val();
                 // if (diff > 0) {

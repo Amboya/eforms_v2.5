@@ -5,6 +5,7 @@ return [
     'name' => env('APP_NAME', 'EZESCO'),
     'rep_subsistence_account_id' => "81",
     'non_rep_subsistence_account_id' => "82",
+    'sub_max_days' => 7 ,
     'petty_cash_account_id' => "21",
     'user_unit_active' => "00",
     'user_unit_not_active' => "01",
@@ -275,6 +276,8 @@ return [
         'audited' => "29",
         'await_audit' => "233",
         'audit_box' => "233",
+        'pre_audited' => "303",
+        'destination_approval' => '304'
 
     ],
 
@@ -286,6 +289,7 @@ return [
         'hr_approved_trip' => "285",
         'trip_authorised' => "286",
         'trip_rejected' => "287",
+        'trip_closed' => 313 ,
         'new_application' => "21",
         'hod_approved' => "22",
         'hr_approved' => "23",

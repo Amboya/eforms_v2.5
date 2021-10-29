@@ -82,7 +82,11 @@
                         @foreach($list as $key => $item)
                             <tr>
                                 <td>{{++$key}}</td>
-                                <td>{{$item->name ?? ""}} </td>
+                                <td>
+                                    <a href="{{route('main.user.show',$item->id)}}" class=" " style="margin: 1px">
+                                    {{$item->name ?? ""}}
+                                    </a>
+                                </td>
                                 <td>{{$item->staff_no ?? "" }} </td>
                                 <td class="text-orange">{{$item->user_unit->user_unit_code ?? "" }}</td>
                                 <td class="text-orange" >{{$item->job_code ?? ""}} </td>

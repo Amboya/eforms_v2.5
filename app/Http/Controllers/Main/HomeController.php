@@ -60,13 +60,19 @@ class HomeController extends Controller
 
     public static function getMySuperior($user_unit_code, ProfileModel $profile)
     {
+
         $user_unit_code = ConfigWorkFlow::select($profile->code_column . ' as code_column', $profile->unit_column . ' as unit_column')
             ->where('user_unit_code', $user_unit_code)
             ->first();
-        $users = User::where('profile_job_code',$user_unit_code->code_column )
+
+        $users = User::
+              where('profile_job_code',$user_unit_code->code_column )
             ->where('profile_unit_code',$user_unit_code->unit_column )
-            ->where('profile_id',$profile->id )
+            ->whereNotNull('unit_column' )
+//            ->where('profile_id',$profile->id )
             ->get();
+
+
         return $users;
     }
 
@@ -74,8 +80,25 @@ class HomeController extends Controller
     {
         $profile = ProfileModel::find($profile);
         $users = self::getMySuperior($user_unit_code, $profile);
-       // dd($users->toArray());
-       return json_encode($users->toArray()) ;
+        // dd($users->toArray());
+        return json_encode($users->toArray()) ;
+
+    }
+    public  function getManySuperiorAPI(Request $request, $profile)
+    {
+
+        $user_unit_codes = $request->array ;
+        $profile = ProfileModel::find($profile);
+
+        foreach ($user_unit_codes as $key => $user_unit_code){
+
+            if($key != 0){
+                $users = $users->merge( self::getMySuperior($user_unit_code, $profile)  );
+            }else{
+                $users = self::getMySuperior($user_unit_code, $profile);
+            }
+        }
+        return json_encode($users->toArray()) ;
 
     }
 
@@ -89,9 +112,10 @@ class HomeController extends Controller
             $profile_assignement = ProfileAssigmentModel::
             where('eform_id', $eform_id)
                 ->where('user_id', $user->id)->first();
-            // dd($profile_assignement);
 
             if ($profile_assignement != null) {
+                $profile_assignement->load('profiles');
+
                 $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
                 $user->profile_id = $default_profile;
                 $user->profile_unit_code = $user->user_unit_code;
@@ -101,13 +125,15 @@ class HomeController extends Controller
 
             }
             else {
+
                 $default_profile = config('constants.user_profiles.EZESCO_002');
                 $user->profile_id = $default_profile;
                 $user->profile_unit_code = $user->user_unit_code;
                 $user->profile_job_code = $user->id;
-                $user->code_column = $profile_assignement->profiles->code_column ?? 'id';
-                $user->unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
+                $user->code_column =  'id';
+                $user->unit_column =  'user_unit_code';
             }
+
 
             //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
             $profile_delegated = ProfileDelegatedModel::
@@ -131,17 +157,16 @@ class HomeController extends Controller
                 || $user->profile_id == config('constants.user_profiles.EZESCO_013')
                 || $user->profile_id == config('constants.user_profiles.EZESCO_011')) {
                 $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
-                    ->where('user_unit_cc_code', '!=', '0')
+//                    ->where('user_unit_cc_code', '!=', '0')
                     ->orderBy('user_unit_description')
                     ->get();
             }else{
                 $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
                     ->where($user->code_column, $user->profile_job_code)
-                    ->where('user_unit_cc_code', '!=', '0')
+//                  ->where('user_unit_cc_code', '!=', '0')
                     ->orderBy('user_unit_description')
                     ->get();
             }
-
             return $my_user_units;
 
         }
@@ -161,11 +186,20 @@ class HomeController extends Controller
 
             if ($profile_assignement != null) {
                 $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
-                $user->profile_id = $default_profile;
-                $user->profile_unit_code = $user->user_unit_code;
-                $user->profile_job_code = $user->job_code;
-                $user->code_column = $profile_assignement->profiles->code_column ?? 'id';
-                $user->unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
+                if($default_profile == config('constants.user_profiles.EZESCO_002') ){
+                    $user->profile_id = $default_profile;
+                    $user->profile_unit_code = $user->user_unit_id;
+                    $user->profile_job_code = $user->user_unit_code;
+                    $user->code_column = $profile_assignement->profiles->code_column ?? 'id';
+                    $user->unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
+                }else{
+                    $user->profile_id = $default_profile;
+                    $user->profile_unit_code = $user->user_unit_code;
+                    $user->profile_job_code = $user->job_code;
+                    $user->code_column = $profile_assignement->profiles->code_column ?? 'id';
+                    $user->unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
+                }
+
 
             }
             else {
@@ -232,7 +266,8 @@ class HomeController extends Controller
     {
         //get the profile associated
         $user = Auth::user();
-        $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
+        $my_user_units = ConfigWorkFlow::
+        where($user->unit_column, $user->profile_unit_code)
             ->where($user->code_column, $user->profile_job_code)
             ->where('user_unit_cc_code', '!=', '0')
             ->orderBy('user_unit_description')

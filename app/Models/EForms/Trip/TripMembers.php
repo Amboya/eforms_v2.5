@@ -16,21 +16,18 @@ class TripMembers extends Model
     use HasFactory;
     use SoftDeletes;
 
-//    protected $appends = ['numdays', 'total'];
-//
-//    protected $dates = [
-//        'date_arrived', 'date_left'
-//    ];
-//
-//    protected $casts = [
-//        'date_arrived' => 'date:Y-m-d',
-//        'date_left' => 'date:Y-m-d',
-//    ];
-//
-//    public function getNumdaysAttribute()
-//    {
-//        return $this->date_arrived->diffInDays($this->date_left);
-//    }
+    protected $appends = ['num_days', 'actual_days', 'total_night_allowance', 'net_amount_paid', 'total_claim_amount', 'deduct_advance_amount'];
+    protected $dates = [
+        'absc_absent_to', 'absc_absent_from', 'date_arrived', 'date_left'
+    ];
+
+    protected $casts = [
+        'absc_absent_to' => 'date:Y-m-d',
+        'absc_absent_from' => 'date:Y-m-d',
+        'date_arrived' => 'date:Y-m-d',
+        'date_left' => 'date:Y-m-d',
+    ];
+
 
     //table name
     protected $table = 'view_trip_membership';
@@ -69,16 +66,11 @@ class TripMembers extends Model
         'absc_visited_place',
         'absc_visited_reason',
         'absc_allowance_per_night',
-        'absc_amount',
 
         'trex_total_attached_claim',
-        'trex_total_claim_amount',
-        'trex_deduct_advance',
-//        'trex_net_amount_paid',
-
+        'date_left',
+        'date_arrived',
         'allocation_code',
-        'total_amount',
-        'total_days',
 
         'authorised_by',
         'authorised_staff_no',
@@ -103,6 +95,14 @@ class TripMembers extends Model
         'expenditure_office',
         'expenditure_office_staff_no',
         'expenditure_date',
+
+        'initiator_name',
+        'initiator_staff_no',
+        'initiator_date',
+
+        'closed_by_name',
+        'closed_by_staff_no',
+        'closed_by_date',
 
         'created_by',
         'created_at',
@@ -129,8 +129,6 @@ class TripMembers extends Model
     ];
 
 
-    //RELATIONSHIPS
-
     protected $with = [
         'status',
         'approvals'
@@ -140,6 +138,43 @@ class TripMembers extends Model
     {
 
     }
+
+
+
+    //ATTRIBUTES
+    public function getNumDaysAttribute()
+    {
+        return $this->absc_absent_from->diffInDays($this->absc_absent_to);
+    }
+    public function getActualDaysAttribute()
+    {
+        return ($this->date_to ?? $this->created_at)->diffInDays( $this->date_arrived ?? $this->created_at );
+    }
+
+    public function getTotalNightAllowanceAttribute()
+    {
+        return ($this->num_days * $this->absc_allowance_per_night ) ;
+    }
+
+    public function getDeductAdvanceAmountAttribute()
+    {
+        return ($this->actual_days * $this->absc_allowance_per_night ) ;
+    }
+
+    public function getTotalClaimAmountAttribute()
+    {
+        return ($this->num_days * $this->absc_allowance_per_night ) + $this->trex_total_attached_claim  ;
+    }
+
+    public function getNetAmountPaidAttribute()
+    {
+        return  ( ($this->num_days * $this->absc_allowance_per_night ) + $this->trex_total_attached_claim ) - ($this->actual_days * $this->absc_allowance_per_night )   ;
+    }
+
+
+
+
+    //RELATIONSHIPS
 
     public function user()
     {
@@ -161,6 +196,10 @@ class TripMembers extends Model
         return $this->hasMany(EformApprovalsModel::class, 'eform_code', 'trip_code');
     }
 
+    public function destinations()
+    {
+        return $this->hasMany(DestinationsApprovals::class, 'subsistence_id', 'id');
+    }
 
 }
 

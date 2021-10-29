@@ -20,6 +20,8 @@ class AllPettyCashTotalsView extends Model
 {
     use HasFactory;
 
+    protected $appends = ['net'] ;
+
     //table name
     protected $table = 'eform_petty_cash_dashboard_all_totals_view';
     //primary key
@@ -32,6 +34,7 @@ class AllPettyCashTotalsView extends Model
         'directorate_id',
         'total',
         'amount',
+        'change',
         'claimant_staff_no',
         'config_status_id',
 
@@ -56,6 +59,12 @@ class AllPettyCashTotalsView extends Model
         'item',
         // 'accounts'
     ];
+
+
+    public function getNetAttribute(){
+        return   ($this->amount - $this->change  )  ;
+    }
+
 
     protected static function booted()
     {

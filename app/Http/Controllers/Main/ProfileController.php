@@ -460,6 +460,10 @@ class ProfileController extends Controller
             //the users to swap
             $old_user_details = User::find($owner_id);
             $new_user_details = User::find($user_id);
+
+            //update the jobs codes from phris
+
+
             //the columns to affect
             $code_column = $profile_modal->code_column ;
             $unit_column = $profile_modal->unit_column ;

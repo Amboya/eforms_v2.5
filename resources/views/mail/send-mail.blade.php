@@ -378,7 +378,7 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td>
-                                        <div style="background: #42b142 ; color: #de7f1a;  padding: 5px ; padding-bottom: 5px; padding-top: 5px">
+                                        <div style=" font-family: 'Arial Black';  padding: 5px ; padding-bottom: 5px; padding-top: 5px">
                                             <h3 >{!! $details['title'] !!}</h3>
                                         </div>
                                         <hr>

@@ -269,7 +269,10 @@ class UserUnitController extends Controller
 
         //get request user and profile
         $new_user_details = User::find( $request->owner_id);
+        //get from profile assignemnt table
         $profile_modal = ProfileModel::find( $new_user_details->profile_id);
+
+       // dd($profile_modal);
 
         //the columns to affect
         $code_column = $profile_modal->code_column ;
