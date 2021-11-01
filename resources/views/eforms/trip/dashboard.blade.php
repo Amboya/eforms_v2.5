@@ -59,7 +59,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'trip.list', config('constants.petty_cash_status.new_application') ) }}">
+                           href="{{route( 'trip.list', config('constants.trip_status.new_trip') ) }}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -91,7 +91,7 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'trip.list', config('constants.petty_cash_status.closed'))}}">
+                           href="{{route( 'trip.list', config('constants.trip_status.new_trip'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">

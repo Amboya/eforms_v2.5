@@ -166,7 +166,6 @@ class ProfileController extends Controller
 
     public function assignmentStore(Request $request)
     {
-
         if($request->units == null){
             return Redirect::back()->with('error', 'Yangutata!, Sorry,assignment failed to complete because no User-Units have been selected');
         }

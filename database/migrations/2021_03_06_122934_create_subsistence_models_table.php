@@ -51,6 +51,7 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('date_left')->nullable();
             $table->string('date_arrived')->nullable();
             $table->string('allocation_code')->nullable();
+            $table->string('account_number')->nullable();
             //
             $table->string('authorised_by')->nullable();
             $table->string('authorised_staff_no')->nullable();

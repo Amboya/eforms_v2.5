@@ -51,7 +51,7 @@ class HomeController extends Controller
         self::getUserProfile($user);
 
         $user_unit_code = ConfigWorkFlow::
-        where($user->code_column, $user->profile_job_code)
+              where($user->code_column, $user->profile_job_code)
             ->where($user->unit_column, $user->profile_unit_code)
             ->get();
 

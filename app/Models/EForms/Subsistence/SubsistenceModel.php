@@ -70,6 +70,7 @@ class SubsistenceModel extends Model
         'date_left',
         'date_arrived',
         'allocation_code',
+        'account_number',
 
         'authorised_by',
         'authorised_staff_no',
@@ -126,10 +127,11 @@ class SubsistenceModel extends Model
                     $builder->where('claimant_staff_no', Auth::user()->staff_no);
                 });
             } else {
-                static::addGlobalScope('hod', function (Builder $builder) {
-                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-                    $mine = $fdsf->pluck('user_unit_code')->toArray();
-                    $builder->WhereIn('user_unit_code', $mine);
+                $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+                $mine = $fdsf->pluck('user_unit_code')->toArray();
+                static::addGlobalScope('hod', function (Builder $builder) use ($user, $mine) {
+                    $builder->where('claimant_staff_no', $user->staff_no)
+                        ->orWhereIn('user_unit_code', $mine);
                 });
 
             }
@@ -142,31 +144,31 @@ class SubsistenceModel extends Model
     {
         return $this->absc_absent_from->diffInDays($this->absc_absent_to);
     }
+
     public function getActualDaysAttribute()
     {
-        return ($this->date_to ?? $this->created_at)->diffInDays( $this->date_arrived ?? $this->created_at );
+        return ($this->date_to ?? $this->created_at)->diffInDays($this->date_arrived ?? $this->created_at);
     }
 
     public function getTotalNightAllowanceAttribute()
     {
-        return ($this->num_days * $this->absc_allowance_per_night ) ;
+        return ($this->num_days * $this->absc_allowance_per_night);
     }
 
     public function getDeductAdvanceAmountAttribute()
     {
-        return ($this->actual_days * $this->absc_allowance_per_night ) ;
+        return ($this->actual_days * $this->absc_allowance_per_night);
     }
 
     public function getTotalClaimAmountAttribute()
     {
-        return ($this->num_days * $this->absc_allowance_per_night ) + $this->trex_total_attached_claim  ;
+        return ($this->num_days * $this->absc_allowance_per_night) + $this->trex_total_attached_claim;
     }
 
     public function getNetAmountPaidAttribute()
     {
-        return  ( ($this->num_days * $this->absc_allowance_per_night ) + $this->trex_total_attached_claim ) - ($this->actual_days * $this->absc_allowance_per_night )   ;
+        return (($this->num_days * $this->absc_allowance_per_night) + $this->trex_total_attached_claim) - ($this->actual_days * $this->absc_allowance_per_night);
     }
-
 
 
     //RELATIONSHIPS

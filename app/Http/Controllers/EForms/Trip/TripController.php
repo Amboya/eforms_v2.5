@@ -58,21 +58,20 @@ class TripController extends Controller
             $list = Trip::all();
             $category = "All";
         } else if ($value == "pending") {
-            $list = Trip::where('config_status_id', '>', config('constants.trip_status.new_trip'))
-                ->where('config_status_id', '<', config('constants.trip_status.closed'))
+            $list = Trip::where('config_status_id',  config('constants.trip_status.new_trip'))
+                ->orWhere('config_status_id',  config('constants.trip_status.trip_authorised'))
                 ->get();
-
             $category = "Opened";
         } else if ($value == config('constants.trip_status.new_trip')) {
             $list = Trip::where('config_status_id', config('constants.trip_status.new_trip'))
                 ->get();
             $category = "New Application";
         } else if ($value == config('constants.trip_status.closed')) {
-            $list = Trip::where('config_status_id', config('constants.trip_status.closed'))
+            $list = Trip::where('config_status_id', config('constants.trip_status.trip_closed'))
                 ->get();
             $category = "Closed";
         } else if ($value == config('constants.trip_status.rejected')) {
-            $list = Trip::where('config_status_id', config('constants.trip_status.rejected'))
+            $list = Trip::where('config_status_id', config('constants.trip_status.trip_rejected'))
                 ->get();
             $category = "Rejected";
         } else if ($value == "needs_me") {
@@ -80,8 +79,8 @@ class TripController extends Controller
             $category = "Needs My Attention";
         } else if ($value == "admin") {
 
-        }
 
+        }
 
         //count all
         $totals = TotalsModel::where('eform_id', config('constants.eforms_id.trip'))->get();
@@ -337,7 +336,7 @@ class TripController extends Controller
                     'trip_code' => $formModel->code,
                     'date_from' => $formModel->date_from,
                     'date_to' => $formModel->date_to,
-                    'type' => config('constants.trip_status.pending'),
+                    'status_id' => config('constants.trip_status.pending'),
                 ]
             );
         }
@@ -533,17 +532,21 @@ class TripController extends Controller
 
         //get the list of users who are supposed to work on the form
         $user_array = self::findMyNextPerson($form, Auth::user()->user_unit, Auth::user());
-        $list_inv = Invitation::where('man_no', $user->staff_no)
-            ->where('trip_code', $form->code)
-            ->first();
 
-        // dd($form);
+        //all invitations
+        $all_inv = Invitation::where( 'trip_code', $form->code )->get();
+        $all_inv->load('members');
 
+        //my invitation
+        $list_inv = $all_inv->where('man_no', $user->staff_no)->first();
+
+      //  dd($list_inv);
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
+
         //return view
-        return view('eforms.trip.show')->with(compact('list_inv', 'user', 'user_array', 'totals_needs_me', 'form', 'approvals'));
+        return view('eforms.trip.show')->with(compact('list_inv', 'user', 'user_array', 'totals_needs_me', 'form','all_inv', 'approvals'));
 
     }
 
@@ -808,6 +811,8 @@ class TripController extends Controller
             $subsistence->load('destinations');
             $destinations_approvals = $subsistence->destinations;
             $approvals_lists = $destinations_approvals->whereIn('user_unit_code', $my_units);
+
+
             //loop through and approve them
             foreach ($approvals_lists as $approvals_list) {
                 $approvals_list->created_by = $user->id;
@@ -834,14 +839,17 @@ class TripController extends Controller
             //update
             $count_dest_approvals = $destinations_approvals->whereNull("created_by");
 
-            //dd($count_dest_approvals);
 
             //choose to update the
             if (($count_dest_approvals->count()) == 0) {
-                //highest date
-                $highest_from_date = $count_dest_approvals->latest('date_from')->first();
-                $highest_to_date = $count_dest_approvals->latest('date_to')->first();
 
+
+                //highest date
+                $highest_from_date = $approvals_lists->sortByDesc('date_from')->first();
+                $highest_to_date = $approvals_lists->sortByDesc('date_to')->first();
+                //
+
+//                dd($highest_from_date->date_from);
                 $new_status = config('constants.subsistence_status.await_audit');
                 $subsistence->config_status_id = $new_status;
                 $subsistence->date_left = $highest_from_date->date_from ;

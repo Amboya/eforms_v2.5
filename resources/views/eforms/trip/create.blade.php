@@ -192,7 +192,6 @@
                             </div>
 
                             <div class="row">
-                              dsafasdlfjd
                                 @foreach($units as $unit)
                                     <div class="col-6">
                                         <div class="card card-outline collapsed-card">

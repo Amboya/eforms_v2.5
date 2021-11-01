@@ -88,12 +88,14 @@ class UserController extends Controller
         $user_types = UserTypeModel::all();
         $delegated_profiles = ProfileDelegatedModel::where('delegated_to', $user->id)
             ->where('config_status_id',  config('constants.active_state') )->get();
+
         $user_unit_new = ConfigWorkFlow::
         select('id', 'user_unit_description', 'user_unit_code', 'user_unit_bc_code', 'user_unit_cc_code')
             ->orderBy('user_unit_code')
             ->get();
 
         $responsible_units = HomeController::getUserResponsibleUnits($user);
+
         $profiles = ProfilePermissionsModel::all();
         $eforms = EFormModel::all();
 

@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Main;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUnitRequest;
 use App\Models\Main\ConfigWorkFlow;
-use App\Models\Main\ProfileModel;
+use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\UserUnitModel;
-use App\Models\Main\UserUnitSpmsSyncModel;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -47,7 +45,7 @@ class UserUnitController extends Controller
             $model = ConfigWorkFlow::updateOrCreate(
                 [
 //                    'user_unit_description' => $item->description,
-                      'user_unit_code' => $item->code_unit ?? '0',
+                    'user_unit_code' => $item->code_unit ?? '0',
 //                    'user_unit_bc_code' => $item->bu_code ?? '0',
 //                    'user_unit_cc_code' => $item->cc_code ?? '0',
                 ],
@@ -60,7 +58,7 @@ class UserUnitController extends Controller
                     'user_unit_superior' => $item->code_unit_superior ?? '0',
                 ]);
 
-           // dd($model);
+            // dd($model);
 
         }
         //return back
@@ -81,8 +79,8 @@ class UserUnitController extends Controller
             ->get();
 
 
-      //  $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->where('profile_id','!=', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
-        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->whereNotNull('profile_id')->orderBy('name')->get();
+        //  $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->where('profile_id','!=', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
+        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code')->whereNotNull('profile_id')->orderBy('name')->get();
 
         //data to send to the view
         return view('main.user_unit.index')->with(compact('list', 'users', 'search'));
@@ -90,9 +88,9 @@ class UserUnitController extends Controller
 
     public function searchId($id)
     {
-        $search = $id ;
+        $search = $id;
 
-        $list = ConfigWorkFlow::where('id',$id )
+        $list = ConfigWorkFlow::where('id', $id)
 //            ->orWhere('user_unit_description', 'LIKE', "%{$search}%")
 //            ->orWhere('user_unit_superior', 'LIKE', "%{$search}%")
 //            ->orWhere('user_unit_bc_code', 'LIKE', "%{$search}%")
@@ -101,7 +99,7 @@ class UserUnitController extends Controller
             ->get();
 
 
-        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->where('profile_id','!=', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
+        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code')->where('profile_id', '!=', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
         //data to send to the view
         return view('main.user_unit.index')->with(compact('list', 'users', 'search'));
     }
@@ -119,9 +117,9 @@ class UserUnitController extends Controller
             ->where('user_unit_status', config('constants.user_unit_active'))
             ->get();
         $search = 'All';
-        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->whereNotNull('profile_id')->orderBy('name')->get();
+        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code')->whereNotNull('profile_id')->orderBy('name')->get();
         //data to send to the view
-        return view('main.user_unit.index')->with(compact('list', 'users' ,'search'));
+        return view('main.user_unit.index')->with(compact('list', 'users', 'search'));
 
     }
 
@@ -176,10 +174,10 @@ class UserUnitController extends Controller
             ->where('user_unit_status', config('constants.user_unit_active'))
             ->get();
         $search = 'One';
-        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code' )->whereNotNull('profile_id')->orderBy('name')->get();
+        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code')->whereNotNull('profile_id')->orderBy('name')->get();
 
         //data to send to the view
-        return view('main.user_unit.index')->with(compact('list', 'users' ,'search'));
+        return view('main.user_unit.index')->with(compact('list', 'users', 'search'));
 
     }
 
@@ -244,7 +242,7 @@ class UserUnitController extends Controller
         //log the activity
         ActivityLogsController::store($request, "Updating of User Unit", "update", " unit user updated", $model->id);
 
-        return redirect()->route('workflow.show', ['configWorkFlow'=> $model])->with('message', 'Details for ' . $model->name . ' have been Created successfully');
+        return redirect()->route('workflow.show', ['configWorkFlow' => $model])->with('message', 'Details for ' . $model->name . ' have been Created successfully');
     }
 
     /**
@@ -255,51 +253,59 @@ class UserUnitController extends Controller
      */
     public function destroy(Request $request)
     {
-       ConfigWorkFlow::destroy($request->workflow_id);
+        ConfigWorkFlow::destroy($request->workflow_id);
         return Redirect::back()->with('message', 'Details for ' . $request->name . ' have been Deleted successfully');
 
     }
 
 
-    public function assign(Request $request){
+    public function assign(Request $request)
+    {
 
-        if($request->units == null){
+        if ($request->units == null) {
             return Redirect::back()->with('error', 'Yangutata!, Sorry,assignment failed to complete because no User-Units have been selected');
         }
-
         //get request user and profile
-        $new_user_details = User::find( $request->owner_id);
-        //get from profile assignemnt table
-        $profile_modal = ProfileModel::find( $new_user_details->profile_id);
+        $new_user_details = User::find($request->owner_id);
+        //update the profiles
+        $profiles = ProfileAssigmentModel::where('user_id', $new_user_details->id)->get();
+        $profiles->load('profiles');
 
-       // dd($profile_modal);
+        foreach ($profiles as $profile) {
+            $profile_modal = $profile->profiles;
 
-        //the columns to affect
-        $code_column = $profile_modal->code_column ;
-        $unit_column = $profile_modal->unit_column ;
+            //the columns to affect
+            $code_column = $profile_modal->code_column;
+            $unit_column = $profile_modal->unit_column;
 
-        //make the update on config workflow
-        if($code_column != "" && $unit_column != "" ) {
-            //update the workflow
-            $units = $request->units ;
-            $work_flow = ConfigWorkFlow::whereIn('id', $units )
-                ->update([
-                    $code_column => $new_user_details->job_code,
-                    $unit_column => $new_user_details->user_unit_code
-                ]);
-            //log the activity
-            ActivityLogsController::store($request, "User Units Assignment to a user", "user units assignment", " user units have been assigned to ".$new_user_details->name ." with the profile for ".$profile_modal->name, json_encode($profile_modal->id));
-            //return
-            return Redirect::back()->with('message', 'Profile ' . $profile_modal->name . ' has been Assigned successfully to '.$new_user_details->name);
+            //make the update on config workflow
+            if ($code_column != "" && $unit_column != "") {
+                //update the workflow
+                $units = $request->units;
+                foreach ($units as $unit) {
+                    $work_flow = ConfigWorkFlow::find($unit);
+                    $work_flow->
+                    update([
+                        $code_column => $new_user_details->job_code,
+                        $unit_column => $new_user_details->user_unit_code
+                    ]);
+                }
+//                $work_flow = ConfigWorkFlow::whereIn('id', $units)
+//                    ->update([
+//                        $code_column => $new_user_details->job_code,
+//                        $unit_column => $new_user_details->user_unit_code
+//                    ]);
+            } else {
+                //  return Redirect::back()->with('error', 'Assignment failed because profile unit_code and code_column are empty for the selected profile : '.$profile_modal->name);
+            }
         }
-        else{
-            return Redirect::back()->with('error', 'Assignment failed because profile unit_code and code_column are empty for the selected profile : '.$profile_modal->name);
 
-        }
+        //log the activity
+        ActivityLogsController::store($request, "User Units Assignment to a user", "user units assignment", " user units have been assigned to " . $new_user_details->name . " with the profile for " . $profile_modal->name, json_encode($profile_modal->id));
+        //return
+        return Redirect::back()->with('message', 'Profile has been Assigned successfully to ' . $new_user_details->name);
 
     }
-
-
 
 
 }

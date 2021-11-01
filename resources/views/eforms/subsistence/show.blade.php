@@ -986,8 +986,7 @@
                     @endif
 
                     {{-- FUNDS ACKNOWELEDGMENT APPROVAL--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                         &&  $form->config_status_id == config('constants.subsistence_status.funds_disbursement')
+                    @if( $form->config_status_id == config('constants.subsistence_status.funds_disbursement')
                          &&  $form->claimant_staff_no == $user->staff_no
                           )
                         <div class="">
@@ -998,12 +997,12 @@
                                 <div class="col-9">
                                     <div class="row">
                                         <div class="col-2">
-                                            <label class="form-control-label text-right">Confirmation File</label>
+                                            <label class="form-control-label text-right">Confirmation File (Optional)</label>
                                         </div>
                                         <div class="col-4">
                                             <div class="input-group">
                                                 <input type="file" title="Confirmation of money received e.g Screenshot of money receipt message" class="form-control" multiple name="confirmation[]"
-                                                       id="confirmation" required>
+                                                       id="confirmation" >
                                             </div>
                                         </div>
                                         <div class="col-1">

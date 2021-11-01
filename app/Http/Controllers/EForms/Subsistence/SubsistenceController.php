@@ -56,7 +56,6 @@ class SubsistenceController extends Controller
      */
     public static function create(Trip $trip, Invitation $invitation)
     {
-
         $user = auth()->user();
         $projects = ProjectsModel::all();
         //count all that needs me
@@ -104,8 +103,13 @@ class SubsistenceController extends Controller
             $list = SubsistenceModel::orderBy('code')->paginate(50);
             $category = "All";
         } else if ($value == "pending") {
-            $list = SubsistenceModel::where('config_status_id', '>', config('constants.subsistence_status.new_application'))
-                ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
+            $list = SubsistenceModel::
+            where('config_status_id', '!=', config('constants.subsistence_status.new_application'))
+                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.closed'))
+                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.void'))
+                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.cancelled'))
+                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.queried'))
+                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.rejected'))
                 ->orderBy('code')->paginate(50);
             $category = "Opened";
         } else if ($value == config('constants.subsistence_status.new_application')) {
@@ -310,6 +314,7 @@ class SubsistenceController extends Controller
         $user = Auth::user();   //superior_code
         $cost_center = ConfigWorkFlow::find($request->cost_center);
         $error = false;
+        $trip->load('user');
 
         //what telling
         $date = Carbon::parse($trip->date_from);
@@ -451,11 +456,14 @@ class SubsistenceController extends Controller
             ]
         );
 
-        //delete invitation
+        //accept invitation
         $list_inv = Invitation::where('man_no', $user->staff_no)
             ->where('trip_code', $trip->code)
+            ->orWhere('status_id', config('constants.trip_status.pending') )
             ->first();
-        $list_inv->type = config('constants.trip_status.accepted');
+        $list_inv->status_id = config('constants.trip_status.accepted');
+        $list_inv->subsistence_id = $formModel->id;
+        $list_inv->subsistence_code = $formModel->code ;
         $list_inv->save();
 
         //destination approvals
@@ -640,7 +648,7 @@ class SubsistenceController extends Controller
      */
 
 
-    public function findMyNextPerson($current_status, $user_unit, $claimant)
+    public function findMyNextPerson($next_status, $user_unit, $claimant)
     {
         $user_array = [];
         $not_claimant = true;
@@ -652,16 +660,16 @@ class SubsistenceController extends Controller
         }
 
         //FOR HOD
-        if ($current_status == config('constants.trip_status.trip_authorised')) {
+        if ($next_status == config('constants.trip_status.trip_authorised')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
         } // HOD APPROVAL AGAIN
-        elseif ($current_status == config('constants.trip_status.new_trip')) {
+        elseif ($next_status == config('constants.trip_status.new_trip')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } //HOD APPROVAL - SAME
-        elseif ($current_status == config('constants.trip_status.hod_approved_trip')) {
+        elseif ($next_status == config('constants.trip_status.hod_approved_trip')) {
             if ($departmental) {
                 $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
@@ -669,7 +677,7 @@ class SubsistenceController extends Controller
                 $user_array = [];
             }
         } //HR APPROVAL - SAME
-        elseif ($current_status == config('constants.trip_status.hr_approved_trip')) {
+        elseif ($next_status == config('constants.trip_status.hr_approved_trip')) {
             if ($departmental) {
                 $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
@@ -677,12 +685,12 @@ class SubsistenceController extends Controller
                 $user_array = [];
             }
         } //HOD APPROVAL
-        elseif ($current_status == config('constants.subsistence_status.hod_approved')) {
+        elseif ($next_status == config('constants.subsistence_status.hod_approved')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } //HR APPROVAL
-        elseif ($current_status == config('constants.subsistence_status.hr_approved')) {
+        elseif ($next_status == config('constants.subsistence_status.hr_approved')) {
             if ($claimant->grade->name == 'M1' || $claimant->grade->name == 'M2' || $claimant->grade->name == 'M3' || $claimant->grade->name == 'M4') {
                 $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
@@ -692,36 +700,36 @@ class SubsistenceController extends Controller
             }
 
         } // CHIEF ACCOUNTANT
-        elseif ($current_status == config('constants.subsistence_status.chief_accountant')) {
+        elseif ($next_status == config('constants.subsistence_status.chief_accountant')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } // PRE AUDIT
-        elseif ($current_status == config('constants.subsistence_status.pre_audited')) {
+        elseif ($next_status == config('constants.subsistence_status.pre_audited')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } // FUNDS HAVE BEEN DISBURSED
-        elseif ($current_status == config('constants.subsistence_status.funds_disbursement')) {
+        elseif ($next_status == config('constants.subsistence_status.funds_disbursement')) {
             $not_claimant = false;
 
         } //DESTINATION APPROVAL
-        elseif ($current_status == config('constants.subsistence_status.destination_approval')) {
+        elseif ($next_status == config('constants.subsistence_status.destination_approval')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } //AWAITING AUDIT
-        elseif ($current_status == config('constants.subsistence_status.await_audit')) {
+        elseif ($next_status == config('constants.subsistence_status.await_audit')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } //SENIOR MANAGER APPROVAL
-        elseif ($current_status == config('constants.subsistence_status.station_mgr_approved')) {
+        elseif ($next_status == config('constants.subsistence_status.station_mgr_approved')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } //CLOSE------------
-        elseif ($current_status == config('constants.subsistence_status.closed')) {
+        elseif ($next_status == config('constants.subsistence_status.closed')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
@@ -1051,11 +1059,14 @@ class SubsistenceController extends Controller
         }
 
 
+
+
         //check if this belongs to the same department
         $departmental = false;
         if (($form->user_unit_code) == ($form->user->user_unit_code)) {
+            $departmental = true;
         }
-        $departmental = true;
+
 
         /** ****************************************************
          * FOR SAME DEPARTMENT
@@ -1132,6 +1143,7 @@ class SubsistenceController extends Controller
         /** ****************************************************
          * FOR DIFFERENT DEPARTMENT
          ***************************************************** */
+
         //FOR CLAIMANT CANCELLATION
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_002')
@@ -1438,7 +1450,7 @@ class SubsistenceController extends Controller
         }
 
         //FOR CLAIMANT - ACKNOWLEDGEMENT
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_002')
+        elseif (Auth::user()->staff_no == $form->claimant_staff_no
             && $current_status == config('constants.subsistence_status.funds_disbursement')
         ) {
 
@@ -1454,6 +1466,9 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.subsistence_status.funds_disbursement');
                 $insert_reasons = false;
             }
+
+
+            $request->reason =  $request->reason . ". Account number used : ".$request->account_number ;
 
             /** upload attached files */
             //upload the receipt files
@@ -1494,17 +1509,25 @@ class SubsistenceController extends Controller
                         ]
                     );
                 }
+            }
 
+            if($request->account_number != null){
                 //update
                 $form->config_status_id = $new_status;
-//              $form->profile = Auth::user()->profile_id;
+                $form->account_number = $request->account_number ;
                 $form->profile = config('constants.user_profiles.EZESCO_007');
                 $form->save();
 
                 //cancel status
                 $insert_reasons = true;
-            }
 
+                //delete invitation
+                $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                    ->where('subsistence_id', $form->id)
+                    ->first();
+                $list_inv->status_id = config('constants.trip_status.funds_acknowledgement');
+                $list_inv->save();
+            }
 
         }
 

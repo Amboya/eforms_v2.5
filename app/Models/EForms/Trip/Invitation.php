@@ -3,6 +3,7 @@
 namespace App\Models\EForms\Trip;
 
 use App\Models\Main\EformApprovalsModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,19 +25,25 @@ class Invitation extends Model
         'man_no',
         'trip_id',
         'trip_code',
+        'subsistence_code',
+        'subsistence_id',
         'date_from',
         'date_to',
-        'type',
+        'status_id',
         'deleted_at',
     ];
 
-    protected $with = [
-        'trips',
-    ];
+//    protected $with = [
+//        'trips',
+//    ];
 
     public function trips()
     {
         return $this->belongsTo(Trip::class, 'trip_code', 'code');
+    }
+    public function members()
+    {
+        return $this->hasOne(User::class, 'staff_no', 'man_no');
     }
 
 

@@ -24,6 +24,7 @@ class ProfileAssigmentModel extends Model
     protected $fillable = [
         'eform_id',
         'profile',
+        'profile_id',
         'user_id',
         'created_by',
         'created_at',

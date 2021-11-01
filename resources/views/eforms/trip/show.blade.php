@@ -129,23 +129,33 @@
                                 @foreach($form->members as $item)
                                     <TR>
                                         <td></td>
-                                        <td>{{$item->claimant_staff_no ?? ""}}</td>
+                                        <td>
+                                            {{$item->claimant_staff_no ?? ""}}
+                                        </td>
                                         <td>
                                             <a href="" data-toggle="modal"
                                                data-sent_data="{{$item}}"
                                                data-target="#modal-approve-member">
                                                 {{$item->claimant_name ?? ""}}
                                             </a>
-
                                         </td>
-                                        <td>{{$item->initiator_name ?? ""}} <br> {{$item->initiator_staff_no ?? ""}}
-                                        </td>
-                                        <td>{{ Carbon::parse(  $form->absc_absent_from )->isoFormat('Do MMM Y') }}</td>
-                                        <td>{{$item->total_days ?? ""}}</td>
-                                        <td>{{$item->m_v_number ?? "" }}</td>
-                                        <td>{{$item->absc_visited_place ?? "" }}</td>
                                         <td>
-                                            {{$item->actual_days ?? "" }}
+                                            {{$item->initiator_name ?? ""}} <br> {{$item->initiator_staff_no ?? ""}}
+                                        </td>
+                                        <td>
+                                            {{ Carbon::parse(  $form->absc_absent_from )->isoFormat('Do MMM Y') }}
+                                        </td>
+                                        <td>
+                                            {{$item->num_days ?? "0"}} Days
+                                        </td>
+                                        <td>
+                                            {{$item->m_v_number ?? "" }}
+                                        </td>
+                                        <td>
+                                            {{$item->absc_visited_place ?? "" }}
+                                        </td>
+                                        <td>
+                                            {{$item->actual_days ?? "" }} Days
                                         </td>
                                         <td>
                                             <table class="table-sm" border="0">
@@ -182,9 +192,9 @@
                                         </td>
                                         <td>
                                             <div class="row">
-                                                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
-                                                    <div class="col-sm-12 mt-2">
-                                                        @if(Auth::user()->staff_no ==  $item->claimant_staff_no)
+                                                @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
+                                                    <div class="col-sm-12 mt-0">
+                                                        @if($user->staff_no ==  $item->claimant_staff_no)
                                                             <a href="{{ route('logout') }}"
                                                                title="Open subsistence form"
                                                                class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
@@ -194,10 +204,10 @@
                                                         class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                                             </a>
                                                         @else
-                                                            <a class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
+                                                            <button disabled class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
                                                     <span title="No Access to this subsistence form"
                                                           class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
-                                                            </a>
+                                                            </button>
                                                         @endif
                                                         @else
                                                             <a href="{{ route('logout') }}"
@@ -219,7 +229,7 @@
                                         </td>
                                         <td>
                                             <div class="row">
-                                                <div class="col-sm-12 mt-2">
+                                                <div class="col-sm-12 mt-0">
                                                     <button
                                                         class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
                                                         title="Trip Approvals List"
@@ -230,8 +240,8 @@
                                                     </button>
                                                 </div>
 
-                                                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
-                                                    @if(Auth::user()->staff_no ==  $item->claimant_staff_no)
+                                                @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
+                                                    @if($user->staff_no ==  $item->claimant_staff_no)
                                                         <div class="col-sm-12 mt-2">
                                                             <a href="{{ route('logout') }}"
                                                                title="Open subsistence form"
@@ -243,10 +253,10 @@
                                                         </div>
                                                     @else
                                                         <div class="col-sm-12 mt-2">
-                                                            <a title="No Access to this subsistence form"
+                                                            <button disabled title="No Access to this subsistence form"
                                                                class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
                                                                 <i class="fa fa-file"></i> Open
-                                                            </a>
+                                                            </button>
                                                         </div>
                                                     @endif
                                                 @else
@@ -270,6 +280,13 @@
                                 @endforeach
                             </TABLE>
                         </div>
+                        <button
+                            class="btn btn-sm bg-default"
+                            title="Invited Trip Members"
+                            data-toggle="modal"
+                            data-target="#modal-trip-members">
+                            <i class="fa fa-user-friends"></i> {{$all_inv->count()}} Invited members
+                        </button>
                     </div>
                 </div>
 
@@ -279,30 +296,39 @@
 
             <div class="card-footer">
                 <br>
-                @if($list_inv != null)
+                <div class="row">
+                    <div class="col-sm-3">
+                        @if($list_inv != null)
 
-                    @if( $list_inv->type == config('constants.trip_status.pending'))
-                        <form name="db1"
-                              action="{{route('subsistence.subscribe', ['trip' => $form, 'invitation'=> $list_inv])}}"
-                              method="post" enctype="multipart/form-data">
-                            @csrf
-                            <button type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "
-                                    title="Click here to accept invitation to be part of this trip"
+                            @if( $list_inv->status_id == config('constants.trip_status.pending'))
+                                <form name="db1"
+                                      action="{{route('subsistence.subscribe', ['trip' => $form, 'invitation'=> $list_inv])}}"
+                                      method="post" enctype="multipart/form-data">
+                                    @csrf
+                                    <button type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "
+                                            title="Click here to accept invitation to be part of this trip"
+                                            value='Subscribe'>Raise Subsistence
+                                    </button>
+                                </form>
+                            @else
+                                <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                        title="You cannot subscribe to this trip"
+                                        value='Subscribe'>Raise Subsistence
+                                </button>
+                            @endif
+                        @else
+                            <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                    title="You cannot subscribe to this trip"
                                     value='Subscribe'>Raise Subsistence
                             </button>
-                        </form>
-                    @else
-                        <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
-                                title="You cannot subscribe to this trip"
-                                value='Subscribe'>Raise Subsistence
-                        </button>
-                    @endif
-                @else
-                    <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
-                            title="You cannot subscribe to this trip"
-                            value='Subscribe'>Raise Subsistence
-                    </button>
-                @endif
+                        @endif
+                    </div>
+                    <div class="col-sm-3">
+
+                    </div>
+                </div>
+
+
                 <br>
                 <form name="db1" action="{{route('trip.approve')}}" method="post" enctype="multipart/form-data">
                     @csrf
@@ -314,6 +340,21 @@
 
         </div>
         <!-- /.card -->
+
+        <div class="modal fade" id="modal-trip-members">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <label> Invited Members</label>
+                    </div>
+                    <div class="modal-body">
+                        <div id="trip_members">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <div class="modal fade" id="modal-approve-member">
@@ -345,30 +386,32 @@
 
                             <hr>
                             {{--  HOD APPROVER--}}
-                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')    )
+                            @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')    )
                                 <div class="" id="div_hod">
 
                                 </div>
+                                @if( $user->staff_no !=  $form->claimant_staff_no    )
                                 <div class="" id="div_dest">
 
                                 </div>
+                                @endif
                             @endif
                             {{--  HR--}}
-                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_009')     )
+                            @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')     )
                                 <div class="" id="div_hr">
 
                                 </div>
                             @endif
                             {{--  SNR--}}
-                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_015')     )
+                            @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')     )
                                 <div class="" id="div_snr">
 
                                 </div>
                             @endif
                             {{--  CHIEF ACC--}}
-                            @if( ( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')  )
-                               ||  ( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_011')  )
-                               ||  ( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')  ) )
+                            @if( ( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')  )
+                               ||  ( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')  )
+                               ||  ( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')  ) )
                                 <div class="" id="div_cac">
 
                                 </div>
@@ -571,6 +614,42 @@
     </SCRIPT>
 
     <script>
+        $('#modal-trip-members').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+
+                //2 - SET APPROVES
+                var details_1B = "<table border='1' class='table table-striped border-transparent '>" +
+                    "<thead>" +
+                    "<tr>" +
+                    "<td> Name</td>" +
+                    "<td> Man Number</td>" +
+                    "<td> Email</td>" +
+                    "<td> Contact</td>" +
+                    "</tr>" +
+                    "</thead>" +
+                    "<tbody>";
+
+                var all_invited = {!! json_encode($all_inv ) !!};
+
+                $.each(all_invited, function (index, value) {
+                    details_1B +=
+                        "<tr>" +
+                        "<td>" + value.members.name + "</td>" +
+                        "<td>" + value.members.staff_no + "</td>" +
+                        "<td>" + value.members.email + "</td>" +
+                        "<td>" + value.members.phone + "</td>" +
+                        "</tr> ";
+
+                });
+                var details_1C = "</tbody></table>" +
+                    "";
+
+                //02 - SET
+                $('#trip_members').html(details_1 + details_1B + details_1C);
+            }
+        );
+
+
         $('#modal-approve-member').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
@@ -782,6 +861,10 @@
 
             //DESTINATION APPROVALS
             else if ((recipient.config_status_id == destination_approvals)) {
+                var user = {!!  json_encode($user) !!};
+                if(user){
+
+                }
                 $('#div_dest').html(dest_profile);
                 next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
                 route_back = '{{url('main/user/unit/many/users')}}';
