@@ -812,7 +812,6 @@ class TripController extends Controller
             $destinations_approvals = $subsistence->destinations;
             $approvals_lists = $destinations_approvals->whereIn('user_unit_code', $my_units);
 
-
             //loop through and approve them
             foreach ($approvals_lists as $approvals_list) {
                 $approvals_list->created_by = $user->id;

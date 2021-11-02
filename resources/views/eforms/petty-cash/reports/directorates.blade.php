@@ -106,12 +106,14 @@
                             <th>#</th>
                             <th>Directorate</th>
                             <th>Total Invoices</th>
-                            <th>Total Amount</th>
+                            <th>Amount Paid</th>
+                            <th>Change Returned</th>
+                            <th>Net Amount</th>
                             <th>Status</th>
+                            <td>Period</td>
                         </tr>
                         </thead>
                         <tbody>
-
                         @foreach( $directorates as $dir )
                             <tr>
                                 <td>{{++$total_num}}</td>
@@ -123,12 +125,25 @@
                                 </td>
                                 <td>
                                     @foreach( $list->where('directorate_id', $dir->id) as $item )
-{{--                                        {{ number_format($item->amount ?? 0 , 2)}}  --}}
-                                        @money($item->net)
+                                        {{ number_format($item->amount ?? 0 , 2 ) }}
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach( $list->where('directorate_id', $dir->id) as $item )
+                                        {{ number_format($item->change ?? 0 , 2 ) }}
+                                    @endforeach
+                                </td>
+                                <td>
+                                    @foreach( $list->where('directorate_id', $dir->id) as $item )
+                                        {{ number_format($item->net ?? 0 , 2 ) }}
+{{--                                        @money($item->net ?? 0)--}}
                                     @endforeach
                                 </td>
                                 <td><span
                                         class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? $category }}</span>
+                                </td>
+                                <td>
+                                    {{$date_range}}
                                 </td>
 
                             </tr>
@@ -140,7 +155,10 @@
                             <td><b>{{$total_num}}</b></td>
                             <td><b></b></td>
                             <td><b>{{$list->sum('total')}}</b></td>
-                            <td><b> @money($list->sum('net')) </b></td>
+                            <td><b> {{$list->sum('amount') }} </b></td>
+                            <td><b> {{$list->sum('change')}}</b></td>
+                            <td><b> @money($list->sum('net'))</b></td>
+                            <td><b></b></td>
                             <td><b></b></td>
                         </tr>
                         </tfoot>
@@ -155,16 +173,6 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer clearfix">
-                {{--                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))--}}
-                {{--                        @if($pending < 1)--}}
-                {{--                            <a href="{{route('petty.cash.create')}}"--}}
-                {{--                               class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>--}}
-                {{--                        @else--}}
-                {{--                            <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>--}}
-                {{--                            <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>--}}
-                {{--                        @endif--}}
-                {{--                    @endif--}}
-
 
                 {{--  HAS RECEIPT - SEND TO AUDIT --}}
                 @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')

@@ -689,7 +689,6 @@ class ReportsController extends Controller
             $status_name = $status->where('id', $status_id)->first()->name;
         }
 
-
         //HYDRATE THE LIST
         $list = AllPettyCashTotalsView::hydrate($form);
         //GET ALL DIRECTORATES
@@ -699,6 +698,10 @@ class ReportsController extends Controller
             $direc[$directorate->name][] = $list->where('directorate_id', $directorate->id)->first()->amount ?? 0;
         }
         $total_num = 0;
+
+
+      //  dd($list);
+
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();

@@ -106,6 +106,7 @@ class SubsistenceController extends Controller
             $list = SubsistenceModel::
             where('config_status_id', '!=', config('constants.subsistence_status.new_application'))
                 ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.closed'))
+                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.audited'))
                 ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.void'))
                 ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.cancelled'))
                 ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.queried'))
@@ -117,7 +118,7 @@ class SubsistenceController extends Controller
                 ->orderBy('code')->paginate(50);
             $category = "New Application";
         } else if ($value == config('constants.subsistence_status.closed')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
+            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.audited'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
             //  dd(11);
@@ -805,9 +806,9 @@ class SubsistenceController extends Controller
             ->orderBy('created_at', 'asc')->get();
         $user = User::find($form->created_by);
 
+        $user_array = [];
         if ($form->config_status_id == config('constants.subsistence_status.destination_approval')) {
             $dest_approvals = DestinationsApprovals::where('subsistence_id', $form->id)
-                ->whereNull('created_by')
                 ->get();
             $dest_approvals->load('user_unit');
 

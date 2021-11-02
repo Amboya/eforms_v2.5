@@ -66,8 +66,8 @@
                         <span
                             class="badge badge-{{$form->status->html ?? "default"}}">{{$form->status->name ?? "none"}}</span><br>
                         <b class='text-orange'>Name:</b> <span class='text-green'>{{ $form->name}}</span><br>
-                        <b class='text-orange'>Date From:</b> <span class='text-green'>{{ $form->date_from}}</span><br>
-                        <b class='text-orange'>Date To:</b> <span class='text-green'>{{ $form->date_to}}</span><br>
+                        <b class='text-orange'>Date From:</b> <span class='text-green'>{{  Carbon::parse(  $form->date_from )->isoFormat('Do MMM Y')  }}</span><br>
+                        <b class='text-orange'>Date To:</b> <span class='text-green'>{{ Carbon::parse(  $form->date_to )->isoFormat('Do MMM Y')  }}</span><br>
                         <b class='text-orange'>Members:</b> <span class='text-green'>Invited {{ $form->invited}} and {{sizeof($form->members)}} have
                         subscribed.</span><br>
                     </div>
@@ -143,7 +143,7 @@
                                             {{$item->initiator_name ?? ""}} <br> {{$item->initiator_staff_no ?? ""}}
                                         </td>
                                         <td>
-                                            {{ Carbon::parse(  $form->absc_absent_from )->isoFormat('Do MMM Y') }}
+                                            {{ Carbon::parse(  $form->date_from )->isoFormat('Do MMM Y') }}
                                         </td>
                                         <td>
                                             {{$item->num_days ?? "0"}} Days
@@ -178,7 +178,7 @@
                                                             @if( $dest_app->date_from == null)
                                                                 - {{$dest_app->user_unit->user_unit_code}} <br>
                                                             @else
-                                                                {{ Carbon::parse(  $dest_app->date_from )->isoFormat('Do MMM Y') }}
+                                                                {{ Carbon::parse(  $dest_app->date_to )->isoFormat('Do MMM Y') }}
                                                                 <br>
                                                             @endif
                                                         </td>
