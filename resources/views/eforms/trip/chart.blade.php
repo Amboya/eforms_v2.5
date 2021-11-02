@@ -1,4 +1,4 @@
-@extends('layouts.eforms.petty-cash.master')
+@extends('layouts.eforms.trip.master')
 
 
 @push('custom-styles')
