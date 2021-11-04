@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\EForms\Trip;
 
 use App\Http\Controllers\Controller;
+use App\Models\EForms\Subsistence\SubsistenceModel;
 use App\Models\EForms\Trip\Destinations;
 use App\Models\EForms\Trip\Invitation;
 use App\Models\EForms\Trip\Trip;
@@ -76,6 +77,8 @@ class HomeController extends Controller
         return $list->count() ;
     }
 
+
+
     public static function needsMeList()
     {
         $user = Auth::user();
@@ -84,7 +87,8 @@ class HomeController extends Controller
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-            $list_inv = Invitation::where('man_no', $user->staff_no)->orderBy('trip_code')->get();
+            $list_inv = Invitation::where('man_no', $user->staff_no)
+                ->orderBy('trip_code')->get();
             $mine = [];
             foreach ($list_inv as $item) {
                 $mine[] = $item->trip_code;

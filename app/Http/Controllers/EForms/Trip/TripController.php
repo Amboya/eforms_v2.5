@@ -248,14 +248,13 @@ class TripController extends Controller
         $destination_units = ConfigWorkFlow::select('id', 'user_unit_description', 'user_unit_code', 'user_unit_bc_code', 'user_unit_cc_code')
             ->where('user_unit_status', config('constants.user_unit_active'))
             ->get();
-        // dd($units);
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
+        $users = User::where('con_st_code', config('constants.phris_user_active') )->get();
 
-       // dd($units);
 
         //show the create form
-        return view('eforms.trip.create')->with(compact('destination_units', 'units', 'user', 'totals_needs_me'));
+        return view('eforms.trip.create')->with(compact('users','destination_units', 'units', 'user', 'totals_needs_me'));
     }
 
     /**
@@ -322,17 +321,21 @@ class TripController extends Controller
             $to[] = ['email' => $userObj->email, 'name' => $userObj->name];
             $names = $names . '<br>' . $userObj->name;
 
+            //send email to my supervisor
+
             // insert into invitations table
             $invitation = Invitation::UpdateOrCreate(
                 [
                     'man_no' => $userObj->staff_no,
                     'trip_code' => $formModel->code,
                     'date_from' => $formModel->date_from,
+                    'user_unit' => $userObj->user_unit_code ,
                     'date_to' => $formModel->date_to,
                 ],
                 [
                     'man_no' => $userObj->staff_no,
                     'trip_id' => $formModel->id,
+                    'user_unit' => $userObj->user_unit_code ,
                     'trip_code' => $formModel->code,
                     'date_from' => $formModel->date_from,
                     'date_to' => $formModel->date_to,
@@ -540,13 +543,25 @@ class TripController extends Controller
         //my invitation
         $list_inv = $all_inv->where('man_no', $user->staff_no)->first();
 
-      //  dd($list_inv);
+        //check for pending
+        //[1B] check pending forms for me before i apply again
+        $pending = SubsistenceModel::where('absc_absent_to', '>=', $form->date_from)
+            ->where('absc_absent_from', '<=', $form->date_from)
+            ->where('claimant_staff_no', $user->staff_no)
+            ->count();
+        //[1B] check pending forms for me before i apply again
+        $pendingb = SubsistenceModel::where('trip_id', $form->id)
+            ->where('claimant_staff_no', $user->staff_no)
+            ->count();
+
+        $pending = $pending + $pendingb;
+
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
 
         //return view
-        return view('eforms.trip.show')->with(compact('list_inv', 'user', 'user_array', 'totals_needs_me', 'form','all_inv', 'approvals'));
+        return view('eforms.trip.show')->with(compact('pending','list_inv', 'user', 'user_array', 'totals_needs_me', 'form','all_inv', 'approvals'));
 
     }
 

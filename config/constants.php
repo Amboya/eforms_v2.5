@@ -273,7 +273,7 @@ return [
         'void' => "101",
         'cancelled' => "161",
         'queried' => "201",
-        'audited' => "29",
+        'audited' => "126",
         'await_audit' => "233",
         'audit_box' => "233",
         'pre_audited' => "303",

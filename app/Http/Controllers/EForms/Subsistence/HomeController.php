@@ -4,6 +4,7 @@ namespace App\Http\Controllers\EForms\Subsistence;
 
 use App\Http\Controllers\Controller;
 use App\Models\EForms\Subsistence\SubsistenceModel;
+use App\Models\EForms\Trip\Destinations;
 use App\Models\EForms\Trip\Invitation;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
@@ -115,16 +116,19 @@ class HomeController extends Controller
             $list = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
                 ->orWhere('config_status_id', '=', config('constants.trip_status.accepted'))
-                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
+//                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
             //   dd(2) ;hod_approved_trip
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
+
             $list = SubsistenceModel::where('config_status_id', config('constants.trip_status.accepted'))
                 ->orWhere('config_status_id', config('constants.subsistence_status.destination_approval'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
+
+
         } //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hod_approved'))
@@ -191,7 +195,7 @@ class HomeController extends Controller
             //count pending applications
             $pending = SubsistenceModel::where('config_status_id', '=', config('constants.subsistence_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.trip_status.accepted'))
-                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
+//                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
                 ->orWhereIn('id', $list_inv)
                 ->count();
         }

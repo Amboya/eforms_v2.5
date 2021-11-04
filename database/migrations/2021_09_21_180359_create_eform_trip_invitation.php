@@ -18,6 +18,7 @@ class CreateEformTripInvitation extends Migration
             $table->string('man_no')->nullable();
             $table->string('trip_code')->nullable();
             $table->string('date_from')->nullable();
+            $table->string('user_unit')->nullable();
             $table->string('date_to')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('subsistence_id')->nullable();

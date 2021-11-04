@@ -333,17 +333,24 @@ class SubsistenceController extends Controller
             ->where('absc_absent_from', '<=', $date)
             ->where('claimant_staff_no', $user->staff_no)
             ->count();
+        $pending = $pending;
+        // check for overlapping days
+        if ($pending >= 1) {
+            //return with error msg
+            return Redirect::route('trip.home')->with('error', 'Sorry, You can not raise a new Subsistence Claim for the' . $trip->destination . ' trip because you already have an open Subsistence Claim in the the specified');
+        }
+
 
         //[1B] check pending forms for me before i apply again
         $pendingb = SubsistenceModel::where('trip_id', $trip->id)
             ->where('claimant_staff_no', $user->staff_no)
             ->count();
 
-        $pending = $pending + $pendingb;
+        $pending =  $pendingb;
         // check for overlapping days
         if ($pending >= 1) {
             //return with error msg
-            return Redirect::route('trip.home')->with('error', 'Sorry, You can not raise a new Subsistence Claim for the' . $trip->destination . ' trip because you already have an open Subsistence Claim. Please allow the opened one to be closed or cancelled');
+            return Redirect::route('trip.home')->with('error', 'Sorry, You can not raise a new Subsistence Claim for the' . $trip->destination . ' trip because you already have an open Subsistence Claim for this trip.');
         }
 
         //[2A] find my code superior
@@ -460,11 +467,11 @@ class SubsistenceController extends Controller
         //accept invitation
         $list_inv = Invitation::where('man_no', $user->staff_no)
             ->where('trip_code', $trip->code)
-            ->orWhere('status_id', config('constants.trip_status.pending') )
             ->first();
-        $list_inv->status_id = config('constants.trip_status.accepted');
+
+        $list_inv->status_id = $status ;
         $list_inv->subsistence_id = $formModel->id;
-        $list_inv->subsistence_code = $formModel->code ;
+        $list_inv->subsistence_code = $code ;
         $list_inv->save();
 
         //destination approvals
@@ -1101,6 +1108,14 @@ class SubsistenceController extends Controller
             $form->profile = Auth::user()->profile_id;
             //
             $form->save();
+
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         }
 
         //FOR AUTHORIZER
@@ -1136,6 +1151,16 @@ class SubsistenceController extends Controller
             //
             $form->save();
 
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+
+
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         }
 
 
@@ -1167,6 +1192,14 @@ class SubsistenceController extends Controller
             $form->config_status_id = $new_status;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         } //FOR HOD
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')
@@ -1193,6 +1226,13 @@ class SubsistenceController extends Controller
             $form->authorised_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         } //FOR  HR
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_009')
@@ -1221,6 +1261,13 @@ class SubsistenceController extends Controller
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         }
 
         //FOR CHIEF ACCOUNTANT
@@ -1248,6 +1295,13 @@ class SubsistenceController extends Controller
             $form->chief_accountant_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         } //FOR CHIEF ACCOUNTANT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
             && $current_status == config('constants.subsistence_status.hr_approved')
@@ -1273,6 +1327,13 @@ class SubsistenceController extends Controller
             $form->chief_accountant_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         } //FOR PRE AUDIT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.subsistence_status.chief_accountant')
@@ -1295,6 +1356,13 @@ class SubsistenceController extends Controller
             $form->config_status_id = $new_status;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         }
 
         //FOR STATION MANAGER -SNR
@@ -1322,6 +1390,13 @@ class SubsistenceController extends Controller
             $form->station_manager_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         }
 
         //   FOR EXPENDITURE OFFICE FUNDS
@@ -1348,6 +1423,13 @@ class SubsistenceController extends Controller
             $form->config_status_id = $new_status;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
 
             //create records for the accounts associated with this Subsistence transaction
             for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
@@ -1520,14 +1602,15 @@ class SubsistenceController extends Controller
                 $form->save();
 
                 //cancel status
-                $insert_reasons = true;
+               $insert_reasons = true;
 
-                //delete invitation
+                //change invitation status
                 $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
-                    ->where('subsistence_id', $form->id)
+                    ->where('trip_id', $form->trip_id)
                     ->first();
-                $list_inv->status_id = config('constants.trip_status.funds_acknowledgement');
+                $list_inv->status_id = $new_status ;
                 $list_inv->save();
+
             }
 
         }
@@ -1554,6 +1637,15 @@ class SubsistenceController extends Controller
             $form->config_status_id = $new_status;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
+
+
         }
 
         //FOR AUDITING OFFICE
@@ -1584,6 +1676,13 @@ class SubsistenceController extends Controller
             $form->audit_date = $request->sig_date;
             $form->profile = Auth::user()->profile_id;
             $form->save();
+
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
         }
 
         //FOR NO-ONE

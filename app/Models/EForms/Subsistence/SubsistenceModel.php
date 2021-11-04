@@ -3,6 +3,7 @@
 namespace App\Models\EForms\Subsistence;
 
 use App\Http\Controllers\Main\HomeController;
+use App\Models\EForms\Trip\Destinations;
 use App\Models\EForms\Trip\DestinationsApprovals;
 use App\Models\EForms\Trip\Trip;
 use App\Models\Main\ConfigWorkFlow;
@@ -129,10 +130,27 @@ class SubsistenceModel extends Model
             } else {
                 $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
                 $mine = $fdsf->pluck('user_unit_code')->toArray();
-                static::addGlobalScope('hod', function (Builder $builder) use ($user, $mine) {
-                    $builder->where('claimant_staff_no', $user->staff_no)
-                        ->orWhereIn('user_unit_code', $mine);
-                });
+
+                if ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
+
+                    //get the list of trips am supposed to approve
+                    $trips = Destinations::whereIn('user_unit_code' , $mine )->get();
+                    $trip_ids = $trips->pluck('trip_id')->toArray();
+
+                    static::addGlobalScope('hod', function (Builder $builder) use ($user, $mine , $trip_ids) {
+                        $builder->where('claimant_staff_no', $user->staff_no)
+                            ->orWhereIn('user_unit_code', $mine)
+                            ->orWhereIn('trip_id', $trip_ids)
+                        ;
+                    });
+                }
+                else {
+                    static::addGlobalScope('hod', function (Builder $builder) use ($user, $mine) {
+                        $builder->where('claimant_staff_no', $user->staff_no)
+                            ->orWhereIn('user_unit_code', $mine);
+                    });
+                }
+
 
             }
         }

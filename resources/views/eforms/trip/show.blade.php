@@ -305,10 +305,18 @@
                                       action="{{route('subsistence.subscribe', ['trip' => $form, 'invitation'=> $list_inv])}}"
                                       method="post" enctype="multipart/form-data">
                                     @csrf
+                                    @if($pending == 0)
                                     <button type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "
                                             title="Click here to accept invitation to be part of this trip"
                                             value='Subscribe'>Raise Subsistence
                                     </button>
+                                    @else
+                                        <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                                title="You cannot subscribe to this trip. Trips are overlapping or you have an open subsistance form"
+                                                value='Subscribe'>Raise Subsistence
+                                        </button>
+                                        @endif
+
                                 </form>
                             @else
                                 <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "

@@ -175,7 +175,7 @@
                                             <td>{{$item->claimant_name}}</td>
                                             <td>{{$item->numdays}}</td>
                                             <td>{{$item->absc_allowance_per_night}}</td>
-                                            <td>ZMW {{number_format($item->total,2)}}</td>
+                                            <td>ZMW {{number_format($item->net_amount_paid,2)}}</td>
 
                                             <td><span
                                                     class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>
