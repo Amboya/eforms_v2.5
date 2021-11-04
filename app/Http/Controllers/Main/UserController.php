@@ -96,6 +96,8 @@ class UserController extends Controller
 
         $responsible_units = HomeController::getUserResponsibleUnits($user);
 
+       // dd($responsible_units);
+
         $profiles = ProfilePermissionsModel::all();
         $eforms = EFormModel::all();
 
