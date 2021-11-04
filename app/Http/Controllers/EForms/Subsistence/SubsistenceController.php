@@ -356,6 +356,7 @@ class SubsistenceController extends Controller
         //[2A] find my code superior
         $my_hods = self::findMyNextPerson(config('constants.trip_status.new_trip'), $user->user_unit, $user);
 
+
         if (empty($my_hods)) {
             //prepare details
             $details = [
@@ -394,11 +395,13 @@ class SubsistenceController extends Controller
         //generate the Subsistence unique code
         $code = self::randGenerator("SUB", 1);
 
-        $hod_who_created_trip = $my_hods->where('id', $trip->created_by)->first()->id;
+
         $departmental = false;
 
+
+
         //check if the next if cost center of the TRIP and SUBSISTENCE IS THE SAME
-        if ($hod_who_created_trip > 0) {
+        if (($my_hods->first()->id ?? 1) ==   $trip->created_by ) {
             $status = config('constants.trip_status.hod_approved_trip');
             $departmental = true;
         } else {

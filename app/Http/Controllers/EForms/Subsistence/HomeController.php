@@ -95,6 +95,10 @@ class HomeController extends Controller
 
     public static function needsMeList()
     {
+        //get the my list
+        $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+        $my_units = $fdsf->pluck('user_unit_code')->toArray();
+
         $user = Auth::user();
 
         $list_inv = Invitation::select('subsistence_id')
