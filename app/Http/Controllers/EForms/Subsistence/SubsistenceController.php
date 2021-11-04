@@ -394,7 +394,7 @@ class SubsistenceController extends Controller
         //generate the Subsistence unique code
         $code = self::randGenerator("SUB", 1);
 
-        $hod_who_created_trip = $my_hods->where('id', $trip->created_by)->first()->id;
+        $hod_who_created_trip = 1;
         $departmental = false;
 
         //check if the next if cost center of the TRIP and SUBSISTENCE IS THE SAME
