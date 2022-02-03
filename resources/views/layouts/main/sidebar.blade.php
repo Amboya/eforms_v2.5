@@ -81,7 +81,6 @@
             @if( Auth::user()->type_id == config('constants.user_types.developer'))
 
 
-
                     <li class="nav-header">SYSTEM USERS</li>
 
                     <li class="nav-item">
@@ -245,6 +244,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{route('main.tax')}}" class="nav-link ">
+                            <i class="nav-icon fas fa-calendar-alt"></i>
+                            <p> Tax </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{route('main.pay.point')}}" class="nav-link ">
                             <i class="nav-icon fas fa-calendar-alt"></i>
                             <p> PayPoint </p>
@@ -254,6 +259,12 @@
                         <a href="{{route('main.functional.unit')}}" class="nav-link ">
                             <i class="nav-icon fas fa-calendar-alt"></i>
                             <p> Functional Unit </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{route('main.operating.units')}}" class="nav-link ">
+                            <i class="nav-icon fas fa-calendar-alt"></i>
+                            <p> Operating Units </p>
                         </a>
                     </li>
 

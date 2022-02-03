@@ -9,8 +9,8 @@ use App\Models\Main\DivisionsModel;
 use App\Models\Main\EFormModel;
 use App\Models\main\FunctionalUnitModel;
 use App\Models\Main\GradesModel;
-use App\Models\main\LocationModel;
-use App\Models\main\PaypointModel;
+use App\Models\Main\LocationModel;
+use App\Models\Main\PaypointModel;
 use App\Models\Main\PositionModel;
 use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\ProfileModel;
@@ -34,7 +34,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+       // $this->middleware('auth');
         // Store a piece of data in the session...
         session(['eform_id' => config('constants.eforms_id.main_dashboard')]);
         session(['eform_code' => config('constants.eforms_name.main_dashboard')]);
@@ -83,11 +83,24 @@ class UserController extends Controller
      */
     public function show($id)
     {
+
+//        $test = ProfileDelegatedModel::all();
+//
+//        foreach ($test as $te){
+//            $te->owner = $te->created_by ;
+//            $te->save();
+//        }
+
+
         //get the user based on id
         $user = User::find($id);
         $user_types = UserTypeModel::all();
-        $delegated_profiles = ProfileDelegatedModel::where('delegated_to', $user->id)
+        $delegated_profiles = ProfileDelegatedModel::
+              where(  'delegated_to', $user->id)
+            ->where('config_status_id',  config('constants.active_state') )
+            ->orWhere('owner', $user->id)
             ->where('config_status_id',  config('constants.active_state') )->get();
+
 
         $user_unit_new = ConfigWorkFlow::
         select('id', 'user_unit_description', 'user_unit_code', 'user_unit_bc_code', 'user_unit_cc_code')
@@ -269,25 +282,27 @@ class UserController extends Controller
                 ->where('user_unit_cc_code', $phirs_user_details->cc_code)
                 ->get()->first();
 
+//
+//            dd($user_unit);
 
             //update the model with the details from phris
-            $model->name = $phirs_user_details->name;
+            $model->name = $phirs_user_details->name ??  $model->name ;
             //  $model->email = $phirs_user_details->staff_email ?? $model->email;
-            $model->nrc = $phirs_user_details->nrc;
-            $model->contract_type = $phirs_user_details->contract_type;
-            $model->con_st_code = $phirs_user_details->con_st_code;
-            $model->con_wef_date = $phirs_user_details->con_wef_date;
-            $model->con_wet_date = $phirs_user_details->con_wet_date;
-            $model->job_code = $phirs_user_details->job_code;
-            $model->grade_id = $grade->id;
-            $model->positions_id = $position->id;
-            $model->location_id = $location->id;
-            $model->user_division_id = $division->id;
-            $model->pay_point_id = $pay_point->id;
-            $model->user_directorate_id = $directorate->id;
-            $model->functional_unit_id = $functional_section->id;
-            $model->user_unit_id = $user_unit->id;
-            $model->user_unit_code = $user_unit->user_unit_code;
+            $model->nrc = $phirs_user_details->nrc ??   $model->nrc ;
+            $model->contract_type = $phirs_user_details->contract_type ??  $model->contract_type ;
+            $model->con_st_code = $phirs_user_details->con_st_code ??  $model->con_st_code ;
+            $model->con_wef_date = $phirs_user_details->con_wef_date ??  $model->con_wef_date ;
+            $model->con_wet_date = $phirs_user_details->con_wet_date ??  $model->con_wet_date ;
+            $model->job_code = $phirs_user_details->job_code ??  $model->job_code ;
+            $model->grade_id = $grade->id ??  $model->grade_id;
+            $model->positions_id = $position->id ??   $model->positions_id ;
+            $model->location_id = $location->id ??  $model->location_id ;
+            $model->user_division_id = $division->id ??  $model->user_division_id ;
+            $model->pay_point_id = $pay_point->id ??  $model->pay_point_id ;
+            $model->user_directorate_id = $directorate->id ??  $model->user_directorate_id ;
+            $model->functional_unit_id = $functional_section->id  ??  $model->functional_unit_id ;
+            $model->user_unit_id = $user_unit->id ?? $model->user_unit_id ;
+            $model->user_unit_code = $user_unit->user_unit_code ??  $model->user_unit_code ;
             //save
             $model->save();
 
@@ -321,6 +336,27 @@ class UserController extends Controller
             $user->password_changed =   config('constants.password_changed')  ;
             $user->save();
             return redirect()->back()->with('message', 'User Password Updated Successfully');
+        }
+
+    }
+
+
+    public function resetPassword(Request $request,User $user){
+
+        $request->validate([
+            'otp' => 'required|min:6',
+        ]);
+        if($request->otp == 'Zesco123' || $request->otp == 'zesco123' || $request->otp == 'zesco@123'||
+            $request->otp == 'Zesco@123' || $request->otp == 'Zesco12345' || $request->otp == 'zesco12345' ){
+            return redirect()->back()->withInput()->withErrors(['otp' => "Sorry your new password has been listed as too common hence not so much secure.Please change to another password."]);
+        }
+        else{
+            $user->password = Hash::make($request->otp) ;
+            $user->password_changed =   config('constants.password_not_changed')  ;
+            $user->save();
+
+            // send emails here but use ques
+            return redirect()->back()->with('message', 'User Password Reset Successful');
         }
 
     }

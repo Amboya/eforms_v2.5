@@ -1,4 +1,4 @@
-@extends('layouts.eforms.Subsistence.master')
+@extends('layouts.eforms.subsistence.master')
 
 
 @push('custom-styles')
@@ -15,12 +15,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Subsistence : {{$category}}</h1>
+                    <h1 class="m-0 text-dark text-orange text-uppercase">SUBSISTENCE : <span class="text-green">{{$category}}</span></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Subsistence  : {{$category}}</li>
+                        <li class="breadcrumb-item"><a href="{{route('subsistence.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">SUBSISTENCE : {{$category}}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -242,7 +242,7 @@
                 alert("Please fill in all the search parameters.");
             }else{
                 //get the route
-                var route = '{{url('subsistence/filtered/report/get')}}' + '/' + unit_selected_value  + '/' + status_selected_value+ '/' + start_date+ '/' + end_date;
+                var route = '{{url('petty/cash/filtered/report/get')}}' + '/' + unit_selected_value  + '/' + status_selected_value+ '/' + start_date+ '/' + end_date;
                 // alert(route);
                 $.ajax({
                     url: route,
@@ -263,7 +263,7 @@
                                  $.each( list[i], function (index, value) {
 
                                      //list array
-                                     var route = '{{ url('subsistence/showForm') }}' + '/'+ value.id ;
+                                     var route = '{{ url('petty/cash/show/form') }}' + '/'+ value.id ;
                                      var View = "View";
                                      //populate the table
                                      list_responce +=
@@ -294,7 +294,7 @@
                              $.each( response_data.list, function (index, value) {
                                  //list array
                                  var form_id  = 'show-form'+value.id ;
-                                 var route = '{{ url('subsistence/showForm') }}' + '/'+ value.id ;
+                                 var route = '{{ url('petty/cash/show/form') }}' + '/'+ value.id ;
                                  var View = "View";
                                  var csrf = '@csrf' ;
                                  //populate the table
@@ -374,7 +374,7 @@
 
 
             {{--//get the route--}}
-            {{--var route = '{{url('subsistence/filtered/report/get')}}' + '/' + selected_value  + '/' + selected_value+ '/' + selected_value+ '/' + selected_value;--}}
+            {{--var route = '{{url('petty/cash/filtered/report/get')}}' + '/' + selected_value  + '/' + selected_value+ '/' + selected_value+ '/' + selected_value;--}}
 
             /*GET */
             // $.get(route, function (data) {

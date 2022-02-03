@@ -76,34 +76,34 @@
 
                     <div class="row">
                         <div class="row mt-2 mb-4">
-                            <div class="col-3">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="row">
-                                    <div class="col-12"><label>Date:</label></div>
-                                    <div class="col-12"><input value="{{ date('Y-m-d H:i:s') }}" type="text" name="date"
+                                    <div class="col-lg-12 col-sm-12 col-sm-12"><label>Date:</label></div>
+                                    <div class="col-lg-12 col-sm-12 col-sm-12"><input value="{{ date('Y-m-d H:i:s') }}" type="text" name="date"
                                                                readonly class="form-control"></div>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="row">
-                                    <div class="col-12 "><label>Cost Center:</label></div>
-                                    <div class="col-12"><input type="text" name="cost_center" class="form-control"
+                                    <div class="col-lg-12 col-sm-12 "><label>Cost Center:</label></div>
+                                    <div class="col-lg-12 col-sm-12 col-sm-12"><input type="text" name="cost_center" class="form-control"
                                                                value="{{ $user->user_unit->user_unit_code}}" readonly
                                                                required>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="row">
-                                    <div class="col-12"><label>HQMS No:</label></div>
-                                    <div class="col-12"><input type="text" name="ref_no"
+                                    <div class="col-lg-12 col-sm-12 col-sm-12"><label>HQMS No:</label></div>
+                                    <div class="col-lg-12 col-sm-12 col-sm-12"><input type="text" name="ref_no"
                                                                placeholder="Enter Your HQMS Number (optional)"
                                                                class="form-control"></div>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="row">
-                                    <div class="col-12"><label>Project Number:</label></div>
-                                    <div class="col-12">
+                                    <div class="col-lg-12 col-sm-12 col-sm-12"><label>Project Number:</label></div>
+                                    <div class="col-lg-12 col-sm-12 col-sm-12">
                                         <select name="projects_id"  class="form-control">
                                             <option disabled >Select Project (Optional)</option>
                                             @foreach($projects as $item)
@@ -121,7 +121,7 @@
 
                     <div class="col-lg-12 grid-margin stretch-card">
                         <div class="table-responsive">
-                            <div class="col-lg-12 ">
+                            <div class="col-lg-12 col-sm-12 ">
                                 <table class="table bg-green">
                                     <thead>
                                     <tr>
@@ -132,43 +132,50 @@
                                     </thead>
                                 </table>
                             </div>
-                            <div class="col-lg-12 ">
-                                <TABLE id="dataTable" class="table">
-                                    <TR>
-                                        <TD><INPUT type="checkbox" name="chk"/></TD>
-                                        <TD>
-                                            {{--                                        <input type="text" name="name[]" class="form-control amount" placeholder="Item Details" id="name" required >--}}
-                                            <textarea rows="4" type="text" name="name[]" class="form-control amount"
-                                                      placeholder="Item Details / Description" id="name"
-                                                      required></textarea>
-                                        </TD>
-                                        <TD><input type="number" step="any" id="amount" name="amount[]" onchange="getvalues()"
-                                                   class="form-control amount" placeholder="Amount [ZMW]">
-                                        </TD>
-                                    </TR>
-                                </TABLE>
-                            </div>
-                            <div class="col-lg-6 offset-6 ">
+                            <div class="col-lg-12  col-sm-12 ">
                                 <div class="row">
-                                    <div class="col-4 text-right">
+                                    <TABLE id="dataTable" class="table table-striped ">
+                                        <TR>
+                                            <TD>
+                                                <INPUT type="checkbox" name="chk"/></TD>
+                                            <TD>
+                                                {{--                                        <input type="text" name="name[]" class="form-control amount" placeholder="Item Details" id="name" required >--}}
+                                                <textarea rows="4" type="text" name="name[]" class="form-control amount"
+                                                          placeholder="Item Details / Description" id="name"
+                                                          required></textarea>
+                                            </TD>
+                                            <TD>
+                                                <input type="number" step="any" id="amount" name="amount[]" onchange="getvalues()"
+                                                       class="form-control amount" placeholder="Amount [ZMW]">
+                                            </TD>
+                                        </TR>
+                                    </TABLE>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 col-sm-12 mb-3 ">
+                                <INPUT type="button" value="Add Row" onclick="addRow('dataTable')"/>
+                                <INPUT type="button" value="Delete Row" onclick="deleteRow('dataTable')"/>
+                            </div>
+
+                            <div class="col-lg-6 col-sm-12 mb-3 ">
+                                <div class="row">
+                                    <div class="col-lg-3  col-sm-12">
                                         <label class="form-control-label">TOTAL PAYMENT </label>
                                     </div>
-                                    <div class="col-8">
+                                    <div class="col-lg-9 col-sm-12">
                                         <input type="text" class="form-control text-bold" readonly id="total-payment"
                                                name="total_payment" value="">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 ">
-                                <INPUT type="button" value="Add Row" onclick="addRow('dataTable')"/>
-                                <INPUT type="button" value="Delete Row" onclick="deleteRow('dataTable')"/>
-                            </div>
-                            <div class="col-lg-12 mb-4">
+
+                            <div class="col-lg-12 col-sm-12 mb-4">
                                 <div class="row">
-                                    <div class="col-2 offset-4">
+                                    <div class="col-lg-2 col-sm-12 ">
                                         <label class="form-control-label">Attach Quotation Files (optional)</label>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-lg-6 col-sm-12">
                                         <div class="input-group">
                                             <input type="file" class="form-control" multiple name="quotation[]" id="receipt" title="Upload Quotation Files (Optional)" >
                                         </div>
@@ -181,52 +188,52 @@
 
 
                     <div class="row mb-1 mt-4">
-                        <div class="col-2">
+                        <div class="col-lg-2 col-sm-12">
                             <label>Name of Claimant:</label>
                         </div>
-                        <div class="col-3">
+                        <div class="col-lg-3 col-sm-12">
                             <input type="text" name="claimant_name" class="form-control"
                                    value="{{Auth::user()->name}}" readonly required></div>
 
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"
+                        <div class="col-lg-2 col-sm-12 text-left"><label>Signature:</label></div>
+                        <div class="col-lg-1 col-sm-12"><input type="text" name="sig_of_claimant" class="form-control"
                                                   value="{{Auth::user()->staff_no}}" readonly required></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
+                        <div class="col-lg-2 col-sm-12 text-left"><label>Date:</label></div>
 
-                        <div class="col-2"><input type="Date" name="date_claimant" class="form-control"
+                        <div class="col-lg-2 col-sm-12"><input type="Date" name="date_claimant" class="form-control"
                                                   value="{{date('Y-m-d')}}" readonly required>
                         </div>
                     </div>
 
                     <div class="row mb-1">
-                        <div class="col-2"><label>Claim Authorised by:</label></div>
-                        <div class="col-3"><input type="text" name="claim_authorised_by" readonly class="form-control">
+                        <div class="col-lg-2 col-sm-12"><label>Claim Authorised by:</label></div>
+                        <div class="col-lg-3 col-sm-12"><input type="text" name="claim_authorised_by" readonly class="form-control">
                         </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_authorised" readonly class="form-control">
+                        <div class="col-lg-2 col-sm-12 "><label>Signature:</label></div>
+                        <div class="col-lg-1 col-sm-12"><input type="text" name="sig_of_authorised" readonly class="form-control">
                         </div>
-                        <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="authorised_date" readonly class="form-control">
+                        <div class="col-lg-2 col-sm-12  "><label>Date:</label></div>
+                        <div class="col-lg-2 col-sm-12"><input type="text" name="authorised_date" readonly class="form-control">
                         </div>
                     </div>
                     <div class="row mb-1">
-                        <div class="col-2"><label>HR/Station Manager:</label></div>
-                        <div class="col-3"><input type="text" name="station_manager" readonly class="form-control">
+                        <div class="col-lg-2 col-sm-12"><label>HR/Station Manager:</label></div>
+                        <div class="col-lg-3 col-sm-12"><input type="text" name="station_manager" readonly class="form-control">
                         </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_station_manager" readonly
+                        <div class="col-lg-2 col-sm-12 "><label>Signature:</label></div>
+                        <div class="col-lg-1 col-sm-12"><input type="text" name="sig_of_station_manager" readonly
                                                   class="form-control"></div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="manager_date" readonly class="form-control"></div>
+                        <div class="col-lg-2 col-sm-12 "><label>Date:</label></div>
+                        <div class="col-lg-2 col-sm-12"><input type="text" name="manager_date" readonly class="form-control"></div>
                     </div>
                     <div class="row mb-4">
-                        <div class="col-2"><label>Accountant:</label></div>
-                        <div class="col-3"><input type="text" name="accountant" readonly class="form-control"></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_accountant" readonly class="form-control">
+                        <div class="col-lg-2 col-sm-12"><label>Accountant:</label></div>
+                        <div class="col-lg-3 col-sm-12"><input type="text" name="accountant" readonly class="form-control"></div>
+                        <div class="col-lg-2 col-sm-12 "><label>Signature:</label></div>
+                        <div class="col-lg-1 col-sm-12"><input type="text" name="sig_of_accountant" readonly class="form-control">
                         </div>
-                        <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="accountant_date" readonly class="form-control">
+                        <div class="col-lg-2 col-sm-12 "><label>Date:</label></div>
+                        <div class="col-lg-2 col-sm-12"><input type="text" name="accountant_date" readonly class="form-control">
                         </div>
                     </div>
 
@@ -240,7 +247,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                     <div class="row">
-                        <div id="submit_not_possible" class="col-12 text-center">
+                        <div id="submit_not_possible" class="col-lg-12 col-sm-12 text-center">
                             <div class="alert alert-danger ">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
                                     &times;
@@ -249,7 +256,7 @@
                                 Sorry, You can not submit <strong>petty cash above K2000</strong>
                             </div>
                         </div>
-                        <div id="submit_possible" class="col-12 text-center">
+                        <div id="submit_possible" class="col-lg-12 col-sm-12 text-center">
                             <div id="divSubmit_show">
                                 <input class="btn btn-lg btn-success" type="submit"
                                        value="submit" id="btnSubmit"

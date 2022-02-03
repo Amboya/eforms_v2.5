@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\main;
+namespace App\Models\Main;
 
 use App\Models\User;
 use App\Models\Main\EFormModel;

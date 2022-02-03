@@ -112,7 +112,7 @@ class Trip extends Model
 
     public function user_unit()
     {
-        return $this->belongsTo(ConfigWorkFlow::class, 'user_unit_code', 'user_unit_code');
+        return $this->belongsTo(ConfigWorkFlow::class, 'hod_unit', 'user_unit_code');
     }
 
     public function members()

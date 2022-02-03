@@ -21,7 +21,8 @@ use App\Models\Main\ProfileDelegatedModel;
 use App\Models\main\ProfileModel;
 use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
-use App\Models\main\TotalsModel;
+use App\Models\Main\TaxModel;
+use App\Models\Main\TotalsModel;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class SubsistenceController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+       // $this->middleware('auth');
         // Store a piece of data in the session...
         session(['eform_id' => config('constants.eforms_id.subsistence')]);
         session(['eform_code' => config('constants.eforms_name.subsistence')]);
@@ -62,7 +63,9 @@ class SubsistenceController extends Controller
         $totals_needs_me = HomeController::needsMeCount();
         $cost_centers = ConfigWorkFlow::orderBy('user_unit_description', 'ASC')->get();
 
-        $previous_subsistence = SubsistenceModel::latest('created_at')->first();
+        $previous_subsistence = SubsistenceModel::where('claimant_staff_no', $user->staff_no)->latest('created_at')->first();
+
+        //dd($previous_subsistence);
 
         //data to send to the view
         $profile_delegated = ProfileDelegatedModel::where('eform_id', config('constants.eforms_id.subsistence'))
@@ -104,14 +107,23 @@ class SubsistenceController extends Controller
             $category = "All";
         } else if ($value == "pending") {
             $list = SubsistenceModel::
-            where('config_status_id', '!=', config('constants.subsistence_status.new_application'))
-                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.closed'))
-                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.audited'))
-                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.void'))
-                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.cancelled'))
-                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.queried'))
-                ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.rejected'))
+            where('config_status_id', '=', config('constants.subsistence_status.hod_approved'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.station_mgr_approved'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.hr_approved'))
+                ->orWhere('config_status_id',  '=', config('constants.trip_status.hr_approved'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.hod_approved'))
+                ->orWhere('config_status_id',  '=', config('constants.trip_status.hod_approved_trip'))
+                ->orWhere('config_status_id', config('constants.trip_status.trip_authorised'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.chief_accountant'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.await_audit'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_disbursement'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_acknowledgement'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.destination_approval'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.pre_audited'))
                 ->orderBy('code')->paginate(50);
+
+
+           // dd(33);
             $category = "Opened";
         } else if ($value == config('constants.subsistence_status.new_application')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
@@ -119,6 +131,7 @@ class SubsistenceController extends Controller
             $category = "New Application";
         } else if ($value == config('constants.subsistence_status.closed')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.audited'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.audit_approved'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
             //  dd(11);
@@ -151,7 +164,7 @@ class SubsistenceController extends Controller
         }
 
         //count all
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+       // $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -162,7 +175,7 @@ class SubsistenceController extends Controller
         $params = [
             'totals_needs_me' => $totals_needs_me,
             'list' => $list,
-            'totals' => $totals,
+         //   'totals' => $totals,
             'pending' => $pending,
             'category' => $category,
             'value' => $value
@@ -332,6 +345,8 @@ class SubsistenceController extends Controller
         $pending = SubsistenceModel::where('absc_absent_to', '>=', $date)
             ->where('absc_absent_from', '<=', $date)
             ->where('claimant_staff_no', $user->staff_no)
+            ->where('config_status_id', config('constants.subsistence_status.reject') )
+            ->orWhere('config_status_id', config('constants.subsistence_status.destination_approval') )
             ->count();
         $pending = $pending;
         // check for overlapping days
@@ -355,7 +370,6 @@ class SubsistenceController extends Controller
 
         //[2A] find my code superior
         $my_hods = self::findMyNextPerson(config('constants.trip_status.new_trip'), $user->user_unit, $user);
-
 
         if (empty($my_hods)) {
             //prepare details
@@ -388,7 +402,6 @@ class SubsistenceController extends Controller
             //return with error msg
         }
 
-
        // $absent_amount = $diff * $request->absc_allowance_per_night;
        // $total_amount = ($absent_amount + $request->trex_total_attached_claim) - $request->trex_deduct_advance;
 
@@ -397,16 +410,20 @@ class SubsistenceController extends Controller
 
 
         $departmental = false;
+      //check if the next if cost center of the TRIP and SUBSISTENCE IS THE SAME
 
+        $user = Auth::user();   //superior_code
+        $cost_center = ConfigWorkFlow::find($request->cost_center);
 
-
-        //check if the next if cost center of the TRIP and SUBSISTENCE IS THE SAME
-        if (($my_hods->first()->id ?? 1) ==   $trip->created_by ) {
-            $status = config('constants.trip_status.hod_approved_trip');
+        if(  $user->user_unit->user_unit_code  ==  $cost_center->user_unit_code ){
+//            $status = config('constants.trip_status.hod_approved_trip');
+            $status = config('constants.subsistence_status.hod_approved');
             $departmental = true;
-        } else {
+        }else{
             $status = config('constants.trip_status.accepted');
         }
+
+
 
         //raise the voucher
         $formModel = SubsistenceModel::firstOrCreate(
@@ -439,6 +456,7 @@ class SubsistenceController extends Controller
                 'claimant_staff_no' => $user->staff_no,
                 'station' => $request->station,
                 'section' => $user->department->name,
+                'claimant_unit_code' => $user->user_unit->user_unit_code,
 
                 'code' => $code,
                 'ref_no' => $request->ref_no,
@@ -453,6 +471,7 @@ class SubsistenceController extends Controller
                 'absc_allowance_per_night' => $request->absc_allowance_per_night,
 
                 'trex_total_attached_claim' => $request->trex_total_attached_claim,
+                'trex_deduct_advance_amount' => $request->trex_deduct_advance,
 
                 'allocation_code' => $request->allocation_code,
 
@@ -563,7 +582,8 @@ class SubsistenceController extends Controller
                     'reason' => $trip->user->name . " (" . $trip->user->staff_no . ") :  Hod approved raising this subsistence",
                     'action' => "Approved",
                     'current_status_id' => config('constants.trip_status.accepted'),
-                    'action_status_id' => config('constants.trip_status.hod_approved_trip'),
+//                    'action_status_id' => config('constants.trip_status.hod_approved_trip'),
+                    'action_status_id' => config('constants.subsistence_status.hod_approved'),
                     'config_eform_id' => config('constants.eforms_id.subsistence'),
                     'eform_id' => $formModel->id,
                     'created_by' => $user->id,
@@ -581,7 +601,8 @@ class SubsistenceController extends Controller
                     'reason' => $trip->user->name . " (" . $trip->user->staff_no . ") :  Hod approved raising this subsistence",
                     'action' => "Approved",
                     'current_status_id' => config('constants.trip_status.accepted'),
-                    'action_status_id' => config('constants.trip_status.hod_approved_trip'),
+//                    'action_status_id' => config('constants.trip_status.hod_approved_trip'),
+                    'action_status_id' => config('constants.subsistence_status.hod_approved'),
                     'config_eform_id' => config('constants.eforms_id.trip'),
                     'eform_id' => $trip->id,
                     'eform_code' => $trip->code,
@@ -661,6 +682,9 @@ class SubsistenceController extends Controller
 
     public function findMyNextPerson($next_status, $user_unit, $claimant)
     {
+
+
+
         $user_array = [];
         $not_claimant = true;
 
@@ -670,8 +694,13 @@ class SubsistenceController extends Controller
             $departmental = true;
         }
 
-        //FOR HOD
-        if ($next_status == config('constants.trip_status.trip_authorised')) {
+
+        //FOR SUBSITENCE RAISED   config('constants.trip_status.hod_approved_trip')
+        if ($next_status == config('constants.trip_status.accepted')) {
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
+            $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
+        } //FOR HOD
+        elseif ($next_status == config('constants.trip_status.trip_authorised')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
         } // HOD APPROVAL AGAIN
@@ -679,21 +708,44 @@ class SubsistenceController extends Controller
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
-        } //HOD APPROVAL - SAME
-        elseif ($next_status == config('constants.trip_status.hod_approved_trip')) {
-            if ($departmental) {
+        } //HOD APPROVAL 1
+        elseif ($next_status == config('constants.trip_status.hod_approved_trip')
+        )
+        {
+//            // - SAME
+//            if ($departmental) {
+//                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+//                $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
+//            }
+//            // - DIFF
+//            else {
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+                $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
+//            }
+        }  //HOD APPROVAL 2
+        elseif ( $next_status ==  config('constants.subsistence_status.hod_approved'))
+        {
+            // - SAME
+//            if ($departmental) {
                 $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
-            } else {
-                $user_array = [];
-            }
+//            }
+//            // - DIFF
+//            else {
+//                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+//                $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
+//            }
         } //HR APPROVAL - SAME
         elseif ($next_status == config('constants.trip_status.hr_approved_trip')) {
             if ($departmental) {
+
                 $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
+
             } else {
-                $user_array = [];
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
+                $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
+
             }
         } //HOD APPROVAL
         elseif ($next_status == config('constants.subsistence_status.hod_approved')) {
@@ -702,23 +754,34 @@ class SubsistenceController extends Controller
 
         } //HR APPROVAL
         elseif ($next_status == config('constants.subsistence_status.hr_approved')) {
+
+
             if ($claimant->grade->name == 'M1' || $claimant->grade->name == 'M2' || $claimant->grade->name == 'M3' || $claimant->grade->name == 'M4') {
+
+                dd('Senior management check line 745');
                 $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
             } else {
+
                 $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
             }
 
-        } // CHIEF ACCOUNTANT
-        elseif ($next_status == config('constants.subsistence_status.chief_accountant')) {
+        } // CHIEF ACCOUNTANT TO AUDIT
+        elseif (   ($next_status == config('constants.subsistence_status.chief_accountant'))
+                || ($next_status == config('constants.subsistence_status.audit_box'))
+                || ($next_status == config('constants.subsistence_status.await_audit'))
+        ) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
-        } // PRE AUDIT
-        elseif ($next_status == config('constants.subsistence_status.pre_audited')) {
+        } // VISIBLE TO EXPENDITURES
+        elseif ( ($next_status == config('constants.subsistence_status.pre_audited'))
+            || ($next_status == config('constants.subsistence_status.queried'))
+           )  {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
+
 
         } // FUNDS HAVE BEEN DISBURSED
         elseif ($next_status == config('constants.subsistence_status.funds_disbursement')) {
@@ -729,18 +792,16 @@ class SubsistenceController extends Controller
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
-        } //AWAITING AUDIT
-        elseif ($next_status == config('constants.subsistence_status.await_audit')) {
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
-            $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
-
-        } //SENIOR MANAGER APPROVAL
+        }
+        //SENIOR MANAGER APPROVAL
         elseif ($next_status == config('constants.subsistence_status.station_mgr_approved')) {
+
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } //CLOSE------------
         elseif ($next_status == config('constants.subsistence_status.closed')) {
+
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
@@ -800,6 +861,7 @@ class SubsistenceController extends Controller
     {
 
         $form = SubsistenceModel::findOrFail($id);
+
         $trip = Trip::findOrFail($form->trip_id);
         //
         $receipts = AttachedFileModel::where('form_id', $form->code)
@@ -814,11 +876,13 @@ class SubsistenceController extends Controller
         $accounts = AccountsChartModel::all();
         $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.subsistence'))
             ->orderBy('created_at', 'asc')->get();
+
         $user = User::find($form->created_by);
 
-        $user_array = [];
+        $user_array = []; //T3218
         if ($form->config_status_id == config('constants.subsistence_status.destination_approval')) {
             $dest_approvals = DestinationsApprovals::where('subsistence_id', $form->id)
+                ->whereNull('created_by')
                 ->get();
             $dest_approvals->load('user_unit');
 
@@ -827,21 +891,42 @@ class SubsistenceController extends Controller
                     $user_array = $user_array->merge( self::findMyNextPerson($form->config_status_id, $dest->user_unit , $user)  );
                 }else{
                     $user_array = self::findMyNextPerson($form->config_status_id, $dest->user_unit , $user) ;
+
                 }
             }
 
-        } else {
-            $user_array = self::findMyNextPerson($form->config_status_id, $user->user_unit, $user);
+        }
+        else {
+            $user_array = self::findMyNextPerson($form->config_status_id, $form->user_unit, $user);
         }
 
         //check if this belongs to the same department
         $departmental = false;
+        $departmental_hod  = false;
         if (($form->user_unit_code) == ($user->user_unit_code)) {
             $departmental = true;
         }
+        else{
+            if ( ($form->config_status_id == config('constants.trip_status.accepted'))
+            || ($form->config_status_id ==  config('constants.trip_status.hod_approved_trip')
+                || ($form->config_status_id == config('constants.trip_status.hr_approved_trip')))
+            ) {
+                $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+                $mine = $fdsf->pluck('user_unit_code')->toArray();
+                if (in_array($user->user_unit_code, $mine))
+                {
+                    $departmental_hod  = true;
+
+                }
+            }
+        }
+
+
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
+
+        $taxes = TaxModel::where('tax', 0 )->get();
 
         //data to send to the view
         $params = [
@@ -853,9 +938,11 @@ class SubsistenceController extends Controller
             'user' => Auth::user(),
             'projects' => $projects,
             'user_array' => $user_array,
+            'taxes' => $taxes,
             'approvals' => $approvals,
             'accounts' => $accounts,
             'trip' => $trip,
+            'departmental_hod' => $departmental_hod ,
             'departmental' => $departmental
         ];
         //return view
@@ -944,132 +1031,10 @@ class SubsistenceController extends Controller
     {
         //GET THE Subsistence MODEL
         $form = SubsistenceModel::find($request->id);
+        $form->load('user_unit.operating');
         $current_status = $form->status->id;
         $user = Auth::user();
-        $eform_pettycash = EFormModel::find(config('constants.eforms_id.subsistence'));
         $insert_reasons = false;
-
-
-        //HANDLE CANCELLATION
-        if ($request->approval == config('constants.approval.cancelled')) {
-
-            if ($current_status = config('constants.subsistence_status.new_application')) {
-                $total_to_subtract_from = config('constants.totals.petty_cash_new');
-            } else {
-                $total_to_subtract_from = config('constants.totals.petty_cash_open');
-            }
-
-            //update the totals rejected
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                ->where('id', config('constants.totals.petty_cash_reject'))
-                ->first();
-            $totals->value = $totals->value + 1;
-            $totals->save();
-            $eform_pettycash->total_rejected = $totals->value;
-            $eform_pettycash->save();
-
-            //update the totals open
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                ->where('id', $total_to_subtract_from)
-                ->first();
-            $totals->value = $totals->value - 1;
-            $totals->save();
-            $eform_pettycash->total_pending = $totals->value;
-            $eform_pettycash->save();
-
-        }
-
-        //HANDLE REJECTION
-        if ($request->approval == config('constants.approval.reject')) {
-
-            //update the totals rejected
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                ->where('id', config('constants.totals.subsistence_reject'))
-                ->first();
-            $totals->value = $totals->value + 1;
-            $totals->save();
-            $eform_pettycash->total_rejected = $totals->value;
-            $eform_pettycash->save();
-
-            //update the totals open
-            $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                ->where('id', config('constants.totals.subsistence_open'))
-                ->first();
-            $totals->value = $totals->value - 1;
-            $totals->save();
-            $eform_pettycash->total_pending = $totals->value;
-            $eform_pettycash->save();
-
-        }
-
-
-        //HANDLE APPROVAL
-        if ($request->approval == config('constants.approval.approve')) {
-            if ($form->status->id == config('constants.subsistence_status.security_approved')) {
-
-                //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.subsistence_closed'))
-                    ->first();
-                $totals->value = $totals->value + 1;
-                $totals->save();
-                $eform_pettycash->total_closed = $totals->value;
-                $eform_pettycash->save();
-
-                //update the totals open
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.subsistence_open'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_pending = $totals->value;
-                $eform_pettycash->save();
-
-            } else if ($form->status->id == config('constants.subsistence_status.new_application')) {
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.subsistence_open'))
-                    ->first();
-                $totals->value = $totals->value + 1;
-                $totals->save();
-                $eform_pettycash->total_pending = $totals->value;
-                $eform_pettycash->save();
-
-                //update the totals new
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.subsistence_new'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_new = $totals->value;
-                $eform_pettycash->save();
-            } else if ($form->status->id == config('constants.subsistence_status.closed')) {
-                //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.subsistence_closed'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_closed = $totals->value;
-                $eform_pettycash->save();
-            }
-        }
-
-
-        //HANDLE AUDIT QUERY
-        if ($request->approval == config('constants.approval.queried')) {
-            if ($form->status->id == config('constants.subsistence_status.closed')) {
-                //update the totals closed
-                $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-                    ->where('id', config('constants.totals.subsistence_closed'))
-                    ->first();
-                $totals->value = $totals->value - 1;
-                $totals->save();
-                $eform_pettycash->total_closed = $totals->value;
-                $eform_pettycash->save();
-            }
-        }
-
-
 
 
         //check if this belongs to the same department
@@ -1086,7 +1051,8 @@ class SubsistenceController extends Controller
         //FOR HR
         if (
             $user->profile_id == config('constants.user_profiles.EZESCO_009')
-            && $current_status == config('constants.trip_status.hod_approved_trip')
+            && $current_status ==   config('constants.subsistence_status.hod_approved')
+//            && $current_status == config('constants.trip_status.hod_approved_trip')
         ) {
             $insert_reasons = true;
             //cancel status
@@ -1094,12 +1060,14 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.trip_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.trip_status.trip_rejected');
+                $new_status = config('constants.subsistence_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.trip_status.hr_approved_trip');
+//                $new_status = config('constants.trip_status.hr_approved_trip');
+                $new_status = config('constants.subsistence_status.hr_approved');
             } else {
-                $new_status = config('constants.trip_status.hod_approved_trip');
+//                $new_status = config('constants.trip_status.hod_approved_trip');
+                $new_status =  config('constants.subsistence_status.hod_approved') ;
                 $insert_reasons = false;
             }
             //update
@@ -1124,7 +1092,8 @@ class SubsistenceController extends Controller
         //FOR AUTHORIZER
         elseif (
             $user->profile_id == config('constants.user_profiles.EZESCO_015')
-            && $current_status == config('constants.trip_status.hr_approved_trip')
+            && $current_status == config('constants.subsistence_status.hr_approved')
+//            && $current_status == config('constants.trip_status.hr_approved_trip')
         ) {
             $insert_reasons = true;
             //cancel status
@@ -1132,12 +1101,13 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.trip_status.cancelled');
             } //reject status
             elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.trip_status.trip_rejected');
+                $new_status = config('constants.subsistence_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
                 $new_status = config('constants.subsistence_status.station_mgr_approved');
             } else {
-                $new_status = config('constants.trip_status.hr_approved_trip');
+//                $new_status = config('constants.trip_status.hr_approved_trip');
+                $new_status =  config('constants.subsistence_status.hr_approved');
                 $insert_reasons = false;
             }
             //update
@@ -1440,97 +1410,283 @@ class SubsistenceController extends Controller
                 $des = $des . " " . $request->account_items[$i] . ",";
                 $des = "Subsistence Claim Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
 
+                $apply_tax  = TaxModel::find($request->tax[$i] );
+                $vat_rate  = $apply_tax->tax ;
 
-                //  dd($form);
-                //[1] CREDITED ACCOUNT
-                //[1A] - money
-                $formAccountModel = SubsistenceAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => $request->credited_amount[$i],
-                        'account' => $request->credited_account[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => 0,
-                        'eform_subsistence_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => '0',
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.subsistence_status.not_exported')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => $request->credited_amount[$i],
-                        'account' => $request->credited_account[$i],
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => 0,
+                if($apply_tax->tax  < 1 ){
 
-                        'eform_subsistence_id' => $form->id,
-                        'subsistence_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
+                    //[1] CREDITED ACCOUNT
+                    //[1A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+                            'creditted_amount' => $request->credited_amount[$i],
+                            'account' => $request->credited_account[$i],
+                            'debitted_account_id' => $request->debited_account[$i],
+//                            'debitted_amount' => 0,
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+                            'creditted_amount' => $request->credited_amount[$i],
+                            'account' => $request->credited_account[$i],
+                            'debitted_account_id' => $request->debited_account[$i],
+//                            'debitted_amount' => 0,
 
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => '0',
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.subsistence_status.not_exported')
-                    ]
-                );
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
 
-                //[2] DEBITED ACCOUNT
-                //[2A] - money
-                $formAccountModel = SubsistenceAccountModel::updateOrCreate(
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => 0,
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => $request->debited_amount[$i],
-                        'account' => $request->debited_account[$i],
-                        'eform_subsistence_id' => $form->id,
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => '0',
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'status_id' => config('constants.subsistence_status.not_exported')
-                    ],
-                    [
-                        'creditted_account_id' => $request->credited_account[$i],
-                        'creditted_amount' => 0,
-                        'debitted_account_id' => $request->debited_account[$i],
-                        'debitted_amount' => $request->debited_amount[$i],
-                        'account' => $request->debited_account[$i],
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'account_type' => config('constants.account_type.operating'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $des,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
 
-                        'eform_subsistence_id' => $form->id,
-                        'subsistence_code' => $form->code,
-                        'cost_center' => $form->cost_center,
-                        'business_unit_code' => $form->business_unit_code,
-                        'user_unit_code' => $form->user_unit_code,
-                        'claimant_name' => $form->claimant_name,
-                        'claimant_staff_no' => $form->claimant_staff_no,
-                        'claim_date' => $form->claim_date,
+                    //[2] DEBITED ACCOUNT
+                    //[2A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+////                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account[$i],
+                            'debitted_amount' => $request->debited_amount[$i],
+                            'account' => $request->debited_account[$i],
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+////                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account[$i],
+                            'debitted_amount' => $request->debited_amount[$i],
+                            'account' => $request->debited_account[$i],
 
-                        'created_by' => $user->id,
-                        'company' => '01',
-                        'intra_company' => '01',
-                        'project' => '0',
-                        'pems_project' => 'N',
-                        'spare' => '0000',
-                        'description' => $des,
-                        'status_id' => config('constants.subsistence_status.not_exported')
-                    ]
-                );
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'account_type' => config('constants.account_type.expense'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $des,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+                }
+                else{
+                    //calculation
+                    $total_percent  = 100 + $apply_tax->tax ;
+                    $tax_amount = ($request->credited_amount[$i]  * $apply_tax->tax  ) / $total_percent ;
+                    $without_tax = ($request->credited_amount[$i])  - $tax_amount ;
+
+
+                    //[1] CREDITED ACCOUNT
+                    //[1A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+                            'creditted_amount' => $request->credited_amount[$i],
+                            'account' => $request->credited_account[$i],
+                            'debitted_account_id' => $request->debited_account[$i],
+//                            'debitted_amount' => 0,
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => 0,
+//                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+                            'creditted_amount' => $request->credited_amount[$i],
+                            'account' => $request->credited_account[$i],
+                            'debitted_account_id' => $request->debited_account[$i],
+//                            'debitted_amount' => 0,
+
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => 0,
+//                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'account_type' => config('constants.account_type.operating'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $des,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+
+                    //[2] DEBITED ACCOUNT
+                    //[2A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account[$i],
+                            'debitted_amount' => $without_tax,
+                            'account' => $request->debited_account[$i],
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account[$i],
+                            'debitted_amount' => $without_tax,
+                            'account' => $request->debited_account[$i],
+                            'account_type' => config('constants.account_type.expense'),
+
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $des,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+
+                    //[2] TAX AMOUNT ACCOUNT 1
+                    //[2A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account[$i],
+                            'debitted_amount' => $tax_amount,
+                            'account' => $request->debited_account[$i],
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => 0,
+//                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.tax'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account[$i],
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account[$i],
+                            'debitted_amount' => $tax_amount,
+                            'account' => $request->debited_account[$i],
+                            'account_type' => config('constants.account_type.expense'),
+
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $apply_tax->cost_center,
+                            'business_unit_code' => $apply_tax->business_unit,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => 0,
+//                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.tax'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $apply_tax->name,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+                }
+
             }
 
         }
@@ -1558,7 +1714,7 @@ class SubsistenceController extends Controller
 
             /** upload attached files */
             //upload the receipt files
-            $files = $request->file('confirmation');
+           $files = $request->file('confirmation');
             if ($request->hasFile('confirmation')) {
                 foreach ($files as $file) {
                     $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
@@ -1619,9 +1775,12 @@ class SubsistenceController extends Controller
         }
 
         //DESTINATION APPROVAL
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')
-            && $current_status == config('constants.subsistence_status.destination_approval')
+        elseif (
+            Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')
+            &&
+            $current_status == config('constants.subsistence_status.destination_approval')
         ) {
+
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
@@ -1636,6 +1795,8 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.subsistence_status.destination_approval');
                 $insert_reasons = false;
             }
+
+          //  $new_status = config('constants.subsistence_status.await_audit');
             //update
             $form->config_status_id = $new_status;
             $form->profile = Auth::user()->profile_id;
@@ -1651,7 +1812,7 @@ class SubsistenceController extends Controller
 
         }
 
-        //FOR AUDITING OFFICE
+        //FOR POST AUDIT OFFICE
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.subsistence_status.await_audit')
         ) {
@@ -1672,6 +1833,9 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.subsistence_status.await_audit');
                 $insert_reasons = false;
             }
+
+           //  dd($new_status);
+
             //update
             $form->config_status_id = $new_status;
             $form->audit_name = $user->name;
@@ -1680,6 +1844,16 @@ class SubsistenceController extends Controller
             $form->profile = Auth::user()->profile_id;
             $form->save();
 
+            // update the accounts to be now ready for upload to fms
+            $ready_for_export = config('constants.not_exported') ;
+            $form->load('accounts');
+            $accounts = $form->accounts ;
+            foreach ($accounts as $account){
+                $account->status_id  = $ready_for_export;
+                $account->save();
+            }
+
+
             //change invitation status
             $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
                 ->where('trip_id', $form->trip_id)
@@ -1687,6 +1861,372 @@ class SubsistenceController extends Controller
             $list_inv->status_id = $new_status ;
             $list_inv->save();
         }
+
+
+        //EXPENDITURE WORK ON QUERY
+        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
+            && $current_status == config('constants.subsistence_status.queried')
+        ) {
+            if ($request->change > 0) {
+                if($request->account_item == "" ||$request->credited_account == "" ||$request->credited_amount == "" ||$request->debited_account == ""  ){
+                    return Redirect::route('subsistence.home')->with('error', 'Subsistence ' . $form->code . ' did not successfully complete because some of the Accounts Values were empty');
+                }
+            }
+           // dd($request->all() );
+            //cancel status
+            $insert_reasons = true;
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.subsistence_status.cancelled');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.subsistence_status.rejected');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.resolve')) {
+                $new_status = config('constants.subsistence_status.await_audit');
+            } else {
+                $new_status = config('constants.subsistence_status.queried');
+                $insert_reasons = false;
+            }
+
+            //update
+            $form->config_status_id = $new_status;
+            $form->profile = Auth::user()->profile_id;
+            $form->save();
+
+
+
+
+            //create records for the accounts associated with this Subsistence transaction
+            //If there was change
+            if ($request->change > 0) {
+                $des = "";
+                $des = $des . " " . $request->account_item . ",";
+                $des = "Subsistence Claim Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', ' . $des . ' Amount: ' . $request->credited_amount . '.';
+
+                $apply_tax  = TaxModel::find($request->tax );
+                $vat_rate  = $apply_tax->tax ;
+
+                if($apply_tax->tax  < 1 ){
+
+                    //[1] CREDITED ACCOUNT
+                    //[1A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account,
+                            'creditted_amount' => $request->credited_amount,
+                            'account' => $request->credited_account,
+                            'debitted_account_id' => $request->debited_account,
+//                            'debitted_amount' => 0,
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account,
+                            'creditted_amount' => $request->credited_amount,
+                            'account' => $request->credited_account,
+                            'debitted_account_id' => $request->debited_account,
+//                            'debitted_amount' => 0,
+
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'account_type' => config('constants.account_type.operating'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $des,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+
+                    //[2] DEBITED ACCOUNT
+                    //[2A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account,
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account,
+                            'debitted_amount' => $request->debited_amount,
+                            'account' => $request->debited_account,
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account,
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account,
+                            'debitted_amount' => $request->debited_amount,
+                            'account' => $request->debited_account,
+
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'account_type' => config('constants.account_type.expense'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $des,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+                }else{
+                    //calculation
+                    $total_percent  = 100 + $apply_tax->tax ;
+                    $tax_amount = ($request->credited_amount  * $apply_tax->tax  ) / $total_percent ;
+                    $without_tax = ($request->credited_amount)  - $tax_amount ;
+
+
+                    //[1] CREDITED ACCOUNT
+                    //[1A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account,
+                            'creditted_amount' => $request->credited_amount,
+                            'account' => $request->credited_account,
+                            'debitted_account_id' => $request->debited_account,
+//                            'debitted_amount' => 0,
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+//                            'vat_rate' => $vat_rate,
+                            'vat_rate' => 0,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account,
+                            'creditted_amount' => $request->credited_amount,
+                            'account' => $request->credited_account,
+                            'debitted_account_id' => $request->debited_account,
+//                            'debitted_amount' => 0,
+
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+//                            'vat_rate' => $vat_rate,
+                            'vat_rate' => 0,
+                            'line_type' => config('constants.line_type.goods'),
+                            'account_type' => config('constants.account_type.operating'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $des,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+
+                    //[2] DEBITED ACCOUNT
+                    //[2A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account,
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account,
+                            'debitted_amount' => $without_tax,
+                            'account' => $request->debited_account,
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.subsistence_status.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account,
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account,
+                            'debitted_amount' => $without_tax,
+                            'account' => $request->debited_account,
+
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $form->cost_center,
+                            'business_unit_code' => $form->business_unit_code,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.goods'),
+                            'account_type' => config('constants.account_type.expense'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $des,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+
+                    //[2] TAX AMOUNT ACCOUNT 2
+                    //[2A] - money
+                    $formAccountModel = SubsistenceAccountModel::updateOrCreate(
+                        [
+                            'creditted_account_id' => $request->credited_account,
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account,
+                            'debitted_amount' => $tax_amount,
+                            'account' => $request->debited_account,
+                            'eform_subsistence_id' => $form->id,
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => 0,
+//                            'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.tax'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'status_id' => config('constants.export_not_ready')
+                        ],
+                        [
+                            'creditted_account_id' => $request->credited_account,
+//                            'creditted_amount' => 0,
+                            'debitted_account_id' => $request->debited_account,
+                            'debitted_amount' => $tax_amount,
+                            'account' => $request->debited_account,
+
+                            'eform_subsistence_id' => $form->id,
+                            'subsistence_code' => $form->code,
+                            'cost_center' => $apply_tax->cost_center,
+                            'business_unit_code' => $apply_tax->business_unit,
+                            'user_unit_code' => $form->user_unit_code,
+                            'claimant_name' => $form->claimant_name,
+                            'claimant_staff_no' => $form->claimant_staff_no,
+                            'claim_date' => $form->claim_date,
+
+                            'created_by' => $user->id,
+                            'company' => '01',
+                            'intra_company' => '01',
+                            'project' => '0',
+                            'pems_project' => 'N',
+                            'spare' => '0000',
+                            'vat_rate' => 0,
+//                           'vat_rate' => $vat_rate,
+                            'line_type' => config('constants.line_type.tax'),
+                            'account_type' => config('constants.account_type.expense'),
+                            'org_id' => $form->user_unit->operating->org_id ,
+                            'description' => $apply_tax->name,
+                            'status_id' => config('constants.export_not_ready')
+                        ]
+                    );
+                }
+
+            }
+
+
+            /** upload attached files */
+            //upload the receipt files
+            $files = $request->file('receipt');
+            if ($request->hasFile('receipt')) {
+                foreach ($files as $file) {
+                    $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
+                    // Get just filename
+                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                    //get size
+                    $size = number_format($file->getSize() * 0.000001, 2);
+                    // Get just ext
+                    $extension = $file->getClientOriginalExtension();
+                    // Filename to store
+                    $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
+                    // Upload File
+                    $path = $file->storeAs('public/subsistence_files', $fileNameToStore);
+
+                    //upload the receipt
+                    $file = AttachedFileModel::updateOrCreate(
+                        [
+                            'name' => $fileNameToStore,
+                            'location' => $path,
+                            'extension' => $extension,
+                            'file_size' => $size,
+                            'form_id' => $form->code,
+                            'form_type' => config('constants.eforms_id.subsistence'),
+                            'file_type' => config('constants.file_type.subsistence')
+                        ],
+                        [
+                            'name' => $fileNameToStore,
+                            'location' => $path,
+                            'extension' => $extension,
+                            'file_size' => $size,
+                            'form_id' => $form->code,
+                            'form_type' => config('constants.eforms_id.subsistence'),
+                            'file_type' => config('constants.file_type.subsistence')
+                        ]
+                    );
+                }
+            }
+
+
+        }
+
+
 
         //FOR NO-ONE
         else {
@@ -1803,7 +2343,6 @@ class SubsistenceController extends Controller
 
         //  dd($user_array);
         $to[] = ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'];
-//        $to[] = ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapuka Sikazwe'];
         $to[] = ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'];
         //prepare details
         $details = [

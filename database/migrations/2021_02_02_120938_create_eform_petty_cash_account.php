@@ -23,9 +23,14 @@ class CreateEformPettyCashAccount extends Migration
             $table->integer('eform_petty_cash_id')->nullable();
 
             $table->string('petty_cash_code')->nullable();
+            $table->string('vat_rate')->nullable();
+            $table->string('line_type')->nullable();
+            $table->string('account_type')->nullable();
 
             $table->integer('status_id')->nullable();
             $table->string('account')->nullable();
+            $table->string('org_id')->nullable();
+
             $table->string('company')->nullable();
             $table->string('intra_company')->nullable();
             $table->string('project')->nullable();

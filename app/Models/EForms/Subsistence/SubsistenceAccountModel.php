@@ -33,15 +33,19 @@ class SubsistenceAccountModel extends Model
         'cost_center' ,
         'business_unit_code' ,
         'user_unit_code' ,
+        'vat_rate' ,
+        'account_type',
 
         'status_id',
         'account',
+        'org_id',
         'company',
         'intra_company',
         'project',
         'pems_project',
         'spare',
         'description',
+        'line_type',
 
         'claimant_staff_no',
         'claimant_name',
@@ -59,6 +63,13 @@ class SubsistenceAccountModel extends Model
     {
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
+
+
+    public function form()
+    {
+        return $this->belongsTo(SubsistenceModel::class, 'eform_subsistence_id', 'id');
+    }
+
 
     protected static function booted()
     {

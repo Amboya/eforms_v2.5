@@ -8,6 +8,7 @@ use App\Mail\SendMail;
 use App\Models\EForms\PettyCash\PettyCashAccountModel;
 use App\Models\EForms\Subsistence\SubsistenceModel;
 use App\Models\EForms\Trip\Destinations;
+use App\Models\EForms\Trip\DestinationsApprovals;
 use App\Models\EForms\Trip\Invitation;
 use App\Models\EForms\Trip\Trip;
 use App\Models\Main\AttachedFileModel;
@@ -529,7 +530,8 @@ class TripController extends Controller
             //find the Trip with that id
             $form = Trip::find($id);
         }
-        $form->load('members', 'members.user', 'members.destinations');
+        $form->load('members', 'members.user', 'members.destinations', 'user_unit');
+
 
         $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.trip'))->get();
 
@@ -548,11 +550,15 @@ class TripController extends Controller
         $pending = SubsistenceModel::where('absc_absent_to', '>=', $form->date_from)
             ->where('absc_absent_from', '<=', $form->date_from)
             ->where('claimant_staff_no', $user->staff_no)
+            ->where('config_status_id', config('constants.subsistence_status.reject') )
+            ->orWhere('config_status_id', config('constants.subsistence_status.destination_approval') )
             ->count();
         //[1B] check pending forms for me before i apply again
         $pendingb = SubsistenceModel::where('trip_id', $form->id)
             ->where('claimant_staff_no', $user->staff_no)
             ->count();
+
+     //   dd($pending);
 
         $pending = $pending + $pendingb;
 
@@ -715,6 +721,7 @@ class TripController extends Controller
 
     public function membershipApprove(Request $request, Trip $trip)
     {
+
         $id = $request->membership;
         $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} ");
         $subsistence = SubsistenceModel::hydrate($list)->first();
@@ -732,6 +739,8 @@ class TripController extends Controller
             $user->profile_id == config('constants.user_profiles.EZESCO_004')
             && $current_status == config('constants.trip_status.accepted')
         ) {
+
+
 
             $insert_reasons = true;
             //cancel status
@@ -786,7 +795,9 @@ class TripController extends Controller
 //            $membership->hrm_staff_no = $user->staff_no;
 //            $membership->hrm_date = $request->sig_date;
             $subsistence->save();
-        } //FOR AUTHORIZER
+        }
+
+        //FOR AUTHORIZER
         elseif (
             $user->profile_id == config('constants.user_profiles.EZESCO_015')
             && $current_status == config('constants.trip_status.hr_approved_trip')
@@ -813,19 +824,30 @@ class TripController extends Controller
             $subsistence->config_status_id = $new_status;
             $subsistence->save();
 
-        } //FOR AUTHORIZER
+        }
+
+
+
+        //FOR AUTHORIZER
         elseif (
             $user->profile_id == config('constants.user_profiles.EZESCO_004')
             && $current_status == config('constants.subsistence_status.destination_approval')
         ) {
-
             //find which unit am approving on this subsistence destination approvals
             //my user units
             $my_units = \App\Http\Controllers\Main\HomeController::getUserResponsibleUnits($user)->pluck('user_unit_code')->toArray();
+
             //check for the one in destination approvals
             $subsistence->load('destinations');
             $destinations_approvals = $subsistence->destinations;
+
+            //the ones am supposed to work on
             $approvals_lists = $destinations_approvals->whereIn('user_unit_code', $my_units);
+
+            //if there are no units to work on for you
+            if(sizeof($approvals_lists) < 1){
+                return Redirect::route('subsistence.home')->with('error', 'User-Unit not properly aligned');
+            }
 
             //loop through and approve them
             foreach ($approvals_lists as $approvals_list) {
@@ -850,13 +872,11 @@ class TripController extends Controller
                 $profile = config('constants.owner');
             }
 
-            //update
+            //check for the remaining un confirmed destinations
             $count_dest_approvals = $destinations_approvals->whereNull("created_by");
-
 
             //choose to update the
             if (($count_dest_approvals->count()) == 0) {
-
 
                 //highest date
                 $highest_from_date = $approvals_lists->sortByDesc('date_from')->first();
@@ -866,8 +886,8 @@ class TripController extends Controller
 //                dd($highest_from_date->date_from);
                 $new_status = config('constants.subsistence_status.await_audit');
                 $subsistence->config_status_id = $new_status;
-                $subsistence->date_left = $highest_from_date->date_from ;
-                $subsistence->date_arrived = $highest_to_date->date_to ;
+                $subsistence->date_left = date("dd-mm-yyyy", strtotime($highest_from_date->date_from));
+                $subsistence->date_arrived = date(" dd-mm-yyyy", strtotime($highest_to_date->date_to));
                 //replace with the latest
                 $subsistence->closed_by_name = $user->name;
                 $subsistence->closed_by_staff_no = $user->staff_no;

@@ -73,12 +73,13 @@ Route::group([
 Route::group([
     'prefix' => 'finance'
 ], function () {
+    Route::get('ready', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'ready'])->name('petty.cash.finance.ready');
     Route::get('index', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'index'])->name('petty.cash.finance.index');
-    Route::get('send', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'send'])->name('petty.cash.finance.send');
-//            Route::get('sync/directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncDirectorates'])->name('petty.cash.reports.sync.directorates');
+    Route::post('send', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'send'])->name('petty.cash.finance.send');
+    Route::get('header', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'header'])->name('petty.cash.finance.header');
+    Route::get('details/{item}', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'details'])->name('petty.cash.finance.details');
 //            Route::get('sync/user/units', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncUserUnits'])->name('petty.cash.reports.sync.units');
 });
-
 
 
 
@@ -90,6 +91,8 @@ Route::group([
     Route::post('units', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'unitsSearch'])->name('petty.cash.invoices.units.search');
     Route::get('directorates/{status}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'directorates'])->name('petty.cash.invoices.directorates');
     Route::post('directorates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'directoratesSearch'])->name('petty.cash.invoices.directorates.search');
+    Route::get('divisions/{status}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'divisions'])->name('petty.cash.invoices.divisions');
+    Route::post('divisions', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'divisionsSearch'])->name('petty.cash.invoices.divisions.search');
     Route::get('duplicates/{status}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'duplicates'])->name('petty.cash.invoices.duplicates');
     Route::post('duplicates', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'duplicatesSearch'])->name('petty.cash.invoices.duplicates.search');
     Route::get('business/units/{status}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'businessUnits'])->name('petty.cash.invoices.business.units');

@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models\EForms\Subsistence;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Recoveries extends Model
+{
+    use HasFactory;
+
+    //table name
+    protected $table = 'eform_subsistence_recoveries';
+    //primary key
+    protected $primaryKey = 'id';
+
+    //fields fillable
+    protected $fillable = [
+            'eform_subsistence_id',
+            'eform_subsistence_code',
+            'actual_day',
+            'days_to',
+            'per_night',
+            'amount',
+            'recovered',
+            'status_id'
+    ];
+
+
+}

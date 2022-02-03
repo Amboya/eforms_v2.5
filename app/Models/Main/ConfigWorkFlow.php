@@ -25,6 +25,8 @@ class ConfigWorkFlow extends Model
         'user_unit_cc_code',
         'user_unit_status',
 
+        'org_id',
+
         'dr_code',
         'dr_unit',
 
@@ -86,4 +88,9 @@ class ConfigWorkFlow extends Model
         return $this->hasMany(User::class,
             'user_unit_code', 'user_unit_code');
     }
+
+    public  function  operating(){
+        return $this->belongsTo(OperatingUnits::class, 'user_unit_bc_code', 'bu_code');
+    }
+
 }

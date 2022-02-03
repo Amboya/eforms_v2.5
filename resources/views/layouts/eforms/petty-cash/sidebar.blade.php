@@ -202,10 +202,10 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{route('petty.cash.finance.index')}}"
+                                <a href="{{route('petty.cash.finance.ready')}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p> Invoice Header
+                                    <p> Ready for upload
                                     </p>
                                 </a>
                             </li>
@@ -213,7 +213,15 @@
                                 <a href="{{route('petty.cash.finance.index')}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p> Invoice Details
+                                    <p> Invoice Uploaded
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('petty.cash.finance.header')}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Invoice Header
                                     </p>
                                 </a>
                             </li>
@@ -257,6 +265,14 @@
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p> Directorates
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('petty.cash.invoices.divisions',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Divisions
                                     </p>
                                 </a>
                             </li>

@@ -76,9 +76,9 @@
                         @foreach($delegation as $key => $item)
                             <tr>
                                 <td>{{$item->id}}</td>
-                                <td>{{$item->form->name}} </td>
-                                <td>{{$item->me->name}} </td>
-                                <td>{{$item->delegation->name}} </td>
+                                <td>{{$item->form->name ?? ""}} </td>
+                                <td>{{$item->me->name ?? ""}} </td>
+                                <td>{{$item->delegation->name ?? ""}} </td>
                                 <td>{{$item->user_unit->user_unit_code ?? ""}}: {{$item->user_unit->user_unit_description ?? ""}}  </td>
                                 <td>{{$item->delegated_job_code}}</td>
                                 <td>{{$item->profile->name}} </td>

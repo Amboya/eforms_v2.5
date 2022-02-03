@@ -4,13 +4,10 @@ namespace App\Http\Controllers\EForms\Subsistence;
 
 use App\Http\Controllers\Controller;
 use App\Models\EForms\Subsistence\SubsistenceModel;
-use App\Models\EForms\Trip\Destinations;
 use App\Models\EForms\Trip\Invitation;
-use App\Models\Main\ProfileAssigmentModel;
-use App\Models\Main\ProfileDelegatedModel;
-use App\Models\User;
+use Carbon;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -29,29 +26,47 @@ class HomeController extends Controller
 
     }
 
+    public static function needsMeCount()
+    {
+        $list = self::needsMeList();
+        return $list->count();
+    }
 
     /**
      * Show the main application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
     public function index()
     {
+
+        //list all that needs me
+        $get_profile = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
 
         //count new forms
         $new_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
             ->count();
         //count pending forms
         $pending_forms = SubsistenceModel::
-        where('config_status_id', '!=', config('constants.subsistence_status.new_application'))
-            ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.closed'))
-            ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.void'))
-            ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.cancelled'))
-            ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.queried'))
-            ->orWhere('config_status_id',  '!=', config('constants.subsistence_status.rejected'))
-            ->count();
+        where('config_status_id', '=', config('constants.subsistence_status.hod_approved'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.station_mgr_approved'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.hr_approved'))
+            ->orWhere('config_status_id',  '=', config('constants.trip_status.hr_approved'))
+            ->orWhere('config_status_id', config('constants.trip_status.trip_authorised'))
+            ->orWhere('config_status_id',  '=', config('constants.trip_status.hr_approved_trip'))
+            ->orWhere('config_status_id',  '=', config('constants.trip_status.hod_approved_trip'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.chief_accountant'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.await_audit'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_disbursement'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_acknowledgement'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.destination_approval'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.pre_audited'))
+            ;
+
+
         //count closed forms
-        $closed_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
+        $closed_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed')
+        ) ->orWhere('config_status_id',  '=', config('constants.subsistence_status.audit_approved'))
             ->count();
         //count rejected forms
         $rejected_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.rejected'))
@@ -63,8 +78,6 @@ class HomeController extends Controller
         $totals['closed_forms'] = $closed_forms;
         $totals['rejected_forms'] = $rejected_forms;
 
-        //list all that needs me
-        //   $get_profile = self::getMyProfile();
 
         //list all that needs me
         $list = self::needsMeList();
@@ -86,31 +99,25 @@ class HomeController extends Controller
         return view('eforms.subsistence.dashboard')->with($params);
     }
 
-
-    public static function needsMeCount(){
-        $list = self::needsMeList();
-        return $list->count() ;
-    }
-
-
     public static function needsMeList()
     {
         //get the my list
-        $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-        $my_units = $fdsf->pluck('user_unit_code')->toArray();
+//        $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+//        $my_units = $fdsf->pluck('user_unit_code')->toArray();
+
 
         $user = Auth::user();
 
         $list_inv = Invitation::select('subsistence_id')
             ->where('man_no', $user->staff_no)
-            ->where('status_id', config('constants.trip_status.accepted') )
+            ->where('status_id', config('constants.trip_status.accepted'))
             ->get();
-        $list_inv = $list_inv->pluck('subsistence_id')->toArray() ;
+        $list_inv = $list_inv->pluck('subsistence_id')->toArray();
 
 
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
-            $list = SubsistenceModel::whereDate('updated_at', \Carbon::today())
+            $list = SubsistenceModel::whereDate('updated_at', Carbon::today())
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
             dd(1);
@@ -123,12 +130,14 @@ class HomeController extends Controller
 //                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
-            //   dd(2) ;hod_approved_trip
+//               dd(2) ;  //hod_approved_trip
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
 
             $list = SubsistenceModel::where('config_status_id', config('constants.trip_status.accepted'))
+                ->orWhere('config_status_id', config('constants.subsistence_status.funds_disbursement'))
                 ->orWhere('config_status_id', config('constants.subsistence_status.destination_approval'))
+                ->orWhere('config_status_id', config('constants.trip_status.trip_authorised'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
 
@@ -140,6 +149,9 @@ class HomeController extends Controller
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
 
+
+
+
         } //for the SNR MANAGER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hr_approved'))
@@ -147,14 +159,14 @@ class HomeController extends Controller
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
 
+
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.station_mgr_approved'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
             //  dd(5) ;
-        }
-        //for the EXPENDITURE OFFICE
+        } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.pre_audited'))
                 ->orWhere('config_status_id', config('constants.subsistence_status.queried'))
@@ -168,12 +180,13 @@ class HomeController extends Controller
                 ->orderBy('code')->paginate(50);
         }//for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.chief_accountant'))
-                ->where('config_status_id', config('constants.subsistence_status.chief_accountant'))
+            //Borrowed authority is very dangerous - snr mgr frank
+            $list = SubsistenceModel::
+            where('config_status_id', config('constants.subsistence_status.chief_accountant'))
+            ->orWhere('config_status_id', config('constants.subsistence_status.await_audit'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
-        }
-        else {
+        } else {
             $list = SubsistenceModel::where('config_status_id', 0)
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
@@ -190,9 +203,9 @@ class HomeController extends Controller
         //
         $list_inv = Invitation::select('subsistence_id')
             ->where('man_no', $user->staff_no)
-            ->where('status_id', config('constants.trip_status.pending') )
+            ->where('status_id', config('constants.trip_status.pending'))
             ->get();
-        $list_inv = $list_inv->pluck('subsistence_id')->toArray() ;
+        $list_inv = $list_inv->pluck('subsistence_id')->toArray();
 
         //for the REQUESTER
         if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {

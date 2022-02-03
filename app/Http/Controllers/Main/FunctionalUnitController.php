@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\main;
+namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FunctionalUnitRequest;
-use App\Models\main\FunctionalUnitModel;
+use App\Models\Main\FunctionalUnitModel;
 use App\Models\Main\UserUnitModel;
 use App\Models\PhrisUserDetailsModel;
 use Illuminate\Http\Request;

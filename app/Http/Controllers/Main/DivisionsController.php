@@ -160,7 +160,7 @@ class DivisionsController extends Controller
         $phirs_models = PhrisUserDetailsModel::select('directorate','pay_point')->groupBy('directorate','pay_point')->get();
 
 
-        dd($phirs_models);
+      //  dd($phirs_models);
 
 
         foreach ($phirs_models as $key => $item) {
@@ -178,23 +178,25 @@ class DivisionsController extends Controller
 
             //get the direcotrate id
             $directorate = DirectoratesModel::where('name', $item->directorate)->first();
-          //  dd($directorate);
 
-            //create the grade
-            $model = DivisionsModel::firstOrCreate(
-                [
-                    'name' => $item->pay_point,
-                    'code' => $acronym ."-".$directorate->code,
-                    'directorate_id'=>  $directorate->id,
-                ],
-                [
-                    'name' => $item->pay_point,
-                    'code' => $acronym ."-".$directorate->code,
-                    'directorate_id'=>  $directorate->id,
-                    'created_by' =>  $id ,
-                ]
+            if( $item->pay_point != null && ($directorate->code ?? null ) != null ){
+                //create the grade
+                $model = DivisionsModel::firstOrCreate(
+                    [
+                        'name' => $item->pay_point ?? 'None',
+                        'code' => $acronym ."-".$directorate->code ?? 'None',
+                        'directorate_id'=>  $directorate->id,
+                    ],
+                    [
+                        'name' => $item->pay_point ?? 'None',
+                        'code' => $acronym ."-".$directorate->code ?? 'None',
+                        'directorate_id'=>  $directorate->id,
+                        'created_by' =>  $id ,
+                    ]
 
-            );
+                );
+            }
+
         }
         //return back
         return Redirect::back()->with('message', 'Pay Point have been Synced successfully');

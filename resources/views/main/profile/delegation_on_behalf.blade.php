@@ -183,6 +183,8 @@
 
                 $.each(profile, function (index, value1) {
                     if (value1.user_id == selected_value1) {
+
+                       console.log(value1.user_profile);
                         responce += "<option data-profile_id=" + value1.id + " value=" + value1.profiles.id + "    > " + value1.profiles.name + " : " + value1.form.name + "  </option> ";
                     }
                 });

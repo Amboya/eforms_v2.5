@@ -17,10 +17,12 @@ use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\UserTypeModel;
 use App\Models\Main\UserUnitModel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class User extends Authenticatable
@@ -42,6 +44,7 @@ class User extends Authenticatable
         'staff_no',
         'avatar',
         'phone',
+        'extension',
 
         'nrc',
         'contract_type',
@@ -123,6 +126,18 @@ class User extends Authenticatable
 //    ];
 
 
+    protected static function booted()
+    {
+        $active = config('constants.phris_user_active') ;
+//        static::addGlobalScope('approve', function (Builder $builder) use ($active) {
+//                            $builder->where('con_st_code', $active);
+//                        });
+
+    }
+
+
+
+
     //RELATIONSHIP
     public function user_unit(){
         return $this->belongsTo(ConfigWorkFlow::class, 'user_unit_id', 'id');
@@ -131,7 +146,8 @@ class User extends Authenticatable
         return $this->hasMany(ProfileAssigmentModel::class, 'user_id', 'id');
     }
     public function delegated_profile(){
-        return $this->hasMany(ProfileDelegatedModel::class, 'delegated_to', 'id');
+        return $this->hasMany(ProfileDelegatedModel::class, 'delegated_to', 'id')
+            ->where( 'config_status_id' ,'=',config('constants.active_state'));
     }
     public function user_type(){
         return $this->belongsTo(UserTypeModel::class, 'type_id', 'id');

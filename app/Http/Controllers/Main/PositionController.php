@@ -186,7 +186,7 @@ class PositionController extends Controller
                     'name' => $item->job_title,
                 ],
                 [
-                    'name' => $item->job_title,
+                    'name' => $item->job_title ?? "None",
                     'code' => $acronym . "-" . ++$key,
                     'created_by' =>  $id ,
                 ]

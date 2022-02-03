@@ -7,6 +7,7 @@ use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DepartmentModel;
 use App\Models\Main\UserUnitModel;
 use App\Models\Main\UserUnitSpmsSyncModel;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -247,9 +248,138 @@ class ConfigWorkFlowController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function mine(Request $request, $user_unit)
     {
-        //
+        $unit = ConfigWorkFlow::where('user_unit_code', $user_unit)->first();
+
+       // dd($unit);
+
+        $dr = User::
+        where('job_code' ,$unit->dr_code )
+            ->where('user_unit_code' ,$unit->dr_unit )
+            ->orWhere('profile_job_code' ,$unit->dr_code )
+            ->where('profile_unit_code' ,$unit->dr_unit )
+            ->get();
+
+        $dm = User::
+        where('job_code' ,$unit->dm_code )
+            ->where('user_unit_code' ,$unit->dm_unit )
+            ->orWhere('profile_job_code' ,$unit->dm_code )
+            ->where('profile_unit_code' ,$unit->dm_unit )
+            ->get();
+
+        $arm = User::
+        where('job_code' ,$unit->arm_code )
+            ->where('user_unit_code' ,$unit->arm_unit )
+            ->orWhere('profile_job_code' ,$unit->arm_code )
+            ->where('profile_unit_code' ,$unit->arm_unit )
+            ->get();
+
+        $bm = User::
+        where('job_code' ,$unit->bm_code )
+            ->where('user_unit_code' ,$unit->bm_unit )
+            ->orWhere('profile_job_code' ,$unit->bm_code )
+            ->where('profile_unit_code' ,$unit->bm_unit )
+            ->get();
+
+        $ca = User::
+        where('job_code' ,$unit->ca_code )
+            ->where('user_unit_code' ,$unit->ca_unit )
+            ->orWhere('profile_job_code' ,$unit->ca_code )
+            ->where('profile_unit_code' ,$unit->ca_unit )
+            ->get();
+
+        $ma = User::
+        where('job_code' ,$unit->ma_code )
+            ->where('user_unit_code' ,$unit->ma_unit )
+            ->orWhere('profile_job_code' ,$unit->ma_code )
+            ->where('profile_unit_code' ,$unit->ma_unit )
+            ->get();
+
+
+        $psa = User::
+        where('job_code' ,$unit->psa_code )
+            ->where('user_unit_code' ,$unit->psa_unit )
+            ->orWhere('profile_job_code' ,$unit->psa_code )
+            ->where('profile_unit_code' ,$unit->psa_unit )
+            ->get();
+
+
+        $hrm = User::
+        where('job_code' ,$unit->hrm_code )
+            ->where('user_unit_code' ,$unit->hrm_unit )
+            ->orWhere('profile_job_code' ,$unit->hrm_code )
+            ->where('profile_unit_code' ,$unit->hrm_unit )
+            ->get();
+
+        $phro = User::
+        where('job_code' ,$unit->phro_code )
+            ->where('user_unit_code' ,$unit->phro_unit )
+            ->orWhere('profile_job_code' ,$unit->audit_code )
+            ->where('profile_unit_code' ,$unit->phro_code )
+            ->get();
+
+        $shro = User::
+        where('job_code' ,$unit->shro_code )
+            ->where('user_unit_code' ,$unit->shro_unit )
+            ->orWhere('profile_job_code' ,$unit->shro_code )
+            ->where('profile_unit_code' ,$unit->shro_unit )
+            ->get();
+
+
+        $audit = User::
+        where('job_code' ,$unit->audit_code )
+            ->where('user_unit_code' ,$unit->audit_unit )
+            ->orWhere('profile_job_code' ,$unit->audit_code )
+            ->where('profile_unit_code' ,$unit->audit_unit )
+            ->get();
+
+        $expenditure = User::
+        where('job_code' ,$unit->expenditure_code )
+            ->where('user_unit_code' ,$unit->expenditure_unit )
+            ->orWhere('profile_job_code' ,$unit->expenditure_code )
+            ->where('profile_unit_code' ,$unit->expenditure_unit )
+            ->get();
+
+        $payroll = User::
+        where('job_code' ,$unit->payroll_code )
+            ->where('user_unit_code' ,$unit->payroll_unit )
+            ->orWhere('profile_job_code' ,$unit->payroll_code )
+            ->where('profile_unit_code' ,$unit->payroll_unit )
+            ->get();
+
+        $security = User::
+        where('job_code' ,$unit->security_code )
+            ->where('user_unit_code' ,$unit->security_unit )
+            ->orWhere('profile_job_code' ,$unit->security_code )
+            ->where('profile_unit_code' ,$unit->security_unit )
+            ->get();
+
+        $transport = User::
+        where('job_code' ,$unit->transport_code )
+            ->where('user_unit_code' ,$unit->transport_unit )
+            ->orWhere('profile_job_code' ,$unit->transport_code )
+            ->where('profile_unit_code' ,$unit->transport_unit )
+            ->get();
+
+        $sheq = User::
+        where('job_code' ,$unit->sheq_code )
+            ->where('user_unit_code' ,$unit->sheq_unit )
+            ->orWhere('profile_job_code' ,$unit->sheq_code )
+            ->where('profile_unit_code' ,$unit->sheq_unit )
+            ->get();
+
+        $hod = User::
+        where('job_code' ,$unit->hod_code )
+            ->where('user_unit_code' ,$unit->hod_unit )
+            ->orWhere('profile_job_code' ,$unit->hod_code )
+            ->where('profile_unit_code' ,$unit->hod_unit )
+            ->get();
+
+
+        $data = compact('dr', 'dm', 'arm', 'hod', 'ca', 'hrm', 'audit', 'expenditure', 'bm', 'security', 'sheq', 'shro', 'payroll', 'phro', 'psa', 'transport', 'ma');
+
+        return json_encode($data);
     }
 
     /**

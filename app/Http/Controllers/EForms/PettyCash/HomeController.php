@@ -28,6 +28,8 @@ class HomeController extends Controller
 
     public function index()
     {
+
+
         //list all that needs me
         $get_profile = self::getMyProfile();
 
@@ -194,7 +196,9 @@ class HomeController extends Controller
             //
         } //for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
+
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
                 ->count();
             $user->unit_column = config('constants.workflow_columns.audit_unit');
             $user->code_column = config('constants.workflow_columns.audit_code');
@@ -267,6 +271,7 @@ class HomeController extends Controller
         }//for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
                 ->orderBy('code')->paginate(50);
         } else {
             $list = PettyCashModel::where('config_status_id', 0)
@@ -282,10 +287,15 @@ class HomeController extends Controller
         //for the REQUESTER
         if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             //count pending applications
-            $pending = PettyCashModel::where('config_status_id', '>=', config('constants.petty_cash_status.new_application'))
-                ->Where('config_status_id', '<', config('constants.petty_cash_status.receipt_approved'))
+            $pending = PettyCashModel::
+                where('claimant_staff_no', $user->staff_no)
+                ->where('config_status_id', '=', config('constants.petty_cash_status.new_application'))
+//                ->orWhere('claimant_staff_no', $user->staff_no)
+//                ->where('config_status_id', '=', config('constants.petty_cash_status.receipt_approved'))
                 ->count();
         }
+
+
         return $pending;
     }
 

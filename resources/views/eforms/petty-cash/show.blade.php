@@ -2,7 +2,6 @@
 
 
 @push('custom-styles')
-
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
@@ -82,39 +81,39 @@
 
                     <div class="row">
                         <div class="row mt-2 mb-4 p-2">
-                            <div class="col-3">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="row">
-                                    <div class="col-12"><label>Date:</label></div>
-                                    <div class="col-12"><input value="{{  $form->claim_date }}" type="text"
+                                    <div class="col-lg-12 col-sm-12"><label>Date:</label></div>
+                                    <div class="col-lg-12 col-sm-12"><input value="{{  $form->claim_date }}" type="text"
                                                                name="date"
                                                                readonly class="form-control"></div>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="row">
-                                    <div class="col-12 "><label>Cost Center:</label>
+                                    <div class="col-lg-12 col-sm-12 "><label>Cost Center:</label>
                                         @if( $user->type_id ==  config('constants.user_types.developer')  )
                                             <a href="{{route('petty.cash.workflow.show',['id'=> $form->user_unit->id ?? "code", 'code' => $form->id ?? "code" ] )}}">
                                                 Check Workflow
                                             </a>
                                         @endif
                                     </div>
-                                    <div class="col-12"><input type="text" name="cost_center" class="form-control"
+                                    <div class="col-lg-12 col-sm-12"><input type="text" name="cost_center" class="form-control"
                                                                value="{{ $form->user_unit_code}}" readonly required>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="row">
-                                    <div class="col-12"><label>HQMS No:</label></div>
-                                    <div class="col-12"><input type="text" value="{{$form->ref_no}}" name="ref_no"
+                                    <div class="col-lg-12 col-sm-12"><label>HQMS No:</label></div>
+                                    <div class="col-lg-12 col-sm-12"><input type="text" value="{{$form->ref_no}}" name="ref_no"
                                                                readonly required class="form-control"></div>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="row">
-                                    <div class="col-12"><label>Project Number:</label></div>
-                                    <div class="col-12"><input list="project_list" type="text" name="projects_id"
+                                    <div class="col-lg-12 col-sm-12"><label>Project Number:</label></div>
+                                    <div class="col-lg-12 col-sm-12"><input list="project_list" type="text" name="projects_id"
                                                                readonly value="{{$form->project->name ?? '' }}"
                                                                class="form-control">
                                         <datalist id="project_list">
@@ -129,9 +128,9 @@
                     </div>
 
 
-                    <div class="col-lg-12 grid-margin stretch-card">
+                    <div class="col-lg-12 col-sm-12 grid-margin stretch-card">
                         <div class="table-responsive">
-                            <div class="col-lg-12 ">
+                            <div class="col-lg-12 col-sm-12 ">
                                 <table class="table bg-green">
                                     <thead>
                                     <tr>
@@ -142,7 +141,7 @@
                                     </thead>
                                 </table>
                             </div>
-                            <div class="col-lg-12 ">
+                            <div class="col-lg-12 col-sm-12 ">
                                 <TABLE id="dataTable1" class="table">
                                     @foreach($form->item as $item)
                                         <TR>
@@ -158,12 +157,12 @@
                                     @endforeach
                                 </TABLE>
                             </div>
-                            <div class="col-lg-6 offset-6 ">
+                            <div class="col-lg-6 col-sm-6">
                                 <div class="row">
-                                    <div class="col-4 text-right">
+                                    <div class="col-lg-4 col-sm-12 text-left">
                                         TOTAL PAYMENT
                                     </div>
-                                    <div class="col-8">
+                                    <div class="col-lg-6 col-sm-12">
                                         <input type="text" class="form-control text-bold" readonly id="total-payment"
                                                name="total_payment" value="ZMW {{$form->total_payment}}">
                                     </div>
@@ -176,57 +175,57 @@
 
 
                     <div class="row mb-1 mt-4">
-                        <div class="col-2">
+                        <div class="col-lg-2 col-sm-12">
                             <label>Name of Claimant:</label>
                         </div>
-                        <div class="col-3">
+                        <div class="col-lg-3 col-sm-12">
                             <input type="text" name="claimant_name" class="form-control"
                                    value="{{$form->claimant_name}}" readonly required></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" name="sig_of_claimant" class="form-control"
+                        <div class="col-lg-2 col-sm-12 text-left"><label>Signature:</label></div>
+                        <div class="col-lg-2 col-sm-12"><input type="text" name="sig_of_claimant" class="form-control"
                                                   value="{{$form->claimant_staff_no}}" readonly required></div>
                         <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" name="date_claimant" class="form-control"
+                        <div class="col-lg-2 col-sm-12"><input type="text" name="date_claimant" class="form-control"
                                                   value="{{$form->claim_date}}" readonly required>
                         </div>
                     </div>
                     <div class="row mb-1">
-                        <div class="col-2"><label>Claim Authorised by:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->authorised_by ?? "" }}"
+                        <div class="col-lg-2 col-sm-12"><label>Claim Authorised by:</label></div>
+                        <div class="col-lg-3 col-sm-12"><input type="text" value="{{$form->authorised_by ?? "" }}"
                                                   name="claim_authorised_by" readonly class="form-control">
                         </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->authorised_staff_no  ?? "" }}"
+                        <div class="col-lg-2 col-sm-12 text-left"><label>Signature:</label></div>
+                        <div class="col-lg-2 col-sm-12"><input type="text" value="{{$form->authorised_staff_no  ?? "" }}"
                                                   name="sig_of_authorised" readonly class="form-control">
                         </div>
                         <div class="col-1  text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->authorised_date ?? "" }}"
+                        <div class="col-lg-2 col-sm-12"><input type="text" value="{{$form->authorised_date ?? "" }}"
                                                   name="authorised_date" readonly class="form-control">
                         </div>
                     </div>
                     <div class="row mb-1">
-                        <div class="col-2"><label>HR/Station Manager:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->station_manager ?? "" }}"
+                        <div class="col-lg-2 col-sm-12"><label>HR/Station Manager:</label></div>
+                        <div class="col-lg-3 col-sm-12"><input type="text" value="{{$form->station_manager ?? "" }}"
                                                   name="station_manager" readonly class="form-control">
                         </div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->station_manager_staff_no ?? "" }}"
+                        <div class="col-lg-2 col-sm-12 text-left"><label>Signature:</label></div>
+                        <div class="col-lg-2 col-sm-12"><input type="text" value="{{$form->station_manager_staff_no ?? "" }}"
                                                   name="sig_of_station_manager" readonly
                                                   class="form-control"></div>
                         <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->station_manager_date ?? "" }}"
+                        <div class="col-lg-2 col-sm-12"><input type="text" value="{{$form->station_manager_date ?? "" }}"
                                                   name="manager_date" readonly class="form-control"></div>
                     </div>
                     <div class="row mb-4">
-                        <div class="col-2"><label>Accountant:</label></div>
-                        <div class="col-3"><input type="text" value="{{$form->accountant ?? "" }}"
+                        <div class="col-lg-2 col-sm-12"><label>Accountant:</label></div>
+                        <div class="col-lg-3 col-sm-12"><input type="text" value="{{$form->accountant ?? "" }}"
                                                   name="accountant" readonly class="form-control"></div>
-                        <div class="col-2 text-center"><label>Signature:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->accountant_staff_no ?? "" }}"
+                        <div class="col-lg-2 col-sm-12 text-left"><label>Signature:</label></div>
+                        <div class="col-lg-2 col-sm-12"><input type="text" value="{{$form->accountant_staff_no ?? "" }}"
                                                   name="sig_of_accountant" readonly class="form-control">
                         </div>
                         <div class="col-1 text-center"><label>Date:</label></div>
-                        <div class="col-2"><input type="text" value="{{$form->accountant_date ?? "" }}"
+                        <div class="col-lg-2 col-sm-12"><input type="text" value="{{$form->accountant_date ?? "" }}"
                                                   name="accountant_date" readonly class="form-control">
                         </div>
                     </div>
@@ -251,7 +250,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="table-responsive">
-                                <div class="col-lg-12 ">
+                                <div class="col-lg-12 col-sm-12 ">
                                     <TABLE class="table">
                                         <thead>
                                         <TR>
@@ -298,12 +297,13 @@
                     <div class="card-body">
                         <div class="row">
                             @foreach($user_array as $item)
-                                <div class="col-4 text-red mb-4">
+                                <div class="col-lg-4 col-sm-12 text-red mb-4">
                                 <span
                                     class="font-weight-bold">Position:</span><span>{{$item->position->name ?? "No Position" }}</span><br>
                                     <span class="font-weight-bold">Name:</span><span>{{$item->name}}</span><br>
-                                    <span class="font-weight-bold">Phone:</span><span>{{$item->phone}}</span><br>
+                                    <span class="font-weight-bold">Phone:</span><span>{{$item->extension ?? $item->phone }}</span><br>
                                     <span class="font-weight-bold">Email:</span><span>{{$item->email}}</span><br>
+                                    <span class="font-weight-bold">Staff No:</span><span>{{$item->staff_no}}</span><br>
                                 </div>
                             @endforeach
                         </div>
@@ -333,7 +333,7 @@
                 <div class="card-body" style="width:100%;  ">
                     <div class="row">
                         @foreach($quotations as $item)
-                            <div class="col-6 mb-3">
+                            <div class="col-lg-6 col-sm-12 mb-3">
                                 <iframe id="{{$item->id}}" src="{{asset('storage/petty_cash_quotation/'.$item->name)}}"
                                         style="width:100%; height: 1000px " title="{{$item->name}}"></iframe>
                                 <span >Size:{{number_format( $item->file_size, 2) }}MB  Name: {{$item->name}} </span>
@@ -375,7 +375,7 @@
                     <div class="card-body" style="width:100%;  ">
                         <div class="row">
                             @foreach($receipts as $item)
-                                <div class="col-6">
+                                <div class="col-lg-6 col-sm-12">
                                     <iframe id="{{$item->id}}"
                                             src="{{asset('storage/petty_cash_receipt/'.$item->name)}}"
                                             style="width:100%; height: 1000px" title="{{$item->name}}"></iframe>
@@ -413,7 +413,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="col-lg-12 ">
+                    <div class="col-lg-12 col-sm-12 ">
                         <TABLE id="dataTable" class="table">
                             <TR class="table text-white text-bold text-uppercase bg-gradient-green ">
                                 <TD>Name</TD>
@@ -452,17 +452,17 @@
                         <div class="">
                             <hr>
                             <div class="row">
-                                <div class="col-10">
+                                <div class="col-lg-10 col-sm-12">
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-lg-1 col-sm-12">
                                             <label class="form-control-label">Reason</label>
                                         </div>
-                                        <div class="col-11">
+                                        <div class="col-lg-11 col-sm-12 mb-2">
                                             <textarea class="form-control" rows="2" name="reason" required></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-2 text-center ">
+                                <div class="col-lg-2 col-sm-12 text-left ">
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
@@ -492,17 +492,17 @@
                         <div class="">
                             <hr>
                             <div class="row">
-                                <div class="col-10">
+                                <div class="col-lg-10 col-sm-12">
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-lg-1 col-sm-12">
                                             <label class="form-control-label">Reason</label>
                                         </div>
-                                        <div class="col-11">
+                                        <div class="col-lg-11 col-sm-12 mb-2">
                                             <textarea class="form-control" rows="2" name="reason" required></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-2 text-center ">
+                                <div class="col-lg-2 col-sm-12 text-left ">
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
@@ -532,17 +532,17 @@
                         <div class="">
                             <hr>
                             <div class="row">
-                                <div class="col-10">
+                                <div class="col-lg-10 col-sm-12">
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-lg-1 col-sm-12">
                                             <label class="form-control-label">Reason</label>
                                         </div>
-                                        <div class="col-11">
+                                        <div class="col-lg-11 col-sm-12 mb-2">
                                             <textarea class="form-control" rows="2" name="reason" required></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-2 text-center ">
+                                <div class="col-lg-2 col-sm-12 text-left ">
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
@@ -572,17 +572,17 @@
                         <div class="">
                             <hr>
                             <div class="row">
-                                <div class="col-10">
+                                <div class="col-lg-10 col-sm-12">
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-lg-1 col-sm-12">
                                             <label class="form-control-label">Reason</label>
                                         </div>
-                                        <div class="col-11">
+                                        <div class="col-lg-11 col-sm-12 mb-2">
                                             <textarea class="form-control" rows="2" name="reason" required></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-2 text-center ">
+                                <div class="col-lg-2 col-sm-12 text-left ">
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
@@ -611,15 +611,15 @@
                         <div class="">
                             <h5 class="text-center">Please Update the Accounts </h5>
                             <h6 class="text-center">(Total Amount : ZMW {{$form->total_payment}}) </h6>
-                            <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="col-lg-12 col-sm-12 grid-margin stretch-card">
                                 <div class="table-responsive">
-                                    <div class="col-lg-12 ">
+                                    <div class="col-lg-12 col-sm-12 ">
                                         <TABLE id="dataTable2" class="table">
                                             <TR>
-                                                <TD><INPUT type="checkbox" name="chk"/></TD>
+                                                <TD><input type="checkbox" name="chk"/></TD>
                                                 <TD>
                                                     <div class="row">
-                                                        <div class="col-12">
+                                                        <div class="col-lg-12 col-sm-12">
                                                             <div class="form-group">
                                                                 <input list="items_list1" type="text"
                                                                        name="account_items[]"
@@ -640,7 +640,7 @@
                                                     {{--                                                </TD>--}}
                                                     {{--                                                <TD>--}}
                                                     <div class="row">
-                                                        <div class="col-3">
+                                                        <div class="col-lg-3 col-sm-12">
                                                             <select name="credited_account[]" id="credited_account"
                                                                     required
                                                                     class="form-control amount">
@@ -655,7 +655,7 @@
                                                         </div>
                                                         {{--                                                </TD>--}}
                                                         {{--                                                <TD>--}}
-                                                        <div class="col-3">
+                                                        <div class="col-lg-3 col-sm-12">
                                                             <input type="number" id="credited_amount"
                                                                    name="credited_amount[]"
                                                                    onchange="getvalues()" step="any" class="form-control amount"
@@ -663,7 +663,7 @@
                                                         </div>
                                                         {{--                                                </TD>--}}
                                                         {{--                                                <TD>--}}
-                                                        <div class="col-3">
+                                                        <div class="col-lg-3 col-sm-12">
                                                             <select name="debited_account[]" id="debited_account"
                                                                     required
                                                                     class="form-control amount">
@@ -676,13 +676,23 @@
                                                         </div>
                                                         {{--                                                </TD>--}}
                                                         {{--                                                <TD>--}}
-                                                        <div class="col-3">
+                                                        <div class="col-lg-3 col-sm-12">
                                                             <input type="number" id="debited_amount"
                                                                    name="debited_amount[]"
                                                                    class="form-control amount"
                                                                    placeholder="Debited Amount [ZMK]" readonly required>
                                                         </div>
                                                     </div>
+                                                </TD>
+                                                <TD>
+                                                    <select name="tax[]" id="debited_account"
+                                                            required
+                                                            class="form-control amount is-warning">
+                                                        <option value="">--Choose--</option>
+                                                        @foreach($taxes as $tax)
+                                                            <option value="{{$tax->id}}">{{$tax->name}}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </TD>
                                             </TR>
                                         </TABLE>
@@ -692,23 +702,23 @@
                                             @endforeach
                                         </datalist>
                                     </div>
-                                    <div class="col-lg-12 ">
-                                        <INPUT type="button" value="Add Row" onclick="addRow('dataTable2')"/>
-                                        <INPUT type="button" value="Delete Row" onclick="deleteRow('dataTable2')"/>
+                                    <div class="col-lg-12 col-sm-12 ">
+                                        <input type="button" value="Add Row" onclick="addRow('dataTable2')"/>
+                                        <input type="button" value="Delete Row" onclick="deleteRow('dataTable2')"/>
                                     </div>
                                 </div>
                             </div>
                             <hr>
                             <div class="row">
                                 <textarea  class="form-control p-2 mb-2" rows="2" name="reason" placeholder="Enter Comment/Reason" required></textarea>
-                                <div id="submit_not_possible" class="col-12 text-center">
+                                <div id="submit_not_possible" class="col-lg-12 col-sm-12 text-center">
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
                                         Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
                                                 )</strong>
                                    </span>
                                 </div>
-                                <div id="submit_possible" class="col-12 text-center">
-                                    <div class="col-12 text-center ">
+                                <div id="submit_possible" class="col-lg-12 col-sm-12 text-center">
+                                    <div class="col-lg-12 col-sm-12 text-center ">
                                         <div id="divSubmit_show">
                                             <button id="btnSubmit_approve" type="submit" name="approval"
                                                     class="btn btn-outline-success mr-2 p-2  "
@@ -756,7 +766,7 @@
                                 <textarea hidden class="form-control" rows="2" name="reason"
                                           required> Funds Received</textarea>
 
-                                <div class="col-12 text-center ">
+                                <div class="col-lg-12 col-sm-12 text-center ">
                                     {{--                                    <button id="btnSubmit_approve" type="submit" name="approval"--}}
                                     {{--                                            class="btn btn-outline-success mr-2 p-2  "--}}
                                     {{--                                            value='Approved'>FUNDS RECEIVED--}}
@@ -799,17 +809,17 @@
                         <div class="">
                             <hr>
                             <div class="row">
-                                <div class="col-10">
+                                <div class="col-lg-10 col-sm-12">
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-lg-1 col-sm-12">
                                             <label class="form-control-label">Reason</label>
                                         </div>
-                                        <div class="col-11">
+                                        <div class="col-lg-11 col-sm-12 mb-2">
                                             <textarea class="form-control" rows="2" name="reason" required></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-2 text-center ">
+                                <div class="col-lg-2 col-sm-12 text-left ">
                                     {{--                                    <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
                                     {{--                                            value='Approved'>APPROVE RECEIPTS--}}
                                     {{--                                    </button>--}}
@@ -851,12 +861,12 @@
                        )
                         <div class="">
                             <div class="card">
-                                <div class="col-lg-10 p-2 mt-3 ">
+                                <div class="col-lg-10 col-sm-12 p-2 mt-3 ">
                                     <div class="row">
-                                        <div class="col-2">
+                                        <div class="col-lg-2 col-sm-12">
                                             <label class="form-control-label">Total Change</label>
                                         </div>
-                                        <div class="col-8">
+                                        <div class="col-lg-8 col-sm-12">
                                             <div class="input-group">
                                                 <div class="custom-file">
                                                     <input type="number" step="any" onchange="showChange()" class="form-control"
@@ -866,10 +876,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-12 grid-margin stretch-card" id="show_change">
+                                <div class="col-lg-12 col-sm-12 mb-2 grid-margin stretch-card" id="show_change">
                                     <h6 class="text-left p-2">Select Account to Retire Change</h6>
                                     <div class="table-responsive">
-                                        <div class="col-lg-12 ">
+                                        <div class="col-lg-12 col-sm-12 ">
                                             <TABLE class="table">
                                                 <tbody>
                                                 <TR>
@@ -916,6 +926,15 @@
                                                                class="form-control amount" id="debited_amount1"
                                                                placeholder="Amount [ZMK]" readonly>
                                                     </TD>
+                                                    <TD>
+                                                        <select name="tax[]" id="debited_account"
+                                                                class="form-control amount is-warning">
+                                                            <option value="">--Choose--</option>
+                                                            @foreach($taxes as $tax)
+                                                                <option value="{{$tax->id}}">{{$tax->name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </TD>
                                                 </TR>
                                                 </tbody>
                                                 <datalist id="accounts_list">
@@ -930,12 +949,12 @@
                                 </div>
                                 <hr>
                                 <div class="row p-2">
-                                    <div class="col-10">
+                                    <div class="col-lg-10 col-sm-12">
                                         <div class="row">
-                                            <div class="col-2">
+                                            <div class="col-lg-2 col-sm-12">
                                                 <label class="form-control-label">Receipt Files</label>
                                             </div>
-                                            <div class="col-8">
+                                            <div class="col-lg-8 col-sm-12">
                                                 <div class="input-group">
                                                     <input type="file" class="form-control" multiple name="receipt[]"
                                                            id="receipt" required>
@@ -944,12 +963,12 @@
                                         </div>
                                     </div>
                                     <textarea hidden class="form-control" rows="2" name="reason" required> Closing of petty cash</textarea>
-                                    <div class="col-2 text-center ">
+                                    <div class="col-lg-2 col-sm-12 mt-2 text-left ">
                                         {{--                                        <button id="btnSubmit_approve" type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "--}}
                                         {{--                                                value='Approved'>CLOSE PETTY.CASH.-}}
                                         {{--                                        </button>--}}
 
-                                        <div id="divSubmit_show">
+                                        <div id="divSubmit_show mt-2">
                                             <button id="btnSubmit_approve" type="submit" name="approval"
                                                     class="btn btn-outline-success mr-2 p-2  "
                                                     value='Approved'>CLOSE PETTY-CASH
@@ -988,17 +1007,17 @@
                         <div class="">
                             <hr>
                             <div class="row">
-                                <div class="col-10">
+                                <div class="col-lg-10 col-sm-12">
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-lg-1 col-sm-12">
                                             <label class="form-control-label">Reason</label>
                                         </div>
-                                        <div class="col-11">
+                                        <div class="col-lg-11 col-sm-12 mb-2">
                                             <textarea class="form-control" rows="2" name="reason" required></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-2 text-center ">
+                                <div class="col-lg-2 col-sm-12 text-left ">
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success p-2   "
@@ -1022,23 +1041,26 @@
 
                     {{--  AUDIT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')
-                        &&  $form->config_status_id == config('constants.petty_cash_status.closed')
+                        && (
+                            ( $form->config_status_id == config('constants.petty_cash_status.closed'))
+                            || ( $form->config_status_id == config('constants.petty_cash_status.audit_box'))
+                        )
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
                             <hr>
                             <div class="row">
-                                <div class="col-9">
+                                <div class="col-lg-9 col-sm-12">
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-lg-1 col-sm-12">
                                             <label class="form-control-label">Reason</label>
                                         </div>
-                                        <div class="col-11">
+                                        <div class="col-lg-11 col-sm-12 mb-2">
                                             <textarea class="form-control" rows="2" name="reason" required></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-3 text-center ">
+                                <div class="col-lg-3 col-sm-12 text-center ">
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success p-2   "
@@ -1067,12 +1089,12 @@
                         )
                         <div class="">
                             <div class="row">
-                            <div class="col-lg-10 p-2 mt-3 ">
+                            <div class="col-lg-10 col-sm-12 p-2 mt-3 ">
                                 <div class="row">
-                                    <div class="col-2">
+                                    <div class="col-lg-2 col-sm-12">
                                         <label class="form-control-label">Total Change</label>
                                     </div>
-                                    <div class="col-8">
+                                    <div class="col-lg-8 col-sm-12">
                                         <div class="input-group">
                                             <div class="custom-file">
                                                 <input type="number" step="any" onchange="showChange()" class="form-control"
@@ -1082,10 +1104,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 grid-margin stretch-card" id="show_change">
+                            <div class="col-lg-12 col-sm-12 mt-2 grid-margin stretch-card" id="show_change">
                                 <h6 class="text-left p-2">Select Account to Retire Change</h6>
                                 <div class="table-responsive">
-                                    <div class="col-lg-12 ">
+                                    <div class="col-lg-12 col-sm-12 ">
                                         <TABLE class="table">
                                             <tbody>
                                             <TR>
@@ -1132,6 +1154,15 @@
                                                            class="form-control amount" id="debited_amount1"
                                                            placeholder="Amount [ZMK]" readonly>
                                                 </TD>
+                                                <TD>
+                                                <select name="tax[]" id="debited_account"
+                                                        class="form-control amount is-warning">
+                                                    <option value="">--Choose--</option>
+                                                    @foreach($taxes as $tax)
+                                                        <option value="{{$tax->id}}">{{$tax->name}}</option>
+                                                    @endforeach
+                                                </select>
+                                                </TD>
                                             </TR>
                                             </tbody>
                                             <datalist id="accounts_list">
@@ -1147,17 +1178,17 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-10">
+                                <div class="col-lg-10 col-sm-12">
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-lg-1 col-sm-12">
                                             <label class="form-control-label">Reason</label>
                                         </div>
-                                        <div class="col-11">
+                                        <div class="col-lg-11 col-sm-12 mb-2">
                                             <textarea class="form-control" rows="2" name="reason" required></textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-2 text-center ">
+                                <div class="col-lg-2 col-sm-12 text-left ">
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
@@ -1206,12 +1237,12 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-lg-12 col-sm-12">
                                 <div id="name2">
 
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-lg-12 col-sm-12">
                                 <div class="form-group">
                                     <label>Change File</label>
                                     <input type="file" class="form-control" id="change_file" name="change_file"
@@ -1256,7 +1287,7 @@
                     <div class="modal-body">
                         <div class="row">
 
-                            <div class="col-12">
+                            <div class="col-lg-12 col-sm-12">
                                 <div class="form-group">
                                     <label>Add File</label>
                                     <input type="file" class="form-control" id="add_file1" name="add_file1"
@@ -1300,7 +1331,7 @@
                     <div class="modal-body">
                         <div class="row">
 
-                            <div class="col-12">
+                            <div class="col-lg-12 col-sm-12">
                                 <div class="form-group">
                                     <label>Add File</label>
                                     <input type="file" class="form-control" id="add_file2" name="add_file2"

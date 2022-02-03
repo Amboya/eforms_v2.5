@@ -5,14 +5,12 @@ namespace App\Http\Controllers\Main;
 use App\Http\Controllers\Controller;
 use App\Models\Main\AttachedFileModel;
 use App\Models\Main\ConfigWorkFlow;
-use App\Models\Main\DepartmentModel;
 use App\Models\Main\EFormCategoryModel;
-use App\Models\Main\EFormModel;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\ProfileModel;
-use App\Models\main\TotalsModel;
 use App\Models\User;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -28,84 +26,81 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
         // Store a piece of data in the session...
-        session(['eform_id' => config('constants.eforms_id.main_dashboard') ]);
-        session(['eform_code'=> config('constants.eforms_name.main_dashboard')]);
+        session(['eform_id' => config('constants.eforms_id.main_dashboard')]);
+        session(['eform_code' => config('constants.eforms_name.main_dashboard')]);
     }
-
-    /**
-     * Show the main application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
-    {
-        $categories = EFormCategoryModel::all();
-        $categories->load('eforms');
-        //return view
-        return view('main.dashboard')->with(compact('categories'));
-    }
-
 
     public static function getUserResponsibleUnits(User $user)
     {
-        self::getUserProfile($user);
-
-        dd();
-
-        $user_unit_code = ConfigWorkFlow::
-              where($user->code_column, $user->profile_job_code)
-            ->where($user->unit_column, $user->profile_unit_code)
-            ->get();
-
-        return $user_unit_code;
-    }
-
-    public static function getMySuperior($user_unit_code, ProfileModel $profile)
-    {
-
-        $user_unit_code = ConfigWorkFlow::select($profile->code_column . ' as code_column', $profile->unit_column . ' as unit_column')
-            ->where('user_unit_code', $user_unit_code)
-            ->first();
-
-        $users = User::
-              where('profile_job_code',$user_unit_code->code_column )
-            ->where('profile_unit_code',$user_unit_code->unit_column )
-            ->whereNotNull('unit_column' )
-//            ->where('profile_id',$profile->id )
-            ->get();
+        // get your user units
+       $my_profiles = ProfileAssigmentModel::where('user_id', $user->id)->get();
+        $delegation = ProfileDelegatedModel::where('delegated_to', $user->id)->where('config_status_id', config('constants.active_state'))->get();
 
 
-        return $users;
-    }
+        $user_units = [];
 
-    public  function getMySuperiorAPI($user_unit_code, $profile)
-    {
-        $profile = ProfileModel::find($profile);
-        $users = self::getMySuperior($user_unit_code, $profile);
-        // dd($users->toArray());
-        return json_encode($users->toArray()) ;
+        //check assigned
+        if ($my_profiles->count() > 0) {
 
-    }
-    public  function getManySuperiorAPI(Request $request, $profile)
-    {
+            $has_units = true;
+            $my_profiles = $my_profiles->load('profiles');
+            // dd($my_profiles);
+            foreach ($my_profiles->pluck('profiles')->unique() as $key => $item) {
 
-        $user_unit_codes = $request->array ;
-        $profile = ProfileModel::find($profile);
-
-        foreach ($user_unit_codes as $key => $user_unit_code){
-
-            if($key != 0){
-                $users = $users->merge( self::getMySuperior($user_unit_code, $profile)  );
-            }else{
-                $users = self::getMySuperior($user_unit_code, $profile);
+                if ($key != 0) {
+                    $user_units_1 = ConfigWorkFlow::
+                    where($item->code_column, $user->job_code)
+                        ->where($item->unit_column, $user->user_unit_code)
+                        ->get();
+                    $user_units->merge($user_units_1);
+                } else {
+                    $user_units = ConfigWorkFlow::
+                    where($item->code_column, $user->job_code)
+                        ->where($item->unit_column, $user->user_unit_code)
+                        ->get();
+                }
             }
         }
-        return json_encode($users->toArray()) ;
+
+        // check delegations
+        if ($delegation->count() > 0) {
+
+            $delegation->load('profile');
+            foreach ($delegation as $key => $item) {
+
+                if ($key != 0) {
+                    $user_units->merge(ConfigWorkFlow::
+                    where($item->profile->code_column, $item->delegated_job_code)
+                        ->where($item->profile->unit_column, $item->delegated_user_unit)
+                        ->get());
+
+                } else {
+                    if (sizeof($user_units) > 0) {
+                        $user_units->merge(ConfigWorkFlow::
+                        where($item->profile->code_column, $item->delegated_job_code)
+                            ->where($item->profile->unit_column, $item->delegated_user_unit)
+                            ->get());
+                    }
+                    else {
+                           $user_units = ConfigWorkFlow::
+                            where($item->profile->code_column, $item->delegated_job_code)
+                                ->where($item->profile->unit_column, $item->delegated_user_unit)
+                                ->get();
+
+                    }
+                }
+
+            }
+        }
+
+        //return
+        return $user_units;
 
     }
 
-    public static function getMyProfile($eform_id )
+    public static function getMyProfile($eform_id)
     {
+
         if (auth()->check()) {
             //get the profile associated with
             $user = Auth::user();
@@ -115,7 +110,10 @@ class HomeController extends Controller
             where('eform_id', $eform_id)
                 ->where('user_id', $user->id)->first();
 
+
+
             if ($profile_assignement != null) {
+
                 $profile_assignement->load('profiles');
 
                 $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
@@ -125,15 +123,14 @@ class HomeController extends Controller
                 $user->code_column = $profile_assignement->profiles->code_column ?? 'id';
                 $user->unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
 
-            }
-            else {
+            } else {
 
                 $default_profile = config('constants.user_profiles.EZESCO_002');
                 $user->profile_id = $default_profile;
                 $user->profile_unit_code = $user->user_unit_code;
                 $user->profile_job_code = $user->id;
-                $user->code_column =  'id';
-                $user->unit_column =  'user_unit_code';
+                $user->code_column = 'id';
+                $user->unit_column = 'user_unit_code';
             }
 
 
@@ -162,7 +159,7 @@ class HomeController extends Controller
 //                    ->where('user_unit_cc_code', '!=', '0')
                     ->orderBy('user_unit_description')
                     ->get();
-            }else{
+            } else {
                 $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
                     ->where($user->code_column, $user->profile_job_code)
 //                  ->where('user_unit_cc_code', '!=', '0')
@@ -180,23 +177,21 @@ class HomeController extends Controller
             //get the profile associated with
             $pro = ProfileModel::find($user->profile_id);
 
-        //    dd($user);
 
             //[1]  GET YOUR PROFILE
             $profile_assignement = ProfileAssigmentModel::
             where('profile', $pro->code)
                 ->where('user_id', $user->id)->first();
-            // dd($profile_assignement);
 
             if ($profile_assignement != null) {
                 $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
-                if($default_profile == config('constants.user_profiles.EZESCO_002') ){
+                if ($default_profile == config('constants.user_profiles.EZESCO_002')) {
                     $user->profile_id = $default_profile;
                     $user->profile_unit_code = $user->user_unit_id;
                     $user->profile_job_code = $user->user_unit_code;
                     $user->code_column = $profile_assignement->profiles->code_column ?? 'id';
                     $user->unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
-                }else{
+                } else {
                     $user->profile_id = $default_profile;
                     $user->profile_unit_code = $user->user_unit_code;
                     $user->profile_job_code = $user->job_code;
@@ -205,8 +200,7 @@ class HomeController extends Controller
                 }
 
 
-            }
-            else {
+            } else {
                 $default_profile = config('constants.user_profiles.EZESCO_002');
                 $user->profile_id = $default_profile;
                 $user->profile_unit_code = $user->user_unit_code;
@@ -240,7 +234,7 @@ class HomeController extends Controller
                     ->where('user_unit_cc_code', '!=', '0')
                     ->orderBy('user_unit_description')
                     ->get();
-            }else{
+            } else {
                 $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
                     ->where($user->code_column, $user->profile_job_code)
                     ->where('user_unit_cc_code', '!=', '0')
@@ -292,10 +286,90 @@ class HomeController extends Controller
         return $my_user_units;
     }
 
+    /**
+     * Show the main application dashboard.
+     *
+     * @return Renderable
+     */
+    public function index()
+    {
+        $categories = EFormCategoryModel::all();
+        $categories->load('eforms');
+        //return view
+        return view('main.dashboard')->with(compact('categories'));
+    }
+
+    public function getMySuperiorAPI($user_unit_code, $profile)
+    {
+        $profile = ProfileModel::find($profile);
+        $users = self::getMySuperior($user_unit_code, $profile);
+        // dd($users->toArray());
+        return json_encode($users->toArray());
+
+    }
+
+    public static function getMySuperior($user_unit_code, ProfileModel $profile)
+    {
+        //
+        $user_unit_code = ConfigWorkFlow::
+        select($profile->code_column . ' as code_column', $profile->unit_column . ' as unit_column')
+            ->where('user_unit_code', $user_unit_code)
+            ->first();
+
+        //users with the profile code
+        $users = User::
+        where('profile_job_code', $user_unit_code->code_column)
+            ->where('profile_unit_code', $user_unit_code->unit_column)
+            ->where('con_st_code', config('constants.phris_user_active') )
+            ->get();
+
+//        $users = User::
+//        where('user_unit_code', $user_unit_code->unit_column)
+//            ->where('job_code', $user_unit_code->code_column)
+//            ->where('con_st_code', config('constants.phris_user_active') )
+//            ->get();
+
+        if(sizeof($users) < 1){
+            $users = User::
+            where('user_unit_code', $user_unit_code->unit_column)
+                ->where('job_code', $user_unit_code->code_column)
+                ->where('con_st_code', config('constants.phris_user_active') )
+                ->get();
+        }else{
+           $users_1 = User::
+            where('user_unit_code', $user_unit_code->unit_column)
+                ->where('job_code', $user_unit_code->code_column)
+               ->where('con_st_code', config('constants.phris_user_active') )
+                ->get() ;
+            $users ->merge($users_1 );
+        }
+
+      //  dd(compact('user_unit_code', 'users'));
+
+        return $users;
+    }
+
+    public function getManySuperiorAPI(Request $request, $profile)
+    {
+
+        $user_unit_codes = $request->array;
+        $profile = ProfileModel::find($profile);
+
+        foreach ($user_unit_codes as $key => $user_unit_code) {
+
+            if ($key != 0) {
+                $users = $users->merge(self::getMySuperior($user_unit_code, $profile));
+            } else {
+                $users = self::getMySuperior($user_unit_code, $profile);
+            }
+        }
+        return json_encode($users->toArray());
+
+    }
+
     public function changeFile(Request $request)
     {
 
-       // dd($request->all());
         /** upload quotation files */
         // upload the receipt files
         if ($request->hasFile('change_file')) {
@@ -319,7 +393,6 @@ class HomeController extends Controller
 
 //          $fast = $request->path.''.$old_name;
 //          unlink(storage_path($fasdf));
-//          dd($request->path.'/'.$old_name);
 
             $model->name = $fileNameToStore;
             $model->extension = $extension;

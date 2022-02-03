@@ -170,16 +170,18 @@ class LoginController extends Controller
         $phirs_user = PhrisUserDetailsModel::where('con_per_no', $request->staff_no)->first() ;
         //update user
         $user->name = $phirs_user->name ?? "" ;
-        $user->email = $phirs_user->staff_email  ?? "";
-        $user->phone = $phirs_user->mobile_no ?? "" ;
-        $user->nrc = $phirs_user->nrc ?? "";
-        $user->contract_type = $phirs_user->contract_type ?? "" ;
-        $user->con_st_code = $phirs_user->con_st_code ?? "";
-        $user->con_wef_date = $phirs_user->con_wef_date ?? "" ;
-        $user->con_wet_date = $phirs_user->con_wet_date ?? "" ;
-        $user->job_code = $phirs_user->job_code ?? "";
-        $user->station = $phirs_user->station ?? "";
-        $user->affiliated_union = $phirs_user->affiliated_union  ?? "";
+        $user->email = $phirs_user->staff_email  ??   $user->email;
+        $user->phone = $phirs_user->mobile_no ??  $user->phone ;
+        $user->nrc = $phirs_user->nrc ??   $user->nrc  ;
+        $user->contract_type = $phirs_user->contract_type ??  $user->contract_type ;
+        $user->con_st_code = $phirs_user->con_st_code ??  $user->con_st_code  ;
+        $user->con_wef_date = $phirs_user->con_wef_date ??   $user->con_wef_date ;
+        $user->con_wet_date = $phirs_user->con_wet_date ??  $user->con_wet_date ;
+        $user->job_code = $phirs_user->job_code ??  $user->job_code ;
+        $user->station =        $phirs_user->station ??  $user->station  ;
+        $user->affiliated_union = $phirs_user->affiliated_union  ??  $user->affiliated_union  ;
+
+        // GETTING OF OTHER DETAILS LIKE GRADE
 
         //count the users login times
         $user->total_login = 1+($user->total_login);

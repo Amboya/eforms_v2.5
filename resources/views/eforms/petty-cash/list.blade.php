@@ -15,7 +15,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark text-orange text-uppercase">Petty-Cash : <span class="text-green">{{$category}}</span></h1>
+                    <h1 class="m-0 text-dark text-orange text-uppercase">Petty-Cash : <span
+                            class="text-green">{{$category}}</span></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -51,9 +52,9 @@
 
     <!-- Default box -->
         <div class="card">
-            <form id="list_form"  action="{{route('petty.cash.approve.batch', $value)}}" method="post">
-                @csrf
-                <!-- /.card-header -->
+            <form id="list_form" action="{{route('petty.cash.approve.batch', $value)}}" method="post">
+            @csrf
+            <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
                         {{--                    <div class="row">--}}
@@ -66,12 +67,12 @@
                         {{--                        <table id="myTable" class="table m-0">--}}
                         {{--                            @else--}}
 
-                                                    <tr>
-                                                        <td>
-                                                            <input id="selectAll" type="checkbox"><label for='selectAll'>Select All</label>
-                                                        </td>
+                        <tr>
+                            <td>
+                                <input id="selectAll" type="checkbox"><label for='selectAll'>Select All</label>
+                            </td>
 
-                                                    </tr>
+                        </tr>
                         <table id="example1" class="table m-0">
                             {{--                                    @endif--}}
                             <thead class="table text-white text-bold text-uppercase bg-gradient-green ">
@@ -106,7 +107,8 @@
                                         </form>
                                     </td>
                                     <td>
-                                        <a href="{{route('main.user.show',$item->created_by)}}" class="text-dark" style="margin: 1px">
+                                        <a href="{{route('main.user.show',$item->created_by)}}" class="text-dark"
+                                           style="margin: 1px">
                                             {{$item->claimant_name}}
                                         </a>
                                     </td>
@@ -126,19 +128,20 @@
                                         </form>
 
                                         @if(Auth::user()->type_id == config('constants.user_types.developer'))
-                                            <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
-                                                    title="Mark as Void."
-                                                    data-toggle="modal"
-                                                    data-target="#modal-void{{$item->id}}">
+                                            <a class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                               title="Mark as Void."
+                                               data-toggle="modal"
+                                               data-target="#modal-void{{$item->id}}">
                                                 <i class="fa fa-ban"></i>
-                                            </button>
-                                            <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
-                                                    title="Reverse Form to the previous state."
-                                                    data-toggle="modal"
-                                                    data-target="#modal-reverse{{$item->id}}">
+                                            </a>
+                                            <a class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                               title="Reverse Form to the previous state."
+                                               data-toggle="modal"
+                                               data-target="#modal-reverse{{$item->id}}">
                                                 <i class="fa fa-redo"></i>
-                                            </button>
-                                            <a class="btn btn-sm bg-gradient-gray "  href="{{route('petty.cash.sync', $item->id)}}"
+                                            </a>
+                                            <a class="btn btn-sm bg-gradient-gray "
+                                               href="{{route('petty.cash.sync', $item->id)}}"
                                                title="Sync Application Forms">
                                                 <i class="fas fa-sync"></i>
                                             </a>
@@ -153,7 +156,9 @@
                                 <td><b> </b></td>
                                 <td><b>Count : {{ number_format(sizeof($list ))}}</b></td>
                                 <td><b></b></td>
-                                <td><b>ZMW {{number_format(($list->sum('total_payment')- ($list->sum('change'))), 2)}}</b></td>
+                                <td>
+                                    <b>ZMW {{number_format(($list->sum('total_payment')- ($list->sum('change'))), 2)}}</b>
+                                </td>
                                 <td><b></b></td>
                                 <td><b></b></td>
                                 <td><b></b></td>
@@ -181,44 +186,44 @@
 
 
                     {{--  HAS RECEIPT - SEND TO AUDIT --}}
-                                        @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
-                                             &&  $value == config('constants.petty_cash_status.receipt_approved')
-                                            )
-                    <div class="">
-                        <hr>
-                        <div class="row">
-                            <div class="col-10">
-                                <div class="row">
-                                    <div class="col-1">
-                                        <label class="form-control-label">Reason/Comment</label>
+                    @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_007')
+                         &&  $value == config('constants.petty_cash_status.receipt_approved')
+                        )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason/Comment</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
                                     </div>
-                                    <div class="col-11">
-                                        <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Resolve'>SEND TO AUDIT
+                                        </button>
+                                        <button style="display: none" id="btnSubmit_reject" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Rejected'>SEND TO AUDIT1
+                                        </button>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-2 text-center ">
-                                <div id="divSubmit_show">
-                                    <button id="btnSubmit_approve" type="submit" name="approval"
-                                            class="btn btn-outline-success mr-2 p-2  "
-                                            value='Resolve'>SEND TO AUDIT
-                                    </button>
-                                    <button style="display: none" id="btnSubmit_reject" type="submit"
-                                            name="approval"
-                                            class="btn btn-outline-success mr-2 p-2  "
-                                            value='Rejected'>SEND TO AUDIT1
-                                    </button>
-                                </div>
-                                <div id="divSubmit_hide">
-                                    <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                            value='Approved'>Processing. Please wait...
-                                    </button>
-                                </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
-                                        @endif
+                    @endif
 
                 </div>
             </form>
@@ -244,8 +249,8 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <p class="text-center">Are you sure you want to mark this form as void? </p>
-                                    <p class="text-center">Note that you can not undo this action. </p>
+                                    <p class="text">Are you sure you want to mark this form as void? </p>
+                                    <p class="text">Note that you can not undo this action. </p>
                                 </div>
 
                                 <div class="col-2">
@@ -253,9 +258,7 @@
                                 </div>
                                 <div class="col-10">
                                     <div class="input-group">
-                                        <textarea class="form-control" rows="2" name="reason"
-                                                  placeholder="Enter reason why" required>
-                                        </textarea>
+                                        <textarea class="form-control" rows="2" name="reason" placeholder="Enter reason why" required></textarea>
                                     </div>
                                 </div>
 
@@ -278,7 +281,7 @@
             <div class="modal-dialog modal-md">
                 <div class="modal-content bg-defualt">
                     <div class="modal-header">
-                        <h4 class="modal-title text-center">Reverse this petty cash one step backwards</h4>
+                        <h4 class="modal-title text-center">Reverse this petty cash to a new Status</h4>
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
@@ -287,9 +290,22 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <p class="text-center">Are you sure you want to reverse this application to the
+                                    <p class="text-left">Are you sure you want to reverse this application to the
                                         previous stage? </p>
-                                    <p class="text-center">Note that you can not undo this action. </p>
+                                </div>
+
+                                <div class="input-group">
+                                    <div class="col-lg-2 col-sm-12">
+                                        <label>New Status</label>
+                                    </div>
+                                    <div class="col-lg-10 col-sm-12">
+                                        <select name="new_status_name" class="form-control">
+                                            <option value="">--Choose--</option>
+                                            @foreach($statuses as $status)
+                                                <option value="{{$status->id}}">{{$status->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="col-2">
@@ -297,9 +313,7 @@
                                 </div>
                                 <div class="col-10">
                                     <div class="input-group">
-                                        <textarea class="form-control" rows="2" name="reason"
-                                                  placeholder="Enter reason why" required>
-                                        </textarea>
+                                        <textarea class="form-control" rows="2" name="reason" placeholder="Enter reason why" required></textarea>
                                     </div>
                                 </div>
 
@@ -307,7 +321,7 @@
                         </div>
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-danger">Mark</button>
+                            <button type="submit" class="btn btn-danger">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -395,7 +409,7 @@
 
 
             //select all
-            $("#selectAll").click(function(){
+            $("#selectAll").click(function () {
                 $("input[type=checkbox]").prop('checked', $(this).prop('checked'));
             });
 

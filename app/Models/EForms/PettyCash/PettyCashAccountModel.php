@@ -27,17 +27,24 @@ class PettyCashAccountModel extends Model
         'eform_petty_cash_id',
 
         'petty_cash_code',
+        'vat_rate',
+        'user_unit_code',
+        'business_unit_code',
+        'cost_center',
         'user_unit_code',
 
         'status_id',
         'account',
         'amount',
+        'org_id',
         'company',
         'intra_company',
         'project',
         'pems_project',
         'spare',
         'description',
+        'line_type',
+        'account_type',
 
         'hod_code',
         'hod_unit',
@@ -103,5 +110,6 @@ class PettyCashAccountModel extends Model
     {
         return $this->belongsTo(PettyCashModel::class, 'eform_petty_cash_id', 'id');
     }
+
 
 }

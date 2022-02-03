@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\main;
+namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TotalsRequest;
 use App\Models\EForms\PettyCash\PettyCashModel;
 use App\Models\EForms\KilometerAllowance\KilometerAllowanceModel;
 use App\Models\Main\EFormModel;
-use App\Models\main\TotalsModel;
+use App\Models\Main\TotalsModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

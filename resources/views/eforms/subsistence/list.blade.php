@@ -84,7 +84,7 @@
                                     <td>{{$item->claimant_name}}</td>
                                     <td>{{$item->numdays}}</td>
                                     <td>{{$item->absc_allowance_per_night}}</td>
-                                    <td>ZMW {{number_format($item->total,2)}}</td>
+                                    <td>ZMW {{number_format($item->net_amount_paid,2)}}</td>
 
                                     <td><span
                                             class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>
@@ -101,6 +101,18 @@
                                 </tr>
                             @endforeach
                             </tbody>
+                            <tfoot class="bg-gray-light">
+                            <tr>
+                                <td><b>Count : {{ number_format(sizeof($list ))}}</b></td>
+                                <td><b></b></td>
+                                <td><b></b></td>
+                                <td><b></b></td>
+                                <td><b>ZMW {{number_format(($list->sum('net_amount_paid')), 2)}}</b></td>
+                                <td><b></b></td>
+                                <td><b></b></td>
+                                <td><b></b></td>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <!-- /.table-responsive -->

@@ -13,6 +13,7 @@ class ZescoItsInvInterfaceHeader extends Model
 
     //table name
     protected $table = 'fms_invoice_interface_header';
+//    protected $table = 'zesco_its_inv_interface_header';
     //fields fillable
     protected $fillable = [
         'invoice_id',

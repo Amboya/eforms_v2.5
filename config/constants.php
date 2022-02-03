@@ -11,6 +11,7 @@ return [
     'user_unit_not_active' => "01",
     'phris_user_active' => "ACT",
     'phris_user_not_active' => "INA",
+
     'active' => "0",
     'not_active' => "1",
     'version' => "2.1.0",
@@ -26,8 +27,19 @@ return [
     'active_state' => 221,
     'non_active_state' => 222,
     'percentage_reimbursement' => 80,
+    'tax_applied' => 16,
+    'tax_not_applied' => 0,
 
+    'processed' => "Y",
+    'unprocessed' => "N",
     'company' => "01",
+    'currency' => "ZMW",
+    'exchange_rate' => "1",
+    'uploaded' => 323 ,
+    'export_not_ready' => "141",
+    'not_exported' => "41",
+    'exported' => "42",
+    'export_failed' => "43",
 
     'file_type' => [
         'quotation' => "1",
@@ -37,8 +49,20 @@ return [
         'subsistence' => 2,
     ],
     'transaction_type' => [
+        'subsistence' => "SUBSISTENCE",
         'petty_cash' => "PETTYCASH",
+        'invoice_type' => "STANDARD",
     ],
+    'line_type' => [
+        'goods' => "GOODS",
+        'tax' => "TAX",
+    ],
+    'account_type' => [
+        'expense' => "EXPENSE",
+        'operating' => "OPERATING",
+    ],
+
+
 
     'team_email_list' =>  [
         ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'],
@@ -223,6 +247,7 @@ return [
         'queried' => "201",
         'processed' => 'Y',
         'unprocessed' => 'N',
+
 
     ],
     'kilometer_allowance_status' => [
