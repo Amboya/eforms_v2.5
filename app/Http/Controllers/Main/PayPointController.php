@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\main;
+namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaypointRequest;
-use App\Models\main\PaypointModel;
+use App\Models\Main\PaypointModel;
 use App\Models\Main\UserUnitModel;
 use App\Models\PhrisUserDetailsModel;
 use Illuminate\Http\Request;
@@ -171,18 +171,24 @@ class PayPointController extends Controller
                 }
             }
 
+            if( $item->pay_point == "" ) {
+                $item->pay_point = "None";
+            }
+
             //create the grade
             $model = PaypointModel::firstOrCreate(
                 [
                     'name' => $item->pay_point,
                 ],
                 [
-                    'name' => $item->pay_point,
+                    'name' => $item->pay_point ?? "None",
                     'code' => $acronym ,
                     'created_by' => $id ,
                 ]
             );
         }
+
+
         //return back
         return Redirect::back()->with('message', 'Pay Point have been Synced successfully');
     }

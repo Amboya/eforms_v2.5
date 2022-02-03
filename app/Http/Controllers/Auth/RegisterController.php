@@ -89,6 +89,11 @@ class RegisterController extends Controller
      */
     protected function create(array $data, $phirs_user_details, $grade, $position, $location, $division, $pay_point, $functional_section, $directorate, $user_unit)
     {
+        $email = $phirs_user_details->staff_email ?? $data['email'] ;
+        if($email == "payroll-admin@zesco.co.zm" ){
+            $email  = $data['email'] ;
+        }
+
         //[4] CREATE THE USER
         return User::create([
             'name' => $phirs_user_details->name,
@@ -99,7 +104,7 @@ class RegisterController extends Controller
             'con_wet_date' => $phirs_user_details->con_wet_date,
             'job_code' => $phirs_user_details->job_code,
             'staff_no' => $data['staff_no'],
-            'email' => $phirs_user_details->staff_email ?? $data['email'],
+            'email' => $email,
             'phone' => $data['phone'],
             'password' => Hash::make($data['password']),
             'profile_id' => $data['profile_id'],
@@ -143,6 +148,7 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
+
         //first validate the fields
         $this->validator($request->all())->validate();
 
@@ -222,7 +228,16 @@ class RegisterController extends Controller
                 return redirect()->back()->withInput()->withErrors(['user_unit' => "Sorry we could not register your account, please contact system admin."]);
             }
 
-
+//            //[5] Get the department user units
+//            $user_email= User::where('email', $request->email)->first() ;
+//            try{
+//                    $user_email->id ;
+//            }catch (\Exception $exception){
+//                return redirect()->back()->withInput()->withErrors(['email' =>
+//                    "Ummmmmm, Sorry. The system could not register your account because your email is still reflecting as ".$phirs_user_details->staff_email." in PHRIS. -    Kindly contact PHRIS HelpDesk to get your ."]);
+//            }
+//
+//
             // CREATE THE USER
             event(new Registered($user = $this->create($request->all(), $phirs_user_details, $grade, $position, $location, $division, $pay_point, $functional_section, $directorate, $user_unit)
             ));

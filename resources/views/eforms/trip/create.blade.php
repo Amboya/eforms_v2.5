@@ -30,7 +30,7 @@
             padding: 10px;
             width: 100%;
             font-size: 17px;
-            font-family: Raleway;
+            /*font-family: Raleway;*/
             border: 1px solid #aaaaaa;
         }
 
@@ -38,7 +38,7 @@
             padding: 10px;
             width: 100%;
             font-size: 17px;
-            font-family: Raleway;
+            /*font-family: Raleway;*/
             border: 1px solid #aaaaaa;
         }
 
@@ -46,7 +46,7 @@
             padding: 10px;
             width: 100%;
             font-size: 17px;
-            font-family: Raleway;
+            /*font-family: Raleway;*/
             border: 1px solid #aaaaaa;
         }
 
@@ -79,7 +79,7 @@
             border: none;
             padding: 10px 20px;
             font-size: 17px;
-            font-family: Raleway;
+            /*font-family: Raleway;*/
             cursor: pointer;
         }
 
@@ -307,7 +307,7 @@
                                         <!-- /.card-header -->
                                         <div class="card-body">
                                             <div class="col-12">
-                                                <input class="mb-2" id="myInputUsers" type="text"
+                                                <input class="mb-2"  id="myInputUsers" type="text"
                                                        placeholder="Search..">
                                             </div>
                                             <div class="col-12">
@@ -374,7 +374,7 @@
                     <span class="step"></span>
                     <span class="step"></span>
                     <span class="step"></span>
-                    <span class="step"></span>
+                    <span hidden class="step"></span>
                 </div>
             </form>
         </div>

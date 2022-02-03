@@ -252,7 +252,7 @@
                                 <td class="text-green  ">Deduct any advance received against these expenses:</td>
                                 <td>
                                     <input readonly id="absc_amount1" class="form-control" name="absc_amount"
-                                           value="ZMW {{number_format($form->deduct_advance_amount ?? 0,2)}}" type="text">
+                                           value="ZMW {{number_format($form->trex_deduct_advance_amount ?? 0,2)}}" type="text">
                                 </td>
                             </tr>
                             <tr>
@@ -358,6 +358,7 @@
                     </div>
                 </div>
             @endif
+
             {{-- NEXT PERSONS TO ACT --}}
             @if(  $form->config_status_id != config('constants.subsistence_status.audited')   )
                 <div class="card">
@@ -437,7 +438,6 @@
                 </div>
             </div>
 
-
             {{--  FORM PPROVALS--}}
             <div class="card ">
                 <div class="card-header">
@@ -480,6 +480,42 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
+                    {{--  CLAIMANT REQUEST FOR REFUND--}}
+                    @if(  \Illuminate\Support\Facades\Auth::user()->id == $form->created_by )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Cancelled'>CANCEL PETTY CASH
+                                        </button>
+                                        <button hidden id="btnSubmit_reject" type="submit" name="approval"
+                                                class="btn btn-outline-danger ml-2 p-2  "
+                                                value='Rejected'>REJECT
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     {{--  CLAIMANT EDIT--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
                          &&  $form->config_status_id == config('constants.subsistence_status.new_application')
@@ -517,6 +553,27 @@
                             </div>
                         </div>
                     @endif
+
+                    {{--  DESTINANTION HOD APPROVAL--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
+                         &&  $form->config_status_id == config('constants.subsistence_status.destination_approval')
+
+                      )
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <a href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$trip->id}}).submit();">
+                                        <span class="btn btn-outline-success text-center  text-orange "> Click to Open the Trip Form </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+
 
                     {{--  HOD APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
@@ -557,6 +614,27 @@
                             </div>
                         </div>
                     @endif
+
+                    {{--  HOD APPROVAL 2--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
+                         &&  $departmental_hod ==  true )
+
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <a href="{{ route('logout') }}" class="btn btn-outline-warning"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$trip->id}}).submit();">
+
+                                        OPEN TRIP {{ $trip->code }} TO ACT
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    @endif
+
 
                     @if($departmental)
                         {{-- DEPARTMENTAL HR APPROVAL--}}
@@ -720,6 +798,29 @@
                         </div>
                     @endif
 
+
+                    {{--  HR APPROVAL 2--}}
+                    @if( $user->profile_id ==   config('constants.user_profiles.EZESCO_009')
+                         &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')
+                         &&  $departmental_hod ==  true )
+
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <a href="{{ route('logout') }}" class="btn btn-outline-warning"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$trip->id}}).submit();">
+                                        OPEN TRIP {{ $trip->code }} TO ACT
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    @endif
+
+
+
                     {{-- SNR MANAGER--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
                          &&  $form->config_status_id == config('constants.subsistence_status.hr_approved')
@@ -757,6 +858,28 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    @endif
+
+
+
+                    {{--  SNR MANAGER 2--}}
+                    @if( $user->profile_id ==   config('constants.user_profiles.EZESCO_015')
+                         &&  $form->config_status_id == config('constants.trip_status.hr_approved_trip')
+                         &&  $departmental_hod ==  true )
+
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <a href="{{ route('logout') }}" class="btn btn-outline-warning"
+                                       onclick="event.preventDefault();
+                                           document.getElementById('show-form'+{{$trip->id}}).submit();">
+                                        OPEN TRIP {{ $trip->code }} TO ACT
+                                    </a>
+                                </div>
+                            </div>
+
                         </div>
                     @endif
 
@@ -822,11 +945,11 @@
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>APPROVE
+                                                value='Approved'>AUDITED
                                         </button>
                                         <button id="btnSubmit_reject" type="submit" name="approval"
                                                 class="btn btn-outline-danger ml-2 p-2  "
-                                                value='Rejected'>REJECT
+                                                value='Rejected'>QUERIED
                                         </button>
                                     </div>
                                     <div id="divSubmit_hide">
@@ -937,6 +1060,15 @@
                                                         </div>
                                                     </div>
                                                 </TD>
+                                                <TD>
+                                                    <select name="tax[]" id="debited_account"
+                                                            required
+                                                            class="form-control amount is-warning">
+                                                        @foreach($taxes as $tax)
+                                                            <option value="{{$tax->id}}">{{$tax->name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </TD>
                                             </TR>
                                         </TABLE>
                                         <datalist id="accounts_list">
@@ -964,7 +1096,7 @@
                                     <div class="col-12 text-center ">
                                         <div id="divSubmit_show">
                                             <button id="btnSubmit_approve" type="submit" name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  "
+                                                    class="btn btn-outline-success mr-2 p-2  " title="Only click this Button to confirm that you will or have given out the money"
                                                     value='Approved'>FUNDS DISBURSED
                                             </button>
                                             <button id="btnSubmit_reject" type="submit" name="approval"
@@ -1020,6 +1152,7 @@
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
+                                                title="Only Click This Button to confirm that you have actually received the money"
                                                 value='Approved'>FUNDS RECEIVED
                                         </button>
                                         <button style="display: none" id="btnSubmit_reject" type="submit"
@@ -1084,6 +1217,102 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                         )
                         <div class="">
+                            <div class="row">
+                                <div class="col-lg-10 p-2 mt-3 ">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Total Change</label>
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="number" step="any" onchange="showChange()" class="form-control"
+                                                           name="change" id="change" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-1 offset-1">
+                                            <label class="form-control-label text-right">Upload Files</label>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <div class="input-group">
+                                                        <input type="file" class="form-control" multiple name="receipt[]"
+                                                               id="receipt" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 grid-margin stretch-card" id="show_change">
+                                    <h6 class="text-left p-2">Select Account to Retire Change</h6>
+                                    <div class="table-responsive">
+                                        <div class="col-lg-12 ">
+                                            <TABLE class="table">
+                                                <tbody>
+                                                <TR>
+                                                    <TD width="30%">
+                                                        <div class="form-group">
+                                                            <input list="items_list" type="text" name="account_item"
+                                                                   class="form-control amount"
+                                                                   placeholder="Change Description " id="account_item1">
+                                                        </div>
+                                                    </TD>
+                                                    <TD>
+                                                        <select name="credited_account" id="credited_account1"
+                                                                class="form-control amount">
+                                                            <option value="">Select Account To Credit</option>
+                                                            @foreach($accounts as $account)
+                                                                <option
+                                                                    value="{{$account->code}}">{{$account->name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </TD>
+                                                    <TD><input type="number" name="credited_amount"
+                                                               id="credited_amount1" class="form-control amount"
+                                                               placeholder=" Credited Amount [ZMK]" readonly>
+                                                    </TD>
+                                                    <TD>
+                                                        <select name="debited_account" id="debited_account1"
+                                                                class="form-control amount">
+                                                            @foreach($accounts as $account)
+                                                                @if($account->id  ==  config('constants.petty_cash_account_id')  )
+                                                                    <option
+                                                                        value="{{$account->code}}">{{$account->name}}
+                                                                        :{{$account->code}}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </TD>
+                                                    <TD><input type="number" name="debited_amount"
+                                                               class="form-control amount" id="debited_amount1"
+                                                               placeholder="Amount [ZMK]" readonly>
+                                                    </TD>
+                                                    <TD>
+                                                        <select name="tax" id="debited_account"
+                                                                required
+                                                                class="form-control amount is-warning">
+                                                            <option value="">--Choose--</option>
+                                                            @foreach($taxes as $tax)
+                                                                <option value="{{$tax->id}}">{{$tax->name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </TD>
+                                                </TR>
+                                                </tbody>
+                                                <datalist id="accounts_list">
+                                                    @foreach($accounts as $account)
+                                                        <option value="{{$account->code}}">{{$account->name}}</option>
+                                                    @endforeach
+                                                </datalist>
+
+                                            </TABLE>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -1117,6 +1346,41 @@
                                 </div>
                             </div>
                         </div>
+
+{{--                        <div class="">--}}
+{{--                            <hr>--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-10">--}}
+{{--                                    <div class="row">--}}
+{{--                                        <div class="col-1">--}}
+{{--                                            <label class="form-control-label">Reason</label>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-11">--}}
+{{--                                            <textarea class="form-control" rows="2" name="reason" required></textarea>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-2 text-center ">--}}
+{{--                                    <div id="divSubmit_show">--}}
+{{--                                        <button id="btnSubmit_approve" type="submit" name="approval"--}}
+{{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
+{{--                                                value='Resolve'>RESOLVE QUERY--}}
+{{--                                        </button>--}}
+{{--                                        <button style="display: none" id="btnSubmit_reject" type="submit"--}}
+{{--                                                name="approval"--}}
+{{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
+{{--                                                value='Rejected'>RESOLVE QUERY--}}
+{{--                                        </button>--}}
+{{--                                    </div>--}}
+{{--                                    <div id="divSubmit_hide">--}}
+{{--                                        <button disabled class="btn btn-outline-success mr-2 p-2  "--}}
+{{--                                                value='Approved'>Processing. Please wait...--}}
+{{--                                        </button>--}}
+{{--                                    </div>--}}
+
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
                     @endif
 
                 </div>
@@ -1127,7 +1391,6 @@
 
     </section>
     <!-- /.content -->
-
 
     <!-- CHANGE MODAL-->
     <div class="modal fade" id="modal-change">
@@ -1223,6 +1486,7 @@
         <!-- /.modal-dialog -->
     </div>
 
+    <!-- ADD -->
     <div class="modal fade" id="modal-add-receipt">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

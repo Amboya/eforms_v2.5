@@ -78,7 +78,9 @@
                         </a>
                         <div class="info-box-content">
                             <span class="info-box-text"> Open Forms</span>
-                            <span class="info-box-number">{{ $totals['pending_forms'] }}</span>
+                            <span class="info-box-number">{{ $totals['pending_forms']->count()  }}</span>
+
+                            {{--                            <span class="info-box-number"> Count : {{ $totals['pending_forms']->count() }} | Amount:   </span>--}}
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -150,10 +152,13 @@
                                 <table class="table m-0">
                                     <thead>
                                     <tr>
-                                        <th>from</th>
-                                        <th>to</th>
+                                        <th>Code</th>
+                                        <th>Claimant</th>
+                                        <th>Place</th>
                                         <th>No. Days</th>
-                                        <th>Allowance / Night</th>
+{{--                                        <th>Allowance / Night</th>--}}
+{{--                                        <th>Absence Claim</th>--}}
+{{--                                        <th>Travelling Expense</th>--}}
                                         <th>Total</th>
                                         <th>Status</th>
                                         <th>Time Period</th>
@@ -173,8 +178,10 @@
                                                 </form>
                                             </td>
                                             <td>{{$item->claimant_name}}</td>
+                                            <td>{{$item->absc_visited_place}}</td>
                                             <td>{{$item->numdays}}</td>
-                                            <td>{{$item->absc_allowance_per_night}}</td>
+{{--                                            <td>{{$item->total_night_allowance}}</td>--}}
+{{--                                            <td>{{$item->absc_allowance_per_night}}</td>--}}
                                             <td>ZMW {{number_format($item->net_amount_paid,2)}}</td>
 
                                             <td><span

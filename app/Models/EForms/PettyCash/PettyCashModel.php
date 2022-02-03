@@ -19,7 +19,7 @@ class PettyCashModel extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $appends = ['total'] ;
+    protected $appends = ['total'];
 
     //table name
     protected $table = 'eform_petty_cash';
@@ -101,13 +101,33 @@ class PettyCashModel extends Model
         'item',
     ];
 
+    protected static function booted()
+    {
+        //check if authenticated user
+        if (auth()->check()) {
+            $user = Auth::user();
 
-    public function getTotalAttribute(){
-        return   $this->total_payment -   $this->change   ;
+            if ($user->type_id == config('constants.user_types.developer_9999')) {
+
+            } else {
+                if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
+                    //if you are just a requester, then only see your forms
+                    static::addGlobalScope('staff_number', function (Builder $builder) use ($user) {
+                        $builder->where('claimant_staff_no', $user->staff_no);
+                    });
+                } else {
+                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.petty_cash'));
+                    $mine = $fdsf->pluck('user_unit_code')->toArray();
+                    static::addGlobalScope('approve', function (Builder $builder) use ($user, $mine) {
+                        $builder->where('claimant_staff_no', $user->staff_no)
+                            ->orWhereIn('user_unit_code', $mine);
+                    });
+                }
+            }
+        }
     }
 
-
-    protected static function booted()
+    protected static function booted1()
     {
         //check if authenticated user
         if (auth()->check()) {
@@ -115,17 +135,22 @@ class PettyCashModel extends Model
             if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
                 //if you are just a requester, then only see your forms
                 static::addGlobalScope('staff_number', function (Builder $builder) {
-                    $builder->where('claimant_staff_no', Auth::user()->staff_no);
+//                    $builder->where('claimant_staff_no', Auth::user()->staff_no);
                 });
             } else {
                 static::addGlobalScope('hod', function (Builder $builder) {
-                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.petty_cash'));
-                    $mine = $fdsf->pluck('user_unit_code')->toArray();
-                    $builder->WhereIn('user_unit_code', $mine);
+//                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.petty_cash'));
+//                    $mine = $fdsf->pluck('user_unit_code')->toArray();
+//                    $builder->WhereIn('user_unit_code', $mine);
 
                 });
             }
         }
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->total_payment - $this->change;
     }
 
 

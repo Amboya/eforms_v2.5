@@ -72,14 +72,14 @@
                         subscribed.</span><br>
                     </div>
                     <div class="col-sm-6 invoice-col">
-                        <br>
-                        <br>
+
                         <b class='text-orange'>Destination:</b><span class='text-green'> {{ $form->destination}} </span><br>
                         <b class='text-orange'>Description:</b><span
                             class='text-green'>  {{ $form->description}} </span><br>
                         <b class='text-orange'>Created By:</b> <span
-                            class=" text-green">{{ $form->initiator_name}}  </span>
-                        <br>
+                            class=" text-green">{{ $form->initiator_name}}  </span> <br>
+                        <b class='text-orange'>HOD's Cost Center:</b> <span
+                            class=" text-green">{{ $form->user_unit->user_unit_description }} : {{ $form->user_unit->user_unit_code}}  : {{ $form->user_unit->user_unit_bc_code}}  : {{ $form->user_unit->user_unit_cc_code}}  </span> <br>
                         <b class='text-orange'>Created At:</b> <span
                             class=" text-green">{{ $form->created_at}} : that is {{ $form->created_at->diffForHumans()}} </span>
                     </div>
@@ -167,20 +167,28 @@
                                                 @foreach($item->destinations as $dest_app)
                                                     <tr>
                                                         <td>
-                                                            @if( $dest_app->date_from == null)
-                                                                - {{$dest_app->user_unit->user_unit_description}} <br>
+                                                            @if( $dest_app == null)
+                                                                -  <br>
                                                             @else
+                                                                @if( $dest_app->date_to  == null)
+                                                                    {{$dest_app->user_unit->user_unit_description ?? ""}} <br>
+                                                                @else
                                                                 {{ Carbon::parse(  $dest_app->date_from )->isoFormat('Do MMM Y') }}
                                                                 <br>
                                                             @endif
+                                                            @endif
                                                         </td>
                                                         <td>
-                                                            @if( $dest_app->date_from == null)
-                                                                - {{$dest_app->user_unit->user_unit_code}} <br>
+                                                            @if( $dest_app == null)
+                                                                -  <br>
                                                             @else
+                                                                @if( $dest_app->date_to  == null)
+                                                                    {{$dest_app->user_unit->user_unit_code ?? ""}} <br>
+                                                                @else
                                                                 {{ Carbon::parse(  $dest_app->date_to )->isoFormat('Do MMM Y') }}
                                                                 <br>
                                                             @endif
+                                                                @endif
                                                         </td>
                                                         <td>
                                                             {{$dest_app->approver->name  ?? "" }}
@@ -350,8 +358,8 @@
         <!-- /.card -->
 
         <div class="modal fade" id="modal-trip-members">
-            <div class="modal-dialog ">
-                <div class="modal-content">
+            <div class="modal-dialog modal-lg ">
+                <div class="modal-content  ">
                     <div class="modal-header">
                         <label> Invited Members</label>
                     </div>
@@ -626,7 +634,7 @@
                 var button = $(event.relatedTarget); // Button that triggered the modal
 
                 //2 - SET APPROVES
-                var details_1B = "<table border='1' class='table table-striped border-transparent '>" +
+                var details_1 = "<table border='1' class='table table-striped border-transparent '>" +
                     "<thead>" +
                     "<tr>" +
                     "<td> Name</td>" +
@@ -636,18 +644,18 @@
                     "</tr>" +
                     "</thead>" +
                     "<tbody>";
+                var details_1B = "" ;
 
                 var all_invited = {!! json_encode($all_inv ) !!};
 
                 $.each(all_invited, function (index, value) {
                     details_1B +=
-                        "<tr>" +
-                        "<td>" + value.members.name + "</td>" +
-                        "<td>" + value.members.staff_no + "</td>" +
-                        "<td>" + value.members.email + "</td>" +
-                        "<td>" + value.members.phone + "</td>" +
+                        " <tr> " +
+                        " <td> " + value.members.name     + " </td> " +
+                        " <td> " + value.members.staff_no + " </td> " +
+                        " <td> " + value.members.email    + " </td> " +
+                        " <td> " + value.members.phone    + " </td> " +
                         "</tr> ";
-
                 });
                 var details_1C = "</tbody></table>" +
                     "";
@@ -661,13 +669,12 @@
         $('#modal-approve-member').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
+            var html_div = "" ;
 
             //01 - SET HEADER
             var header = "<h4 class='modal-title text-center'>COMMENTS FOR " + recipient.claimant_name + "'S TRIP FORM</h4>   <span class='btn btn-sm bg-" + recipient.status.html + "'> " + recipient.status.name + "  </span>" +
                 "<input hidden value='" + recipient.id + "' id='membership' name='membership'>"
             $('#details_0').html(header);
-
-            console.log(recipient);
 
             //02 - SET DETAILS
             var details_1 = "<div class='row'>" +
@@ -743,7 +750,7 @@
                 "class='btn btn-outline-success mr-2 p-2  '" +
                 "value='Rejected'>REJECT </button> " +
                 "</div> " +
-                "<div id='divSubmit_hide'> " +
+                "<div id='divSubmit_hide' style='display: none'> " +
                 "<button disabled class='btn btn-outline-success mr-2 p-2  '" +
                 "value='Approved'>Processing. Please wait... " +
                 "</button> " +
@@ -751,15 +758,19 @@
                 "</div> " +
                 "</div>";
 
-            //04 - CHIEF ACC
-            var chif_acc_profile = "  <div class='row ''> " +
-                "<div class='col-12'> " +
-                "<label class='form-control-label'>To Approve or Reject this one, you need to open the subsistence form</label> " +
-                "</div> " +
 
-                "</div>";
 
-            console.log(recipient);
+            var route =    '{{url('subsistence/show/now')}}'+'/'+ recipient.id ;
+           var hod_profile_sub  = "  <div class='row ''> " +
+               "<div class='col-12  text-center'> " +
+               "  <a href='"+route+"' title='Open subsistence form'"+
+             "class='btn btn-sm btn-outline-warning ' "+
+           " <span class='badge 'default' > CLICK HERE TO OPEN FORM </span> </a> </div>"+
+               "</div> " +
+               "</div>";
+            var chif_acc_profile =  hod_profile_sub ;
+            var snr_profile_sub =  hod_profile_sub ;
+
 
             var date_from = Date.parse(recipient.absc_absent_from);
             var date_to = Date.parse(recipient.absc_absent_to);
@@ -771,6 +782,7 @@
                 var year = date_1.getFullYear();
                 return year + '-' + month + '-' + day;
             }
+
 
 
             //05
@@ -803,7 +815,7 @@
                 "class='btn btn-outline-success mr-2 p-2  '" +
                 "value='Rejected'>REJECT </button> " +
                 "</div> " +
-                "<div id='divSubmit_hide'> " +
+                "<div id='divSubmit_hide' style='display: none' > " +
                 "<button disabled class='btn btn-outline-success mr-2 p-2  '" +
                 "value='Approved'>Processing. Please wait... " +
                 "</button> " +
@@ -811,12 +823,16 @@
                 "</div> " +
                 "</div>";
 
+            html_div = dest_profile ;
+
 
             //STATUS
             var accepted = {!!  json_encode(config('constants.trip_status.accepted')) !!};
+            var hod_approved =  {!!  json_encode(config('constants.subsistence_status.hod_approved')) !!};
             var hod_approved_trip = {!!  json_encode(config('constants.trip_status.hod_approved_trip')) !!};
             var trip_authorised = {!!  json_encode(config('constants.trip_status.trip_authorised')) !!};
             var hr_approved_trip = {!!  json_encode(config('constants.trip_status.hr_approved_trip')) !!};
+            var hr_approved = {!!  json_encode(config('constants.subsistence_status.hr_approved')) !!};
             var station_mgr_approved = {!!  json_encode(config('constants.subsistence_status.station_mgr_approved')) !!};
             var chief_accountant = {!!  json_encode(config('constants.subsistence_status.chief_accountant')) !!};
             var audit = {!!  json_encode(config('constants.subsistence_status.pre_audited')) !!};
@@ -828,23 +844,45 @@
             var route_back = '{{url('main/user/unit/users')}}';
 
 
+
+
+
+
             //HOD
             if ((recipient.config_status_id == accepted)) {
                 $('#div_hod').html(hod_profile);
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
+                 user_unit = recipient.user.user_unit_code;
+
             }
 
-            //HR
+            //HR 1
             else if ((recipient.config_status_id == hod_approved_trip)) {
-                $('#div_hr').html(hod_profile);
+                html_div  = hod_profile ;
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
+                user_unit = recipient.user.user_unit_code;
+            }
+
+            //HR 2
+            else if ((recipient.config_status_id == hod_approved)) {
+                html_div  = hod_profile_sub ;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
             }
 
-            //SNR MANAGER
+            //SNR MANAGER  TRIP
             else if ((recipient.config_status_id == hr_approved_trip)) {
-                $('#div_snr').html(hod_profile);
+               // $('#div_snr').html(hod_profile);
+                html_div  = hod_profile ;
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
+                user_unit = recipient.user.user_unit_code;
+            }
+            //SNR MANAGER
+            else if ((recipient.config_status_id == hr_approved)) {
+                html_div  = snr_profile_sub ;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
             }
+
+
 
 
             //CHIEF ACCOUNTANT
@@ -869,17 +907,20 @@
 
             //DESTINATION APPROVALS
             else if ((recipient.config_status_id == destination_approvals)) {
-                var user = {!!  json_encode($user) !!};
-                if(user){
-
-                }
-                $('#div_dest').html(dest_profile);
                 next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
                 route_back = '{{url('main/user/unit/many/users')}}';
-                var a = recipient.destinations;
-                user_unit = a.map(a => a.user_unit_code);
 
-                //
+                //remove from the array the user unit already worked on
+                var aaaa = recipient.destinations;
+                for (var i = 0; i < aaaa.length; ++i) {
+                    if(aaaa[i].created_by != null){
+                         aaaa.splice(i,1);
+                    }
+                }
+                //final of unworked on user units - get the user unit code only removing duplicates
+                user_unit = aaaa.map(aaaa => aaaa.user_unit_code);
+
+                //user units urls
                 var url = '';
                 for (var i = 0; i < user_unit.length; ++i) {
                     if (url.indexOf('?') === -1) {
@@ -926,9 +967,8 @@
 
             //APPROVED
             else if ((recipient.config_status_id == trip_authorised)) {
-
-                {{--$('#div_snr').html(hod_profile);--}}
-                {{--next_profile = {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};--}}
+                $('#div_hod').html(hod_profile_sub);
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
             }
 
 
@@ -946,14 +986,14 @@
                 });
             });
 
-            getNextUsers(route_back, user_unit, next_profile);
+            getNextUsers(route_back, user_unit, next_profile, recipient.config_status_id, html_div);
         });
     </script>
 
     <script>
 
         //GET ARTICLE FROM DB
-        function getNextUsers(route_back, user_unit, profile) {
+        function getNextUsers(route_back, user_unit, profile, stage, html_div ) {
             var route = route_back + '/' + user_unit + profile;
 
             console.log(route);
@@ -976,6 +1016,8 @@
                     //HANDLE WHO'S NEXT
                     var whos_next1 = "<div class='row'> ";
                     var whos_next2 = " ";
+                    var user = {!!  json_encode($user) !!};
+                    var mine_to_work = false ;
                     for (i = 0; i < obj.length; i++) {
                         whos_next2 += "<div class='col-4 '> " +
                             "<span class='font-weight-bold text-orange'>test : </span><span class='text-green'>" + obj[i].staff_no + "</span><br> " +
@@ -984,10 +1026,62 @@
                             "<span class='font-weight-bold text-orange'>Phone : </span><span class='text-green'>" + obj[i].phone + "</span><br> " +
                             "<span class='font-weight-bold text-orange'>Email : </span><span class='text-green'>" + obj[i].email + "</span><br><br> " +
                             " </div>";
+
+                        if(user.staff_no == obj[i].staff_no ){
+                            mine_to_work = true ;
+                        }
                     }
                     var whos_next3 = "</div>" +
                         "";
                     $("#details_3").html(whos_next1 + whos_next2 + whos_next3);
+
+                    var dest = {!!  json_encode(config('constants.subsistence_status.destination_approval')) !!} ;
+                    if((stage == dest ) && (mine_to_work == true) ){
+
+                        $('#div_dest').html(html_div);
+                    }
+
+                    var myDiv = document.getElementById("div_hr");
+                    var dest1 = {!!  json_encode(config('constants.subsistence_status.hod_approved')) !!} ;
+                    var dest2 = {!!  json_encode(config('constants.trip_status.hod_approved_trip')) !!} ;
+                    if((stage == dest1 ) && (mine_to_work == true) ){
+                        myDiv.innerHTML = "";//remove all child elements inside of myDiv
+                        $('#div_hr').html(html_div);
+                    }else if((stage == dest2 ) && (mine_to_work == true) ){
+                        myDiv.innerHTML = "";//remove all child elements inside of myDiv
+                        $('#div_hr').html(html_div);
+                    }else if ((stage == dest1 ) && (mine_to_work == false) ){
+                        myDiv.innerHTML = "";//remove all child elements inside of myDiv
+                    }else if ((stage == dest2 ) && (mine_to_work == false) ){
+                        myDiv.innerHTML = "";//remove all child elements inside of myDiv
+                    }else {
+
+                    }
+
+
+                    var mydiv_snr = document.getElementById("div_snr");
+
+                    var hr_approved_trip = {!!  json_encode(config('constants.trip_status.hr_approved_trip')) !!};
+                    var hr_approved = {!!  json_encode(config('constants.subsistence_status.hr_approved')) !!};
+
+
+
+                    if((stage == hr_approved_trip ) && (mine_to_work == true) ){
+                        mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
+                        $('#div_snr').html(html_div);
+                    }else if((stage == hr_approved ) && (mine_to_work == true) ){
+                        mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
+                        $('#div_snr').html(html_div);
+                    }else if((stage == hr_approved_trip ) && (mine_to_work == false) ) {
+                        mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
+                    }else if((stage == hr_approved ) && (mine_to_work == false) ) {
+                        mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
+                    }else {
+
+                    }
+
+
+
                 },
                 complete: function (response_data) {
                     // Hide image container
@@ -995,6 +1089,12 @@
                 }
             });
 
+        }
+
+        function removeAllChildNodes(parent) {
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
         }
 
     </script>

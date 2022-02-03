@@ -38,6 +38,7 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('claim_date')->nullable();
             $table->string('claimant_name')->nullable();
             $table->string('claimant_staff_no')->nullable();
+            $table->string('claimant_unit_code')->nullable();
             $table->string('station')->nullable();
             $table->string('section')->nullable();
             //
@@ -48,10 +49,14 @@ class CreateSubsistenceModelsTable extends Migration
             $table->string('absc_allowance_per_night')->nullable();
             //
             $table->string('trex_total_attached_claim')->nullable();
+            $table->string('trex_deduct_advance_amount')->nullable();
             $table->string('date_left')->nullable();
             $table->string('date_arrived')->nullable();
             $table->string('allocation_code')->nullable();
             $table->string('account_number')->nullable();
+            $table->string('total_payment')->nullable();
+            $table->string('change')->nullable();
+
             //
             $table->string('authorised_by')->nullable();
             $table->string('authorised_staff_no')->nullable();

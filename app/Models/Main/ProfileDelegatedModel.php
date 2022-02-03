@@ -23,6 +23,7 @@ class ProfileDelegatedModel extends Model
     protected $fillable = [
         'eform_id',
         'eform_code',
+        'owner',
         'delegated_to',
         'delegated_user_unit',
         'delegated_job_code',
@@ -36,6 +37,7 @@ class ProfileDelegatedModel extends Model
     ];
 
     protected $with = [
+        'status',
         'profile',
         'form'
     ];
@@ -53,7 +55,7 @@ class ProfileDelegatedModel extends Model
 
     public function me()
     {
-        return $this->belongsTo(User::class, 'created_by', 'id');
+        return $this->belongsTo(User::class, 'owner', 'id');
     }
 
     public function delegation()

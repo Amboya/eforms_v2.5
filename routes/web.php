@@ -40,6 +40,8 @@ Route::get('/', function () {
 |
 */
 
+
+
 Route::group([
     'namespace' => 'main',
     'prefix' => 'main',
@@ -62,6 +64,7 @@ Route::group([
             Route::post('avatar/{id}', [App\Http\Controllers\Main\UserController::class, 'updatePhoto'])->name('main.user.avatar');
             Route::get('sync/{id}', [App\Http\Controllers\Main\UserController::class, 'sync'])->name('main.user.sync');
             Route::post('change', [App\Http\Controllers\Main\UserController::class, 'changePassword'])->name('main.user.change.password');
+            Route::post('reset/{user}', [App\Http\Controllers\Main\UserController::class, 'resetPassword'])->name('main.user.reset.password');
             Route::post('change_unit', [App\Http\Controllers\Main\UserController::class, 'changeUnit'])->name('main.user.change.unit');
         });
         //user type
@@ -118,6 +121,7 @@ Route::group([
             Route::get('delegation/list', [App\Http\Controllers\Main\ProfileController::class, 'delegationList'])->name('main.profile.delegation.list');
             Route::get('delegation/show/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationShowOnBehalf'])->name('main.profile.delegation.show.on.behalf');
             Route::post('delegation/store/on/behalf', [App\Http\Controllers\Main\ProfileController::class, 'delegationStoreOnBehalf'])->name('main.profile.delegation.store.on.behalf');
+            Route::post('delegation/store/on/user', [App\Http\Controllers\Main\ProfileController::class, 'delegationStoreUser'])->name('main.profile.delegation.store.on.behalf.user');
             Route::post('delegation/store', [App\Http\Controllers\Main\ProfileController::class, 'delegationStore'])->name('main.profile.delegation.store');
             Route::post('delegation/end/{id}', [App\Http\Controllers\Main\ProfileController::class, 'delegationEnd'])->name('main.profile.delegation.end');
             Route::post('delegation/remove', [App\Http\Controllers\Main\ProfileController::class, 'removeDelegation'])->name('main.profile.delegation.remove');
@@ -264,6 +268,25 @@ Route::group([
             Route::post('update', [App\Http\Controllers\Main\LocationController::class, 'update'])->name('main.location.update');
             Route::post('destroy/{id}', [App\Http\Controllers\Main\LocationController::class, 'destroy'])->name('main.location.destroy');
             Route::get('sync', [App\Http\Controllers\Main\LocationController::class, 'sync'])->name('main.location.sync');
+        });
+
+        //Tax
+        Route::group([
+            'prefix' => 'tax'], function () {
+            Route::get('list', [App\Http\Controllers\Main\TaxController::class, 'index'])->name('main.tax');
+            Route::post('store', [App\Http\Controllers\Main\TaxController::class, 'store'])->name('main.tax.store');
+            Route::post('update', [App\Http\Controllers\Main\TaxController::class, 'update'])->name('main.tax.update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\TaxController::class, 'destroy'])->name('main.tax.destroy');
+            Route::get('sync', [App\Http\Controllers\Main\TaxController::class, 'sync'])->name('main.tax.sync');
+        });
+
+        //operating units
+        Route::group([
+            'prefix' => 'operating-units'], function () {
+            Route::get('list', [App\Http\Controllers\Main\OperatingUnitsController::class, 'index'])->name('main.operating.units');
+            Route::post('store', [App\Http\Controllers\Main\OperatingUnitsController::class, 'store'])->name('main.operating.units.store');
+            Route::post('update', [App\Http\Controllers\Main\OperatingUnitsController::class, 'update'])->name('main.operating.units.update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\OperatingUnitsController::class, 'destroy'])->name('main.operating.units.destroy');
         });
 
         //totals
@@ -629,7 +652,8 @@ Route::group([
     function () {
     //sync all
     Route::get('sync', [App\Http\Controllers\Main\ConfigWorkFlowController::class, 'syncFromConfigUserUnits'])->name('workflow.sync');
-    Route::post('details/{configWorkFlow}', [App\Http\Controllers\Main\ConfigWorkFlowController::class, 'show'])->name('workflow.show');
+        Route::post('details/{configWorkFlow}', [App\Http\Controllers\Main\ConfigWorkFlowController::class, 'show'])->name('workflow.show');
+        Route::get('mine/{user_unit}', [App\Http\Controllers\Main\ConfigWorkFlowController::class, 'mine'])->name('workflow.mine');
 
 
     //config_work_flow for petty cash

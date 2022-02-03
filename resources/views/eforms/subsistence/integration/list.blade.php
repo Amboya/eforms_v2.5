@@ -1,4 +1,4 @@
-@extends('layouts.eforms.SUBSISTENCE.master')
+@extends('layouts.eforms.subsistence.master')
 
 
 @push('custom-styles')
@@ -9,18 +9,20 @@
 @endpush
 
 
+
 @section('content')
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-primary">SUBSISTENCE : {{$category}}</h1>
+                    <h1 class="m-0 text-dark text-orange text-uppercase">Subsistence : <span
+                            class="text-green">{{$category}}</span></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('subsistence.home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">SUBSISTENCE : {{$category}}</li>
+                        <li class="breadcrumb-item active">Subsistence : {{$category}}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -38,8 +40,14 @@
                 <p class="lead"> {{session()->get('message')}}</p>
             </div>
         @endif
+        @if(session()->has('error'))
+            <div class="alert alert-info alert-dismissible">
+                <p class="lead"> {{session()->get('error')}}</p>
+            </div>
+        @endif
 
-        @if ($errors->any())
+
+    @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
                     @foreach ($errors->all() as $error)
@@ -51,23 +59,46 @@
 
     <!-- Default box -->
         <div class="card">
-            <form id="list_form" action="{{route('petty.cash.approve.batch', $value)}}" method="post">
+            <form id="list_form" action="{{route('subsistence.finance.send')}}" method="post">
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
+                        {{--                    <div class="row">--}}
+                        {{--                        <div class="col-6 offset-6">--}}
+                        {{--                        <input type="text" class="form-control m-2" id="myInput" onkeyup="myFunction()" placeholder="Search ..">--}}
+                        {{--                    </div>--}}
+                        {{--                    </div>--}}
+
+                        {{--                @if(Auth::user()->type_id != config('constants.user_types.developer'))--}}
+                        {{--                        <table id="myTable" class="table m-0">--}}
+                        {{--                            @else--}}
+
                         <tr>
                             <td>
                                 <input id="selectAll" type="checkbox"><label for='selectAll'>Select All</label>
                             </td>
+
                         </tr>
                         <table id="example1" class="table m-0">
+                            {{--                                    @endif--}}
                             <thead>
                             <tr>
                                 <th></th>
                                 <th>Serial</th>
-                                <th>Invoice Type</th>
-                                <th>Claimant</th>
-                                <th>Payment</th>
+                                <th>Staff no</th>
+                                <th>Credited Acc</th>
+                                <th>Credited Amt</th>
+                                <th>Debited Acc</th>
+                                <th>Debited Amt</th>
+                                <th>Vat Rate</th>
+                                <th>CC : BU</th>
+                                <th>Org Id</th>
+                                <th>Company</th>
+                                <th>Intra Company</th>
+                                <th>Project</th>
+                                <th>Pems Project</th>
+                                <th>Spare</th>
+                                <th>Description</th>
                                 <th>Status</th>
                                 <th>Date Created</th>
                                 <th>Action</th>
@@ -80,56 +111,50 @@
                                 <tr>
                                     <td>
                                         <div class="icheck-warning d-inline">
-                                            <input type="checkbox" value="{{$item->invoice_id}}" id="forms[]"
+                                            <input type="checkbox" value="'{{$item->form->code}}'" id="forms[]"
                                                    name="forms[]">
                                         </div>
                                     </td>
                                     <td>
-                                        <a href="{{ route('logout') }}" class="dropdown-item"
+                                        <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault();
-                                               document.getElementById('show-form'+{{$item->invoice_id ?? 0 }}).submit();"> {{$item->invoice_id ?? 0 }}</a>
+                                               document.getElementById('show-form'+{{$item->eform_petty_cash_id ?? 0 }}).submit();"> {{$item->form->code ?? 0 }}</a>
                                         <form id="show-form{{$item->invoice_id}}"
-                                              action="{{ route('petty.cash.show', $item->invoice_id ?? 0) }}"
+                                              action="{{ route('subsistence.show', $item->eform_petty_cash_id ?? 0) }}"
                                               method="POST" class="d-none">
                                             @csrf
                                         </form>
                                     </td>
-                                    <td>{{$item->invoice_type}}</td>
-                                    <td>{{$item->supplier_num}}</td>
-                                    <td>{{$item->invoice_currency_code}} {{ number_format($item->invoice_amount , 2)}}</td>
+                                    <td>{{$item->claimant_staff_no}}</td>
+                                    <td>{{$item->creditted_account_id}}</td>
+                                    <td>{{ number_format($item->creditted_amount , 2)}}</td>
+                                    <td>{{$item->debitted_account_id}}</td>
+                                    <td>{{ number_format($item->debitted_amount , 2)}}</td>
+
+                                    <td>{{$item->vat_rate ?? 0}} </td>
+
+                                    <td>{{$item->form->user_unit->user_unit_cc_code}} : {{$item->form->user_unit->user_unit_bc_code}}</td>
+                                    <td>{{$item->form->user_unit->org_id}}</td>
+                                    <td>{{$item->company}}</td>
+                                    <td>{{$item->intra_company}}</td>
+                                    <td>{{$item->project}}</td>
+                                    <td>{{$item->pems_project}}</td>
+                                    <td>{{$item->spare}}</td>
+                                    <td>{{$item->description}}</td>
                                     <td><span
                                             class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                     </td>
-                                    <td>{{ $item->creation_date }}</td>
+                                    <td>{{ Carbon::parse(  $item->updated_at )->isoFormat('Do MMM Y') }}</td>
                                     <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
                                            onclick="event.preventDefault();
-                                               document.getElementById('show-form'+{{$item->invoice_id}}).submit();">
+                                               document.getElementById('show-form'+{{$item->eform_petty_cash_id}}).submit();">
                                             View </a>
-                                        <form id="show-form{{$item->invoice_id}}"
-                                              action="{{ route('petty.cash.show', $item->invoice_id) }}"
+                                        <form id="show-form{{$item->eform_petty_cash_id}}"
+                                              action="{{ route('subsistence.show', $item->eform_petty_cash_id) }}"
                                               method="POST" class="d-none">
                                             @csrf
                                         </form>
 
-                                        @if(Auth::user()->type_id == config('constants.user_types.developer'))
-                                            <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
-                                                    title="Mark as Void."
-                                                    data-toggle="modal"
-                                                    data-target="#modal-void{{$item->invoice_id}}">
-                                                <i class="fa fa-ban"></i>
-                                            </button>
-                                            <button class="btn btn-sm bg-gradient-gray " style="margin: 1px"
-                                                    title="Reverse Form to the previous state."
-                                                    data-toggle="modal"
-                                                    data-target="#modal-reverse{{$item->invoice_id}}">
-                                                <i class="fa fa-redo"></i>
-                                            </button>
-                                            <a class="btn btn-sm bg-gradient-gray "
-                                               href="{{route('petty.cash.sync', $item->invoice_id)}}"
-                                               title="Sync Application Forms">
-                                                <i class="fas fa-sync"></i>
-                                            </a>
-                                        @endif
                                     </td>
 
                                 </tr>
@@ -146,6 +171,35 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
+
+
+                    {{-- IS CLOSED- SEND TO PHRIS--}}
+                    @if(Auth::user()->type_id == config('constants.user_types.developer'))
+                        <div class="">
+                            <hr>
+                            <div class="row">
+                                <div class="col-2 text-center">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>SEND TO FMS INTERFACE
+                                        </button>
+                                        <button style="display: none" id="btnSubmit_reject" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Rejected'>SEND TO FMS INTERFACE
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 
                 </div>
             </form>

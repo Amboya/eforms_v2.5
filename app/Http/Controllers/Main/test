@@ -1,11 +1,47 @@
-   <a href='{{ route('logout') }}  title='Open subsistence form'
-                                                   class='btn btn-sm bg-{{$item->status->html ?? default'}}
-                                                   onclick='event.preventDefault();
-                                                       document.getElementById('show-form1'+{{$item->id}}).submit();'>
-                                                    <i class='fa fa-file'></i>
-                                                </a>
-                                            <form id='show-form1{{$item->id}}
-                                                  action='{{ route('subsistence.show', $item->id) }}
-                                                  method='POST' class='d-none'>
-                                                @csrf
-                                            </form>
+   <div class='row'>
+                            <div class='col-6'>
+                                <div class='form-group'>
+                                    <label>Select Profile Owner</label>
+                                    <input  class='form-control select2' id='owner_id' name='owner_id'
+                                           required
+                                           style='width: 100%;'>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <div class='col-6'>
+                                <div class='form-group'>
+                                    <label>Select Delegated User</label>
+                                     <input  class='form-control select2' id='user_id' name='user_id'
+                                           required
+                                           style='width: 100%;'>
+                                    </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <div class='col-6'>
+                                <div class='form-group'>
+                                    <label>Select Profile</label>
+                                    <select class='form-control select2' id='profile_select' name='profile' required
+                                            style='width: 100%;'>
+                                        <option disabled value=' selected>Select Profile to Delegate</option>
+                                        </select>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <div class='col-6 ''>
+                                <div class='form-group'>
+                                    <label>Select E-Form</label>
+                                    <select class='form-control select2' id='eform_select' name='eform_id' required
+                                            style='width: 100%;'>
+                                    </select>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <div class='col-6 ''>
+                                <div class='form-group'>
+                                    <label>Delegation End-Date</label>
+                                    <input type='date' class='form-control' name='delegation_end_date'
+                                           id='delegation_end_date'>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                        </div>

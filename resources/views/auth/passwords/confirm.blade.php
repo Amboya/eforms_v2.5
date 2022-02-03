@@ -4,6 +4,11 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
+
+            <div class="row justify-content-center ">
+                <img src="{{asset('dashboard/dist/img/ZESCO_removebg.png')}}" width="50%">
+            </div>
+
             <div class="card">
                 <div class="card-header">{{ __('Confirm Password') }}</div>
 

@@ -7,6 +7,7 @@ use App\Http\Requests\UserUnitRequest;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\UserUnitModel;
+use App\Models\Main\UserUnitSpmsSyncModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -35,8 +36,9 @@ class UserUnitController extends Controller
      */
     public static function sync()
     {
+
         //get positions from phris
-        $user_units_from_spms = UserUnitModel::select('*')
+        $user_units_from_spms = UserUnitSpmsSyncModel::select('*')
             ->where('status', config('constants.user_unit_active'))
             ->get();
 
@@ -86,25 +88,6 @@ class UserUnitController extends Controller
         return view('main.user_unit.index')->with(compact('list', 'users', 'search'));
     }
 
-    public function searchId($id)
-    {
-        $search = $id;
-
-        $list = ConfigWorkFlow::where('id', $id)
-//            ->orWhere('user_unit_description', 'LIKE', "%{$search}%")
-//            ->orWhere('user_unit_superior', 'LIKE', "%{$search}%")
-//            ->orWhere('user_unit_bc_code', 'LIKE', "%{$search}%")
-//            ->orWhere('user_unit_cc_code', 'LIKE', "%{$search}%")
-//            ->orWhere('user_unit_status', 'LIKE', "%{$search}%")
-            ->get();
-
-
-        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code')->where('profile_id', '!=', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
-        //data to send to the view
-        return view('main.user_unit.index')->with(compact('list', 'users', 'search'));
-    }
-
-
     /**
      * Display a listing of the resource.
      *
@@ -112,6 +95,7 @@ class UserUnitController extends Controller
      */
     public function index()
     {
+
         //get all the categories
         $list = ConfigWorkFlow::orderBy('user_unit_code')
             ->where('user_unit_status', config('constants.user_unit_active'))
@@ -203,46 +187,68 @@ class UserUnitController extends Controller
     {
         $model = ConfigWorkFlow::find($request->workflow_id);
 
-        $model->dr_code = $request->dr_code ?? $model->dr_code;
-        $model->dr_unit = $request->dr_unit ?? $model->dr_unit;
-        $model->dm_code = $request->dm_code ?? $model->dm_code;
-        $model->dm_unit = $request->dm_unit ?? $model->dm_unit;
-        $model->hod_code = $request->hod_code ?? $model->hod_code;
-        $model->hod_unit = $request->hod_unit ?? $model->hod_unit;
-        $model->arm_code = $request->arm_code ?? $model->arm_code;
-        $model->arm_unit = $request->arm_unit ?? $model->arm_unit;
-        $model->bm_code = $request->bm_code ?? $model->bm_code;
-        $model->bm_unit = $request->bm_unit ?? $model->bm_unit;
-        $model->ca_code = $request->ca_code ?? $model->ca_code;
-        $model->ca_unit = $request->ca_unit ?? $model->ca_unit;
-        $model->ma_code = $request->ma_code ?? $model->ma_code;
-        $model->ma_unit = $request->ma_unit ?? $model->ma_unit;
-        $model->psa_code = $request->psa_code ?? $model->psa_code;
-        $model->psa_unit = $request->psa_unit ?? $model->psa_unit;
-        $model->hrm_code = $request->hrm_code ?? $model->hrm_code;
-        $model->hrm_unit = $request->hrm_unit ?? $model->hrm_unit;
-        $model->phro_code = $request->phro_code ?? $model->phro_code;
-        $model->phro_unit = $request->phro_unit ?? $model->phro_unit;
-        $model->shro_code = $request->shro_code ?? $model->shro_code;
-        $model->shro_unit = $request->shro_unit ?? $model->shro_unit;
-        $model->audit_code = $request->audit_code ?? $model->audit_code;
-        $model->audit_unit = $request->audit_unit ?? $model->audit_unit;
-        $model->expenditure_code = $request->expenditure_code ?? $model->expenditure_code;
-        $model->expenditure_unit = $request->expenditure_unit ?? $model->expenditure_unit;
-        $model->payroll_code = $request->payroll_code ?? $model->payroll_code;
-        $model->payroll_unit = $request->payroll_unit ?? $model->payroll_unit;
-        $model->security_code = $request->security_code ?? $model->security_code;
-        $model->security_unit = $request->security_unit ?? $model->security_unit;
-        $model->transport_code = $request->transport_code ?? $model->transport_code;
-        $model->transport_unit = $request->transport_unit ?? $model->transport_unit;
-        $model->sheq_code = $request->sheq_code ?? $model->sheq_code;
-        $model->sheq_unit = $request->sheq_unit ?? $model->sheq_unit;
+        $model->dr_code = $request->dr_code ?? ($model->dr_code ?? 0);
+        $model->dr_unit = $request->dr_unit ?? ($model->dr_unit ?? 0);
+        $model->dm_code = $request->dm_code ?? ($model->dm_code ?? 0);
+        $model->dm_unit = $request->dm_unit ?? ($model->dm_unit ?? 0);
+        $model->hod_code = $request->hod_code ?? ($model->hod_code ?? 0);
+        $model->hod_unit = $request->hod_unit ?? ($model->hod_unit ?? 0);
+        $model->arm_code = $request->arm_code ?? ($model->arm_code ?? 0);
+        $model->arm_unit = $request->arm_unit ?? ($model->arm_unit ?? 0);
+        $model->bm_code = $request->bm_code ?? ($model->bm_code ?? 0);
+        $model->bm_unit = $request->bm_unit ?? ($model->bm_unit ?? 0);
+        $model->ca_code = $request->ca_code ?? ($model->ca_code ?? 0);
+        $model->ca_unit = $request->ca_unit ?? ($model->ca_unit ?? 0);
+        $model->ma_code = $request->ma_code ?? ($model->ma_code ?? 0);
+        $model->ma_unit = $request->ma_unit ?? ($model->ma_unit ?? 0);
+        $model->psa_code = $request->psa_code ?? ($model->psa_code ?? 0);
+        $model->psa_unit = $request->psa_unit ?? ($model->psa_unit ?? 0);
+        $model->hrm_code = $request->hrm_code ?? ($model->hrm_code ?? 0);
+        $model->hrm_unit = $request->hrm_unit ?? ($model->hrm_unit ?? 0);
+        $model->phro_code = $request->phro_code ?? ($model->phro_code ?? 0);
+        $model->phro_unit = $request->phro_unit ?? ($model->phro_unit ?? 0);
+        $model->shro_code = $request->shro_code ?? ($model->shro_code ?? 0);
+        $model->shro_unit = $request->shro_unit ?? ($model->shro_unit ?? 0);
+        $model->audit_code = $request->audit_code ?? ($model->audit_code ?? 0);
+        $model->audit_unit = $request->audit_unit ?? ($model->audit_unit ?? 0);
+        $model->expenditure_code = $request->expenditure_code ?? ($model->expenditure_code ?? 0);
+        $model->expenditure_unit = $request->expenditure_unit ?? ($model->expenditure_unit ?? 0);
+        $model->payroll_code = $request->payroll_code ?? ($model->payroll_code ?? 0);
+        $model->payroll_unit = $request->payroll_unit ?? ($model->payroll_unit ?? 0);
+        $model->security_code = $request->security_code ?? ($model->security_code ?? 0);
+        $model->security_unit = $request->security_unit ?? ($model->security_unit ?? 0);
+        $model->transport_code = $request->transport_code ?? ($model->transport_code ?? 0);
+        $model->transport_unit = $request->transport_unit ?? ($model->transport_unit ?? 0);
+        $model->sheq_code = $request->sheq_code ?? ($model->sheq_code ?? 0);
+        $model->sheq_unit = $request->sheq_unit ?? ($model->sheq_unit ?? 0);
         $model->save();
 
         //log the activity
         ActivityLogsController::store($request, "Updating of User Unit", "update", " unit user updated", $model->id);
 
-        return redirect()->route('workflow.show', ['configWorkFlow' => $model])->with('message', 'Details for ' . $model->name . ' have been Created successfully');
+        return self::searchId($model->id)->with('message', 'Details for ' . $model->name . ' have been Updated successfully');
+//        return redirect()->route('workflow.show', ['configWorkFlow' => $model])->with('message', 'Details for ' . $model->name . ' have been Updated successfully');
+    }
+
+    public function searchId($id)
+    {
+        $search = $id;
+
+        $list = ConfigWorkFlow::where('id', $id)
+//            ->orWhere('user_unit_description', 'LIKE', "%{$search}%")
+//            ->orWhere('user_unit_superior', 'LIKE', "%{$search}%")
+//            ->orWhere('user_unit_bc_code', 'LIKE', "%{$search}%")
+//            ->orWhere('user_unit_cc_code', 'LIKE', "%{$search}%")
+//            ->orWhere('user_unit_status', 'LIKE', "%{$search}%")
+            ->get();
+
+
+//        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code')->where('profile_id', '!=', config('constants.user_profiles.EZESCO_002'))->orderBy('name')->get();
+
+        $users = User::select('id', 'staff_no', 'name', 'user_unit_code', 'job_code')->whereNotNull('profile_id')->orderBy('name')->get();
+
+        //data to send to the view
+        return view('main.user_unit.index')->with(compact('list', 'users', 'search'));
     }
 
     /**
@@ -278,28 +284,31 @@ class UserUnitController extends Controller
             $code_column = $profile_modal->code_column;
             $unit_column = $profile_modal->unit_column;
 
-            //make the update on config workflow
-            if ($code_column != "" && $unit_column != "") {
-                //update the workflow
-                $units = $request->units;
-                foreach ($units as $unit) {
-                    $work_flow = ConfigWorkFlow::find($unit);
-                    $work_flow->
-                    update([
-                        $code_column => $new_user_details->job_code,
-                        $unit_column => $new_user_details->user_unit_code
-                    ]);
-                }
+            if ($code_column == "user_unit_code" || $unit_column == "user_unit_code") {
+                //
+            } else {
+                //  make the update on config workflow
+                if ($code_column != "" && $unit_column != "") {
+                    //update the workflow
+                    $units = $request->units;
+                    foreach ($units as $unit) {
+                        $work_flow = ConfigWorkFlow::find($unit);
+                        $work_flow->
+                        update([
+                            $code_column => $new_user_details->job_code,
+                            $unit_column => $new_user_details->user_unit_code
+                        ]);
+                    }
 //                $work_flow = ConfigWorkFlow::whereIn('id', $units)
 //                    ->update([
 //                        $code_column => $new_user_details->job_code,
 //                        $unit_column => $new_user_details->user_unit_code
 //                    ]);
-            } else {
-                //  return Redirect::back()->with('error', 'Assignment failed because profile unit_code and code_column are empty for the selected profile : '.$profile_modal->name);
+                } else {
+                    return Redirect::back()->with('error', 'Assignment failed because profile unit_code and code_column are empty for the selected profile : ' . $profile_modal->name);
+                }
             }
         }
-
         //log the activity
         ActivityLogsController::store($request, "User Units Assignment to a user", "user units assignment", " user units have been assigned to " . $new_user_details->name . " with the profile for " . $profile_modal->name, json_encode($profile_modal->id));
         //return

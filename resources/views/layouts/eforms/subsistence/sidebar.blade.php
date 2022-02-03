@@ -163,6 +163,41 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-file-download"></i>
+                            <p>
+                                Integration
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('subsistence.finance.ready')}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Ready for upload
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('subsistence.finance.index')}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Invoice Uploaded
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('subsistence.finance.header')}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Invoice Header
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     @if (Auth::user()->type_id == config('constants.user_types.developer'))
                         <li class="nav-item">
                             <a href="{{route('subsistence.record','all')}}" class="nav-link ">
@@ -173,6 +208,62 @@
                         </li>
                     @endif
                 @endif
+
+
+
+                <li class="nav-header">SUMMARIES</li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-file-download"></i>
+                            <p>
+                                INVOICES
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('subsistence.invoices.units',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> User-Units
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('subsistence.invoices.directorates',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Directorates
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('subsistence.invoices.divisions',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Divisions
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('subsistence.invoices.duplicates',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Duplicates
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('subsistence.invoices.business.units',0)}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Business Units
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
 
                 <li class="nav-header">CONFIGURATIONS</li>
 
@@ -213,79 +304,6 @@
                     </li>
                 @endif
 
-                {{--                                <li class="nav-header">TOTALS</li>--}}
-                {{--                                <li class="nav-item">--}}
-                {{--                                    <a href="#" class="nav-link">--}}
-                {{--                                        <i class="nav-icon far fa-chart-bar"></i>--}}
-                {{--                                        <p> Personal--}}
-                {{--                                            <i class="fas fa-angle-left right"></i>--}}
-                {{--                                        </p>--}}
-                {{--                                    </a>--}}
-                {{--                                    <ul class="nav nav-treeview">--}}
-                {{--                                        <li class="nav-item">--}}
-                {{--                                            <a href="#" class="nav-link ">--}}
-                {{--                                                <i class="nav-icon far fa-circle"></i>--}}
-                {{--                                                <p> Daily--}}
-                {{--                                                </p>--}}
-                {{--                                            </a>--}}
-                {{--                                        </li>--}}
-                {{--                                        <li class="nav-item">--}}
-                {{--                                            <a href="#" class="nav-link ">--}}
-                {{--                                                <i class="nav-icon far fa-circle"></i>--}}
-                {{--                                                <p> Monthly--}}
-                {{--                                                </p>--}}
-                {{--                                            </a>--}}
-                {{--                                        </li>--}}
-                {{--                                        <li class="nav-item">--}}
-                {{--                                            <a href="#" class="nav-link ">--}}
-                {{--                                                <i class="nav-icon far fa-circle"></i>--}}
-                {{--                                                <p> Yearly--}}
-                {{--                                                </p>--}}
-                {{--                                            </a>--}}
-                {{--                                        </li>--}}
-                {{--                                    </ul>--}}
-                {{--                                </li>--}}
-
-                {{--                                @if (Auth::user()->type_id == config('constants.user_types.developer'))--}}
-                {{--                                    <li class="nav-item">--}}
-                {{--                                        <a href="#" class="nav-link">--}}
-                {{--                                            <i class="nav-icon  far fa-chart-bar"></i>--}}
-                {{--                                            <p> Directorates--}}
-                {{--                                                <i class="fas fa-angle-left right"></i>--}}
-                {{--                                            </p>--}}
-                {{--                                        </a>--}}
-                {{--                                        <ul class="nav nav-treeview">--}}
-                {{--                                            <li class="nav-item">--}}
-                {{--                                                <a href="#" class="nav-link ">--}}
-                {{--                                                    <i class="nav-icon fas fa-circle"></i>--}}
-                {{--                                                    <p> Daily--}}
-                {{--                                                    </p>--}}
-                {{--                                                </a>--}}
-                {{--                                            </li>--}}
-                {{--                                            <li class="nav-item">--}}
-                {{--                                                <a href="#" class="nav-link ">--}}
-                {{--                                                    <i class="nav-icon fas fa-circle"></i>--}}
-                {{--                                                    <p> Monthly--}}
-                {{--                                                    </p>--}}
-                {{--                                                </a>--}}
-                {{--                                            </li>--}}
-                {{--                                            <li class="nav-item">--}}
-                {{--                                                <a href="#" class="nav-link ">--}}
-                {{--                                                    <i class="nav-icon fas fa-circle"></i>--}}
-                {{--                                                    <p> Yearly--}}
-                {{--                                                    </p>--}}
-                {{--                                                </a>--}}
-                {{--                                            </li>--}}
-                {{--                                            <li class="nav-item">--}}
-                {{--                                                <a href="{{route('subsistence.reports-index')}}" class="nav-link ">--}}
-                {{--                                                    <i class="nav-icon fas fa-file"></i>--}}
-                {{--                                                    <p> All Time--}}
-                {{--                                                    </p>--}}
-                {{--                                                </a>--}}
-                {{--                                            </li>--}}
-                {{--                                        </ul>--}}
-                {{--                                    </li>--}}
-                {{--                                @endif--}}
 
             </ul>
         </nav>
@@ -307,7 +325,7 @@
                 {{--                </button>--}}
             </div>
             <!-- form start -->
-            <form role="form-new" method="post" action="{{route('petty.cash.workflow.search')}}">
+            <form role="form-new" method="post" action="{{route('subsistence.workflow.search')}}">
                 @csrf
                 <div class="modal-body">
                     <div class="row">

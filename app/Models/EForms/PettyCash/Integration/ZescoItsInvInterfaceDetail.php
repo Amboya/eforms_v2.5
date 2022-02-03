@@ -11,7 +11,8 @@ class ZescoItsInvInterfaceDetail extends Model
     use HasFactory;
 
     //table name
-    protected $table = 'fms_invoice_interface_detail';
+        protected $table = 'fms_invoice_interface_detail';
+//    protected $table = 'zesco_its_inv_interface_detail';
     //fields fillable
     protected $fillable = [
         'invoice_id',
@@ -25,6 +26,7 @@ class ZescoItsInvInterfaceDetail extends Model
         'cost_centre',
         'gl_account',
         'vat_rate',
+        'line_type',
         'creation_date'
     ];
 

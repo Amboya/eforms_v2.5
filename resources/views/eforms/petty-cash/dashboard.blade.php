@@ -204,16 +204,26 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer clearfix">
-                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )
-                                @if($pending < 1)
-                                    <a href="{{route('petty.cash.create')}}"
-                                       class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
-                                @else
-                                    <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
-                                    <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
+                            <div class="row ">
+                                <div class=" col-lg-12 col-sm-12">
+                                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )
+                                    @if($pending < 1)
+                                        <a href="{{route('petty.cash.create')}}"
+                                           class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
+                                    @else
+                                        <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
+                                        <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
+                                    @endif
                                 @endif
-                            @endif
+                            </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-lg-12 col-sm-12">
+                                <div class="pagination-sm mt-2">
                                 {!! $list->links() !!}
+                                </div>
+                                </div>
+                            </div>
                         </div>
                         <!-- /.card-footer -->
                     </div>

@@ -1,4 +1,4 @@
-@extends('layouts.eforms.Subsistence.master')
+@extends('layouts.eforms.subsistence.master')
 
 
 @push('custom-styles')
@@ -14,12 +14,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Subsistence : {{$category}}</h1>
+                    <h1 class="m-0 text-dark text-orange text-uppercase">SUBSISTENCE : <span class="text-green">{{$category}}</span></h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Subsistence  : {{$category}}</li>
+                        <li class="breadcrumb-item"><a href="{{route('subsistence.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">SUBSISTENCE  : {{$category}}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->

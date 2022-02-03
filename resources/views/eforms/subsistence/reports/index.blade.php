@@ -1,4 +1,4 @@
-@extends('layouts.eforms.petty-cash.master')
+@extends('layouts.eforms.subsistence.master')
 
 
 @push('custom-styles')
@@ -17,12 +17,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Directorates Petty-Cash Totals</h1>
+                    <h1 class="m-0 text-dark">DIRECTORATES SUBSISTENCE TOTALS</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('main-home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Directorates Petty-Cash Totals</li>
+                        <li class="breadcrumb-item"><a href="{{route('subsistence.home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">DIRECTORATES SUBSISTENCE TOTALS</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -59,7 +59,7 @@
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="info-box mb-3">
                             <a class="info-box-icon bg-gray elevation-1"
-                               href="{{route( 'petty-cash-list', config('constants.subsistence_status.rejected'))}}">
+                               href="{{route( 'subsistence.list', config('constants.petty_cash_status.rejected'))}}">
                                 <span><i class="fa fa-file"></i></span>
                             </a>
                             <div class="info-box-content">
@@ -80,7 +80,7 @@
             {{--                    <div class="col-12 col-sm-6 col-md-3">--}}
             {{--                        <div class="info-box mb-3">--}}
             {{--                            <a class="info-box-icon bg-gray elevation-1"--}}
-            {{--                               href="{{route( 'petty-cash-list', config('constants.subsistence_status.rejected'))}}">--}}
+            {{--                               href="{{route( 'subsistence.list', config('constants.petty_cash_status.rejected'))}}">--}}
             {{--                                <span><i class="fa fa-file"></i></span>--}}
             {{--                            </a>--}}
             {{--                            <div class="info-box-content">--}}
@@ -108,10 +108,10 @@
                             <h3 class="card-title">Bar Chart</h3>
 
                             <div class="card-tools">
-                                <a href="{{route('petty-cash-reports-sync-directorates')}}" class="btn btn-tool">
+                                <a href="{{route('subsistence.reports.sync.directorates')}}" class="btn btn-tool">
                                     <i class="fas fa-sync"> Directorates</i>
                                 </a>
-                                <a href="{{route('petty-cash-reports-sync-units')}}" class="btn btn-tool">
+                                <a href="{{route('subsistence.reports.sync.units')}}" class="btn btn-tool">
                                     <i class="fas fa-sync">Units</i>
                                 </a>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i

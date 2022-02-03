@@ -9,6 +9,7 @@ use App\Models\EForms\PettyCash\Views\AllPettyCashTotalsView;
 use App\Models\EForms\PettyCash\Views\DailyPettyCashTotalsView;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DirectoratesModel;
+use App\Models\Main\DivisionsModel;
 use App\Models\Main\StatusModel;
 use App\Models\Main\Totals;
 use Illuminate\Http\Request;
@@ -309,16 +310,47 @@ class ReportsController extends Controller
          * ***************************************/
         elseif ($status_id == config('constants.money_given')) {
 
+
+
+            //  'new_application' => "21",
+            //        'hod_approved' => "22",
+            //        'hr_approved' => "23",
+            //        'chief_accountant' => "24",
+            //        'funds_disbursement' => "25",
+            //        'funds_acknowledgement' => "26",
+            //        'security_approved' => "27",
+            //        'receipt_approved' => "28",
+            //        'closed' => "28",
+            //        'audited' => "29",
+            //        'rejected' => "30",
+            //        'export_not_ready' => "141",
+            //        'not_exported' => "41",
+            //        'exported' => "42",
+            //        'export_failed' => "43",
+            //        'void' => "101",
+            //        'cancelled' => "161",
+            //        'queried' => "201",
+
+            $status_id_1 = 25 ;
+            $status_id_2 = 26;
+            $status_id_3 = 27;
+            $status_id_4 = 28;
+            $status_id_5 = 28;
+            $status_id_6 = 29;
+            $status_id_7 = 29;
+            $status_id_8 = 29;
+            $status_id_9 = 29;
+
             /** STATUSES*/
-            $status_id_1 = config('constants.petty_cash_status.funds_disbursement');
-            $status_id_2 = config('constants.petty_cash_status.funds_acknowledgement');
-            $status_id_3 = config('constants.petty_cash_status.security_approved');
-            $status_id_4 = config('constants.petty_cash_status.receipt_approved');
-            $status_id_5 = config('constants.petty_cash_status.closed');
-            $status_id_6 = config('constants.petty_cash_status.audited');
-            $status_id_7 = config('constants.petty_cash_status.reimbursement_box');
-            $status_id_8 = config('constants.petty_cash_status.await_audit');
-            $status_id_9 = config('constants.petty_cash_status.audit_box');
+//            $status_id_1 = config('constants.petty_cash_status.funds_disbursement');
+//            $status_id_2 = config('constants.petty_cash_status.funds_acknowledgement');
+//            $status_id_3 = config('constants.petty_cash_status.security_approved');
+//            $status_id_4 = config('constants.petty_cash_status.receipt_approved');
+//            $status_id_5 = config('constants.petty_cash_status.closed');
+//            $status_id_6 = config('constants.petty_cash_status.audited');
+//            $status_id_7 = config('constants.petty_cash_status.reimbursement_box');
+//            $status_id_8 = config('constants.petty_cash_status.await_audit');
+//            $status_id_9 = config('constants.petty_cash_status.audit_box');
 
             /** CUMULATIVE*/
             if ($request->date_from == null && $request->date_to == null) {
@@ -339,17 +371,20 @@ class ReportsController extends Controller
                     ");
 
 
+
             } /** BY DATE RANGE*/
             elseif ($request->date_from != null && $request->date_to != null) {
+
+//                dd(5555);
                 $date_range = "From " . $request->date_from . " To " . $request->date_to;
                 $form = DB::select(
                     "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
                     FROM (
                          SELECT id,   config_status_id ,total_payment ,change , directorate_id
                          from eform_petty_cash
-                         where created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
+                         where  created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
                          )
-                   where config_status_id = {$status_id_1}
+                   where   config_status_id = {$status_id_1}
                     or config_status_id = {$status_id_2}
                     or config_status_id = {$status_id_3}
                     or config_status_id = {$status_id_4}
@@ -406,7 +441,7 @@ class ReportsController extends Controller
             elseif (($request->date_from != null && $request->date_to != null) && ($request->date_from == $request->date_to)) {
                 $date_range = "Transactions for " . $request->date_to;
 
-              //  dd($request->date_to);
+                //  dd($request->date_to);
 
                 $form = DB::select(
                     "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
@@ -700,7 +735,7 @@ class ReportsController extends Controller
         $total_num = 0;
 
 
-      //  dd($list);
+        //  dd($list);
 
 
         //count all that needs me
@@ -708,6 +743,553 @@ class ReportsController extends Controller
         $category = " " . $status_name;
         //RETURN VIEW
         return view('eforms.petty-cash.reports.directorates')->with(
+            compact('list', 'category', 'totals_needs_me',
+                'total_num', 'status', 'direc', 'directorates', 'date_range'
+            ));
+    }
+
+    //DIVISIONS REPORTS
+    public function divisions($status_id)
+    {
+        $date_range = "";
+        //QUERY 1
+        if ($status_id == config('constants.all')) {
+            $form = DB::select("SELECT
+        config_status_id, count(id) as total, sum(total_payment) as amount ,sum(change) as change ,
+        user_unit_code, business_unit_code ,cost_center, directorate_id
+        from eform_petty_cash
+        group by  user_unit_code, business_unit_code ,cost_center, directorate_id, config_status_id
+        ");
+        } //QUERY 2
+        else {
+            $form = DB::select("SELECT
+        config_status_id, count(id) as total, sum(total_payment) as amount ,sum(change) as change ,
+        user_unit_code, business_unit_code ,cost_center, directorate_id
+        from eform_petty_cash
+        where config_status_id = {$status_id}
+        group by  user_unit_code, business_unit_code ,cost_center, directorate_id, config_status_id
+        ");
+
+        }
+        //HYDRATE THE LIST
+        $list = AllPettyCashTotalsView::hydrate($form);
+        //GET ALL DIRECTORATES
+        $directorates = DirectoratesModel::all();
+        $direc = [];
+        foreach ($directorates as $directorate) {
+            $direc[$directorate->name][] = $list->where('directorate_id', $directorate->id)->first()->amount ?? 0;
+        }
+
+        //count all that needs me
+        $total_num = 0;
+        $status = StatusModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
+        $totals_needs_me = HomeController::needsMeCount();
+        $category = " All";
+
+        //RETURN VIEW
+        return view('eforms.petty-cash.reports.divisions')->with(
+            compact('list', 'category', 'totals_needs_me',
+                'total_num', 'status', 'direc', 'directorates', 'date_range'
+            ));
+    }
+
+    public function divisionsSearch(Request $request)
+    {
+
+        //RECEIVE STATUS
+        $date_range = "";
+        $status_id = $request->status_select;
+        $status = StatusModel::where('eform_id', config('constants.eforms_id.petty_cash'))->get();
+
+
+        /* ****************************************
+        * GET ALL
+        * ***************************************/
+        if ($status_id == config('constants.all')) {
+            $form = DB::select("SELECT
+        count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+        from eform_petty_cash
+        group by  directorate_id
+        ");
+
+
+            /** CUMULATIVE*/
+            if ($request->date_from == null && $request->date_to == null) {
+                $date_range = "Cumulative Totals";
+                $form = DB::select("SELECT
+                    count(id)  as total, sum(total_payment) as amount ,sum(change) as change  , directorate_id
+                    from eform_petty_cash
+                    group by  directorate_id
+                    ");
+
+            } /** BY DATE RANGE*/
+            elseif ($request->date_from != null && $request->date_to != null) {
+                dd(33333);
+                $date_range = "From " . $request->date_from . " To " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id)  as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment , change , directorate_id
+                         from eform_petty_cash
+                         where created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
+                         )
+                    group by  directorate_id
+                     ");
+            } /** DATE FROM TO TODAY (Greater than)*/
+            elseif ($request->date_from != null && $request->date_to == null) {
+                $date_range = "Transactions on or After " . $request->date_from;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment , change  , directorate_id
+                         from eform_petty_cash
+                         where created_at >= '{$request->date_from}'
+                         )
+                    group by  directorate_id
+                     ");
+            } /** DATE TO (Less than)*/
+            elseif ($request->date_from == null && $request->date_to != null) {
+                $date_range = "Transactions on or Before " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment , change  , directorate_id
+                         from eform_petty_cash
+                          where created_at <= '{$request->date_to}'
+                         )
+                    group by  directorate_id
+                     ");
+            }
+
+            $status_name = config('constants.all');
+        } /* ****************************************
+         * GET GIVEN
+         * ***************************************/
+        elseif ($status_id == config('constants.money_given')) {
+
+            /** STATUSES*/
+            $status_id_1 = config('constants.petty_cash_status.funds_disbursement');
+            $status_id_2 = config('constants.petty_cash_status.funds_acknowledgement');
+            $status_id_3 = config('constants.petty_cash_status.security_approved');
+            $status_id_4 = config('constants.petty_cash_status.receipt_approved');
+            $status_id_5 = config('constants.petty_cash_status.closed');
+            $status_id_6 = config('constants.petty_cash_status.audited');
+            $status_id_7 = config('constants.petty_cash_status.reimbursement_box');
+            $status_id_8 = config('constants.petty_cash_status.await_audit');
+            $status_id_9 = config('constants.petty_cash_status.audit_box');
+
+            /** CUMULATIVE*/
+            if ($request->date_from == null && $request->date_to == null) {
+                $date_range = "Cumulative Totals";
+                $form = DB::select("SELECT
+                    count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    from eform_petty_cash
+                    where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    or config_status_id = {$status_id_5}
+                    or config_status_id = {$status_id_6}
+                    or config_status_id = {$status_id_7}
+                    or config_status_id = {$status_id_8}
+                    or config_status_id = {$status_id_9}
+                    group by  directorate_id
+                    ");
+
+
+            } /** BY DATE RANGE*/
+            elseif ($request->date_from != null && $request->date_to != null) {
+
+                print_r("SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , division_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , division_id
+                         from eform_petty_cash
+                         where created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
+                         )
+                   where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    or config_status_id = {$status_id_5}
+                    or config_status_id = {$status_id_6}
+                    or config_status_id = {$status_id_7}
+                    or config_status_id = {$status_id_8}
+                    or config_status_id = {$status_id_9}
+                    group by  division_id
+                     ");
+
+                dd();
+
+                $date_range = "From " . $request->date_from . " To " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , division_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , division_id
+                         from eform_petty_cash
+                         where created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
+                         )
+                   where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    or config_status_id = {$status_id_5}
+                    or config_status_id = {$status_id_6}
+                    or config_status_id = {$status_id_7}
+                    or config_status_id = {$status_id_8}
+                    or config_status_id = {$status_id_9}
+                    group by  division_id
+                     ");
+            } /** DATE FROM TO TODAY (Greater than)*/
+            elseif ($request->date_from != null && $request->date_to == null) {
+                $date_range = "Transactions on or After " . $request->date_from;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at >= '{$request->date_from}'
+                         )
+                  where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    or config_status_id = {$status_id_5}
+                    or config_status_id = {$status_id_6}
+                    or config_status_id = {$status_id_7}
+                    or config_status_id = {$status_id_8}
+                    or config_status_id = {$status_id_9}
+                    group by  directorate_id
+                     ");
+            } /** DATE TO (Less than)*/
+            elseif ($request->date_from == null && $request->date_to != null) {
+                $date_range = "Transactions on or Before " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                          where created_at <= '{$request->date_to}'
+                         )
+                  where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    or config_status_id = {$status_id_5}
+                    or config_status_id = {$status_id_6}
+                    or config_status_id = {$status_id_7}
+                    or config_status_id = {$status_id_8}
+                    or config_status_id = {$status_id_9}
+                    group by  directorate_id
+                     ");
+            } /** SPECIFIC DATE*/
+            elseif (($request->date_from != null && $request->date_to != null) && ($request->date_from == $request->date_to)) {
+                $date_range = "Transactions for " . $request->date_to;
+
+                //  dd($request->date_to);
+
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                          where created_at <= '{$request->date_to}'
+                         )
+                  where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    or config_status_id = {$status_id_5}
+                    or config_status_id = {$status_id_6}
+                    or config_status_id = {$status_id_7}
+                    or config_status_id = {$status_id_8}
+                    or config_status_id = {$status_id_9}
+                    group by  directorate_id
+                     ");
+            }
+
+
+            $status_name = config('constants.money_given');
+        } /* ****************************************
+         * GET QUERIED
+         * ***************************************/
+        elseif ($status_id == config('constants.money_queried')) {
+            /** STATUS*/
+            $status_id_1 = config('constants.petty_cash_status.audit_rejected');
+
+            /** CUMULATIVE*/
+            if ($request->date_from == null && $request->date_to == null) {
+                $date_range = "Cumulative Totals";
+                $form = DB::select("SELECT
+                    count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    from eform_petty_cash
+                    where config_status_id = {$status_id_1}
+                    group by  directorate_id
+                    ");
+            } /** BY DATE RANGE*/
+            elseif ($request->date_from != null && $request->date_to != null) {
+                $date_range = "From " . $request->date_from . " To " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
+                         )
+                 where config_status_id = {$status_id_1}
+                    group by  directorate_id
+                     ");
+            } /** DATE FROM TO TODAY (Greater than)*/
+            elseif ($request->date_from != null && $request->date_to == null) {
+                $date_range = "Transactions on or After " . $request->date_from;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at >= '{$request->date_from}'
+                         )
+                 where config_status_id = {$status_id_1}
+                    group by  directorate_id
+                     ");
+            } /** DATE TO (Less than)*/
+            elseif ($request->date_from == null && $request->date_to != null) {
+                $date_range = "Transactions on or Before " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                          where created_at <= '{$request->date_to}'
+                         )
+                 where config_status_id = {$status_id_1}
+                    group by  directorate_id
+                     ");
+            }
+
+            $status_name = config('constants.money_queried');
+        } /* ****************************************
+        *GET PENDING
+        * ***************************************/
+        elseif ($status_id == config('constants.money_pending')) {
+            /** STATUS*/
+            $status_id_1 = config('constants.petty_cash_status.new_application');
+            $status_id_2 = config('constants.petty_cash_status.hod_approved');
+            $status_id_3 = config('constants.petty_cash_status.hr_approved');
+            $status_id_4 = config('constants.petty_cash_status.chief_accountant');
+
+            /** CUMULATIVE*/
+            if ($request->date_from == null && $request->date_to == null) {
+                $date_range = "Cumulative Totals";
+                $form = DB::select("SELECT
+                    count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    from eform_petty_cash
+                    where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    group by  directorate_id
+                    ");
+
+            } /** BY DATE RANGE*/
+            elseif ($request->date_from != null && $request->date_to != null) {
+                $date_range = "From " . $request->date_from . " To " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
+                         )
+                   where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    group by  directorate_id
+                     ");
+            } /** DATE FROM TO TODAY (Greater than)*/
+            elseif ($request->date_from != null && $request->date_to == null) {
+                $date_range = "Transactions on or After " . $request->date_from;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at >= '{$request->date_from}'
+                         )
+                  where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    group by  directorate_id
+                     ");
+            } /** DATE TO (Less than)*/
+            elseif ($request->date_from == null && $request->date_to != null) {
+                $date_range = "Transactions on or Before " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                          where created_at <= '{$request->date_to}'
+                         )
+                  where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    or config_status_id = {$status_id_4}
+                    group by  directorate_id
+                     ");
+            }
+
+            $status_name = config('constants.money_pending');
+        } /* ****************************************
+        *GET REJECTED
+        * ***************************************/
+        elseif ($status_id == config('constants.money_rejected')) {
+            /** STATUS*/
+            $status_id_1 = config('constants.petty_cash_status.rejected');
+            $status_id_2 = config('constants.petty_cash_status.void');
+            $status_id_3 = config('constants.petty_cash_status.cancelled');
+
+            /** CUMULATIVE*/
+            if ($request->date_from == null && $request->date_to == null) {
+                $date_range = "Cumulative Totals";
+                $form = DB::select("SELECT
+                    count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    from eform_petty_cash
+                    where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    group by  directorate_id
+                    ");
+
+            } /** BY DATE RANGE*/
+            elseif ($request->date_from != null && $request->date_to != null) {
+                $date_range = "From " . $request->date_from . " To " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
+                         )
+                   where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    group by  directorate_id
+                     ");
+            } /** DATE FROM TO TODAY (Greater than)*/
+            elseif ($request->date_from != null && $request->date_to == null) {
+                $date_range = "Transactions on or After " . $request->date_from;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at >= '{$request->date_from}'
+                         )
+                  where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    group by  directorate_id
+                     ");
+            } /** DATE TO (Less than)*/
+            elseif ($request->date_from == null && $request->date_to != null) {
+                $date_range = "Transactions on or Before " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                          where created_at <= '{$request->date_to}'
+                         )
+                  where config_status_id = {$status_id_1}
+                    or config_status_id = {$status_id_2}
+                    or config_status_id = {$status_id_3}
+                    group by  directorate_id
+                     ");
+            }
+            $status_name = config('constants.money_rejected');
+        } /* ****************************************
+        *GET SPECIFIED
+        * ***************************************/
+        else {
+
+            /** CUMULATIVE*/
+            if ($request->date_from == null && $request->date_to == null) {
+                $date_range = "Cumulative Totals";
+                $form = DB::select("SELECT
+                    count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    from eform_petty_cash
+                    where config_status_id = {$status_id}
+                    group by  directorate_id
+                    ");
+
+            } /** BY DATE RANGE*/
+            elseif ($request->date_from != null && $request->date_to != null) {
+                $date_range = "From " . $request->date_from . " To " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at BETWEEN  '{$request->date_from}' AND '{$request->date_to}'
+                         )
+                    where config_status_id = {$status_id}
+                    group by  directorate_id
+                     ");
+            } /** DATE FROM TO TODAY (Greater than)*/
+            elseif ($request->date_from != null && $request->date_to == null) {
+                $date_range = "Transactions on or After " . $request->date_from;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                         where created_at >= '{$request->date_from}'
+                         )
+                   where config_status_id = {$status_id}
+                    group by  directorate_id
+                     ");
+            } /** DATE TO (Less than)*/
+            elseif ($request->date_from == null && $request->date_to != null) {
+                $date_range = "Transactions on or Before " . $request->date_to;
+                $form = DB::select(
+                    "SELECT count(id) as total, sum(total_payment) as amount ,sum(change) as change , directorate_id
+                    FROM (
+                         SELECT id,   config_status_id ,total_payment ,change , directorate_id
+                         from eform_petty_cash
+                          where created_at <= '{$request->date_to}'
+                         )
+                     where config_status_id = {$status_id}
+                      group by  directorate_id
+                   ");
+            }
+
+            $status_name = $status->where('id', $status_id)->first()->name;
+        }
+
+        //HYDRATE THE LIST
+        $list = AllPettyCashTotalsView::hydrate($form);
+        //GET ALL DIRECTORATES
+       // $directorates = DirectoratesModel::all();
+        $directorates = DivisionsModel::all();
+
+        // division_id
+        $direc = [];
+        foreach ($directorates as $directorate) {
+            $direc[$directorate->name][] = $list->where('division_id', $directorate->id)->first()->amount ?? 0;
+        }
+        $total_num = 0;
+
+
+        //  dd($list);
+
+
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+        $category = " " . $status_name;
+        //RETURN VIEW
+        return view('eforms.petty-cash.reports.divisions')->with(
             compact('list', 'category', 'totals_needs_me',
                 'total_num', 'status', 'direc', 'directorates', 'date_range'
             ));
@@ -805,6 +1387,7 @@ class ReportsController extends Controller
                 'total_num', 'status', 'direc', 'directorates', 'date_range'
             ));
     }
+
     public function duplicatesSearch(Request $request)
     {
         $status_id = "" ;

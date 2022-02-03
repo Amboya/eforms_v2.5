@@ -77,6 +77,8 @@
 
                             <p class="text-muted text-center">{{$user->position->name ?? "Position"}}</p>
 
+                            <p class="text-muted text-center">{{$user->staff_no ?? "Position"}}</p>
+
                             <ul class="list-group list-group-unbordered mb-3">
                                 @if( Auth::user()->id == $user->id || Auth::user()->type_id ==  config('constants.user_types.developer')|| Auth::user()->type_id ==  config('constants.user_types.mgt')  )
                                     <li class="list-group-item">
@@ -184,9 +186,12 @@
                                                     </div>
                                                     <div class="col-6">
                                                         @if($user->con_st_code == config('constants.phris_user_active'))
-                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                            <button type="submit" class="btn btn-primary">Submit
+                                                            </button>
                                                         @else
-                                                            <button disabled type="submit" class="btn btn-primary">Submit</button>
+                                                            <button disabled type="submit" class="btn btn-primary">
+                                                                Submit
+                                                            </button>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -211,11 +216,22 @@
                                                             data-toggle="tab">Settings</a>
                                     </li>
                                 @endif
-                                <li class="nav-item"><a class="nav-link " href="#units" data-toggle="tab">My User-Units</a>
+                                <li class="nav-item"><a class="nav-link " href="#units" data-toggle="tab">My
+                                        User-Units</a>
+
+                                <li class="nav-item"><a class="nav-link " href="#workflow" data-toggle="tab">My
+                                        Work-flow</a>
+                                @if(  Auth::user()->type_id ==  config('constants.user_types.developer')
+                                       || Auth::user()->type_id ==  config('constants.user_types.mgt')  )
+                                    <li class="nav-item"><a class="nav-link" href="#pass_reset"
+                                                            data-toggle="tab">Password Reset</a>
+                                    </li>
+                                @endif
                             </ul>
                         </div><!-- /.card-header -->
                         <div class="card-body">
                             <div class="tab-content">
+
                                 <div class="active tab-pane" id="activity">
                                     <!-- Post -->
                                     <div class="post">
@@ -237,6 +253,8 @@
                                             <div class="col-6">
                                                 <p class="text-muted"><b>User
                                                         Unit:</b>
+                                                    @if(  Auth::user()->type_id ==  config('constants.user_types.developer')|| Auth::user()->type_id ==  config('constants.user_types.mgt')  )
+
                                                     <a href="{{ route('logout') }}" class="text-dark"
                                                        onclick="event.preventDefault();
                                                            document.getElementById('search-form12').submit();">
@@ -246,6 +264,9 @@
                                                       method="post" class="d-none">
                                                     @csrf
                                                 </form>
+                                                @else
+                                                {{$user->user_unit->user_unit_description  ?? ""}}
+                                                @endif
                                                 </p>
                                                 <p class="text-muted "><b class=" text-orange">User Unit
                                                         Code:</b> {{$user->user_unit->user_unit_code  ?? ""}}  </p>
@@ -310,6 +331,7 @@
                                                                     <th>Code</th>
                                                                     <th>Name</th>
                                                                     <th>Description</th>
+                                                                    <th></th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody id="profiles">
@@ -328,6 +350,15 @@
                                                                         <td> {{$item->profiles->code}}  </td>
                                                                         <td>  {{$item->profiles->name}} </td>
                                                                         <td>  {{$item->form->name}} </td>
+                                                                        <td>
+                                                                            <a class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
+                                                                                    title="Edit"
+                                                                                    data-toggle="modal"
+                                                                                    data-sent_data="{{$item}}"
+                                                                                    data-target="#modal-profile-delegate">
+                                                                              Delegate
+                                                                            </a>
+                                                                        </td>
                                                                     <tr>
                                                                 @endforeach
                                                                 </tbody>
@@ -363,7 +394,9 @@
                                                                     <th></th>
                                                                     <th>Code</th>
                                                                     <th>Name</th>
-                                                                    <th>Description</th>
+                                                                    <th>Status</th>
+                                                                    <th>Owner</th>
+                                                                    <th>Delegating</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody id="profiles">
@@ -379,8 +412,10 @@
                                                                             </div>
                                                                         </td>
                                                                         <td> {{$item_p->form->code ?? ""}}  </td>
-                                                                        <td>  {{$item_p->profile->name}} </td>
-                                                                        <td>  {{$item_p->me->name}} </td>
+                                                                        <td>  {{$item_p->profile->name ?? ""}} </td>
+                                                                        <td>  {{$item_p->status->name ?? ""}} </td>
+                                                                        <td>  {{$item_p->me->name ?? ""}} </td>
+                                                                        <td> {{$item_p->delegation->name ?? ""}}</td>
                                                                     <tr>
                                                                 @endforeach
                                                                 </tbody>
@@ -507,9 +542,9 @@
                                 <div class="tab-pane" id="units">
                                     <!-- Post -->
                                     <div class="post">
-{{--                                        <div class="user-block">--}}
-{{--                                            <span class="username"> <a href="#">My Units</a> </span>--}}
-{{--                                        </div>--}}
+                                        {{--                                        <div class="user-block">--}}
+                                        {{--                                            <span class="username"> <a href="#">My Units</a> </span>--}}
+                                        {{--                                        </div>--}}
                                         <div class="row">
                                             <div class="col-6">
                                                 <form role="form-units" method="post"
@@ -575,58 +610,59 @@
                                                                style="width: 100%;">
                                                     </div>
                                                     @if( Auth::user()->type_id ==  config('constants.user_types.developer')  )
-                                                    <div class="col-6">
-                                                        <div class="form-group">
-                                                            <label class="text-orange">ASSIGN UNITS</label>
-                                                            <div class="col-12">
-                                                                <input class="form-control" id="myInput" type="text" placeholder="Search..">
+                                                        <div class="col-6">
+                                                            <div class="form-group">
+                                                                <label class="text-orange">ASSIGN UNITS</label>
+                                                                <div class="col-12">
+                                                                    <input class="form-control" id="myInput" type="text"
+                                                                           placeholder="Search..">
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                             <table class="table table-striped">
-                                                                    <thead>
+                                                            <table class="table table-striped">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>#</th>
+                                                                    <th>Code</th>
+                                                                    <th>Name</th>
+                                                                    <th>BU</th>
+                                                                    <th>CC</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody id="myTable">
+                                                                @foreach($user_unit_new as $item)
                                                                     <tr>
-                                                                        <th>#</th>
-                                                                        <th>Code</th>
-                                                                        <th>Name</th>
-                                                                        <th>BU</th>
-                                                                        <th>CC</th>
-                                                                    </tr>
-                                                                    </thead>
-                                                                    <tbody id="myTable">
-                                                                    @foreach($user_unit_new as $item)
-                                                                        <tr>
-                                                                            <td>
-                                                                                <div class="form-group clearfix">
-                                                                                    <div class="icheck-warning d-inline">
-                                                                                        <input type="checkbox"
-                                                                                               value="{{$item->id}}"
-                                                                                               id="units[]" name="units[]">
+                                                                        <td>
+                                                                            <div class="form-group clearfix">
+                                                                                <div class="icheck-warning d-inline">
+                                                                                    <input type="checkbox"
+                                                                                           value="{{$item->id}}"
+                                                                                           id="units[]" name="units[]">
 
-                                                                                    </div>
                                                                                 </div>
-                                                                            </td>
-                                                                            <td><span for="accounts"> <span
-                                                                                        class="text-gray">{{$item->user_unit_code}}</span>  </span>
-                                                                            </td>
-                                                                            <td><span for="accounts"> <span
-                                                                                        class="text-gray">{{$item->user_unit_description}}</span>  </span>
-                                                                            </td>
-                                                                            <td><span for="accounts"> <span
-                                                                                        class="text-gray">{{$item->user_unit_bc_code}}</span>  </span>
-                                                                            </td>
-                                                                            <td><span for="accounts"> <span
-                                                                                        class="text-gray">{{$item->user_unit_cc_code}}</span> </span>
-                                                                            </td>
-                                                                        </tr>
-                                                                    @endforeach
-                                                                    </tbody>
-                                                                </table>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td><span for="accounts"> <span
+                                                                                    class="text-gray">{{$item->user_unit_code}}</span>  </span>
+                                                                        </td>
+                                                                        <td><span for="accounts"> <span
+                                                                                    class="text-gray">{{$item->user_unit_description}}</span>  </span>
+                                                                        </td>
+                                                                        <td><span for="accounts"> <span
+                                                                                    class="text-gray">{{$item->user_unit_bc_code}}</span>  </span>
+                                                                        </td>
+                                                                        <td><span for="accounts"> <span
+                                                                                    class="text-gray">{{$item->user_unit_cc_code}}</span> </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                                </tbody>
+                                                            </table>
 
 
-                                                                <button type="submit" class="btn btn-sm btn-info">
-                                                                    Assign
-                                                                </button>
-                                                    </div>
+                                                            <button type="submit" class="btn btn-sm btn-info">
+                                                                Assign
+                                                            </button>
+                                                        </div>
                                                     @endif
                                                 </form>
                                             </div>
@@ -636,6 +672,171 @@
                                     <!-- /.post -->
                                 </div>
                                 <!-- /.tab-pane -->
+
+                                <div class="tab-pane" id="workflow">
+                                    <!-- Post -->
+                                    <div class="post">
+
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <button
+                                                    class="btn btn-sm btn-outline-success  mb-3"
+                                                    onclick="getMyWorkflow('{{$user->user_unit_code}}')"
+                                                    required
+                                                    style="width: 100%;">Search
+                                                </button>
+
+                                            </div>
+                                            <div class="col-6">  <div id="loader_c_2" style="display: none;">
+                                                    <img src=" {{ asset('dashboard/dist/gif/Eclipse_loading.gif')}} "
+                                                         width="100px"
+                                                         height="100px">
+                                                </div>
+
+                                            </div>
+                                            @if(  Auth::user()->type_id ==  config('constants.user_types.developer')|| Auth::user()->type_id ==  config('constants.user_types.mgt')  )
+                                            <div class="col-2">
+                                                <label>Sync Workflow for : </label>
+                                                <a href="{{ route('logout') }}" class="text-dark"
+                                                   onclick="event.preventDefault();
+                                                           document.getElementById('search-form123').submit();">
+                                                    {{$user->user_unit->user_unit_description  ?? ""}} </a>
+                                                <form id="search-form123"
+                                                      action="{{ route('main.user.unit.search.profile', $user->user_unit->id ) }}"
+                                                      method="post" class="d-none">
+                                                    @csrf
+                                                </form>
+                                            </div>
+                                            @endif
+                                            <div class="col-12">
+                                                <div id="table_body_div">
+
+
+                                                    <br> <label class="text-green">Director Approval</label>
+                                                    <hr>
+                                                    <div id="directors_div">
+                                                    </div>
+
+
+                                                    <br> <label class="text-green">Snr Manager Approval</label>
+                                                    <hr>
+                                                    <div id="divisional_div">
+                                                    </div>
+
+
+                                                    <br> <label class="text-green">Chief Accountant Approval</label>
+                                                    <hr>
+                                                    <div id="ca_div">
+                                                    </div>
+
+
+                                                    <br> <label class="text-green">HRM Approval</label>
+                                                    <hr>
+                                                    <div id="hrm_div">
+                                                    </div>
+
+
+                                                    <br> <label class="text-green">HOD Approval</label>
+                                                    <hr>
+                                                    <div id="hod_div">
+                                                    </div>
+
+
+                                                    <br> <label class="text-green">Audit Approval</label>
+                                                    <hr>
+                                                    <div id="audit_div">
+                                                    </div>
+
+
+                                                    <br> <label class="text-green">Expenditure Approval</label>
+                                                    <hr>
+                                                    <div id="expenditure_div">
+                                                    </div>
+
+                                                    <br> <label class="text-green">Management Accountants Approval</label>
+                                                    <hr>
+                                                    <div id="ma_div">
+                                                    </div>
+
+                                                    <br> <label class="text-green">Security Approval</label>
+                                                    <hr>
+                                                    <div id="security_div">
+                                                    </div>
+
+                                                    <br> <label class="text-green">Sheq Approval</label>
+                                                    <hr>
+                                                    <div id="sheq_div">
+                                                    </div>
+
+                                                    <br> <label class="text-green">Transport Approval</label>
+                                                    <hr>
+                                                    <div id="transport_div">
+                                                    </div>
+
+                                                    <br> <label class="text-green">Payroll Approval</label>
+                                                    <hr>
+                                                    <div id="payroll_div">
+                                                    </div>
+
+                                                    <br> <label class="text-green">PSA Approval</label>
+                                                    <hr>
+                                                    <div id="psa_div">
+                                                    </div>
+
+                                                    <br> <label class="text-green">PHRO Approval</label>
+                                                    <hr>
+                                                    <div id="phro_div">
+                                                    </div>
+
+                                                    <br> <label class="text-green">Area Manager Approval</label>
+                                                    <hr>
+                                                    <div id="arm_div">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- /.post -->
+                                </div>
+                                <!-- /.tab-pane -->
+
+                                <div class="tab-pane" id="pass_reset">
+                                    <div >
+                                            <!-- form start -->
+                                            <form method="POST" action="{{ route('main.user.reset.password', $user) }}">
+                                                @csrf
+                                                <div class="p-4">
+
+                                                    <div class="form-group row">
+                                                        <label for="password"
+                                                               class="col-md-4 col-form-label text-md-right">{{ __('OTP') }}</label>
+                                                        <div class="col-md-6">
+                                                            <input id="password" type="otp"
+                                                                   class="form-control @error('otp') is-invalid @enderror" name="otp"
+                                                                   value="{{ old('otp') }}" required autocomplete="otp" autofocus>
+                                                            @error('otp')
+                                                            <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group row mb-0">
+                                                        <div class="col-md-8 offset-md-4">
+                                                            <button type="submit" class="btn btn-primary">
+                                                                {{ __('Change Password') }}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                    </div>
+                                </div>
+
+
                             </div>
                             <!-- /.tab-content -->
                         </div><!-- /.card-body -->
@@ -697,11 +898,97 @@
     <!-- /.View modal -->
 
 
+    <!-- VIEW MODAL-->
+    <div class="modal fade" id="modal-profile-delegate">
+        <div class="modal-dialog modal-lg ">
+            <div class="modal-content">
+                <div class="modal-header" id="delegate_name">
+
+                </div>
+                <!-- form start -->
+                <form role="form" method="post" action="{{route('main.profile.delegation.store.on.behalf.user')}} "
+                      enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div id="delegate_div">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.View modal -->
+
+
 @endsection
 
 
 @push('custom-scripts')
     <!--  -->
+
+    <script>
+        $('#modal-profile-delegate').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+
+            var user = {!! json_encode($user) !!};
+            var html_name = " <h4 class='modal-title text-center'> Delegate "+user.name+"'s Profile</h4>" ;
+            $('#delegate_name').html(html_name);
+
+            var html_values = "" +
+                "   <div class='row'> " +
+                "<div class='col-6'> " +
+                "<div class='form-group'> " +
+                "<label> Profile Owner ["+user.name +"]</label> " +
+                "<input  class='form-control select2' id='owner_id' name='owner_id' required style='width: 100%;'" +
+                "value='"+user.staff_no +"' readonly> " +
+                "</div> " +
+                "</div> " +
+                "<div class='col-6'> " +
+                "<div class='form-group'> " +
+                "<label>Enter Delegated User's Staff Number</label> " +
+                "<input  class='form-control select2' id='user_id' name='user_id' required style='width: 100%;'> " +
+                "</div> " +
+                "</div> " +
+                "<div class='col-6'> " +
+                "<div class='form-group'> " +
+                "<label>Select Profile</label> " +
+                "<select class='form-control select2' id='profile_select' name='profile' required style='width: 100%;'> " +
+                "<option  value='"+recipient.profiles.id +"' selected>"+recipient.profiles.name +"</option> </select> " +
+                "</div> " +
+                "</div> " +
+                "<div class='col-6 ''> " +
+                "<div class='form-group'> " +
+                "<label>Select E-Form</label> " +
+                "<select class='form-control select2' id='eform_select' name='eform_id' required" +
+                "style='width: 100%;'> " +
+                "<option  value='"+recipient.form.id +"' selected>"+recipient.form.name +"</option> </select> " +
+                "</select> " +
+                "</div> " +
+                "</div> " +
+                "<div class='col-6 ''> " +
+                "<div class='form-group'> " +
+                "<label>Delegation End-Date</label> " +
+                "<input type='date' class='form-control' name='delegation_end_date'" +
+                "id='delegation_end_date'> " +
+                "</div> " +
+                "</div> " +
+                "</div>";
+
+            $('#delegate_div').html(html_values);
+
+
+        });
+    </script>
 
     <script>
         $(document).ready(function () {
@@ -742,6 +1029,282 @@
                 });
             });
         });
+
+
+        function getMyWorkflow(user_unit) {
+            {{--var loader = '{{ asset('dashboard/dist/gif/Eclipse_loading.gif')}}';--}}
+            var route = '{{url('work_flow/mine')}}' + '/' + user_unit;
+
+            //alert(route);
+
+            /* AJAX */
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: route,
+                type: 'get',
+                beforeSend: function () {
+                    // Show image container
+                    $("#loader_c_2").show();
+                },
+                success: function (response_data) {
+
+                    var response_data = JSON.parse(response_data);
+
+                    console.log(response_data);
+
+                    var responce_dr = "";
+                    $.each(response_data['dr'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#directors_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['dm'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#divisional_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['hod'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#hod_div").html("<div class='row'>" + responce_dr + "</div>");
+                    var responce_dr = "";
+                    $.each(response_data['ca'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#ca_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['hrm'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#hrm_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['arm'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#arm_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['audit'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#audit_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['bm'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#bm_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['expenditure'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#expenditure_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['security'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#security_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['transport'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#transport_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['sheq'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#sheq_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['shro'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#shro_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['payroll'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#payroll_div").html("<div class='row'>" + responce_dr + "</div>");
+                    var responce_dr = "";
+                    $.each(response_data['phro'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#phro_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['psa'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#psa_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['ma'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#ma_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                },
+                complete: function (response_data) {
+                    // Hide image container
+                    $("#loader_c_2").hide();
+                }
+            });
+
+        }
+
     </script>
 
 

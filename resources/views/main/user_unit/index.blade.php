@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">User-Units Workflow</h1>
+                    <h1 class="m-0 text-dark">User-Units Workflow </h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -60,6 +60,13 @@
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fas fa-minus"></i></button>
+
+                    <div id="loader_c_2" style="display: none;">
+                        <img src=" {{ asset('dashboard/dist/gif/Eclipse_loading.gif')}} "
+                             width="100px"
+                             height="100px">
+                    </div>
+
                     <a  class="btn btn-tool" href="{{route('main.user.unit.sync')}}"
                         title="Sync Grades">
                         <i class="fas fa-sync"></i></a>
@@ -77,6 +84,7 @@
                             <th>Departmental User Unit</th>
                             <th>Business Unit Code</th>
                             <th>Cost Center Code</th>
+                            <th>ORG ID</th>
 
                             <th>DR</th>
                             <th>DM</th>
@@ -109,6 +117,7 @@
                                 <td>{{$item->user_unit_code}} </td>
                                 <td>{{$item->user_unit_bc_code}} </td>
                                 <td>{{$item->user_unit_cc_code}} </td>
+                                <td>{{$item->org_id ?? 0}} </td>
 
                                 <td>{{ $item->dr_unit }} : {{ $item->dr_code }} </td>
                                 <td>{{ $item->dm_unit }} : {{ $item->dm_code }} </td>
@@ -143,6 +152,15 @@
                                             data-target="#modal-edit">
                                         <i class="fa fa-edit"></i>
                                     </button>
+                                    <button class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
+                                            title="Edit"
+                                            data-toggle="modal"
+                                            data-sent_data="{{$item}}"
+                                            data-target="#modal-users">
+                                        <i class="fa fa-users"></i>
+                                    </button>
+
+
                                 </td>
                             </tr>
                         @endforeach
@@ -695,6 +713,122 @@
     <!-- /.Edit modal -->
 
 
+    <!-- USERS MODAL-->
+    <div class="modal fade" id="modal-users">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">USERS FOR THIS WORKFLOW</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- form start -->
+                <form role="form" method="post" action="{{route('main.user.unit.update')}}">
+                    @csrf
+                  <div class="modal-body">
+                      <div class="row">
+                          <div class="col-12">
+                              <div id="table_body_div">
+
+
+                                  <br> <label class="text-green">Director Approval</label>
+                                  <hr>
+                                  <div id="directors_div">
+                                  </div>
+
+
+                                  <br> <label class="text-green">Snr Manager Approval</label>
+                                  <hr>
+                                  <div id="divisional_div">
+                                  </div>
+
+
+                                  <br> <label class="text-green">Chief Accountant Approval</label>
+                                  <hr>
+                                  <div id="ca_div">
+                                  </div>
+
+
+                                  <br> <label class="text-green">HRM Approval</label>
+                                  <hr>
+                                  <div id="hrm_div">
+                                  </div>
+
+
+                                  <br> <label class="text-green">HOD Approval</label>
+                                  <hr>
+                                  <div id="hod_div">
+                                  </div>
+
+
+                                  <br> <label class="text-green">Audit Approval</label>
+                                  <hr>
+                                  <div id="audit_div">
+                                  </div>
+
+
+                                  <br> <label class="text-green">Expenditure Approval</label>
+                                  <hr>
+                                  <div id="expenditure_div">
+                                  </div>
+
+                                  <br> <label class="text-green">Management Accountants Approval</label>
+                                  <hr>
+                                  <div id="ma_div">
+                                  </div>
+
+                                  <br> <label class="text-green">Security Approval</label>
+                                  <hr>
+                                  <div id="security_div">
+                                  </div>
+
+                                  <br> <label class="text-green">Sheq Approval</label>
+                                  <hr>
+                                  <div id="sheq_div">
+                                  </div>
+
+                                  <br> <label class="text-green">Transport Approval</label>
+                                  <hr>
+                                  <div id="transport_div">
+                                  </div>
+
+                                  <br> <label class="text-green">Payroll Approval</label>
+                                  <hr>
+                                  <div id="payroll_div">
+                                  </div>
+
+                                  <br> <label class="text-green">PSA Approval</label>
+                                  <hr>
+                                  <div id="psa_div">
+                                  </div>
+
+                                  <br> <label class="text-green">PHRO Approval</label>
+                                  <hr>
+                                  <div id="phro_div">
+                                  </div>
+
+                                  <br> <label class="text-green">Area Manager Approval</label>
+                                  <hr>
+                                  <div id="arm_div">
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.USERS modal -->
+
+
 @endsection
 
 
@@ -770,6 +904,17 @@
             $('#sheq_code').val(recipient.sheq_code);
             $('#sheq_unit').val(recipient.sheq_unit);
 
+
+        });
+
+
+        $('#modal-users').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+
+            alert(recipient.user_unit_code);
+
+            getMyWorkflow(recipient.user_unit_code ) ;
 
         });
 
@@ -1153,6 +1298,284 @@
             });
 
         });
+    </script>
+
+    <script>
+
+        function getMyWorkflow(user_unit) {
+            {{--var loader = '{{ asset('dashboard/dist/gif/Eclipse_loading.gif')}}';--}}
+            var route = '{{url('work_flow/mine')}}' + '/' + user_unit;
+
+            //alert(route);
+
+            /* AJAX */
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: route,
+                type: 'get',
+                beforeSend: function () {
+                    // Show image container
+                    $("#loader_c_2").show();
+                },
+                success: function (response_data) {
+
+                    var response_data = JSON.parse(response_data);
+
+                    console.log(response_data);
+
+                    var responce_dr = "";
+                    $.each(response_data['dr'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#directors_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['dm'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#divisional_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['hod'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#hod_div").html("<div class='row'>" + responce_dr + "</div>");
+                    var responce_dr = "";
+                    $.each(response_data['ca'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#ca_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['hrm'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#hrm_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['arm'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#arm_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['audit'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#audit_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['bm'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#bm_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['expenditure'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#expenditure_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['security'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#security_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['transport'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#transport_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                    var responce_dr = "";
+                    $.each(response_data['sheq'], function (index, value) {
+
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#sheq_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['shro'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#shro_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['payroll'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#payroll_div").html("<div class='row'>" + responce_dr + "</div>");
+                    var responce_dr = "";
+                    $.each(response_data['phro'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#phro_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['psa'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#psa_div").html("<div class='row'>" + responce_dr + "</div>");
+
+                    var responce_dr = "";
+                    $.each(response_data['ma'], function (index, value) {
+                        //populate the table
+                        responce_dr +=
+                            "<div class='col-sm-4'>" +
+                            "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.email + "</span> <br>" +
+                            "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
+                            "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
+                            "</div>";
+                    });
+                    $("#ma_div").html("<div class='row'>" + responce_dr + "</div>");
+
+
+                },
+                complete: function (response_data) {
+                    // Hide image container
+                    $("#loader_c_2").hide();
+                }
+            });
+
+        }
+
     </script>
 
 @endpush

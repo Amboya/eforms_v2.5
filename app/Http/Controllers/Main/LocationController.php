@@ -4,7 +4,7 @@ namespace App\Http\Controllers\main;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LocationRequest;
-use App\Models\main\LocationModel;
+use App\Models\Main\LocationModel;
 use App\Models\Main\UserUnitModel;
 use App\Models\PhrisUserDetailsModel;
 use Illuminate\Http\Request;

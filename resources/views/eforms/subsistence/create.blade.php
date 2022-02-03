@@ -234,7 +234,7 @@
                                 <td class="text-green">Deduct any advance received against these expenses:</td>
                                 <td>
                                     <input required id="trex_deduct_advance" class="form-control"
-                                           name="trex_deduct_advance" readonly value="{{$previous_subsistence->deduct_advance_amount ?? 0}}"  type="number">
+                                           name="trex_deduct_advance"  value="{{$previous_subsistence->deduct_advance_amount ?? 0}}"  type="number">
                                 </td>
                             </tr>
                             <tr>

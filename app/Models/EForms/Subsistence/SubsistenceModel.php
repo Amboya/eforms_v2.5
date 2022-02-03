@@ -56,6 +56,7 @@ class SubsistenceModel extends Model
         'claim_date',
         'claimant_name',
         'claimant_staff_no',
+        'claimant_unit_code',
         'station',
         'section',
         'type',
@@ -68,6 +69,7 @@ class SubsistenceModel extends Model
         'absc_allowance_per_night',
 
         'trex_total_attached_claim',
+        'trex_deduct_advance_amount',
         'date_left',
         'date_arrived',
         'allocation_code',
@@ -122,36 +124,39 @@ class SubsistenceModel extends Model
         //check if authenticated user
         if (auth()->check()) {
             $user = Auth::user();
-            if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-                //if you are just a requester, then only see your forms
-                static::addGlobalScope('staff_number', function (Builder $builder) {
-                    $builder->where('claimant_staff_no', Auth::user()->staff_no);
-                });
+
+            if ($user->type_id == config('constants.user_types.developer')) {
+
             } else {
-                $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-                $mine = $fdsf->pluck('user_unit_code')->toArray();
-
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-
-                    //get the list of trips am supposed to approve
-                    $trips = Destinations::whereIn('user_unit_code' , $mine )->get();
-                    $trip_ids = $trips->pluck('trip_id')->toArray();
-
-                    static::addGlobalScope('hod', function (Builder $builder) use ($user, $mine , $trip_ids) {
-                        $builder->where('claimant_staff_no', $user->staff_no)
-                            ->orWhereIn('user_unit_code', $mine)
-                            ->orWhereIn('trip_id', $trip_ids)
-                        ;
+                if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
+                    //if you are just a requester, then only see your forms
+                    static::addGlobalScope('staff_number', function (Builder $builder) use ($user) {
+                        $builder->where('claimant_staff_no', $user->staff_no);
                     });
-                }
-                else {
-                    static::addGlobalScope('hod', function (Builder $builder) use ($user, $mine) {
-                        $builder->where('claimant_staff_no', $user->staff_no)
-                            ->orWhereIn('user_unit_code', $mine);
-                    });
-                }
+                } else {
+                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+                    $mine = $fdsf->pluck('user_unit_code')->toArray();
 
+                    if ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
 
+                        //get the list of trips am supposed to approve
+                        $trips = Destinations::whereIn('user_unit_code', $mine)->get();
+                        $trip_ids = $trips->pluck('trip_id')->toArray();
+
+                        static::addGlobalScope('hod', function (Builder $builder) use ($user, $mine, $trip_ids) {
+                            $builder->where('claimant_staff_no', $user->staff_no)
+                                ->orWhereIn('claimant_unit_code', $mine)
+                                ->orWhereIn('user_unit_code', $mine)
+                                ->orWhereIn('trip_id', $trip_ids);
+                        });
+                    } else {
+                        static::addGlobalScope('approve', function (Builder $builder) use ($user, $mine) {
+                            $builder->where('claimant_staff_no', $user->staff_no)
+                                ->orWhereIn('claimant_unit_code', $mine)
+                                ->orWhereIn('user_unit_code', $mine);
+                        });
+                    }
+                }
             }
         }
     }
@@ -175,6 +180,7 @@ class SubsistenceModel extends Model
 
     public function getDeductAdvanceAmountAttribute()
     {
+        // return $this->trex_deduct_advance_amount ;
         return ($this->actual_days * $this->absc_allowance_per_night);
     }
 
@@ -185,7 +191,8 @@ class SubsistenceModel extends Model
 
     public function getNetAmountPaidAttribute()
     {
-        return (($this->num_days * $this->absc_allowance_per_night) + $this->trex_total_attached_claim) - ($this->actual_days * $this->absc_allowance_per_night);
+        return (($this->num_days * $this->absc_allowance_per_night) + $this->trex_total_attached_claim) - ($this->trex_deduct_advance_amount);
+//        return (($this->num_days * $this->absc_allowance_per_night) + $this->trex_total_attached_claim) - ($this->actual_days * $this->absc_allowance_per_night);
     }
 
 
@@ -214,6 +221,11 @@ class SubsistenceModel extends Model
     public function destinations()
     {
         return $this->hasMany(DestinationsApprovals::class, 'subsistence_id', 'id');
+    }
+
+    public function accounts()
+    {
+        return $this->hasMany(SubsistenceAccountModel::class, 'eform_subsistence_id', 'id');
     }
 
 

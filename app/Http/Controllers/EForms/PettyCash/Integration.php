@@ -24,60 +24,146 @@ class Integration extends Controller
      */
     public function index()
     {
-        //GET THE PETTY CASH MODEL
-//        $status = config('constants.petty_cash_status.not_exported');
-//        $list = DB::select("SELECT * FROM eform_petty_cash_account where status_id = {$status} ");
-//        $form = PettyCashAccountModel::hydrate($list);
-//        $form->load(
-//            'form',
-//            'form.item',
-//            'form.user',
-//            'status');
-      //  $form = ZescoItsInvInterfaceDetail::all();
+        $ready = config('constants.uploaded') ;
+        //GET THE PETTY CASH MODEL if you are an admin
+        $accounts = DB::select("SELECT * FROM eform_petty_cash_account where status_id = '{$ready}' ORDER BY  petty_cash_code  ");
+        $list = PettyCashAccountModel::hydrate($accounts);
+        $list->load("form.user_unit");
 
-//       dd($form);
-
-//        foreach ($form as $item) {
-//            $list = DB::select("SELECT * FROM eform_petty_cash_account where petty_cash_code = '{$item->invoice_id}' ");
-//            $form_1 = PettyCashAccountModel::hydrate($list)->first();
-//            $form_1->load(
-//                'form',
-//                'form.item',
-//                'form.user',
-//                'status');
-//
-////            $list22 = DB::table('fms_invoice_interface_header')
-////                ->where('invoice_id', $form_1->petty_cash_code)
-////                ->update(['supplier_num' => $form_1->form->claimant_staff_no ]);
-//
-//
-//
-//
-//            //one
-//            $list22 = DB::table('fms_invoice_interface_detail')
-//                ->where('invoice_id', $form_1->petty_cash_code)
-//                ->where('gl_account', $form_1->creditted_account_id)
-//                ->update([
-////                    'company_code' =>  config('constants.company'),
-//                    'amount' =>  "-". ($form_1->creditted_amount ??  $form_1->debitted_amount)
-//                ]);
-//
-//            //two
-//            $list22 = DB::table('fms_invoice_interface_detail')
-//                ->where('invoice_id', $form_1->petty_cash_code)
-//                ->where('gl_account', $form_1->debitted_account_id)
-//                ->update([
-////                    'company_code' =>  config('constants.company'),
-//                    'amount' =>   $form_1->debitted_amount ?? $form_1->creditted_amount
-//                ]);
-//
-////            dd( "-".$form_1->creditted_amount ??  $form_1->debitted_amount);
-//
-//        }
+        $category = 'Petty Cash Details Ready to be Uploaded';
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+        //return view
+        return view('eforms.petty-cash.integration.ready')->with(compact('category', 'list', 'totals_needs_me'));
+ }
 
 
-    //    dd($form);
+    public function ready()
+    {
+//        $ready = config('constants.export_not_ready');
+        $ready = config('constants.not_exported');
+        $type = config('constants.account_type.expense');
+        //GET THE PETTY CASH MODEL if you are an admin
+        $accounts = DB::select("SELECT * FROM eform_petty_cash_account where status_id = '{$ready}'   AND  account_type = '{$type}'   ORDER BY  petty_cash_code  ");
+        $list = PettyCashAccountModel::hydrate($accounts);
+        $list->load("form.user_unit");
 
+        $category = 'Petty Cash Details Ready to be Uploaded';
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+        //return view
+        return view('eforms.petty-cash.integration.ready')->with(compact('category', 'list', 'totals_needs_me'));
+
+    }
+
+
+    public function send(Request $request)
+    {
+
+        if($request->forms == null ){
+            return back()->with('error', 'No invoices were selected');
+        }
+
+        //get the requested accounts
+        $codes_array = array_unique($request->forms);
+        $type = config('constants.account_type.expense');
+
+        //dd($codes_array);
+        $codes_array = implode(',', $codes_array);
+        $accounts = DB::select("SELECT * FROM eform_petty_cash_account WHERE petty_cash_code IN ({$codes_array})  AND  account_type = '{$type}'   ORDER  BY  petty_cash_code  ");
+        $list = PettyCashAccountModel::hydrate($accounts);
+        $list->load("form.user_unit");
+
+        //
+        $rec = 0;
+
+
+
+        //loop through the accounts
+        foreach ($list as $account) {
+            $org = $account->org_id ?? $account->form->user_unit->org_id;
+            //check for header
+            $header = DB::select("SELECT count(invoice_num) as total FROM fms_invoice_interface_header
+                  WHERE invoice_num = '{$account->form->code}' AND org_id = {$org}   ");
+            $header_list = ZescoItsInvInterfaceHeader::hydrate($header)->first();
+
+            //
+            if($header_list->total  == 0){
+                // [1] insert into header
+                DB::table('fms_invoice_interface_header')->insert(
+                //insert column
+                    [
+                        'invoice_id' => $account->form->code ,
+                        'transaction_type' => config('constants.transaction_type.petty_cash'),
+                        'invoice_num' => $account->form->code,
+                        'invoice_date' => $account->form->created_at,
+                        'invoice_description' => $account->description,
+                        'invoice_type' =>  config('constants.transaction_type.invoice_type'),
+                        'supplier_num' => $account->form->claimant_staff_no,
+                        'invoice_amount' => $account->form->total_payment,
+                        'invoice_currency_code' =>config('constants.currency'),
+                        'exchange_rate'  =>config('constants.exchange_rate'),
+                        'gl_date' => $account->created_at,
+                        'org_id' => $org,
+                        'creation_date' => $account->form->claim_date,
+                        'process_yn' => config('constants.unprocessed'),
+
+                    ]
+                );
+
+              //  mark as as updated
+                $affected_form = DB::table('eform_petty_cash')
+                    ->where('id', $account->form->id)
+                    ->update(['config_status_id'  =>config('constants.uploaded') ]);
+            }
+
+
+            //check for detail
+            $detail = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
+                  WHERE invoice_id = '{$account->form->code}' AND org_id = {$org}
+                    AND item_description = '{$account->description}' AND  gl_account = '{$account->account}' ");
+            $detail_list = ZescoItsInvInterfaceDetail::hydrate($detail)->first();
+
+
+            if($detail_list->total  == 0) {
+
+                ++$rec ;
+                //count line number
+                $detail_count = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
+                  WHERE invoice_id = '{$account->form->code}'  ");
+
+                // [2] insert into detail
+                DB::table('fms_invoice_interface_detail')->insert(
+                //insert column
+                    [
+                        'invoice_id' => $account->form->code,
+                        'line_number' => $detail_count[0]->total + 1,
+                        'amount' => $account->debitted_amount ?? ( "".$account->creditted_amount),
+                        'item_description' => $account->description,
+                        'org_id' => $org ,
+                        'company_code' => $account->company,
+                        'business_unit' => $account->business_unit_code,
+                        'cost_centre' => $account->cost_center,
+                        'gl_account' => $account->account,
+                        'vat_rate' => $account->vat_rate ?? 0,
+                        'line_type' => $account->line_type,
+                        'creation_date' => $account->created_at
+                    ]
+                );
+
+                //mark as as updated
+                $affected_account = DB::table('eform_petty_cash_account')
+                    ->where('id', $account->id)
+                    ->update(['status_id'  =>config('constants.uploaded') ]);
+            }
+
+        }
+
+     return Redirect::back()->with('message', $rec. ' Uploaded successfully');
+    }
+
+
+    public function header(){
 
         $list = ZescoItsInvInterfaceHeader::where('transaction_type', config('constants.transaction_type.petty_cash'))->get();
         $list->load('code');
@@ -87,16 +173,26 @@ class Integration extends Controller
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
         //return view
-        return view('eforms.petty-cash.integration.list')->with(compact('list', 'category', 'value', 'totals_needs_me'));
+        return view('eforms.petty-cash.integration.header')->with(compact('list', 'category', 'value', 'totals_needs_me'));
+
     }
 
 
-    public function send()
-    {
-        $Detail = ZescoItsInvInterfaceDetail::all();
-        $Header = ZescoItsInvInterfaceHeader::all();
-        dd($Detail->first());
+    public function details($item){
+
+        $list = ZescoItsInvInterfaceDetail::where('invoice_id', $item )->get();
+        $list->load('code');
+        $category = 'Zesco Its Inv Interface Details for '.$item;
+        $value = config('constants.petty_cash_status.processed');
+
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+        //return view
+        return view('eforms.petty-cash.integration.details')->with(compact('list', 'category', 'value', 'totals_needs_me'));
+
     }
+
+
 
     /**
      * Store a newly created resource in storage.

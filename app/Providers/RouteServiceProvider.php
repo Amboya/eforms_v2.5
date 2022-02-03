@@ -71,6 +71,14 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/petty_cash.php'));
 
+//
+//            //MAIN DASH ROUTES
+//            Route::middleware(['web','auth'])
+////                ->name('petty.cash.')
+//                ->prefix('main')
+//                ->namespace($this->namespace)
+//                ->group(base_path('routes/main.php'));
+
 
         });
     }

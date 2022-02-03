@@ -44,6 +44,8 @@ class PasswordChange extends Command
 
         $user = User::where('staff_no', $staff_no)->first();
         $user->password = Hash::make($password);
+        //reset your password
+        $user->password_changed = config('constants.password_not_changed');
         $user->save();
         $this->info('Password Changed Successfully');
     }

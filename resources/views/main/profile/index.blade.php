@@ -2,9 +2,9 @@
 
 
 @push('custom-styles')
-<!-- DataTables -->
-<link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
-<link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 @endpush
 
 
@@ -72,8 +72,8 @@
                             <th>Name</th>
                             <th>Code</th>
                             <th>Description</th>
-                            <th>Created At</th>
-                            <th>Period</th>
+                            <th>Code Column</th>
+                            <th>Unit Column</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -84,8 +84,8 @@
                                 <td>{{$item->name}} </td>
                                 <td>{{$item->code}} </td>
                                 <td>{{$item->description}} </td>
-                                <td>{{$item->created_at}}</td>
-                                <td>{{$item->created_at->diffForHumans()}}</td>
+                                <td>{{$item->code_column}}</td>
+                                <td>{{$item->unit_column}}</td>
                                 <td>
                                     <button class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
                                             title="Edit"
@@ -153,11 +153,25 @@
                                            placeholder="Enter profile code">
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="code_column">Code Column</label>
+                                    <input type="text" class="form-control" id="code_column" name="code_column"
+                                           placeholder="Enter code column">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="unit_column">Unit Column</label>
+                                    <input type="text" class="form-control" id="unit_column" name="unit_column"
+                                           placeholder="Enter Unit Column">
+                                </div>
+                            </div>
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="description">Profile Description</label>
                                     <textarea rows="3" type="text" class="form-control" id="description" name="description"
-                                           placeholder="Enter profile description"> </textarea>
+                                              placeholder="Enter profile description"> </textarea>
                                 </div>
                             </div>
 
@@ -203,6 +217,8 @@
                                 <b>Id:</b> <span id="span_id"></span><br>
                                 <b>Name:</b> <span id="span_name"></span><br>
                                 <b>Code:</b> <span id="span_code"></span><br>
+                                <b>Code Column:</b> <span id="code_column2"></span><br>
+                                <b>Unit Column:</b> <span id="unit_column2"></span><br>
                                 <b>Description:</b> <span id="span_description"></span><br>
                                 <b>Created By:</b> <span id="span_created_by"></span><br>
                                 <b>Created At:</b> <span id="span_created_at"></span><br>
@@ -253,6 +269,20 @@
                                     <label for="exampleInputEmail1">Code</label>
                                     <input type="text" class="form-control" id="code2" name="code"
                                            placeholder="Enter profile Code" required>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="code_column">Code Column</label>
+                                    <input type="text" class="form-control" id="code_column1" name="code_column"
+                                           placeholder="Enter code column">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="unit_column">Unit Column</label>
+                                    <input type="text" class="form-control" id="unit_column1" name="unit_column"
+                                           placeholder="Enter Unit Column">
                                 </div>
                             </div>
                             <div class="col-12">
@@ -319,63 +349,70 @@
 
 @push('custom-scripts')
 
-<!-- DataTables -->
-<script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+    <!-- DataTables -->
+    <script src="{{ asset('dashboard/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+    <script src="{{ asset('dashboard/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
 
-<!-- page script -->
-<script>
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true,
-            "autoWidth": false,
+    <!-- page script -->
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
         });
-        $('#example2').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
+    </script>
+
+    <script>
+
+        $('#modal-edit').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+            $('#profile_name2').val(recipient.name);
+            $('#profile_id2').val(recipient.id);
+            $('#code2').val(recipient.code);
+            $('#description2').val(recipient.description);
+            $('#code_column1').val(recipient.code_column);
+            $('#unit_column1').val(recipient.unit_column);
+
+
         });
-    });
-</script>
 
-<script>
+        $('#modal-view').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var recipient = button.data('sent_data'); // Extract info from data-* attributes
 
-    $('#modal-edit').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var recipient = button.data('sent_data'); // Extract info from data-* attributes
-        $('#profile_name2').val(recipient.name);
-        $('#profile_id2').val(recipient.id);
-        $('#code2').val(recipient.code);
-        $('#description2').val(recipient.description);
+            var span_id = document.getElementById("span_id");
+            span_id.textContent = recipient.id;
+            var span_name = document.getElementById("span_name");
+            span_name.textContent = recipient.name;
+            var span_code = document.getElementById("span_code");
+            span_code.textContent = recipient.code;
+            var span_description = document.getElementById("span_description");
+            span_description.textContent = recipient.description;
+            var span_created_by = document.getElementById("span_created_by");
+            span_created_by.textContent = recipient.created_by;
+            var span_created_at = document.getElementById("span_created_at");
+            span_created_at.textContent = recipient.created_at;
+            var span_period = document.getElementById("span_period");
+            span_period.textContent = recipient.created_at;
+            var code_column2 = document.getElementById("code_column2");
+            code_column2.textContent = recipient.code_column;
+            var unit_column2 = document.getElementById("unit_column2");
+            unit_column2.textContent = recipient.unit_column;
 
-    });
+        });
 
-    $('#modal-view').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var recipient = button.data('sent_data'); // Extract info from data-* attributes
-
-        var span_id = document.getElementById("span_id");
-        span_id.textContent = recipient.id;
-        var span_name = document.getElementById("span_name");
-        span_name.textContent = recipient.name;
-        var span_code = document.getElementById("span_code");
-        span_code.textContent = recipient.code;
-        var span_description = document.getElementById("span_description");
-        span_description.textContent = recipient.description;
-        var span_created_by = document.getElementById("span_created_by");
-        span_created_by.textContent = recipient.created_by;
-        var span_created_at = document.getElementById("span_created_at");
-        span_created_at.textContent = recipient.created_at;
-        var span_period = document.getElementById("span_period");
-        span_period.textContent = recipient.created_at;
-
-    });
-
-</script>
+    </script>
 @endpush
