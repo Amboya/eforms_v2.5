@@ -171,18 +171,12 @@ class SubsistenceController extends Controller
         //pending forms for me before i apply again
         $pending = HomeController::pendingForMe();
 
-        //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'list' => $list,
-         //   'totals' => $totals,
-            'pending' => $pending,
-            'category' => $category,
-            'value' => $value
-        ];
+        //list of statuses
+        $statuses = StatusModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
 
         //return view
-        return view('eforms.subsistence.list')->with($params);
+        return view('eforms.subsistence.list')->with(compact(
+            'statuses', 'list', 'totals_needs_me', 'pending', 'category', 'value'));
 
     }
 
@@ -2573,7 +2567,7 @@ class SubsistenceController extends Controller
                 //Make the update on the Subsistence account
                 $previous_status = config('constants.subsistence_status.exported');
                 $id = $item->id;
-                $eform_petty_cash_item = DB::table('eform_subsistence_account')
+                $eform_subsistence_item = DB::table('eform_subsistence_account')
                     ->where('id', $id)
                     ->update(['status_id' => $previous_status]);
 
@@ -2690,12 +2684,12 @@ class SubsistenceController extends Controller
 
 
         // SYNC ALL
-//        $eform_petty_cash_all = DB::select("SELECT * FROM eform_subsistence  ");
+//        $eform_subsistence_all = DB::select("SELECT * FROM eform_subsistence  ");
 
-//        foreach ($eform_petty_cash_all as $form) {
+//        foreach ($eform_subsistence_all as $form) {
 //
 //            //get the form
-//            $eform_petty_cash = DB::table('eform_subsistence')
+//            $eform_subsistence = DB::table('eform_subsistence')
 //                ->where('id', $form->id)
 //                ->get()->first();
 //
@@ -2735,15 +2729,15 @@ class SubsistenceController extends Controller
 //          //  dd($update_eform_petty_cash);
 //
 //        }
-        //  dd($eform_petty_cash_all);
+        //  dd($eform_subsistence_all);
 
-//        $eform_petty_cash = DB::select("SELECT * FROM eform_subsistence where id =  {$id} ");
-//        $eform_petty_cash = SubsistenceAccountModel::hydrate($eform_petty_cash);
+//        $eform_subsistence = DB::select("SELECT * FROM eform_subsistence where id =  {$id} ");
+//        $eform_subsistence = SubsistenceAccountModel::hydrate($eform_subsistence);
 //
-//        $claimant = User::find($eform_petty_cash[0]->created_by);
+//        $claimant = User::find($eform_subsistence[0]->created_by);
 //        $user_unit_code = $claimant->user_unit->code;
 //        $superior_code = $claimant->position->superior_code;
-//        $eform_petty_cash = DB::table('eform_subsistence')
+//        $eform_subsistence = DB::table('eform_subsistence')
 //            ->where('id', $id)
 //            ->update(['code_superior' => $superior_code,
 //                'user_unit_code' => $user_unit_code,
@@ -2778,7 +2772,7 @@ class SubsistenceController extends Controller
 
             $previous_status = config('constants.subsistence_status.not_exported');
             $id = $item->id;
-            $eform_petty_cash_item = DB::table('eform_subsistence_account')
+            $eform_subsistence_item = DB::table('eform_subsistence_account')
                 ->where('id', $id)
                 ->update(['status_id' => $previous_status]);
 
@@ -2806,46 +2800,71 @@ class SubsistenceController extends Controller
     {
         try {
             // get the form using its id
-            $eform_petty_cash = DB::select("SELECT * FROM eform_subsistence where id =  {$id} ");
-            $eform_petty_cash = SubsistenceAccountModel::hydrate($eform_petty_cash);
-
-            //get current status id
-            $status_model = StatusModel::where('id', $eform_petty_cash[0]->config_status_id)
-                ->where('eform_id', config('constants.eforms_id.subsistence'))->first();
-            $current_status = $status_model->id;
-
+            $eform_subsistence = DB::select("SELECT * FROM eform_subsistence where id =  {$id} ");
+            $eform_subsistence = SubsistenceModel::hydrate($eform_subsistence)->first();
+            $eform_subsistence->load('status');
             //new status
-            $new_status_id = $current_status - 1;
-            $status_model = StatusModel::where('id', $new_status_id)
-                ->where('eform_id', config('constants.eforms_id.subsistence'))->first();
-            $previous_status = $status_model->id;
-
-            //  $eform_petty_cash = DB::select("UPDATE eform_subsistence SET config_status_id = {$previous_status} where id =  {$id} ");
-            $eform_petty_cash = DB::table('eform_subsistence')
+            $status = StatusModel::find($request->new_status_name);
+            //update form
+            $eform_subsistence_update = DB::table('eform_subsistence')
                 ->where('id', $id)
-                ->update(['config_status_id' => $previous_status]);
+                ->update(['config_status_id' => $status->id ]);
+            //update accounts
+            $eform_accounts_update = DB::table('eform_subsistence_account')
+                ->where('id', $id)
+                ->update(['eform_subsistence_id' => $eform_subsistence->id ]);
 
             $user = Auth::user();
-            //save reason
-//            $reason = EformApprovalsModel::updateOrCreate(
-//                [
-//                    'profile' => $user->profile_id,
-//                    'title' => $user->profile_id,
-//                    'name' => $user->name,
-//                    'staff_no' => $user->staff_no,
-//                    'reason' => $request->reason,
-//                    'action' => $request->approval,
-//                    'current_status_id' => $current_status,
-//                    'action_status_id' => $previous_status,
-//                    'config_eform_id' => config('constants.eforms_id.subsistence'),
-//                    'eform_id' => $eform_petty_cash[0]->id,
-//                    'created_by' => $user->id,
-//                ]);
-
-            return Redirect::back()->with('message', 'Subsistence Account Line have been dropped to the previous stage successfully');
+            // log the activity
+            ActivityLogsController::store($request, "Subsistence Status manual change", "status update of subsistence " . $eform_subsistence->code, $user->name . " updated status of subsistence voucher from " . $eform_subsistence->status->name . " to " . $status->name, $eform_subsistence->id);
+            return Redirect::route('subsistence.home')->with('message', 'Subsistence ('.$eform_subsistence->code.') Has been set to a new Status '.$status->name.' from '.$eform_subsistence->status->name);
         } catch (Exception $exception) {
             return Redirect::back()->with('error', 'Sorry an error happened');
         }
+
+
+//        try {
+//            // get the form using its id
+//            $eform_subsistence = DB::select("SELECT * FROM eform_subsistence where id =  {$id} ");
+//            $eform_subsistence = SubsistenceAccountModel::hydrate($eform_subsistence);
+//
+//            //get current status id
+//            $status_model = StatusModel::where('id', $eform_subsistence[0]->config_status_id)
+//                ->where('eform_id', config('constants.eforms_id.subsistence'))->first();
+//            $current_status = $status_model->id;
+//
+//            //new status
+//            $new_status_id = $current_status - 1;
+//            $status_model = StatusModel::where('id', $new_status_id)
+//                ->where('eform_id', config('constants.eforms_id.subsistence'))->first();
+//            $previous_status = $status_model->id;
+//
+//            //  $eform_subsistence = DB::select("UPDATE eform_subsistence SET config_status_id = {$previous_status} where id =  {$id} ");
+//            $eform_subsistence = DB::table('eform_subsistence')
+//                ->where('id', $id)
+//                ->update(['config_status_id' => $previous_status]);
+//
+//            $user = Auth::user();
+//            //save reason
+////            $reason = EformApprovalsModel::updateOrCreate(
+////                [
+////                    'profile' => $user->profile_id,
+////                    'title' => $user->profile_id,
+////                    'name' => $user->name,
+////                    'staff_no' => $user->staff_no,
+////                    'reason' => $request->reason,
+////                    'action' => $request->approval,
+////                    'current_status_id' => $current_status,
+////                    'action_status_id' => $previous_status,
+////                    'config_eform_id' => config('constants.eforms_id.subsistence'),
+////                    'eform_id' => $eform_subsistence[0]->id,
+////                    'created_by' => $user->id,
+////                ]);
+//
+//            return Redirect::back()->with('message', 'Subsistence Account Line have been dropped to the previous stage successfully');
+//        } catch (Exception $exception) {
+//            return Redirect::back()->with('error', 'Sorry an error happened');
+//        }
     }
 
     public function reportsSync()

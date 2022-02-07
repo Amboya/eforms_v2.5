@@ -306,6 +306,7 @@
                 <br>
                 <div class="row">
                     <div class="col-sm-3">
+                        @if( $form->status->id != config('constants.trip_status.trip_closed'))
                         @if($list_inv != null)
 
                             @if( $list_inv->status_id == config('constants.trip_status.pending'))
@@ -335,6 +336,13 @@
                         @else
                             <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
                                     title="You cannot subscribe to this trip"
+                                    value='Subscribe'>Raise Subsistence
+                            </button>
+                            @endif
+
+                        @else
+                            <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                    title="This trip has ended you can not raise subsistence for it"
                                     value='Subscribe'>Raise Subsistence
                             </button>
                         @endif
