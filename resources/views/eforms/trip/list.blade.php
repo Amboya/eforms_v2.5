@@ -88,7 +88,8 @@
                                         class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>
                                 </td>
                                 <td>{{$item->created_at->diffForHumans()}}</td>
-                                <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
+                                <td>
+                                    <a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
                                        onclick="event.preventDefault();
                                            document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
                                     <form id="show-form{{$item->id}}"
@@ -96,6 +97,7 @@
                                           method="POST" class="d-none">
                                         @csrf
                                     </form>
+
                             </tr>
                         @endforeach
                         </tbody>

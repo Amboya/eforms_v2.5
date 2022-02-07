@@ -25,6 +25,7 @@ Route::post('search', [App\Http\Controllers\EForms\Subsistence\SubsistenceContro
 Route::get('charts', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'charts'])->name('charts');
 Route::get('removeDuplicateAccountLines/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'markAccountLinesAsDuplicates'])->name('accounts.duplicate-remove');
 Route::get('showForm/{id}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'showForm'])->name('reports.show');
+Route::post('approve/batch/{status}', [App\Http\Controllers\EForms\Subsistence\SubsistenceController::class, 'approveBatch'])->name('approve.batch');
 
 //REPORTS
 Route::group([

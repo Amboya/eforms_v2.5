@@ -7,7 +7,9 @@ use App\Models\EForms\Subsistence\SubsistenceModel;
 use App\Models\EForms\Trip\Destinations;
 use App\Models\EForms\Trip\Invitation;
 use App\Models\EForms\Trip\Trip;
+use Carbon\Carbon;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -33,6 +35,20 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+        //clear all expired trips
+        //get all trips that have expired as of today
+        $allTrips = Trip::where('date_to', '<', Carbon::now())
+            ->where('config_status_id', config('constants.trip_status.new_trip') )
+            ->get() ;
+
+        foreach ($allTrips as $trip){
+            $trip->config_status_id = config('constants.trip_status.trip_closed') ;
+            $trip->save();
+           // echo "  ".$trip->name . " Expired and Closed.   :   " ;
+        }
+        //
+
         //count new forms
         $new_forms = Trip::where('config_status_id', config('constants.trip_status.new_trip'))
             ->count();

@@ -49,7 +49,7 @@
             </div>
         @endif
 
-        <form id="list_form" action="{{route('petty.cash.approve.batch', 1)}}" method="post">
+        <form id="list_form" action="{{route('subsistence.approve.batch', 1)}}" method="post">
         @csrf
         <!-- Default box -->
             <div class="card">
@@ -66,7 +66,7 @@
                                 <th>Total</th>
                                 <th>Status</th>
                                 <th>Time Period</th>
-                                <th>Status</th>
+                                <th>View</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -90,7 +90,8 @@
                                             class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>
                                     </td>
                                     <td>{{$item->created_at->diffForHumans()}}</td>
-                                    <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
+                                    <td>
+                                        <a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
                                            onclick="event.preventDefault();
                                                document.getElementById('show-form'+{{$item->id}}).submit();"> view</a>
                                         <form id="show-form{{$item->id}}"
@@ -98,6 +99,20 @@
                                               method="POST" class="d-none">
                                             @csrf
                                         </form>
+                                        @if(Auth::user()->type_id == config('constants.user_types.developer'))
+                                            <a class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                               title="Mark as Void."
+                                               data-toggle="modal"
+                                               data-target="#modal-void{{$item->id}}">
+                                                <i class="fa fa-ban"></i>
+                                            </a>
+                                            <a class="btn btn-sm bg-gradient-gray " style="margin: 1px"
+                                               title="Reverse Form to the previous state."
+                                               data-toggle="modal"
+                                               data-target="#modal-reverse{{$item->id}}">
+                                                <i class="fa fa-redo"></i>
+                                            </a>
+                                    @endif
                                 </tr>
                             @endforeach
                             </tbody>
@@ -116,6 +131,105 @@
                         </table>
                     </div>
                     <!-- /.table-responsive -->
+
+                @foreach($list as $item)
+                    <!-- VOID MODAL-->
+                        <div class="modal fade" id="modal-void{{$item->id}}">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content bg-defualt">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title text-center">Mark Voucher as Void</h4>
+                                    </div>
+                                    <!-- form start -->
+                                    <form role="form" method="post"
+                                          action="{{route('subsistence.void', ['id' => $item->id])}}">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <p class="text">Are you sure you want to mark this form as void? </p>
+                                                    <p class="text">Note that you can not undo this action. </p>
+                                                </div>
+
+                                                <div class="col-2">
+                                                    <label>Reason</label>
+                                                </div>
+                                                <div class="col-10">
+                                                    <div class="input-group">
+                                                        <textarea class="form-control" rows="2" name="reason" placeholder="Enter reason why" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-danger">Mark</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <!-- /.VOID modal -->
+
+                        <!-- REVERSE MODAL-->
+                        <div class="modal fade" id="modal-reverse{{$item->id}}">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content bg-defualt">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title text-center">Reverse this subsistence to a new Status</h4>
+                                    </div>
+                                    <!-- form start -->
+                                    <form role="form" method="post"
+                                          action="{{route('subsistence.reverse', ['id' => $item->id])}}">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <p class="text-left">Are you sure you want to reverse this application to the
+                                                        previous stage? </p>
+                                                </div>
+
+                                                <div class="input-group">
+                                                    <div class="col-lg-2 col-sm-12">
+                                                        <label>New Status</label>
+                                                    </div>
+                                                    <div class="col-lg-10 col-sm-12">
+                                                        <select name="new_status_name" class="form-control">
+                                                            <option value="">--Choose--</option>
+                                                            @foreach($statuses as $status)
+                                                                <option value="{{$status->id}}">{{$status->name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-2">
+                                                    <label>Reason</label>
+                                                </div>
+                                                <div class="col-10">
+                                                    <div class="input-group">
+                                                        <textarea class="form-control" rows="2" name="reason" placeholder="Enter reason why" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-danger">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <!-- /.REVERSE modal -->
+                    @endforeach
+
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
@@ -180,7 +294,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('petty.cash.void', ['id' => $item->id])}}">
+                          action="{{route('subsistence.void', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">
@@ -219,11 +333,11 @@
             <div class="modal-dialog modal-md">
                 <div class="modal-content bg-defualt">
                     <div class="modal-header">
-                        <h4 class="modal-title text-center">Reverse this petty cash one step backwards</h4>
+                        <h4 class="modal-title text-center">Reverse this subsistence one step backwards</h4>
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('petty.cash.reverse', ['id' => $item->id])}}">
+                          action="{{route('subsistence.reverse', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

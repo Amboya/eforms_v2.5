@@ -253,7 +253,6 @@ class TripController extends Controller
         $totals_needs_me = HomeController::needsMeCount();
         $users = User::where('con_st_code', config('constants.phris_user_active') )->get();
 
-
         //show the create form
         return view('eforms.trip.create')->with(compact('users','destination_units', 'units', 'user', 'totals_needs_me'));
     }
@@ -282,9 +281,9 @@ class TripController extends Controller
 
         $invited = sizeof($request->users);
 
-        //[1]get the logged in user
+        //[1]-get the logged in user
         $user = Auth::user();   //superior_code
-        //generate the Trip unique code
+        //[6]-generate the Trip unique code
         $code = self::randGenerator("TR", 1);
         $formModel = Trip::updateOrCreate(
             [
