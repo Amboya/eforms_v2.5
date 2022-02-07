@@ -254,36 +254,15 @@ class SubsistenceController extends Controller
         $form = SubsistenceModel::hydrate($list)->first();
         //get the status
         $current_status = $form->status->id;
-        $new_status = 0;
         $user = Auth::user();
-        //get the form type
-        $e_form_petty_cash = EFormModel::find(config('constants.eforms_id.subsistence'));
 
         //HANDLE VOID REQUEST
         $new_status = config('constants.subsistence_status.void');
 
-        //update the totals rejected
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-            ->where('id', config('constants.totals.petty_cash_reject'))
-            ->first();
-        $totals->value = $totals->value + 1;
-        $totals->save();
-        $e_form_petty_cash->total_rejected = $totals->value;
-        $e_form_petty_cash->save();
-
-        //update the totals open
-        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))
-            ->where('id', config('constants.totals.petty_cash_open'))
-            ->first();
-        $totals->value = $totals->value - 1;
-        $totals->save();
-        $e_form_petty_cash->total_pending = $totals->value;
-        $e_form_petty_cash->save();
-
-        //get status id
-        $status_model = StatusModel::where('id', $new_status)
-            ->where('eform_id', config('constants.eforms_id.subsistence'))->first();
-        $new_status = $status_model->id;
+        //update the accounts
+        $affected_accounts = DB::table('eform_subsistence_account')
+            ->where('eform_subsistence_id', $id)
+            ->update(['status_id'  => $new_status ]);
 
         //update the form status
         $form->config_status_id = $new_status;

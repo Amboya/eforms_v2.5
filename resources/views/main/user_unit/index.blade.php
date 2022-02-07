@@ -903,19 +903,14 @@
             $('#transport_unit').val(recipient.transport_unit);
             $('#sheq_code').val(recipient.sheq_code);
             $('#sheq_unit').val(recipient.sheq_unit);
-
-
         });
 
 
         $('#modal-users').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
-
-            alert(recipient.user_unit_code);
-
+         //   alert(recipient.user_unit_code);
             getMyWorkflow(recipient.user_unit_code ) ;
-
         });
 
 
