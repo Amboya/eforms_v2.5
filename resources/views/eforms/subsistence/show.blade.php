@@ -499,7 +499,7 @@
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
-                                                value='Cancelled'>CANCEL PETTY CASH
+                                                value='Cancelled'>CANCEL SUBSISTENCE
                                         </button>
                                         <button hidden id="btnSubmit_reject" type="submit" name="approval"
                                                 class="btn btn-outline-danger ml-2 p-2  "
@@ -537,7 +537,7 @@
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success mr-2 p-2  "
-                                                value='Cancelled'>CANCEL PETTY CASH
+                                                value='Cancelled'>CANCEL SUBSISTENCE
                                         </button>
                                         <button hidden id="btnSubmit_reject" type="submit" name="approval"
                                                 class="btn btn-outline-danger ml-2 p-2  "
@@ -1588,7 +1588,7 @@
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to absc_amount
+                //check if subsistence accounts is equal to absc_amount
                 if (total == net_amount_paid) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
@@ -1623,7 +1623,7 @@
 
             if (!isNaN(total)) {
 
-                //check if petty cash accounts is equal to net_amount_paid
+                //check if subsistence accounts is equal to net_amount_paid
                 if (total == net_amount_paid) {
                     $('#submit_possible').show();
                     $('#submit_not_possible').hide();
@@ -1648,7 +1648,7 @@
 
                 var change_value_int = parseFloat(change_value);
 
-                //check if petty cash accounts is equal to absc_amount
+                //check if subsistence accounts is equal to absc_amount
                 if (Number(change_value_int) > 0) {
                     $('#show_change').show();
                     //set value

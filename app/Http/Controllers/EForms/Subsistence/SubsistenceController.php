@@ -190,9 +190,11 @@ class SubsistenceController extends Controller
         //get list of all Subsistence forms for today
         if ($value == "all") {
             $list = DB::table('eform_subsistence')
-                ->select('eform_subsistence.*', 'config_status.name as status_name ', 'config_status.html as html ')
+                ->select('eform_subsistence.*', 'config_status.name', 'config_status.html')
                 ->join('config_status', 'eform_subsistence.config_status_id', '=', 'config_status.id')
                 ->paginate(50);
+
+         //   dd($list);
             $category = "All Records";
             //  dd($list);
         } else if ($value == "pending") {

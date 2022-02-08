@@ -713,7 +713,7 @@
                                 <textarea  class="form-control p-2 mb-2" rows="2" name="reason" placeholder="Enter Comment/Reason" required></textarea>
                                 <div id="submit_not_possible" class="col-lg-12 col-sm-12 text-center">
                                         <span class="text-red"><i class="icon fas fa-ban"></i> Alert!
-                                        Sorry, You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
+                                        You can not submit because Credited Accounts total does not equal to the total payment requested <strong>(ZMK {{$form->total_payment}}
                                                 )</strong>
                                    </span>
                                 </div>

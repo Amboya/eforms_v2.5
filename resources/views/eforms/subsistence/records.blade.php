@@ -84,7 +84,7 @@
                                 <td>ZMW {{number_format($item->total ?? 0,2)}}</td>
 
                                 <td><span
-                                        class="badge badge-{{$item->html ?? 11}}">{{$item->status_name ?? 00}}</span>
+                                        class="badge badge-{{$item->html ?? "default"}}">{{$item->name ?? 9}}</span>
                                 </td>
                                 <td>{{$item->created_at }}</td>
                                 <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
@@ -122,7 +122,7 @@
                     </div>
                     <!-- form start -->
                     <form role="form" method="post"
-                          action="{{route('petty-cash-void', ['id' => $item->id])}}">
+                          action="{{route('subsistence.void', ['id' => $item->id])}}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

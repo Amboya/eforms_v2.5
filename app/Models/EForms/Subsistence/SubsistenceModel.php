@@ -125,15 +125,16 @@ class SubsistenceModel extends Model
         if (auth()->check()) {
             $user = Auth::user();
 
-            if ($user->type_id == config('constants.user_types.developer')) {
-
-            } else {
+//            if ($user->type_id == config('constants.user_types.developer')) {
+//
+//            } else {
                 if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
                     //if you are just a requester, then only see your forms
                     static::addGlobalScope('staff_number', function (Builder $builder) use ($user) {
                         $builder->where('claimant_staff_no', $user->staff_no);
                     });
-                } else {
+                }
+                else {
                     $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
                     $mine = $fdsf->pluck('user_unit_code')->toArray();
 
@@ -157,7 +158,7 @@ class SubsistenceModel extends Model
                         });
                     }
                 }
-            }
+//            }
         }
     }
 

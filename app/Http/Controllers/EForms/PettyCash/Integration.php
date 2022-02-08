@@ -30,6 +30,8 @@ class Integration extends Controller
         $list = PettyCashAccountModel::hydrate($accounts);
         $list->load("form.user_unit");
 
+
+
         $category = 'Petty Cash Details Ready to be Uploaded';
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -46,8 +48,8 @@ class Integration extends Controller
         //GET THE PETTY CASH MODEL if you are an admin
         $accounts = DB::select("SELECT * FROM eform_petty_cash_account where status_id = '{$ready}'   AND  account_type = '{$type}'   ORDER BY  petty_cash_code  ");
         $list = PettyCashAccountModel::hydrate($accounts);
-        $list->load("form.user_unit");
-
+//        $list->load("form.user_unit");
+//        dd($list);
         $category = 'Petty Cash Details Ready to be Uploaded';
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();

@@ -212,7 +212,7 @@
                                            class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
                                     @else
                                         <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
-                                        <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
+                                        <span class="text-warning m-3"> You can not raise a new petty cash because you already have an open petty cash.</span>
                                     @endif
                                 @endif
                             </div>

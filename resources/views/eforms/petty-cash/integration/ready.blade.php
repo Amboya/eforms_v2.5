@@ -111,7 +111,7 @@
                                 <tr>
                                     <td>
                                         <div class="icheck-warning d-inline">
-                                            <input type="checkbox" value="'{{$item->form->code}}'" id="forms[]"
+                                            <input type="checkbox" value="'{{$item->form->code ?? 0}}'" id="forms[]"
                                                    name="forms[]">
                                         </div>
                                     </td>
@@ -174,7 +174,9 @@
 
 
                     {{-- IS CLOSED- SEND TO PHRIS--}}
-                    @if(Auth::user()->type_id == config('constants.user_types.developer'))
+                    @if( auth()->user()->profile_id ==  config('constants.user_profiles.EZESCO_014')
+
+                      )
                         <div class="">
                             <hr>
                             <div class="row">

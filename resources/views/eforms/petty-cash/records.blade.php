@@ -95,7 +95,7 @@
                                 <td>{{$item->claimant_name}}</td>
                                 <td>ZMW {{ number_format($item->total_payment  - $item->change, 2)}}</td>
                                 <td><span
-                                        class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name  ?? "none"}}</span>
+                                        class="badge badge-{{$item->status->html ?? $item->html ?? "default"}}">{{$item->status->name ?? $item->name ?? "-"}}</span>
                                 </td>
                                 <td>{{$item->updated_at}}</td>
                                 <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
