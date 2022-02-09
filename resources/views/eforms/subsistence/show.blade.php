@@ -481,43 +481,43 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                     {{--  CLAIMANT REQUEST FOR REFUND--}}
-                    @if(  \Illuminate\Support\Facades\Auth::user()->id == $form->created_by )
-                        <div class="">
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Cancelled'>CANCEL SUBSISTENCE
-                                        </button>
-                                        <button hidden id="btnSubmit_reject" type="submit" name="approval"
-                                                class="btn btn-outline-danger ml-2 p-2  "
-                                                value='Rejected'>REJECT
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
+{{--                    @if(  \Illuminate\Support\Facades\Auth::user()->id == $form->created_by )--}}
+{{--                        <div class="">--}}
+{{--                            <hr>--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-10">--}}
+{{--                                    <div class="row">--}}
+{{--                                        <div class="col-1">--}}
+{{--                                            <label class="form-control-label">Reason</label>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-11">--}}
+{{--                                            <textarea class="form-control" rows="2" name="reason" required></textarea>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-2 text-center ">--}}
+{{--                                    <div id="divSubmit_show">--}}
+{{--                                        <button id="btnSubmit_approve" type="submit" name="approval"--}}
+{{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
+{{--                                                value='Cancelled'>CANCEL SUBSISTENCE--}}
+{{--                                        </button>--}}
+{{--                                        <button hidden id="btnSubmit_reject" type="submit" name="approval"--}}
+{{--                                                class="btn btn-outline-danger ml-2 p-2  "--}}
+{{--                                                value='Rejected'>REJECT--}}
+{{--                                        </button>--}}
+{{--                                    </div>--}}
+{{--                                    <div id="divSubmit_hide">--}}
+{{--                                        <button disabled class="btn btn-outline-success mr-2 p-2  "--}}
+{{--                                                value='Approved'>Processing. Please wait...--}}
+{{--                                        </button>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    @endif--}}
 
                     {{--  CLAIMANT EDIT--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
+                    @if(  auth()->user()->id == $form->created_by
                          &&  $form->config_status_id == config('constants.subsistence_status.new_application')
                          &&  $user->id  == $form->created_by)
                         <div class="">
