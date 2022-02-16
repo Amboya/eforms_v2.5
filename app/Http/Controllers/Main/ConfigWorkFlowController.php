@@ -252,7 +252,215 @@ class ConfigWorkFlowController extends Controller
     {
         $unit = ConfigWorkFlow::where('user_unit_code', $user_unit)->first();
 
-       // dd($unit);
+        // dd($unit);
+
+//        $dr = User::
+//        where('job_code' ,$unit->dr_code )
+//            ->where('user_unit_code' ,$unit->dr_unit )
+//            ->orWhere('profile_job_code' ,$unit->dr_code )
+//            ->where('profile_unit_code' ,$unit->dr_unit )
+//            ->get();
+        $unit->load('dr_unit_user', 'dr_unit_delegate_user' );
+        $dr = $unit->dr_unit_user ;
+        $delegated = $unit->dr_unit_delegate_user ;
+        $dr ->merge($delegated );
+
+//        $dm = User::
+//        where('job_code' ,$unit->dm_code )
+//            ->where('user_unit_code' ,$unit->dm_unit )
+//            ->orWhere('profile_job_code' ,$unit->dm_code )
+//            ->where('profile_unit_code' ,$unit->dm_unit )
+//            ->get();
+        $unit->load('dm_unit_user', 'dm_unit_delegate_user' );
+        $dm = $unit->dm_unit_user ;
+        $delegated = $unit->dm_unit_delegate_user ;
+        $dm ->merge($delegated );
+
+//        $arm = User::
+//        where('job_code' ,$unit->arm_code )
+//            ->where('user_unit_code' ,$unit->arm_unit )
+//            ->orWhere('profile_job_code' ,$unit->arm_code )
+//            ->where('profile_unit_code' ,$unit->arm_unit )
+//            ->get();
+        $unit->load('arm_unit_user', 'arm_unit_delegate_user' );
+        $arm = $unit->arm_unit_user ;
+        $delegated = $unit->arm_unit_delegate_user ;
+        $arm ->merge($delegated );
+
+//        $bm = User::
+//        where('job_code' ,$unit->bm_code )
+//            ->where('user_unit_code' ,$unit->bm_unit )
+//            ->orWhere('profile_job_code' ,$unit->bm_code )
+//            ->where('profile_unit_code' ,$unit->bm_unit )
+//            ->get();
+        $unit->load('bm_unit_user', 'bm_unit_delegate_user' );
+        $bm = $unit->bm_unit_user ;
+        $delegated = $unit->bm_unit_delegate_user ;
+        $bm ->merge($delegated );
+
+//        $ca = User::
+//        where('job_code' ,$unit->ca_code )
+//            ->where('user_unit_code' ,$unit->ca_unit )
+//            ->orWhere('profile_job_code' ,$unit->ca_code )
+//            ->where('profile_unit_code' ,$unit->ca_unit )
+//            ->get();
+        $unit->load( 'ca_unit_delegate_user' );
+        $ca = $unit->ca_unit_user ;
+        $delegated = $unit->ca_unit_delegate_user ;
+        $ca ->merge($delegated );
+
+
+
+//        $ma = User::
+//        where('job_code' ,$unit->ma_code )
+//            ->where('user_unit_code' ,$unit->ma_unit )
+//            ->orWhere('profile_job_code' ,$unit->ma_code )
+//            ->where('profile_unit_code' ,$unit->ma_unit )
+//            ->get();
+        $unit->load('ma_unit_user', 'ma_unit_delegate_user' );
+        $ma = $unit->ma_unit_user ;
+        $delegated = $unit->ma_unit_delegate_user ;
+        $ma ->merge($delegated );
+
+
+//        $psa = User::
+//        where('job_code' ,$unit->psa_code )
+//            ->where('user_unit_code' ,$unit->psa_unit )
+//            ->orWhere('profile_job_code' ,$unit->psa_code )
+//            ->where('profile_unit_code' ,$unit->psa_unit )
+//            ->get();
+
+        $unit->load('psa_unit_user', 'psa_unit_delegate_user' );
+        $psa = $unit->psa_unit_user ;
+        $delegated = $unit->psa_unit_delegate_user ;
+        $psa ->merge($delegated );
+
+//        $hrm = User::
+//        where('job_code' ,$unit->hrm_code )
+//            ->where('user_unit_code' ,$unit->hrm_unit )
+//            ->orWhere('profile_job_code' ,$unit->hrm_code )
+//            ->where('profile_unit_code' ,$unit->hrm_unit )
+//            ->get();
+
+        $unit->load('hrm_unit_user', 'hrm_unit_delegate_user' );
+        $hrm = $unit->hrm_unit_user ;
+        $delegated = $unit->hrm_unit_delegate_user ;
+        $hrm ->merge($delegated );
+
+//        $phro = User::
+//        where('job_code' ,$unit->phro_code )
+//            ->where('user_unit_code' ,$unit->phro_unit )
+//            ->orWhere('profile_job_code' ,$unit->audit_code )
+//            ->where('profile_unit_code' ,$unit->phro_code )
+//            ->get();
+
+        $unit->load('phro_unit_user', 'phro_unit_delegate_user' );
+        $phro = $unit->phro_unit_user ;
+        $delegated = $unit->phro_unit_delegate_user ;
+        $phro ->merge($delegated );
+
+//        $shro = User::
+//        where('job_code' ,$unit->shro_code )
+//            ->where('user_unit_code' ,$unit->shro_unit )
+//            ->orWhere('profile_job_code' ,$unit->shro_code )
+//            ->where('profile_unit_code' ,$unit->shro_unit )
+//            ->get();
+
+        $unit->load('shro_unit_user', 'shro_unit_delegate_user' );
+        $shro = $unit->shro_unit_user ;
+        $delegated = $unit->shro_unit_delegate_user ;
+        $shro ->merge($delegated );
+
+
+//        $audit = User::
+//        where('job_code' ,$unit->audit_code )
+//            ->where('user_unit_code' ,$unit->audit_unit )
+//            ->orWhere('profile_job_code' ,$unit->audit_code )
+//            ->where('profile_unit_code' ,$unit->audit_unit )
+//            ->get();
+
+        $unit->load('audit_unit_user', 'audit_unit_delegate_user' );
+        $audit = $unit->audit_unit_user ;
+        $delegated = $unit->audit_unit_delegate_user ;
+        $audit ->merge($delegated );
+
+//        $expenditure = User::
+//        where('job_code' ,$unit->expenditure_code )
+//            ->where('user_unit_code' ,$unit->expenditure_unit )
+//            ->orWhere('profile_job_code' ,$unit->expenditure_code )
+//            ->where('profile_unit_code' ,$unit->expenditure_unit )
+//            ->get();
+        $unit->load('expenditure_unit_user', 'expenditure_unit_delegate_user' );
+        $expenditure = $unit->expenditure_unit_user ;
+        $delegated = $unit->expenditure_unit_delegate_user ;
+        $expenditure ->merge($delegated );
+
+
+//        $payroll = User::
+//        where('job_code' ,$unit->payroll_code )
+//            ->where('user_unit_code' ,$unit->payroll_unit )
+//            ->orWhere('profile_job_code' ,$unit->payroll_code )
+//            ->where('profile_unit_code' ,$unit->payroll_unit )
+//            ->get();
+        $unit->load('payroll_unit_user', 'payroll_unit_delegate_user' );
+        $payroll = $unit->payroll_unit_user ;
+        $delegated = $unit->payroll_unit_delegate_user ;
+        $payroll ->merge($delegated );
+
+//        $security = User::
+//        where('job_code' ,$unit->security_code )
+//            ->where('user_unit_code' ,$unit->security_unit )
+//            ->orWhere('profile_job_code' ,$unit->security_code )
+//            ->where('profile_unit_code' ,$unit->security_unit )
+//            ->get();
+        $unit->load('security_unit_user', 'security_unit_delegate_user' );
+        $security = $unit->security_unit_user ;
+        $delegated = $unit->security_unit_delegate_user ;
+        $security ->merge($delegated );
+
+//        $transport = User::
+//        where('job_code' ,$unit->transport_code )
+//            ->where('user_unit_code' ,$unit->transport_unit )
+//            ->orWhere('profile_job_code' ,$unit->transport_code )
+//            ->where('profile_unit_code' ,$unit->transport_unit )
+//            ->get();
+        $unit->load('transport_unit_user', 'transport_unit_delegate_user' );
+        $transport = $unit->transport_unit_user ;
+        $delegated = $unit->transport_unit_delegate_user ;
+        $transport ->merge($delegated );
+
+//        m = User::
+//        where('job_code' ,$unit->sheq_code )
+//            ->where('user_unit_code' ,$unit->sheq_unit )
+//            ->orWhere('profile_job_code' ,$unit->sheq_code )
+//            ->where('profile_unit_code' ,$unit->sheq_unit )
+//            ->get();
+        $unit->load('sheq_unit_user', 'sheq_unit_delegate_user' );
+        $sheq = $unit->sheq_unit_user ;
+        $delegated = $unit->sheq_unit_delegate_user ;
+        $sheq ->merge($delegated );
+
+//        $hod = User::
+//        where('job_code' ,$unit->hod_code )
+//            ->where('user_unit_code' ,$unit->hod_unit )
+//            ->orWhere('profile_job_code' ,$unit->hod_code )
+//            ->where('profile_unit_code' ,$unit->hod_unit )
+//            ->get();
+        $unit->load('hod_unit_user', 'hod_unit_delegate_user' );
+        $hod = $unit->hod_unit_user ;
+        $delegated = $unit->hod_unit_delegate_user ;
+        $hod ->merge($delegated );
+
+
+        $data = compact('dr', 'dm', 'arm', 'hod', 'ca', 'hrm', 'audit', 'expenditure', 'bm', 'security', 'sheq', 'shro', 'payroll', 'phro', 'psa', 'transport', 'ma');
+
+        return json_encode($data);
+    }
+    public function mineOld(Request $request, $user_unit)
+    {
+        $unit = ConfigWorkFlow::where('user_unit_code', $user_unit)->first();
+
+        // dd($unit);
 
         $dr = User::
         where('job_code' ,$unit->dr_code )

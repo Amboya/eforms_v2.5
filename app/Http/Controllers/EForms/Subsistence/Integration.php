@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\EForms\Subsistence\Integration\ZescoItsInvInterfaceHeader;
 use App\Models\EForms\Subsistence\SubsistenceAccountModel;
+use App\Models\EForms\Subsistence\SubsistenceModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -21,10 +22,13 @@ class Integration extends Controller
      */
     public function index()
     {
+        self::checkProcessed() ;
+
         $ready = config('constants.exported') ;
 
         //GET THE PETTY CASH MODEL if you are an admin
         $accounts = DB::select("SELECT * FROM eform_subsistence_account where status_id = '{$ready}' ORDER BY  subsistence_code  ");
+
         $list = SubsistenceAccountModel::hydrate($accounts);
         $list->load("form.user_unit");
 
@@ -40,7 +44,6 @@ class Integration extends Controller
     {
         $ready = config('constants.not_exported');
         $type = config('constants.account_type.expense');
-       // dd($ready);
         //GET THE PETTY CASH MODEL if you are an admin
         $accounts = DB::select("SELECT * FROM eform_subsistence_account where status_id = '{$ready}' AND  account_type = '{$type}'  ORDER BY  subsistence_code  ");
 //        $accounts = DB::select("SELECT * FROM eform_subsistence_account   ");
@@ -82,7 +85,7 @@ class Integration extends Controller
 
             $org = $account->org_id;
 
-         //   dd($account->form);
+            //   dd($account->form);
 
             //check for header
             $header = DB::select("SELECT count(invoice_num) as total FROM fms_invoice_interface_header
@@ -161,7 +164,107 @@ class Integration extends Controller
 
         }
 
-     return Redirect::back()->with('message', $rec. ' Uploaded successfully');
+        return Redirect::back()->with('message', $rec. ' Uploaded successfully');
+    }
+
+
+    public  function sendFromSubistence(SubsistenceModel $subsistenceModel)
+    {
+        //get the requested accounts
+
+        $type = config('constants.account_type.expense');
+        $code = $subsistenceModel->code ;
+        $accounts = DB::select("SELECT * FROM eform_subsistence_account WHERE subsistence_code = '{$code}' AND  account_type = '{$type}'    ");
+
+        $list = SubsistenceAccountModel::hydrate($accounts);
+        $list->load("form.user_unit");
+
+        //
+        $rec = 0;
+
+        //loop through the accounts
+        foreach ($list as $account) {
+
+            $org = $account->org_id;
+
+            //check for header
+            $header = DB::select("SELECT count(invoice_num) as total FROM fms_invoice_interface_header
+                  WHERE invoice_num = '{$account->form->code}' AND org_id = {$org}   ");
+            $header_list = ZescoItsInvInterfaceHeader::hydrate($header)->first();
+
+            //
+            if($header_list->total  == 0){
+                // [1] insert into header
+                DB::table('fms_invoice_interface_header')->insert(
+                //insert column
+                    [
+                        'invoice_id' => $account->form->code ,
+                        'transaction_type' => config('constants.transaction_type.subsistence'),
+                        'invoice_num' => $account->form->code,
+                        'invoice_date' => $account->form->created_at,
+                        'invoice_description' => $account->description,
+                        'invoice_type' =>  config('constants.transaction_type.invoice_type'),
+                        'supplier_num' => $account->form->claimant_staff_no,
+                        'invoice_amount' => $account->form->net_amount_paid,
+                        'invoice_currency_code' =>config('constants.currency'),
+                        'exchange_rate'  =>config('constants.exchange_rate'),
+                        'gl_date' => $account->created_at,
+                        'org_id' => $account->org_id,
+                        'creation_date' => $account->form->claim_date,
+                        'process_yn' => config('constants.unprocessed'),
+
+                    ]
+                );
+
+                //mark as as updated
+                $affected_form = DB::table('eform_subsistence')
+                    ->where('id', $account->form->id)
+                    ->update(['config_status_id'  => config('constants.exported') ]);
+            }
+
+
+            //check for detail
+            $detail = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
+                  WHERE invoice_id = '{$account->form->code}' AND org_id = {$org}
+                    AND item_description = '{$account->description}' AND  gl_account = '{$account->account}' ");
+            $detail_list = ZescoItsInvInterfaceHeader::hydrate($detail)->first();
+
+
+            if($detail_list->total  == 0) {
+
+                ++$rec ;
+                //count line number
+                $detail_count = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
+                  WHERE invoice_id = '{$account->form->code}'  ");
+
+                // [2] insert into detail
+                DB::table('fms_invoice_interface_detail')->insert(
+                //insert column
+                    [
+                        'invoice_id' => $account->form->code,
+                        'line_number' => $detail_count[0]->total + 1,
+                        'amount' => $account->creditted_amount ?? ( "".$account->debitted_amount),
+                        'item_description' => $account->description,
+                        'org_id' => $account->org_id,
+                        'company_code' => $account->company,
+                        'business_unit' => $account->business_unit_code,
+                        'cost_centre' => $account->cost_center,
+                        'gl_account' => $account->account,
+                        'vat_rate' => $account->vat_rate ?? 0,
+                        'line_type' => $account->line_type,
+                        'creation_date' => $account->created_at
+                    ]
+                );
+
+                //mark as as updated
+                $affected_account = DB::table('eform_subsistence_account')
+                    ->where('id', $account->id)
+                    ->update(['status_id'  =>  config('constants.exported')  ]);
+            }
+
+        }
+
+        return  $rec. ' Uploaded successfully' ;
     }
 
 
@@ -179,6 +282,44 @@ class Integration extends Controller
         $totals_needs_me = HomeController::needsMeCount();
         //return view
         return view('eforms.subsistence.integration.header')->with(compact('list', 'category', 'value', 'totals_needs_me'));
+
+    }
+
+    public function checkProcessed(){
+
+        //check for all processed invoices
+        $list = ZescoItsInvInterfaceHeader::where('transaction_type', config('constants.transaction_type.subsistence'))->get();
+        //mark the ones that have been rejected
+        $rejected = $list->where('process_yn', config('constants.unprocessed') )->whereNotNull('error_msg');
+
+        foreach ($rejected as $reject){
+            //mark form as as updated
+
+            $vaas = $reject->invoice_id ;
+            $affected_form = DB::table('eform_subsistence')
+                ->where('code', $reject->invoice_id)
+                ->update(['config_status_id'  => config('constants.export_failed') ]);
+
+            //mark accounts as as updated
+            $affected_accounts = DB::table('eform_subsistence_account')
+                ->where('subsistence_code', $reject->invoice_id)
+                ->update(['status_id'  => config('constants.export_failed') ]);
+
+        }
+
+        //mark the ones that have been uploaded
+        $uploaded = $list->where('process_yn', config('constants.processed') )->whereNull('error_msg');
+        foreach ($uploaded as $upload){
+            //mark form as as updated
+            $affected_form7 = DB::table('eform_subsistence')
+                ->where('code', $upload->invoice_id)
+                ->update(['config_status_id'  => config('constants.uploaded') ]);
+            //mark accounts as as updated
+            $affected_accounts7 = DB::table('eform_subsistence_account')
+                ->where('subsistence_code', $upload->invoice_id)
+                ->update(['status_id'  => config('constants.uploaded') ] );
+
+        }
 
     }
 

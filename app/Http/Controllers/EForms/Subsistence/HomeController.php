@@ -39,9 +39,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-
         //list all that needs me
         $get_profile = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+
 
         //count new forms
         $new_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
@@ -102,9 +102,8 @@ class HomeController extends Controller
     public static function needsMeList()
     {
         //get the my list
-//        $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-//        $my_units = $fdsf->pluck('user_unit_code')->toArray();
-
+        // $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+        // $my_units = $fdsf->pluck('user_unit_code')->toArray();
 
         $user = Auth::user();
 
@@ -152,21 +151,30 @@ class HomeController extends Controller
 
 
 
-        } //for the SNR MANAGER
-        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hr_approved'))
-                ->orWhere('config_status_id', '=', config('constants.trip_status.hr_approved_trip'))
-                ->orWhereIn('id', $list_inv)
-                ->orderBy('code')->paginate(50);
+        }
 
+        //for the SNR MANAGER
+//        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
+//            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hr_approved'))
+//                ->orWhere('config_status_id', '=', config('constants.trip_status.hr_approved_trip'))
+//                ->orWhereIn('id', $list_inv)
+//                ->orderBy('code')->paginate(50);
+//        }
+        //for the CHIEF ACCOUNTANT
+//        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
+//            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.station_mgr_approved'))
+//                ->orWhereIn('id', $list_inv)
+//                ->orderBy('code')->paginate(50);
+//            //  dd(5) ;
+//        }
 
-        } //for the CHIEF ACCOUNTANT
+        //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.station_mgr_approved'))
+            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hr_approved'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
-            //  dd(5) ;
-        } //for the EXPENDITURE OFFICE
+        }
+        //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.pre_audited'))
                 ->orWhere('config_status_id', config('constants.subsistence_status.queried'))

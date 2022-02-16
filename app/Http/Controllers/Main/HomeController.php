@@ -103,7 +103,7 @@ class HomeController extends Controller
 
         if (auth()->check()) {
             //get the profile associated with
-            $user = Auth::user();
+            $user = auth()->user();
 
             //[1]  GET YOUR PROFILE
             $profile_assignement = ProfileAssigmentModel::
@@ -111,9 +111,8 @@ class HomeController extends Controller
                 ->where('user_id', $user->id)->first();
 
 
-
             if ($profile_assignement != null) {
-
+                //here we have a profile
                 $profile_assignement->load('profiles');
 
                 $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
@@ -124,7 +123,7 @@ class HomeController extends Controller
                 $user->unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
 
             } else {
-
+                //here the default is claimant
                 $default_profile = config('constants.user_profiles.EZESCO_002');
                 $user->profile_id = $default_profile;
                 $user->profile_unit_code = $user->user_unit_code;
@@ -142,7 +141,7 @@ class HomeController extends Controller
             if ($profile_delegated->exists()) {
                 //
                 $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
-                $user->profile_id = $default_profile;
+                $user->profile_id_delegated = $default_profile ;
                 $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
                 $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
                 $user->code_column = $profile_delegated->first()->profile->code_column ?? 'id';
@@ -160,6 +159,8 @@ class HomeController extends Controller
                     ->orderBy('user_unit_description')
                     ->get();
             } else {
+
+
                 $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
                     ->where($user->code_column, $user->profile_job_code)
 //                  ->where('user_unit_cc_code', '!=', '0')
@@ -173,6 +174,7 @@ class HomeController extends Controller
 
     public static function getUserProfile(User $user)
     {
+
         if (auth()->check()) {
             //get the profile associated with
             $pro = ProfileModel::find($user->profile_id);
@@ -250,7 +252,7 @@ class HomeController extends Controller
     public static function getMyViisbleUserUnitsProcessed()
     {
         //get the profile associated
-        $user = Auth::user();
+        $user = auth()->user();
         $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
             ->where($user->code_column, $user->profile_job_code)
             ->where('user_unit_cc_code', '!=', '0')
@@ -263,7 +265,7 @@ class HomeController extends Controller
     public static function getMyViisbleUserUnits()
     {
         //get the profile associated
-        $user = Auth::user();
+        $user = auth()->user();
         $my_user_units = ConfigWorkFlow::
         where($user->unit_column, $user->profile_unit_code)
             ->where($user->code_column, $user->profile_job_code)
@@ -276,7 +278,7 @@ class HomeController extends Controller
     public static function getMyViisbleDirectorates()
     {
         //get the profile associated
-        $user = Auth::user();
+        $user = auth()->user();
         $my_user_units = ConfigSystemWorkFlow::select('directorate_id', 'directorate_name')
             ->where($user->unit_column, $user->profile_unit_code)
             ->where($user->code_column, $user->profile_job_code)
@@ -310,9 +312,22 @@ class HomeController extends Controller
 
     public static function getMySuperior($user_unit_code, ProfileModel $profile)
     {
+        $user_unit_code = ConfigWorkFlow:: where('user_unit_code', $user_unit_code)
+            ->first();
+        $user_unit_code->load($profile->unit_column . '_user' , $profile->unit_column . '_delegate_user');
+        $users = $user_unit_code[$profile->unit_column . '_user'] ;
+        $delegated = $user_unit_code[$profile->unit_column . '_delegate_user'] ;
+        $users ->merge($delegated );
+
+        return $users;
+    }
+
+
+    public static function getMySuperior_old($user_unit_code, ProfileModel $profile)
+    {
+
         //
-        $user_unit_code = ConfigWorkFlow::
-        select($profile->code_column . ' as code_column', $profile->unit_column . ' as unit_column')
+        $user_unit_code = ConfigWorkFlow:: select($profile->code_column . ' as code_column', $profile->unit_column . ' as unit_column')
             ->where('user_unit_code', $user_unit_code)
             ->first();
 
@@ -351,10 +366,8 @@ class HomeController extends Controller
 
     public function getManySuperiorAPI(Request $request, $profile)
     {
-
         $user_unit_codes = $request->array;
         $profile = ProfileModel::find($profile);
-
         foreach ($user_unit_codes as $key => $user_unit_code) {
 
             if ($key != 0) {
@@ -364,7 +377,6 @@ class HomeController extends Controller
             }
         }
         return json_encode($users->toArray());
-
     }
 
     public function changeFile(Request $request)

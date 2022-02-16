@@ -75,7 +75,7 @@
                                     <datalist id="list1">
                                         <option disabled value="" selected>Select Profile Owner</option>
                                         @foreach($users as $user)
-                                            @if($user->id  != Auth::user()->id)
+                                            @if($user->id  == Auth::user()->id)
                                                 <option
                                                     value="{{$user->id}}"> {{$user->name}}
                                                     : {{$user->staff_no}}  </option>

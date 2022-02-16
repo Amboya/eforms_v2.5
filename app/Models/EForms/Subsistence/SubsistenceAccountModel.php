@@ -77,6 +77,7 @@ class SubsistenceAccountModel extends Model
         if (auth()->check()) {
             $user = Auth::user();
             if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
+
                 //if you are just a requester, then only see your forms
                 static::addGlobalScope('staff_number', function (Builder $builder) {
                     $builder->where('claimant_staff_no', Auth::user()->staff_no);

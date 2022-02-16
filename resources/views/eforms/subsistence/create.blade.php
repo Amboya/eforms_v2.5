@@ -119,9 +119,9 @@
                                 <div class="col-6">
                                     <select name="cost_center" required class="form-control is-warning">
                                         <option value="">--choose--</option>
-                                        <option class="text-gray" value="{{auth()->user()->user_unit->id}} "  > {{auth()->user()->user_unit->user_unit_code}}  -  {{auth()->user()->user_unit->user_unit_cc_code}}  -   {{auth()->user()->user_unit->user_unit_description}} </option>
+                                        <option class="text-orange" value="{{auth()->user()->user_unit->id}} "  > {{auth()->user()->user_unit->user_unit_code}}  -  {{auth()->user()->user_unit->user_unit_cc_code}}  -   {{auth()->user()->user_unit->user_unit_description}} </option>
                                     @foreach($cost_centers as $cc)
-                                            <option value=" {{$cc->id}} "  > {{$cc->user_unit_code}}  -  {{$cc->user_unit_cc_code}}  -   {{$cc->user_unit_description}} </option>
+                                            <option value=" {{$cc->id}} "  > {{$cc->user_unit_cc_code}}  -  {{$cc->user_unit_code}}  -   {{$cc->user_unit_description}} </option>
                                         @endforeach
                                     </select>
                                 </div>

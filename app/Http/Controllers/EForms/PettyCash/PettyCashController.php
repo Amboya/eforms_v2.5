@@ -2065,7 +2065,6 @@ class PettyCashController extends Controller
                             'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
-                            //'debitted_amount' => number_format($request->debited_amount,2 , '.),',
                             'eform_petty_cash_id' => $form->id,
                             'created_by' => $user->id,
                             'company' => '01',
@@ -2080,8 +2079,6 @@ class PettyCashController extends Controller
                             'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
-                            //'debitted_amount' => number_format($request->debited_amount,2 , '.),',
-
                             'eform_petty_cash_id' => $form->id,
                             'petty_cash_code' => $form->code,
                             'cost_center' => $form->cost_center,

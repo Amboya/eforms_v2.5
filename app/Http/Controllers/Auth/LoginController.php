@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Main\ConfigWorkFlow;
 use App\Models\PhrisUserDetailsModel;
-use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
 {
@@ -46,11 +49,10 @@ class LoginController extends Controller
     }
 
 
-
     /**
      * Show the application's login form.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function showLoginForm()
     {
@@ -60,10 +62,10 @@ class LoginController extends Controller
     /**
      * Handle a login request to the application.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return RedirectResponse|\Illuminate\Http\Response|JsonResponse
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function login(Request $request)
     {
@@ -95,10 +97,10 @@ class LoginController extends Controller
     /**
      * Validate the user login request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return void
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     protected function validateLogin(Request $request)
     {
@@ -113,9 +115,19 @@ class LoginController extends Controller
     }
 
     /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return 'staff_no';
+    }
+
+    /**
      * Attempt to log the user into the application.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return bool
      */
     protected function attemptLogin(Request $request)
@@ -126,9 +138,19 @@ class LoginController extends Controller
     }
 
     /**
+     * Get the guard to be used during authentication.
+     *
+     * @return StatefulGuard
+     */
+    protected function guard()
+    {
+        return Auth::guard();
+    }
+
+    /**
      * Get the needed authorization credentials from the request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return array
      */
     protected function credentials(Request $request)
@@ -139,8 +161,8 @@ class LoginController extends Controller
     /**
      * Send the response after the user was authenticated.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return RedirectResponse|JsonResponse
      */
     protected function sendLoginResponse(Request $request)
     {
@@ -160,35 +182,55 @@ class LoginController extends Controller
     /**
      * The user has been authenticated.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
+     * @param Request $request
+     * @param mixed $user
      * @return mixed
      */
     protected function authenticated(Request $request, $user)
     {
         //then get the user details in phris
-        $phirs_user = PhrisUserDetailsModel::where('con_per_no', $request->staff_no)->first() ;
+        $phirs_user = PhrisUserDetailsModel::where('con_per_no', $request->staff_no)->first();
         //update user
-        $user->name = $phirs_user->name ?? "" ;
-        $user->email = $phirs_user->staff_email  ??   $user->email;
-        $user->phone = $phirs_user->mobile_no ??  $user->phone ;
-        $user->nrc = $phirs_user->nrc ??   $user->nrc  ;
-        $user->contract_type = $phirs_user->contract_type ??  $user->contract_type ;
-        $user->con_st_code = $phirs_user->con_st_code ??  $user->con_st_code  ;
-        $user->con_wef_date = $phirs_user->con_wef_date ??   $user->con_wef_date ;
-        $user->con_wet_date = $phirs_user->con_wet_date ??  $user->con_wet_date ;
-        $user->job_code = $phirs_user->job_code ??  $user->job_code ;
-        $user->station =        $phirs_user->station ??  $user->station  ;
-        $user->affiliated_union = $phirs_user->affiliated_union  ??  $user->affiliated_union  ;
+        $user->name = $phirs_user->name ?? "";
+        $user->email = $phirs_user->staff_email ?? $user->email;
+        $user->phone = $phirs_user->mobile_no ?? $user->phone;
+        $user->nrc = $phirs_user->nrc ?? $user->nrc;
+        $user->contract_type = $phirs_user->contract_type ?? $user->contract_type;
+        $user->con_st_code = $phirs_user->con_st_code ?? $user->con_st_code;
+        $user->con_wef_date = $phirs_user->con_wef_date ?? $user->con_wef_date;
+        $user->con_wet_date = $phirs_user->con_wet_date ?? $user->con_wet_date;
+        $user->job_code = $phirs_user->job_code ?? $user->job_code;
+        $user->station = $phirs_user->station ?? $user->station;
+        $user->affiliated_union = $phirs_user->affiliated_union ?? $user->affiliated_union;
 
-        // GETTING OF OTHER DETAILS LIKE GRADE
+        //check if the job code changed
+        if ($user->job_code != $phirs_user->job_code ?? "") {
+            //trigger a check of user unit
+            $user_unit = ConfigWorkFlow::where('user_unit_cc_code', $phirs_user->cc_code)
+                ->where('user_unit_bc_code', $phirs_user->bu_code)->first();
+            //trigger an update on work-flow
+            if ($user_unit != null) {
+                //update workflow
+                $work_flow = ConfigWorkFlow::where($user->unit_column, $user->user_unit_code)
+                    ->where($user->code_column, $user->job_code)
+                    ->update([
+                        $user->unit_column => $user_unit->user_unit_code,
+                        $user->code_column => $phirs_user->job_code ?? $user->job_code
+                    ]);
+                //update user-unit details on user
+                $user->job_code = $phirs_user->job_code ?? $user->job_code;
+                $user->user_unit_code = $user_unit->user_unit_code;
+                $user->user_unit_id = $user_unit->id;
+            }
+
+        }
 
         //count the users login times
-        $user->total_login = 1+($user->total_login);
+        $user->total_login = 1 + ($user->total_login);
         $user->save();
 
         //check if phris has you activated or not  //
-        if($phirs_user->contract_type == config('constants.phris_user_not_active') ){
+        if ($phirs_user->contract_type == config('constants.phris_user_not_active')) {
             Auth::logout();
             return back()->withErrors([
                 'staff_no' => ['The provided credentials (Man Number) is no longer active in PHRIS.']
@@ -199,10 +241,10 @@ class LoginController extends Controller
     /**
      * Get the failed login response instance.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param Request $request
+     * @return Response
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     protected function sendFailedLoginResponse(Request $request)
     {
@@ -212,20 +254,10 @@ class LoginController extends Controller
     }
 
     /**
-     * Get the login username to be used by the controller.
-     *
-     * @return string
-     */
-    public function username()
-    {
-        return 'staff_no';
-    }
-
-    /**
      * Log the user out of the application.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return RedirectResponse|JsonResponse
      */
     public function logout(Request $request)
     {
@@ -247,29 +279,13 @@ class LoginController extends Controller
     /**
      * The user has logged out of the application.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return mixed
      */
     protected function loggedOut(Request $request)
     {
         //
     }
-
-    /**
-     * Get the guard to be used during authentication.
-     *
-     * @return \Illuminate\Contracts\Auth\StatefulGuard
-     */
-    protected function guard()
-    {
-        return Auth::guard();
-    }
-
-
-
-
-
-
 
 
 }

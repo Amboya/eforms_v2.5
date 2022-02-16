@@ -97,7 +97,7 @@
                                                    name="forms[]">
                                         </div>
                                     </td>
-                                    <td><a href="{{ route('logout') }}" class="dropdown-item"
+                                    <td><a href="{{ route('logout') }}" class=""
                                            onclick="event.preventDefault();
                                                document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                         <form id="show-form{{$item->id}}"

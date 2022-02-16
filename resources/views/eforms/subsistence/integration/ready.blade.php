@@ -109,7 +109,7 @@
                                 <tr>
                                     <td>
                                         <div class="icheck-warning d-inline">
-                                            <input type="checkbox" value="'{{$item->form->code}}'" id="forms[]"
+                                            <input type="checkbox" value="'{{$item->form->code ?? $item->subsistence_code }}'" id="forms[]"
                                                    name="forms[]">
                                         </div>
                                     </td>
@@ -131,8 +131,8 @@
 
                                     <td>{{$item->vat_rate ?? 0}} </td>
 
-                                    <td>{{$item->form->user_unit->user_unit_cc_code}} : {{$item->form->user_unit->user_unit_bc_code}}</td>
-                                    <td>{{$item->form->user_unit->org_id}}</td>
+                                    <td>{{$item->form->user_unit->user_unit_cc_code ?? $item->cost_center }} : {{$item->form->user_unit->user_unit_bc_code ?? $item->business_unit_code }}</td>
+                                    <td>{{$item->form->user_unit->org_id ?? $item->org_id}}</td>
                                     <td>{{$item->company}}</td>
                                     <td>{{$item->intra_company}}</td>
                                     <td>{{$item->project}}</td>
@@ -143,7 +143,8 @@
                                             class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                     </td>
                                     <td>{{ Carbon::parse(  $item->updated_at )->isoFormat('Do MMM Y') }}</td>
-                                    <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
+                                    <td>
+                                        <a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
                                            onclick="event.preventDefault();
                                                document.getElementById('show-form'+{{$item->eform_subsistence_id}}).submit();">
                                             View </a>
@@ -152,7 +153,6 @@
                                               method="POST" class="d-none">
                                             @csrf
                                         </form>
-
                                     </td>
 
                                 </tr>

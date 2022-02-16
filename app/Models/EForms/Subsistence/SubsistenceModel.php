@@ -125,9 +125,9 @@ class SubsistenceModel extends Model
         if (auth()->check()) {
             $user = Auth::user();
 
-//            if ($user->type_id == config('constants.user_types.developer')) {
+            if ($user->type_id == config('constants.user_types.developer')) {
 //
-//            } else {
+            } else {
                 if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
                     //if you are just a requester, then only see your forms
                     static::addGlobalScope('staff_number', function (Builder $builder) use ($user) {
@@ -158,7 +158,7 @@ class SubsistenceModel extends Model
                         });
                     }
                 }
-//            }
+            }
         }
     }
 

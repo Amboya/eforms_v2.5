@@ -109,7 +109,8 @@ class HomeController extends Controller
             foreach ($list_inv as $item) {
                 $mine[] = $item->trip_code;
             }
-            $list = Trip::whereIn('code', $mine)->orderBy('code')->get();
+            $list = Trip::whereIn('code', $mine)
+                ->orderBy('code')->get();
 
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
@@ -165,6 +166,9 @@ class HomeController extends Controller
             $list = Trip::whereIn('code', $mine)
                 ->orderBy('code')->get();
         }
+
+     //  $new_list =  $list->where('config_status_id' , '!=', config('constants.trip_status.trip_closed') ) ;
+        $list =  $list->where('config_status_id' , '!=', config('constants.trip_status.trip_closed') ) ;
 
         return $list;
     }

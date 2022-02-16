@@ -71,7 +71,7 @@ class ProfileController extends Controller
      */
     public function store(ProfileRequest $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $model = ProfileModel::firstOrCreate(
             [
                 'name' => $request->name,
@@ -175,7 +175,7 @@ class ProfileController extends Controller
         }
 
         //get request user and profile
-        $user = Auth::user();
+        $user = auth()->user();
         $profile_modal = ProfileModel::where('code', $request->profile)->first();
         //the users to swap
         $new_user_details = User::find( $request->user_id);
@@ -219,7 +219,7 @@ class ProfileController extends Controller
     public function assignmentStoreSingle(Request $request)
     {
         //get request user and profile
-        $user = Auth::user();
+        $user = auth()->user();
         $profile_modal = ProfileModel::where('code', $request->profile)->first();
         //the users to swap
         $new_user_details = User::find( $request->user_id);
@@ -246,10 +246,10 @@ class ProfileController extends Controller
 
     public function delegationList()
     {
-        if (Auth::user()->type_id == config('constants.user_types.developer')) {
+        if (auth()->user()->type_id == config('constants.user_types.developer')) {
             $delegation = ProfileDelegatedModel::orderBy('created_at')->get();
         } else {
-            $id = Auth::user()->id;
+            $id = auth()->user()->id;
             $delegation = ProfileDelegatedModel::where('created_by', $id)->orderBy('created_at')->get();
         }
         $delegation->load('me', 'delegation');
@@ -268,7 +268,7 @@ class ProfileController extends Controller
 
     public function removeDelegation(Request $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $count = 0 ;
         if($request->delegated_profiles == null ){
             return Redirect::back()->with('error', 'no delegated profiles selected to remove' );
@@ -294,17 +294,16 @@ class ProfileController extends Controller
         //get all the categories
         $eforms = EFormModel::all();
         $users = User::orderBy('name')->get();
-        $mine = Auth::user();
+        $mine = auth()->user();
 
         //data to send to the view
         $params = [
-            'profiles' => Auth::user()->user_profile,
+            'profiles' => auth()->user()->user_profile,
             'eforms' => $eforms,
             'users' => $users,
             'mine' => $mine,
         ];
 
-        //  dd($mine->user_profile);
 
         return view('main.profile.delegation')->with($params);
     }
@@ -313,11 +312,10 @@ class ProfileController extends Controller
     {
         //get all the categories
         $eforms = EFormModel::all();
-        $users = User::with('user_profile')->orderBy('name')->get();
-        $mine = Auth::user();
-       // $profiles = ProfileAssigmentModel::all();
-
-        dd($users->first() );
+        $users = User::orderBy('name')->get();
+        $mine = auth()->user();
+        $profiles = ProfileAssigmentModel::all();
+        $profiles->load('profiles');
 
         //data to send to the view
         $params = [
@@ -334,39 +332,47 @@ class ProfileController extends Controller
     public function delegationStore(Request $request)
     {
         //get logged in user
-        $user = Auth::user();
+        $owner = User::find($request->owner_id);
+        $delegated_owner = User::find($request->user_id);
         //get eform
         $eform = EFormModel::find($request->eform_id);
+        $profile = Profile::find($request->profile);
 
         //create model
         $model = ProfileDelegatedModel::firstOrCreate(
             [
                 'eform_id' => $eform->id,
                 'eform_code' => $eform->name,
-
-                'delegated_to' => $request->user_id,
-                'delegated_profile' => $request->profile,
-                'delegated_user_unit' => $user->user_unit_code,
-                'delegated_job_code' => $user->job_code,
-                'delegated_unit_column' => $user->unit_column,
-                'delegated_code_column' => $user->code_column,
+                'delegated_to' => $delegated_owner->id,
+                'delegated_profile' => $profile->id,
+                'delegated_user_unit' => $owner->user_unit_code,
+                'delegated_job_code' => $owner->job_code,
+                'delegated_unit_column' => $owner->unit_column,
+                'delegated_code_column' => $owner->code_column,
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' => config('constants.active_state'),
-                'created_by' => $user->id
+                'created_by' => $owner->id
             ],
             [
                 'eform_id' => $eform->id,
                 'eform_code' => $eform->name,
-                'delegated_to' => $request->user_6id,
-                'delegated_profile' => $request->profile,
-                'delegated_user_unit' => $user->user_unit_code,
-                'delegated_job_code' => $user->job_code,
-                'delegated_unit_column' => $user->unit_column,
-                'delegated_code_column' => $user->code_column,
+                'delegated_to' => $delegated_owner->id,
+                'delegated_profile' => $profile->id,
+                'delegated_user_unit' => $owner->user_unit_code,
+                'delegated_job_code' => $owner->job_code,
+                'delegated_unit_column' => $owner->unit_column,
+                'delegated_code_column' => $owner->code_column,
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' => config('constants.active_state'),
-                'created_by' => $user->id
+                'created_by' => $owner->id
             ]);
+
+
+        //NEW USER
+        $delegated_owner->profile_job_code = $owner->job_code ;
+        $delegated_owner->profile_unit_code = $owner->user_unit_code ;
+        $delegated_owner->profile_id_delegated = $profile->id ;
+        $delegated_owner->save() ;
 
         //log the activity
         ActivityLogsController::store($request, "Creating of Profile Delegation", "update", " system profile delegation created", json_encode($model->id));
@@ -379,9 +385,9 @@ class ProfileController extends Controller
     {
         //get logged in user
         $owner = User::find($request->owner_id);
+        $delegated_owner = User::find($request->user_id);
         //get eform
         $eform = EFormModel::find($request->eform_id);
-
         $profile = Profile::find($request->profile);
 
         //create model
@@ -389,8 +395,7 @@ class ProfileController extends Controller
             [
                 'eform_id' => $eform->id,
                 'eform_code' => $eform->name,
-
-                'delegated_to' => $request->user_id,
+                'delegated_to' => $delegated_owner->id,
                 'delegated_profile' => $profile->id,
                 'delegated_user_unit' => $owner->user_unit_code,
                 'delegated_job_code' => $owner->job_code,
@@ -398,12 +403,12 @@ class ProfileController extends Controller
                 'delegated_code_column' => $owner->code_column,
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' => config('constants.active_state'),
-                'created_by' => $owner->id
+                'created_by' => auth()->user()->id
             ],
             [
                 'eform_id' => $eform->id,
                 'eform_code' => $eform->name,
-                'delegated_to' => $request->user_id,
+                'delegated_to' => $delegated_owner->id,
                 'delegated_profile' => $profile->id,
                 'delegated_user_unit' => $owner->user_unit_code,
                 'delegated_job_code' => $owner->job_code,
@@ -411,8 +416,14 @@ class ProfileController extends Controller
                 'delegated_code_column' => $owner->code_column,
                 'delegation_end' => $request->delegation_end_date,
                 'config_status_id' => config('constants.active_state'),
-                'created_by' => $owner->id
+                'created_by' => auth()->user()->id
             ]);
+
+        //NEW USER
+        $delegated_owner->profile_job_code = $owner->job_code ;
+        $delegated_owner->profile_unit_code = $owner->user_unit_code ;
+        $delegated_owner->profile_id_delegated = $profile->id ;
+        $delegated_owner->save() ;
 
         //log the activity
         ActivityLogsController::store($request, "Creating of Profile Delegation", "update", " system profile delegation created", json_encode($model->id));
@@ -423,17 +434,16 @@ class ProfileController extends Controller
 
     public function delegationStoreUser(Request $request)
     {
-
-        $user_login = Auth::user();
+        $user_login = auth()->user();
         //get logged in user
-        $owner1 = User::where('staff_no',$request->user_id);
+        $delegated_user = User::where('staff_no',$request->user_id);
 
-        if($owner1->exists()){
+        if($delegated_user->exists()){
             $active_profile =ProfileDelegatedModel::where('delegated_to', $request->user_id)
                 ->where( 'config_status_id' ,config('constants.active_state')) ;
 
             if($active_profile->exists()){
-                $msg = 'The Delegated User '.$owner1->first()->name .', already has an Active Delegation ('.$active_profile->first()->delegated_profile.')' ;
+                $msg = 'The Delegated User '.$delegated_user->first()->name .', already has an Active Delegation ('.$active_profile->first()->delegated_profile.')' ;
                 return Redirect::back()->with('error', $msg);
             }
         }else{
@@ -456,7 +466,7 @@ class ProfileController extends Controller
                 'eform_id' => $eform->id,
                 'eform_code' => $eform->name,
 
-                'delegated_to' => $owner1->first()->id,
+                'delegated_to' => $delegated_user->first()->id,
                 'delegated_profile' => $profile->id,
                 'delegated_user_unit' => $owner->user_unit_code,
                 'delegated_job_code' => $owner->job_code,
@@ -469,7 +479,7 @@ class ProfileController extends Controller
             [
                 'eform_id' => $eform->id,
                 'eform_code' => $eform->name,
-                'delegated_to' => $owner1->first()->id,
+                'delegated_to' => $delegated_user->first()->id,
                 'delegated_profile' => $profile->id,
                 'delegated_user_unit' => $owner->user_unit_code,
                 'delegated_job_code' => $owner->job_code,
@@ -492,13 +502,10 @@ class ProfileController extends Controller
     // PROFILE TRANSFER
     public function transfer()
     {
-
         //get all the categories
         $eforms = EFormModel::all();
         $users = User::orderBy('name')->get();
-        $mine = Auth::user();
-        // $users->load('user_profile');
-
+        $mine = auth()->user();
         $profiles = ProfileAssigmentModel::orderBy('id')->get();
         $profiles->load('profiles', 'form');
 
@@ -533,19 +540,11 @@ class ProfileController extends Controller
             $old_user_details = User::find($owner_id);
             $new_user_details = User::find($user_id);
 
-            //update the jobs codes from phris
-
-
             //the columns to affect
             $code_column = $profile_modal->code_column ;
             $unit_column = $profile_modal->unit_column ;
             //make the update on config workflow
             if($code_column != "" && $unit_column != "" ){
-
-//                $work_flow = ConfigWorkFlow::where($code_column,$old_user_details->job_code )
-//                    ->where($unit_column,$old_user_details->user_unit_code )
-//                    ->get();
-//                dd($work_flow);
 
                 //work-flow
                 $work_flow = ConfigWorkFlow::where($code_column,$old_user_details->job_code )
@@ -566,9 +565,6 @@ class ProfileController extends Controller
                 //return
                 return Redirect::back()->with('error', 'Profile Transfer failed because code_column and unit_column are empty for'.$profile_modal->code) ;
             }
-
-
-
         }
 
 
@@ -580,7 +576,7 @@ class ProfileController extends Controller
         //get all the categories
         $eforms = EFormModel::all();
         $users = User::orderBy('name')->get();
-        $mine = Auth::user();
+        $mine = auth()->user();
         //
         $profiles = ProfileAssigmentModel::orderBy('id')->get();
         $profiles->load('profiles', 'form');

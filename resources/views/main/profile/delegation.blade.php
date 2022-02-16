@@ -73,7 +73,7 @@
                                                 style="width: 100%;">
                                             <option disabled  value="" selected>Select User</option>
                                             @foreach($users as $user)
-                                                @if($user->id  != \Auth::user()->id)
+                                                @if( ($user->functional_unit_id  == \Auth::user()->functional_unit_id) && ($user->id  != \Auth::user()->id))
                                                     <option
                                                         value="{{$user->id}}"> {{$user->name}} : {{$user->staff_no}}</option>
                                                 @endif

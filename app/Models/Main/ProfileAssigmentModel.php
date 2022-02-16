@@ -16,6 +16,8 @@ class ProfileAssigmentModel extends Model
     use HasFactory;
     use SoftDeletes;
 
+    use \Awobaz\Compoships\Compoships;
+
     //table name
     protected $table  = 'config_profile_assignment';
     //primary key

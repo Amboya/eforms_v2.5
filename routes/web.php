@@ -55,6 +55,7 @@ Route::group([
         //user
         Route::group([
             'prefix' => 'user'], function () {
+            Route::get('list/all', [App\Http\Controllers\Main\UserController::class, 'list']);
             Route::get('list', [App\Http\Controllers\Main\UserController::class, 'index'])->name('main.user');
             Route::get('show/{id}', [App\Http\Controllers\Main\UserController::class, 'show'])->name('main.user.show');
             Route::post('search', [App\Http\Controllers\Main\UserController::class, 'search'])->name('main.user.search');

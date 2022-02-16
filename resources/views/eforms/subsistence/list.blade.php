@@ -59,8 +59,8 @@
                         <table class="table m-0">
                             <thead>
                             <tr>
-                                <th>from</th>
-                                <th>to</th>
+                                <th>Code</th>
+                                <th>Claimant</th>
                                 <th>No. Days</th>
                                 <th>Allowance / Night</th>
                                 <th>Total</th>
@@ -72,7 +72,7 @@
                             <tbody>
                             @foreach( $list as $item )
                                 <tr>
-                                    <td><a href="{{ route('logout') }}" class="dropdown-item"
+                                    <td><a href="{{ route('logout') }}" class=""
                                            onclick="event.preventDefault();
                                                document.getElementById('show-form'+{{$item->id}}).submit();"> {{$item->code}}</a>
                                         <form id="show-form{{$item->id}}"

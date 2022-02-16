@@ -66,8 +66,10 @@
                         <span
                             class="badge badge-{{$form->status->html ?? "default"}}">{{$form->status->name ?? "none"}}</span><br>
                         <b class='text-orange'>Name:</b> <span class='text-green'>{{ $form->name}}</span><br>
-                        <b class='text-orange'>Date From:</b> <span class='text-green'>{{  Carbon::parse(  $form->date_from )->isoFormat('Do MMM Y')  }}</span><br>
-                        <b class='text-orange'>Date To:</b> <span class='text-green'>{{ Carbon::parse(  $form->date_to )->isoFormat('Do MMM Y')  }}</span><br>
+                        <b class='text-orange'>Date From:</b> <span
+                            class='text-green'>{{  Carbon::parse(  $form->date_from )->isoFormat('Do MMM Y')  }}</span><br>
+                        <b class='text-orange'>Date To:</b> <span
+                            class='text-green'>{{ Carbon::parse(  $form->date_to )->isoFormat('Do MMM Y')  }}</span><br>
                         <b class='text-orange'>Members:</b> <span class='text-green'>Invited {{ $form->invited}} and {{sizeof($form->members)}} have
                         subscribed.</span><br>
                     </div>
@@ -79,7 +81,8 @@
                         <b class='text-orange'>Created By:</b> <span
                             class=" text-green">{{ $form->initiator_name}}  </span> <br>
                         <b class='text-orange'>HOD's Cost Center:</b> <span
-                            class=" text-green">{{ $form->user_unit->user_unit_description }} : {{ $form->user_unit->user_unit_code}}  : {{ $form->user_unit->user_unit_bc_code}}  : {{ $form->user_unit->user_unit_cc_code}}  </span> <br>
+                            class=" text-green">{{ $form->user_unit->user_unit_description }} : {{ $form->user_unit->user_unit_code}}  : {{ $form->user_unit->user_unit_bc_code}}  : {{ $form->user_unit->user_unit_cc_code}}  </span>
+                        <br>
                         <b class='text-orange'>Created At:</b> <span
                             class=" text-green">{{ $form->created_at}} : that is {{ $form->created_at->diffForHumans()}} </span>
                     </div>
@@ -171,11 +174,12 @@
                                                                 -  <br>
                                                             @else
                                                                 @if( $dest_app->date_to  == null)
-                                                                    {{$dest_app->user_unit->user_unit_description ?? ""}} <br>
+                                                                    {{$dest_app->user_unit->user_unit_description ?? ""}}
+                                                                    <br>
                                                                 @else
-                                                                {{ Carbon::parse(  $dest_app->date_from )->isoFormat('Do MMM Y') }}
-                                                                <br>
-                                                            @endif
+                                                                    {{ Carbon::parse(  $dest_app->date_from )->isoFormat('Do MMM Y') }}
+                                                                    <br>
+                                                                @endif
                                                             @endif
                                                         </td>
                                                         <td>
@@ -185,10 +189,10 @@
                                                                 @if( $dest_app->date_to  == null)
                                                                     {{$dest_app->user_unit->user_unit_code ?? ""}} <br>
                                                                 @else
-                                                                {{ Carbon::parse(  $dest_app->date_to )->isoFormat('Do MMM Y') }}
-                                                                <br>
-                                                            @endif
+                                                                    {{ Carbon::parse(  $dest_app->date_to )->isoFormat('Do MMM Y') }}
+                                                                    <br>
                                                                 @endif
+                                                            @endif
                                                         </td>
                                                         <td>
                                                             {{$dest_app->approver->name  ?? "" }}
@@ -212,11 +216,13 @@
                                                         class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                                             </a>
                                                         @else
-                                                            <button disabled class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
+                                                            <button disabled
+                                                                    class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
                                                     <span title="No Access to this subsistence form"
                                                           class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                                             </button>
                                                         @endif
+
                                                         @else
                                                             <a href="{{ route('logout') }}"
                                                                title="Open subsistence form"
@@ -244,7 +250,7 @@
                                                         data-toggle="modal"
                                                         data-sent_data="{{$item}}"
                                                         data-target="#modal-approve-member">
-                                                        <i class="fa fa-check"></i> Sign
+                                                        <i class="fa fa-check"></i> Approve
                                                     </button>
                                                 </div>
 
@@ -262,7 +268,7 @@
                                                     @else
                                                         <div class="col-sm-12 mt-2">
                                                             <button disabled title="No Access to this subsistence form"
-                                                               class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
+                                                                    class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
                                                                 <i class="fa fa-file"></i> Open
                                                             </button>
                                                         </div>
@@ -305,51 +311,72 @@
             <div class="card-footer">
                 <br>
                 <div class="row">
-                    <div class="col-sm-3">
+                    <div class="col-sm-3 ml-lg-3  ">
                         @if( $form->status->id != config('constants.trip_status.trip_closed'))
-                        @if($list_inv != null)
-
-                            @if( $list_inv->status_id == config('constants.trip_status.pending'))
-                                <form name="db1"
-                                      action="{{route('subsistence.subscribe', ['trip' => $form, 'invitation'=> $list_inv])}}"
-                                      method="post" enctype="multipart/form-data">
-                                    @csrf
-                                    @if($pending == 0)
-                                    <button type="submit" name="approval" class="btn btn-outline-success mr-2 p-2  "
-                                            title="Click here to accept invitation to be part of this trip"
-                                            value='Subscribe'>Raise Subsistence
-                                    </button>
-                                    @else
-                                        <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
-                                                title="You cannot subscribe to this trip. Trips are overlapping or you have an open subsistance form"
-                                                value='Subscribe'>Raise Subsistence
-                                        </button>
+                            @if($list_inv != null)
+                                @if( $list_inv->status_id == config('constants.trip_status.pending'))
+                                    <form name="db1"
+                                          action="{{route('subsistence.subscribe', ['trip' => $form, 'invitation'=> $list_inv])}}"
+                                          method="post" enctype="multipart/form-data">
+                                        @csrf
+                                        @if($pending == 0)
+                                            <button type="submit" name="approval"
+                                                    class="btn btn-outline-success mr-2 p-2  "
+                                                    title="Click here to accept invitation to be part of this trip"
+                                                    value='Subscribe'>Raise Subsistence
+                                            </button>
+                                        @else
+                                            <button disabled name="approval"
+                                                    class="btn btn-outline-secondary mr-2 p-2  "
+                                                    title="You cannot subscribe to this trip. Trips are overlapping or you have an open subsistance form"
+                                                    value='Subscribe'>Raise Subsistence
+                                            </button>
                                         @endif
 
-                                </form>
+                                    </form>
+                                @else
+                                    <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                            title="You cannot subscribe to this trip"
+                                            value='Subscribe'>Raise Subsistence
+                                    </button>
+                                @endif
                             @else
                                 <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
                                         title="You cannot subscribe to this trip"
                                         value='Subscribe'>Raise Subsistence
                                 </button>
                             @endif
-                        @else
-                            <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
-                                    title="You cannot subscribe to this trip"
-                                    value='Subscribe'>Raise Subsistence
-                            </button>
-                            @endif
 
+                            {{--  HOD APPROVER--}}
+                            @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')    )
+                                <button name="invite" class="btn btn-outline-primary  p-2 justify-content-start "
+                                        title="Invite members to be part of this trip"
+                                        data-toggle="modal"
+                                        data-target="#modal-invite-trip-members"
+                                        value='invite'> Add Trip Members
+                                </button>
+
+                            @endif
                         @else
                             <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
                                     title="This trip has ended you can not raise subsistence for it"
                                     value='Subscribe'>Raise Subsistence
                             </button>
+                            {{--  HOD APPROVER--}}
+                            @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')    )
+                                <button disabled name="invite"
+                                        class="btn btn-outline-primary  p-2 justify-content-start "
+                                        title="This trip has ended you can not Invite members to be part of this trip"
+                                        data-toggle="modal"
+                                        data-target="#modal-invite-trip-members"
+                                        value='invite'> Add Trip Members
+                                </button>
+                            @endif
                         @endif
-                    </div>
-                    <div class="col-sm-3">
 
                     </div>
+
+
                 </div>
 
 
@@ -375,6 +402,33 @@
                         <div id="trip_members">
 
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-invite-trip-members">
+            <div class="modal-dialog modal-lg ">
+                <div class="modal-content  ">
+                    <div class="modal-header">
+                        <label> Invite Trip Members</label>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Image loader -->
+                        <div id="loader_inv" style="display: none; ">
+                            <img src="{{ asset('dashboard/dist/gif/Eclipse_loading.gif')}}"
+                                 width="100px"
+                                 height="100px">
+                        </div>
+                        <form id="create_form" name="invite_member_form" action="{{route('trip.invite', $form)}}"
+                              enctype="multipart/form-data"
+                              method="post">
+                        @csrf
+                        <!-- Image loader -->
+                            <div id="invite_trip_members">
+
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -415,9 +469,9 @@
 
                                 </div>
                                 @if( $user->staff_no !=  $form->claimant_staff_no    )
-                                <div class="" id="div_dest">
+                                    <div class="" id="div_dest">
 
-                                </div>
+                                    </div>
                                 @endif
                             @endif
                             {{--  HR--}}
@@ -638,6 +692,86 @@
     </SCRIPT>
 
     <script>
+        $('#modal-invite-trip-members').on('show.bs.modal', function (event) {
+
+                var route_invite = '{{url('main/user/list/all')}}';
+
+                /* AJAX TO GET USERS*/
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: route_invite,
+                    type: 'get',
+                    beforeSend: function () {
+                        // Show image container
+                        $("#loader_inv").show();
+                    },
+                    success: function (response_data) {
+                        var obj = JSON.parse(response_data);
+
+                        //HANDLE WHO'S NEXT
+                        var details_1 = "" +
+                            " <div class='col-12'> <input class='mb-2'  id='myInputUsers' type='text' placeholder='Search..'> </div>" +
+                            "" +
+                            "<table border='1' class='table table-striped border-transparent '>" +
+                            "<thead>" +
+                            "<tr>" +
+                            "<td> #</td>" +
+                            "<td> Man Number</td>" +
+                            "<td> Name</td>" +
+                            "<td> Job Code</td>" +
+                            "</tr>" +
+                            "</thead>" +
+                            "<tbody id='myTableUsers' >"
+
+                        var details_1B = " ";
+                        for (i = 0; i < obj.length; i++) {
+                            details_1B +=
+                                "   <tr> " +
+                                "<td> " +
+                                "<div c.lass='form-group clearfix'> " +
+                                "<div class='icheck-warning d-inline'> " +
+                                "<input type='checkbox' value=' " + obj[i].id + " ' id='users[]' name='users[]'> </div> " +
+                                "</div> " +
+                                "</td> " +
+                                "<td><span for='accounts'> <span class='text-gray'>" + obj[i].staff_no + "</span>  </span>  </td> " +
+                                "<td><span for='accounts'> <span class='text-gray'>" + obj[i].name + "</span>  </span>  </td> " +
+                                "<td><span for='accounts'> <span class='text-gray'>" + obj[i].job_code + "</span>  </span> </td> " +
+                                "";
+
+                        }
+                        var details_1C = "</tbody></table>" +
+                            "" +
+                            " <button type='submit' class='btn btn-outline-success mr-2 p-2  '>Invite</button>" +
+                            "";
+
+                        //02 - SET
+                        $('#invite_trip_members').html(details_1 + details_1B + details_1C);
+
+                        $(document).ready(function () {
+                            $("#myInputUsers").on("keyup", function () {
+                                var value = $(this).val().toLowerCase();
+                                $("#myTableUsers tr").filter(function () {
+                                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                                });
+                            });
+                        });
+
+                    },
+                    complete: function (response_data) {
+                        // Hide image container
+                        $("#loader_inv").hide();
+                    }
+                });
+
+                //02 - SET
+                //   $('#invite_trip_members').html(details_1 + details_1B + details_1C);
+            }
+        );
+
         $('#modal-trip-members').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget); // Button that triggered the modal
 
@@ -652,17 +786,17 @@
                     "</tr>" +
                     "</thead>" +
                     "<tbody>";
-                var details_1B = "" ;
+                var details_1B = "";
 
                 var all_invited = {!! json_encode($all_inv ) !!};
 
                 $.each(all_invited, function (index, value) {
                     details_1B +=
                         " <tr> " +
-                        " <td> " + value.members.name     + " </td> " +
+                        " <td> " + value.members.name + " </td> " +
                         " <td> " + value.members.staff_no + " </td> " +
-                        " <td> " + value.members.email    + " </td> " +
-                        " <td> " + value.members.phone    + " </td> " +
+                        " <td> " + value.members.email + " </td> " +
+                        " <td> " + value.members.phone + " </td> " +
                         "</tr> ";
                 });
                 var details_1C = "</tbody></table>" +
@@ -677,7 +811,7 @@
         $('#modal-approve-member').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
-            var html_div = "" ;
+            var html_div = "";
 
             //01 - SET HEADER
             var header = "<h4 class='modal-title text-center'>COMMENTS FOR " + recipient.claimant_name + "'S TRIP FORM</h4>   <span class='btn btn-sm bg-" + recipient.status.html + "'> " + recipient.status.name + "  </span>" +
@@ -767,17 +901,16 @@
                 "</div>";
 
 
-
-            var route =    '{{url('subsistence/show/now')}}'+'/'+ recipient.id ;
-           var hod_profile_sub  = "  <div class='row ''> " +
-               "<div class='col-12  text-center'> " +
-               "  <a href='"+route+"' title='Open subsistence form'"+
-             "class='btn btn-sm btn-outline-warning ' "+
-           " <span class='badge 'default' > CLICK HERE TO OPEN FORM </span> </a> </div>"+
-               "</div> " +
-               "</div>";
-            var chif_acc_profile =  hod_profile_sub ;
-            var snr_profile_sub =  hod_profile_sub ;
+            var route = '{{url('subsistence/show/now')}}' + '/' + recipient.id;
+            var hod_profile_sub = "  <div class='row ''> " +
+                "<div class='col-12  text-center'> " +
+                "  <a href='" + route + "' title='Open subsistence form'" +
+                "class='btn btn-sm btn-outline-warning ' " +
+                " <span class='badge 'default' > CLICK HERE TO OPEN FORM </span> </a> </div>" +
+                "</div> " +
+                "</div>";
+            var chif_acc_profile = hod_profile_sub;
+            var snr_profile_sub = hod_profile_sub;
 
 
             var date_from = Date.parse(recipient.absc_absent_from);
@@ -790,7 +923,6 @@
                 var year = date_1.getFullYear();
                 return year + '-' + month + '-' + day;
             }
-
 
 
             //05
@@ -831,12 +963,12 @@
                 "</div> " +
                 "</div>";
 
-            html_div = dest_profile ;
+            html_div = dest_profile;
 
 
             //STATUS
             var accepted = {!!  json_encode(config('constants.trip_status.accepted')) !!};
-            var hod_approved =  {!!  json_encode(config('constants.subsistence_status.hod_approved')) !!};
+            var hod_approved = {!!  json_encode(config('constants.subsistence_status.hod_approved')) !!};
             var hod_approved_trip = {!!  json_encode(config('constants.trip_status.hod_approved_trip')) !!};
             var trip_authorised = {!!  json_encode(config('constants.trip_status.trip_authorised')) !!};
             var hr_approved_trip = {!!  json_encode(config('constants.trip_status.hr_approved_trip')) !!};
@@ -852,49 +984,52 @@
             var route_back = '{{url('main/user/unit/users')}}';
 
 
-
-
-
-
             //HOD
             if ((recipient.config_status_id == accepted)) {
                 $('#div_hod').html(hod_profile);
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
-                 user_unit = recipient.user.user_unit_code;
+                user_unit = recipient.user.user_unit_code;
 
             }
 
             //HR 1
             else if ((recipient.config_status_id == hod_approved_trip)) {
-                html_div  = hod_profile ;
+                html_div = hod_profile;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
                 user_unit = recipient.user.user_unit_code;
             }
 
             //HR 2
             else if ((recipient.config_status_id == hod_approved)) {
-                html_div  = hod_profile_sub ;
+                html_div = hod_profile_sub;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
             }
 
             //SNR MANAGER  TRIP
             else if ((recipient.config_status_id == hr_approved_trip)) {
-               // $('#div_snr').html(hod_profile);
-                html_div  = hod_profile ;
+                // $('#div_snr').html(hod_profile);
+                html_div = hod_profile;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
                 user_unit = recipient.user.user_unit_code;
             }
-            //SNR MANAGER
-            else if ((recipient.config_status_id == hr_approved)) {
-                html_div  = snr_profile_sub ;
-                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
-            }
 
 
+
+            {{--//SNR MANAGER--}}
+            {{--else if ((recipient.config_status_id == hr_approved)) {--}}
+            {{--    html_div = snr_profile_sub;--}}
+            {{--    next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};--}}
+            {{--}--}}
+            {{--    --}}
+            {{--//CHIEF ACCOUNTANT--}}
+            {{--else if ((recipient.config_status_id == station_mgr_approved)) {--}}
+            {{--    $('#div_cac').html(chif_acc_profile);--}}
+            {{--    next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_007')) !!};--}}
+            {{--}--}}
 
 
             //CHIEF ACCOUNTANT
-            else if ((recipient.config_status_id == station_mgr_approved)) {
+            else if ((recipient.config_status_id == hr_approved)) {
                 $('#div_cac').html(chif_acc_profile);
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_007')) !!};
             }
@@ -921,8 +1056,8 @@
                 //remove from the array the user unit already worked on
                 var aaaa = recipient.destinations;
                 for (var i = 0; i < aaaa.length; ++i) {
-                    if(aaaa[i].created_by != null){
-                         aaaa.splice(i,1);
+                    if (aaaa[i].created_by != null) {
+                        aaaa.splice(i, 1);
                     }
                 }
                 //final of unworked on user units - get the user unit code only removing duplicates
@@ -937,13 +1072,10 @@
                         url = url + '&array[]=' + user_unit[i];
                     }
                 }
-
                 //inter-change
                 user_unit = next_profile;
                 next_profile = url;
-
             }
-
 
             //USER
             else if ((recipient.config_status_id == funds_disbursement)) {
@@ -965,8 +1097,6 @@
                 $("#details_3").html(whos_next1 + whos_next2 + whos_next3);
             }
 
-
-
             //AWAIT AUDIT
             else if ((recipient.config_status_id == await_audit)) {
                 $('#div_cac').html(chif_acc_profile);
@@ -978,7 +1108,6 @@
                 $('#div_hod').html(hod_profile_sub);
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
             }
-
 
             //HANDLE BUTTON SUBMISSIONS
             $("#divSubmit_hide").hide();
@@ -996,15 +1125,18 @@
 
             getNextUsers(route_back, user_unit, next_profile, recipient.config_status_id, html_div);
         });
+
+
     </script>
+
+
+
 
     <script>
 
         //GET ARTICLE FROM DB
-        function getNextUsers(route_back, user_unit, profile, stage, html_div ) {
+        function getNextUsers(route_back, user_unit, profile, stage, html_div) {
             var route = route_back + '/' + user_unit + profile;
-
-            console.log(route);
 
             /* AJAX */
             $.ajaxSetup({
@@ -1025,7 +1157,7 @@
                     var whos_next1 = "<div class='row'> ";
                     var whos_next2 = " ";
                     var user = {!!  json_encode($user) !!};
-                    var mine_to_work = false ;
+                    var mine_to_work = false;
                     for (i = 0; i < obj.length; i++) {
                         whos_next2 += "<div class='col-4 '> " +
                             "<span class='font-weight-bold text-orange'>test : </span><span class='text-green'>" + obj[i].staff_no + "</span><br> " +
@@ -1035,34 +1167,34 @@
                             "<span class='font-weight-bold text-orange'>Email : </span><span class='text-green'>" + obj[i].email + "</span><br><br> " +
                             " </div>";
 
-                        if(user.staff_no == obj[i].staff_no ){
-                            mine_to_work = true ;
+                        if (user.staff_no == obj[i].staff_no) {
+                            mine_to_work = true;
                         }
                     }
                     var whos_next3 = "</div>" +
                         "";
                     $("#details_3").html(whos_next1 + whos_next2 + whos_next3);
 
-                    var dest = {!!  json_encode(config('constants.subsistence_status.destination_approval')) !!} ;
-                    if((stage == dest ) && (mine_to_work == true) ){
+                    var dest = {!!  json_encode(config('constants.subsistence_status.destination_approval')) !!};
+                    if ((stage == dest) && (mine_to_work == true)) {
 
                         $('#div_dest').html(html_div);
                     }
 
                     var myDiv = document.getElementById("div_hr");
-                    var dest1 = {!!  json_encode(config('constants.subsistence_status.hod_approved')) !!} ;
-                    var dest2 = {!!  json_encode(config('constants.trip_status.hod_approved_trip')) !!} ;
-                    if((stage == dest1 ) && (mine_to_work == true) ){
+                    var dest1 = {!!  json_encode(config('constants.subsistence_status.hod_approved')) !!};
+                    var dest2 = {!!  json_encode(config('constants.trip_status.hod_approved_trip')) !!};
+                    if ((stage == dest1) && (mine_to_work == true)) {
                         myDiv.innerHTML = "";//remove all child elements inside of myDiv
                         $('#div_hr').html(html_div);
-                    }else if((stage == dest2 ) && (mine_to_work == true) ){
+                    } else if ((stage == dest2) && (mine_to_work == true)) {
                         myDiv.innerHTML = "";//remove all child elements inside of myDiv
                         $('#div_hr').html(html_div);
-                    }else if ((stage == dest1 ) && (mine_to_work == false) ){
+                    } else if ((stage == dest1) && (mine_to_work == false)) {
                         myDiv.innerHTML = "";//remove all child elements inside of myDiv
-                    }else if ((stage == dest2 ) && (mine_to_work == false) ){
+                    } else if ((stage == dest2) && (mine_to_work == false)) {
                         myDiv.innerHTML = "";//remove all child elements inside of myDiv
-                    }else {
+                    } else {
 
                     }
 
@@ -1073,21 +1205,19 @@
                     var hr_approved = {!!  json_encode(config('constants.subsistence_status.hr_approved')) !!};
 
 
-
-                    if((stage == hr_approved_trip ) && (mine_to_work == true) ){
+                    if ((stage == hr_approved_trip) && (mine_to_work == true)) {
                         mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
                         $('#div_snr').html(html_div);
-                    }else if((stage == hr_approved ) && (mine_to_work == true) ){
+                    } else if ((stage == hr_approved) && (mine_to_work == true)) {
                         mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
                         $('#div_snr').html(html_div);
-                    }else if((stage == hr_approved_trip ) && (mine_to_work == false) ) {
+                    } else if ((stage == hr_approved_trip) && (mine_to_work == false)) {
                         mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
-                    }else if((stage == hr_approved ) && (mine_to_work == false) ) {
+                    } else if ((stage == hr_approved) && (mine_to_work == false)) {
                         mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
-                    }else {
+                    } else {
 
                     }
-
 
 
                 },

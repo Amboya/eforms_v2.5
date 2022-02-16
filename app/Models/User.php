@@ -31,6 +31,8 @@ class User extends Authenticatable
 
     use SoftDeletes;
 
+    use \Awobaz\Compoships\Compoships;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -64,6 +66,7 @@ class User extends Authenticatable
         'code_column',
         'profile_job_code',
         'profile_unit_code',
+        'profile_id_delegated',
 
         'type_id',
         'grade_id',
@@ -140,10 +143,10 @@ class User extends Authenticatable
 
     //RELATIONSHIP
     public function user_unit(){
-        return $this->belongsTo(ConfigWorkFlow::class, 'user_unit_id', 'id');
+        return $this->belongsTo(ConfigWorkFlow::class, ['user_unit_code'], ['user_unit_code']);
     }
     public function user_profile(){
-        return $this->hasMany(ProfileAssigmentModel::class, 'user_id', 'id');
+        return $this->hasMany(ProfileAssigmentModel::class,  'user_id','id' );
     }
     public function delegated_profile(){
         return $this->hasMany(ProfileDelegatedModel::class, 'delegated_to', 'id')

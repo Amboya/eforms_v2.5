@@ -2,11 +2,13 @@
 
 
 @push('custom-styles')
-
-    <!-- Select2 -->
-    <link rel="stylesheet" href="{{ asset('dashboard/plugins/select2/css/select2.min.css')}}">
-    <link rel="stylesheet" href="{{ asset('dashboard/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 @endpush
+
+
 
 
 @section('content')
@@ -980,7 +982,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            <h5 class="text-center">Please Update the Accounts </h5>
+                            <h5 class="text-center">Please Update the Accounts To create an Invoice in FMS </h5>
                             <h6 class="text-center">(Total Amount : ZMW {{$form->net_amount_paid}}) </h6>
                             <div class="col-lg-12 grid-margin stretch-card">
                                 <div class="table-responsive">
@@ -1010,21 +1012,21 @@
                                                                 @if($form->user->affiliated_union  == null)
                                                                     <option
                                                                         value="{{$accounts->where('id', config('constants.non_rep_subsistence_account_id'))->first()->code}}">
-                                                                        {{$accounts->where('id', config('constants.non_rep_subsistence_account_id'))->first()->name}}
-                                                                        :{{$accounts->where('id', config('constants.non_rep_subsistence_account_id'))->first()->code}}
+                                                                        {{$accounts->where('id', config('constants.non_rep_subsistence_account_id'))->first()->code}}
+                                                                        :{{$accounts->where('id', config('constants.non_rep_subsistence_account_id'))->first()->name}}
                                                                     </option>
                                                                 @endif
 
                                                                 @if($form->user->affiliated_union  != null)
                                                                     <option
                                                                         value="{{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->code}}">
-                                                                        {{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->name}}
-                                                                        :{{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->code}}
+                                                                        {{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->code}}
+                                                                        :{{$accounts->where('id', config('constants.rep_subsistence_account_id'))->first()->name}}
                                                                     </option>
                                                                 @endif
                                                                     @foreach($accounts as $account)
                                                                         <option
-                                                                            value="{{$account->code}}">{{$account->name}}</option>
+                                                                            value="{{$account->code}}">{{$account->code}}:{{$account->name}}</option>
                                                                     @endforeach
 
                                                             </select>
@@ -1046,7 +1048,7 @@
                                                                 <option value="">Select Expense Account</option>
                                                                 @foreach($accounts as $account)
                                                                     <option
-                                                                        value="{{$account->code}}">{{$account->name}}</option>
+                                                                        value="{{$account->code}}">{{$account->code}} : {{$account->name}}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -1073,7 +1075,7 @@
                                         </TABLE>
                                         <datalist id="accounts_list">
                                             @foreach($accounts as $account)
-                                                <option value="{{$account->code}}">{{$account->name}}</option>
+                                                <option value="{{$account->code}}">{{$account->code}} : {{$account->name}}</option>
                                             @endforeach
                                         </datalist>
                                     </div>
@@ -1096,8 +1098,8 @@
                                     <div class="col-12 text-center ">
                                         <div id="divSubmit_show">
                                             <button id="btnSubmit_approve" type="submit" name="approval"
-                                                    class="btn btn-outline-success mr-2 p-2  " title="Only click this Button to confirm that you will or have given out the money"
-                                                    value='Approved'>FUNDS DISBURSED
+                                                    class="btn btn-outline-success mr-2 p-2  " title="To Generate an Invoice to be paid in FMS, Click here. And wait for the Invoice to be uploaded in FMS"
+                                                    value='Approved'>GENERATE INVOICE IN FMS
                                             </button>
                                             <button id="btnSubmit_reject" type="submit" name="approval"
                                                     class="btn btn-outline-danger ml-2 p-2  "

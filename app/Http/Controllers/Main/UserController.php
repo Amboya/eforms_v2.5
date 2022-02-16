@@ -54,6 +54,14 @@ class UserController extends Controller
         return view('main.users.index')->with(compact('list', 'search'));
     }
 
+
+    public function list()
+    {
+        $list = User::select('id','user_unit_id','con_st_code','positions_id','staff_no','user_unit_code','job_code','email','name','created_at','phone')
+            ->get();
+        return json_encode($list);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

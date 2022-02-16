@@ -70,6 +70,7 @@
                                 <th>Claimant</th>
                                 <th>Payment</th>
                                 <th>Status</th>
+                                <th>Error Msg</th>
                                 <th>Date Created</th>
                                 <th>Action</th>
                             </tr>
@@ -86,7 +87,7 @@
                                         <a href="{{ route('logout') }}" class="dropdown-item"
                                            onclick="event.preventDefault();
                                                document.getElementById('show-form'+{{$item->invoice_id ?? 0 }}).submit();"> {{$item->invoice_id ?? 0 }}</a>
-                                        <form id="show-form{{$item->invoice_id}}"
+                                        <form id="show-form+{{$item->invoice_id ?? 0}}"
                                               action="{{ route('subsistence.show', $item->invoice_id ?? 0) }}"
                                               method="POST" class="d-none">
                                             @csrf
@@ -98,6 +99,7 @@
                                     <td><span
                                             class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
                                     </td>
+                                    <td>{{$item->error_msg ?? "none"}}</td>
                                     <td>{{ $item->creation_date }}</td>
                                     <td><a href="{{ route('logout') }}" class="btn btn-sm bg-orange"
                                            onclick="event.preventDefault();
@@ -108,6 +110,8 @@
                                               method="POST" class="d-none">
                                             @csrf
                                         </form>
+
+
 
                                     </td>
 

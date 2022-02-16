@@ -123,7 +123,6 @@ class SubsistenceController extends Controller
                 ->orderBy('code')->paginate(50);
 
 
-           // dd(33);
             $category = "Opened";
         } else if ($value == config('constants.subsistence_status.new_application')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
@@ -197,7 +196,8 @@ class SubsistenceController extends Controller
          //   dd($list);
             $category = "All Records";
             //  dd($list);
-        } else if ($value == "pending") {
+        }
+        else if ($value == "pending") {
             $list = SubsistenceModel::where('config_status_id', '>', config('constants.subsistence_status.new_application'))
                 ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
                 ->orderBy('code')->paginate(50);
@@ -230,17 +230,14 @@ class SubsistenceController extends Controller
         //pending forms for me before i apply again
         $pending = HomeController::pendingForMe();
 
-        //data to send to the view
-        $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'list' => $list,
-            //    'totals' => $totals,
-            'pending' => $pending, 'reimbursement',
-            'category' => $category,
-        ];
+
+
+        //list of statuses
+        $statuses = StatusModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+
 
         //return view
-        return view('eforms.subsistence.records')->with($params);
+        return view('eforms.subsistence.records')->with(compact('statuses','totals_needs_me', 'list', 'pending', 'category'));
 
     }
 
@@ -658,8 +655,6 @@ class SubsistenceController extends Controller
     public function findMyNextPerson($next_status, $user_unit, $claimant)
     {
 
-
-
         $user_array = [];
         $not_claimant = true;
 
@@ -670,7 +665,7 @@ class SubsistenceController extends Controller
         }
 
 
-        //FOR SUBSITENCE RAISED   config('constants.trip_status.hod_approved_trip')
+        //FOR SUBSISTENCE RAISED   config('constants.trip_status.hod_approved_trip')
         if ($next_status == config('constants.trip_status.accepted')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
@@ -712,16 +707,17 @@ class SubsistenceController extends Controller
 //            }
         } //HR APPROVAL - SAME
         elseif ($next_status == config('constants.trip_status.hr_approved_trip')) {
-            if ($departmental) {
 
-                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
+            if ($departmental) {
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));  // remove snr manager
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
             } else {
-                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015')); // remove snr manager
+               // dd($profile);
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
-
             }
+
         } //HOD APPROVAL
         elseif ($next_status == config('constants.subsistence_status.hod_approved')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
@@ -834,8 +830,12 @@ class SubsistenceController extends Controller
      */
     public function show($id)
     {
+        $form = SubsistenceModel::where('id', $id)->Orwhere('code', $id)->first();
 
-        $form = SubsistenceModel::findOrFail($id);
+
+        if($form->id == null ){
+            return back()->with('error', 'No subsistence invoices '.$id.' could not be found, or you do not have permissions to view it. ');
+        }
 
         $trip = Trip::findOrFail($form->trip_id);
         //
@@ -848,7 +848,7 @@ class SubsistenceController extends Controller
         //
         $form_accounts = SubsistenceAccountModel::all();
         $projects = ProjectsModel::all();
-        $accounts = AccountsChartModel::all();
+        $accounts = AccountsChartModel::orderBy('code')->get();
         $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.subsistence'))
             ->orderBy('created_at', 'asc')->get();
 
@@ -929,8 +929,12 @@ class SubsistenceController extends Controller
     public function showForm($id)
     {
         //GET THE Subsistence MODEL if you are an admin
-        $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} ");
+        $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} or where code = '{$id}' ");
         $form = SubsistenceModel::hydrate($list)->first();
+
+        if($form->id == null ){
+            return back()->with('error', 'No subsistence invoices '.$id.' could not be found, or you do not have permissions to view it. ');
+        }
 
         $receipts = AttachedFileModel::where('form_id', $form->code)
             ->where('form_type', config('constants.eforms_id.subsistence'))
@@ -1282,7 +1286,8 @@ class SubsistenceController extends Controller
 
             $list_inv->status_id = $new_status ;
             $list_inv->save();
-        } //FOR PRE AUDIT
+        }
+        //FOR PRE AUDIT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.subsistence_status.chief_accountant')
         ) {
@@ -1663,6 +1668,10 @@ class SubsistenceController extends Controller
                 }
 
             }
+
+            //upload invoice to FMS
+            $integration = new Integration();
+            $integration->sendFromSubistence($form);
 
         }
 
@@ -2281,6 +2290,7 @@ class SubsistenceController extends Controller
 
         $names = "";
         $claimant_details = User::find($form->created_by);
+        $form_state = StatusModel::find($new_status);
 
         //check if this next profile is for a claimant and if the Subsistence Claim needs Acknowledgement
         if ($new_status == config('constants.subsistence_status.security_approved')) {
@@ -2288,7 +2298,7 @@ class SubsistenceController extends Controller
             $subject = 'Subsistence Claim Needs Your Attention';
             $title = 'Subsistence Claim Needs Your Attention';
             $message = 'This is to notify you that there is a <b>ZMW ' . $form->total_payment . '</b>  Subsistence Claim (' . $form->code . ') raised by ' . $form->claimant_name . ', that needs your attention.
-            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at ' . $form->status->name . ' stage';
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at ' . $form_state->name . ' stage';
         } //check if this next profile is for   a claimant and if the Subsistence Claim is closed
         else if ($new_status == config('constants.subsistence_status.closed')) {
             $names = $names . '<br>' . $claimant_details->namee;
@@ -2303,7 +2313,7 @@ class SubsistenceController extends Controller
             $subject = 'Subsistence Claim Needs Your Attention';
             $title = 'Subsistence Claim Needs Your Attention';
             $message = 'This is to notify you that there is a <b>ZMW ' . $form->total_payment . '</b>  Subsistence Claim (' . $form->code . ') raised by ' . $form->claimant_name . ',that needs your attention.
-            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at ' . $form->status->name . ' stage.';
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at ' . $form_state->name . ' stage.';
         }
 
         /** send email to supervisor */
@@ -2929,6 +2939,10 @@ class SubsistenceController extends Controller
         $pending = HomeController::pendingForMe();
         $category = "Search Results";
 
+        //list of statuses
+        $statuses = StatusModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+
+
         //data to send to the view
         $params = [
             'totals_needs_me' => $totals_needs_me,
@@ -2936,6 +2950,7 @@ class SubsistenceController extends Controller
             'totals' => $totals,
             'pending' => $pending,
             'category' => $category,
+            'statuses' => $statuses,
         ];
 
         //return view

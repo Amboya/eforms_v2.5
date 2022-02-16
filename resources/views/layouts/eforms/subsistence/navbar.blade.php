@@ -31,7 +31,7 @@
         <li class="nav-item dropdown ">
             <div class="user-panel mt-1 pb-1 d-flex">
                 <div class="image">
-                    <img src="{{asset('storage/user_avatar/'.Auth::user()->avatar)}}" class="img-circle elevation-2"
+                    <img src="{{asset('storage/user_avatar/'.auth()->user()->avatar)}}" class="img-circle elevation-2"
                          alt="User Image"
                          onerror="this.src='{{asset('dashboard/dist/img/avatar.png')}}';"
                     >
@@ -41,18 +41,17 @@
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown ">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                {{Auth::user()->name}}</a>
+                {{auth()->user()->name}}</a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <a href="{{ route('main.user.show',Auth::user()->id ) }}"  class="dropdown-item">
+                <a href="{{ route('main.user.show',auth()->user()->id ) }}"  class="dropdown-item">
                     <i class="fas fa-user-circle mr-2"></i> My Profile
                 </a>
                 <div class="dropdown-divider"></div>
                 <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form_nav_bar').submit();">
+                                                     document.getElementById('logout-form_nav_bar1').submit();">
                     <i class="fas fa-sign-out-alt mr-2"></i> Logout
                 </a>
-
-                <form id="logout-form_nav_bar" action="{{ route('logout') }}" method="POST" class="d-none">
+                <form id="logout-form_nav_bar1" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
                 </form>
             </div>

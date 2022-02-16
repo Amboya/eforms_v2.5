@@ -202,7 +202,9 @@
                         <div class="card-footer clearfix">
                             @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')     )
                                 <a href="{{route('trip.create')}}"
-                                       class="btn btn-sm bg-gradient-green float-left">New Trip</a>
+                                   class="btn btn-sm bg-gradient-green float-left">New Trip</a>
+                                <a href="{{route( 'trip.list', 'existing')}}"
+                                   class="btn btn-sm bg-gradient-orange float-left ml-2">Existing Trip</a>
                             @endif
                         </div>
                         <!-- /.card-footer -->
