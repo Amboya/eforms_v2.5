@@ -44,7 +44,7 @@ class SubsistenceController extends Controller
      */
     public function __construct()
     {
-       // $this->middleware('auth');
+        // $this->middleware('auth');
         // Store a piece of data in the session...
         session(['eform_id' => config('constants.eforms_id.subsistence')]);
         session(['eform_code' => config('constants.eforms_name.subsistence')]);
@@ -105,23 +105,23 @@ class SubsistenceController extends Controller
         if ($value == "all") {
             $list = SubsistenceModel::orderBy('code')->paginate(50);
             $category = "All";
-        }
-        else if ($value == "pending") {
+        } else if ($value == "pending") {
             $list = SubsistenceModel::
             where('config_status_id', '=', config('constants.subsistence_status.hod_approved'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.station_mgr_approved'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.hr_approved'))
-                ->orWhere('config_status_id',  '=', config('constants.trip_status.hr_approved'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.hod_approved'))
-                ->orWhere('config_status_id',  '=', config('constants.trip_status.hod_approved_trip'))
-                ->orWhere('config_status_id', config('constants.trip_status.trip_authorised'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.chief_accountant'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.await_audit'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_disbursement'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_acknowledgement'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.destination_approval'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.pre_audited'))
-                ->orWhere('config_status_id',  '=', config('constants.exported'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.station_mgr_approved'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.hr_approved'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.hr_approved'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.hod_approved'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.trip_authorised'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.chief_accountant'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.await_audit'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_acknowledgement'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.destination_approval'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.pre_audited'))
+                ->orWhere('config_status_id', '=', config('constants.exported'))
+                ->orWhere('config_status_id', '=', config('constants.uploaded'))
                 ->orderBy('code')->paginate(50);
 
 
@@ -136,7 +136,7 @@ class SubsistenceController extends Controller
             $category = "Closed";
         } else if ($value == config('constants.subsistence_status.rejected')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.rejected'))
-                ->orWhere('config_status_id',  '=', config('constants.export_failed'))
+                ->orWhere('config_status_id', '=', config('constants.export_failed'))
                 ->orderBy('code')->paginate(50);
             $category = "Rejected";
         } else if ($value == config('constants.subsistence_status.cancelled')) {
@@ -155,7 +155,7 @@ class SubsistenceController extends Controller
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.queried'))
                 ->orderBy('code')->paginate(50);
             $category = "Queried";
-        }else if ($value == config('constants.exported')) {
+        } else if ($value == config('constants.exported')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.exported'))
                 ->orderBy('code')->paginate(50);
             $category = "Payment Processing in FMS";
@@ -168,7 +168,7 @@ class SubsistenceController extends Controller
         }
 
         //count all
-       // $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+        // $totals = TotalsModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -176,7 +176,7 @@ class SubsistenceController extends Controller
         $pending = HomeController::pendingForMe();
 
         //list of statuses
-      //  $statuses = StatusModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+        //  $statuses = StatusModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
         $statuses = StatusModel::all();
 
         //return view
@@ -199,11 +199,10 @@ class SubsistenceController extends Controller
                 ->join('config_status', 'eform_subsistence.config_status_id', '=', 'config_status.id')
                 ->paginate(50);
 
-         //   dd($list);
+            //   dd($list);
             $category = "All Records";
             //  dd($list);
-        }
-        else if ($value == "pending") {
+        } else if ($value == "pending") {
             $list = SubsistenceModel::where('config_status_id', '>', config('constants.subsistence_status.new_application'))
                 ->where('config_status_id', '<', config('constants.subsistence_status.closed'))
                 ->orderBy('code')->paginate(50);
@@ -216,7 +215,7 @@ class SubsistenceController extends Controller
 
         } else if ($value == config('constants.subsistence_status.closed')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.audit_approved'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.audit_approved'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
 
@@ -238,13 +237,12 @@ class SubsistenceController extends Controller
         $pending = HomeController::pendingForMe();
 
 
-
         //list of statuses
         $statuses = StatusModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
 
 
         //return view
-        return view('eforms.subsistence.records')->with(compact('statuses','totals_needs_me', 'list', 'pending', 'category'));
+        return view('eforms.subsistence.records')->with(compact('statuses', 'totals_needs_me', 'list', 'pending', 'category'));
 
     }
 
@@ -268,7 +266,7 @@ class SubsistenceController extends Controller
         //update the accounts
         $affected_accounts = DB::table('eform_subsistence_account')
             ->where('eform_subsistence_id', $id)
-            ->update(['status_id'  => $new_status ]);
+            ->update(['status_id' => $new_status]);
 
         //update the form status
         $form->config_status_id = $new_status;
@@ -316,7 +314,7 @@ class SubsistenceController extends Controller
 
         //control :
         //do not allow more than 7 days
-        if($diff > config('constants.sub_max_days')){
+        if ($diff > config('constants.sub_max_days')) {
             return Redirect::route('trip.home')->with('error', 'Sorry, You can not raise a new Subsistence Claim for the ' . $trip->destination . ', because the trip has exceeded the maximum number of days.');
         }
 
@@ -324,8 +322,8 @@ class SubsistenceController extends Controller
         $pending = SubsistenceModel::where('absc_absent_to', '>=', $date)
             ->where('absc_absent_from', '<=', $date)
             ->where('claimant_staff_no', $user->staff_no)
-            ->where('config_status_id', config('constants.subsistence_status.reject') )
-            ->orWhere('config_status_id', config('constants.subsistence_status.destination_approval') )
+            ->where('config_status_id', config('constants.subsistence_status.reject'))
+            ->orWhere('config_status_id', config('constants.subsistence_status.destination_approval'))
             ->count();
         $pending = $pending;
         // check for overlapping days
@@ -340,7 +338,7 @@ class SubsistenceController extends Controller
             ->where('claimant_staff_no', $user->staff_no)
             ->count();
 
-        $pending =  $pendingb;
+        $pending = $pendingb;
         // check for overlapping days
         if ($pending >= 1) {
             //return with error msg
@@ -381,27 +379,26 @@ class SubsistenceController extends Controller
             //return with error msg
         }
 
-       // $absent_amount = $diff * $request->absc_allowance_per_night;
-       // $total_amount = ($absent_amount + $request->trex_total_attached_claim) - $request->trex_deduct_advance;
+        // $absent_amount = $diff * $request->absc_allowance_per_night;
+        // $total_amount = ($absent_amount + $request->trex_total_attached_claim) - $request->trex_deduct_advance;
 
         //generate the Subsistence unique code
         $code = self::randGenerator("SUB", 1);
 
 
         $departmental = false;
-      //check if the next if cost center of the TRIP and SUBSISTENCE IS THE SAME
+        //check if the next if cost center of the TRIP and SUBSISTENCE IS THE SAME
 
         $user = Auth::user();   //superior_code
         $cost_center = ConfigWorkFlow::find($request->cost_center);
 
-        if(  $user->user_unit->user_unit_code  ==  $cost_center->user_unit_code ){
+        if ($user->user_unit->user_unit_code == $cost_center->user_unit_code) {
 //            $status = config('constants.trip_status.hod_approved_trip');
             $status = config('constants.subsistence_status.hod_approved');
             $departmental = true;
-        }else{
+        } else {
             $status = config('constants.trip_status.accepted');
         }
-
 
 
         //raise the voucher
@@ -470,9 +467,9 @@ class SubsistenceController extends Controller
             ->where('trip_code', $trip->code)
             ->first();
 
-        $list_inv->status_id = $status ;
+        $list_inv->status_id = $status;
         $list_inv->subsistence_id = $formModel->id;
-        $list_inv->subsistence_code = $code ;
+        $list_inv->subsistence_code = $code;
         $list_inv->save();
 
         //destination approvals
@@ -687,8 +684,7 @@ class SubsistenceController extends Controller
 
         } //HOD APPROVAL 1
         elseif ($next_status == config('constants.trip_status.hod_approved_trip')
-        )
-        {
+        ) {
 //            // - SAME
 //            if ($departmental) {
 //                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
@@ -696,16 +692,15 @@ class SubsistenceController extends Controller
 //            }
 //            // - DIFF
 //            else {
-                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
-                $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+            $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
 //            }
         }  //HOD APPROVAL 2
-        elseif ( $next_status ==  config('constants.subsistence_status.hod_approved'))
-        {
+        elseif ($next_status == config('constants.subsistence_status.hod_approved')) {
             // - SAME
 //            if ($departmental) {
-                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
-                $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+            $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 //            }
 //            // - DIFF
 //            else {
@@ -721,7 +716,7 @@ class SubsistenceController extends Controller
 
             } else {
                 $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015')); // remove snr manager
-               // dd($profile);
+                // dd($profile);
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
             }
 
@@ -746,19 +741,19 @@ class SubsistenceController extends Controller
             }
 
         } // CHIEF ACCOUNTANT TO AUDIT
-        elseif (   ($next_status == config('constants.subsistence_status.chief_accountant'))
-                || ($next_status == config('constants.subsistence_status.audit_box'))
-                || ($next_status == config('constants.subsistence_status.await_audit'))
+        elseif (($next_status == config('constants.subsistence_status.chief_accountant'))
+            || ($next_status == config('constants.subsistence_status.audit_box'))
+            || ($next_status == config('constants.subsistence_status.await_audit'))
         ) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } // VISIBLE TO EXPENDITURES
-        elseif ( ($next_status == config('constants.subsistence_status.pre_audited'))
+        elseif (($next_status == config('constants.subsistence_status.pre_audited'))
             || ($next_status == config('constants.subsistence_status.queried'))
             || ($next_status == config('constants.exported'))
             || ($next_status == config('constants.uploaded'))
-           )  {
+        ) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
@@ -772,8 +767,7 @@ class SubsistenceController extends Controller
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
-        }
-        //SENIOR MANAGER APPROVAL
+        } //SENIOR MANAGER APPROVAL
         elseif ($next_status == config('constants.subsistence_status.station_mgr_approved')) {
 
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
@@ -842,8 +836,8 @@ class SubsistenceController extends Controller
         $form = SubsistenceModel::where('id', $id)->Orwhere('code', $id)->first();
 
 
-        if($form->id == null ){
-            return back()->with('error', 'No subsistence invoices '.$id.' could not be found, or you do not have permissions to view it. ');
+        if ($form->id == null) {
+            return back()->with('error', 'No subsistence invoices ' . $id . ' could not be found, or you do not have permissions to view it. ');
         }
 
         $trip = Trip::findOrFail($form->trip_id);
@@ -870,47 +864,43 @@ class SubsistenceController extends Controller
                 ->get();
             $dest_approvals->load('user_unit');
 
-            foreach ($dest_approvals as $key => $dest){
-                if($key != 0){
-                    $user_array = $user_array->merge( self::findMyNextPerson($form->config_status_id, $dest->user_unit , $user)  );
-                }else{
-                    $user_array = self::findMyNextPerson($form->config_status_id, $dest->user_unit , $user) ;
+            foreach ($dest_approvals as $key => $dest) {
+                if ($key != 0) {
+                    $user_array = $user_array->merge(self::findMyNextPerson($form->config_status_id, $dest->user_unit, $user));
+                } else {
+                    $user_array = self::findMyNextPerson($form->config_status_id, $dest->user_unit, $user);
 
                 }
             }
 
-        }
-        else {
+        } else {
             $user_array = self::findMyNextPerson($form->config_status_id, $form->user_unit, $user);
         }
 
         //check if this belongs to the same department
         $departmental = false;
-        $departmental_hod  = false;
+        $departmental_hod = false;
         if (($form->user_unit_code) == ($user->user_unit_code)) {
             $departmental = true;
-        }
-        else{
-            if ( ($form->config_status_id == config('constants.trip_status.accepted'))
-            || ($form->config_status_id ==  config('constants.trip_status.hod_approved_trip')
-                || ($form->config_status_id == config('constants.trip_status.hr_approved_trip')))
+        } else {
+            if (($form->config_status_id == config('constants.trip_status.accepted'))
+                || ($form->config_status_id == config('constants.trip_status.hod_approved_trip')
+                    || ($form->config_status_id == config('constants.trip_status.hr_approved_trip')))
             ) {
                 $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
                 $mine = $fdsf->pluck('user_unit_code')->toArray();
-                if (in_array($user->user_unit_code, $mine))
-                {
-                    $departmental_hod  = true;
+                if (in_array($user->user_unit_code, $mine)) {
+                    $departmental_hod = true;
 
                 }
             }
         }
 
 
-
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
 
-        $taxes = TaxModel::where('tax', 0 )->get();
+        $taxes = TaxModel::where('tax', 0)->get();
 
         //data to send to the view
         $params = [
@@ -926,7 +916,7 @@ class SubsistenceController extends Controller
             'approvals' => $approvals,
             'accounts' => $accounts,
             'trip' => $trip,
-            'departmental_hod' => $departmental_hod ,
+            'departmental_hod' => $departmental_hod,
             'departmental' => $departmental
         ];
         //return view
@@ -941,8 +931,8 @@ class SubsistenceController extends Controller
         $list = DB::select("SELECT * FROM eform_subsistence where id = {$id} or where code = '{$id}' ");
         $form = SubsistenceModel::hydrate($list)->first();
 
-        if($form->id == null ){
-            return back()->with('error', 'No subsistence invoices '.$id.' could not be found, or you do not have permissions to view it. ');
+        if ($form->id == null) {
+            return back()->with('error', 'No subsistence invoices ' . $id . ' could not be found, or you do not have permissions to view it. ');
         }
 
         $receipts = AttachedFileModel::where('form_id', $form->code)
@@ -1039,7 +1029,7 @@ class SubsistenceController extends Controller
         //FOR HR
         if (
             $user->profile_id == config('constants.user_profiles.EZESCO_009')
-            && $current_status ==   config('constants.subsistence_status.hod_approved')
+            && $current_status == config('constants.subsistence_status.hod_approved')
 //            && $current_status == config('constants.trip_status.hod_approved_trip')
         ) {
             $insert_reasons = true;
@@ -1055,7 +1045,7 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.subsistence_status.hr_approved');
             } else {
 //                $new_status = config('constants.trip_status.hod_approved_trip');
-                $new_status =  config('constants.subsistence_status.hod_approved') ;
+                $new_status = config('constants.subsistence_status.hod_approved');
                 $insert_reasons = false;
             }
             //update
@@ -1073,11 +1063,9 @@ class SubsistenceController extends Controller
                 ->where('trip_id', $form->trip_id)
                 ->first();
 
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
-        }
-
-        //FOR AUTHORIZER
+        } //FOR AUTHORIZER
         elseif (
             $user->profile_id == config('constants.user_profiles.EZESCO_015')
             && $current_status == config('constants.subsistence_status.hr_approved')
@@ -1095,7 +1083,7 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.subsistence_status.station_mgr_approved');
             } else {
 //                $new_status = config('constants.trip_status.hr_approved_trip');
-                $new_status =  config('constants.subsistence_status.hr_approved');
+                $new_status = config('constants.subsistence_status.hr_approved');
                 $insert_reasons = false;
             }
             //update
@@ -1118,9 +1106,7 @@ class SubsistenceController extends Controller
                 ->first();
 
 
-
-
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
         }
 
@@ -1159,7 +1145,7 @@ class SubsistenceController extends Controller
                 ->where('trip_id', $form->trip_id)
                 ->first();
 
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
         } //FOR HOD
         elseif (
@@ -1192,7 +1178,7 @@ class SubsistenceController extends Controller
                 ->where('trip_id', $form->trip_id)
                 ->first();
 
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
         } //FOR  HR
         elseif (
@@ -1227,11 +1213,9 @@ class SubsistenceController extends Controller
                 ->where('trip_id', $form->trip_id)
                 ->first();
 
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
-        }
-
-        //FOR CHIEF ACCOUNTANT
+        } //FOR CHIEF ACCOUNTANT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
             && $current_status == config('constants.subsistence_status.station_mgr_approved')
         ) {
@@ -1261,7 +1245,7 @@ class SubsistenceController extends Controller
                 ->where('trip_id', $form->trip_id)
                 ->first();
 
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
         } //FOR CHIEF ACCOUNTANT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007')
@@ -1293,10 +1277,9 @@ class SubsistenceController extends Controller
                 ->where('trip_id', $form->trip_id)
                 ->first();
 
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
-        }
-        //FOR PRE AUDIT
+        } //FOR PRE AUDIT
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.subsistence_status.chief_accountant')
         ) {
@@ -1323,7 +1306,7 @@ class SubsistenceController extends Controller
                 ->where('trip_id', $form->trip_id)
                 ->first();
 
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
         }
 
@@ -1390,7 +1373,7 @@ class SubsistenceController extends Controller
             $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
                 ->where('trip_id', $form->trip_id)
                 ->first();
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
 
             //create records for the accounts associated with this Subsistence transaction
@@ -1399,10 +1382,10 @@ class SubsistenceController extends Controller
                 $des = $des . " " . $request->account_items[$i] . ",";
                 $des = "Subsistence Claim Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', ' . $des . ' Amount: ' . $request->credited_amount[$i] . '.';
 
-                $apply_tax  = TaxModel::find($request->tax[$i] );
-                $vat_rate  = $apply_tax->tax ;
+                $apply_tax = TaxModel::find($request->tax[$i]);
+                $vat_rate = $apply_tax->tax;
 
-                if($apply_tax->tax  < 1 ){
+                if ($apply_tax->tax < 1) {
 
                     //[1] CREDITED ACCOUNT
                     //[1A] - money
@@ -1422,7 +1405,7 @@ class SubsistenceController extends Controller
                             'spare' => '0000',
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -1450,7 +1433,7 @@ class SubsistenceController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.operating'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $des,
                             'status_id' => config('constants.export_not_ready')
                         ]
@@ -1474,7 +1457,7 @@ class SubsistenceController extends Controller
                             'spare' => '0000',
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -1502,17 +1485,16 @@ class SubsistenceController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $des,
                             'status_id' => config('constants.export_not_ready')
                         ]
                     );
-                }
-                else{
+                } else {
                     //calculation
-                    $total_percent  = 100 + $apply_tax->tax ;
-                    $tax_amount = ($request->credited_amount[$i]  * $apply_tax->tax  ) / $total_percent ;
-                    $without_tax = ($request->credited_amount[$i])  - $tax_amount ;
+                    $total_percent = 100 + $apply_tax->tax;
+                    $tax_amount = ($request->credited_amount[$i] * $apply_tax->tax) / $total_percent;
+                    $without_tax = ($request->credited_amount[$i]) - $tax_amount;
 
 
                     //[1] CREDITED ACCOUNT
@@ -1534,7 +1516,7 @@ class SubsistenceController extends Controller
                             'vat_rate' => 0,
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -1563,7 +1545,7 @@ class SubsistenceController extends Controller
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.operating'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $des,
                             'status_id' => config('constants.export_not_ready')
                         ]
@@ -1587,7 +1569,7 @@ class SubsistenceController extends Controller
                             'spare' => '0000',
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -1615,7 +1597,7 @@ class SubsistenceController extends Controller
                             'spare' => '0000',
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $des,
                             'status_id' => config('constants.export_not_ready')
                         ]
@@ -1640,7 +1622,7 @@ class SubsistenceController extends Controller
                             'vat_rate' => 0,
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.tax'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -1669,7 +1651,7 @@ class SubsistenceController extends Controller
                             'vat_rate' => 0,
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.tax'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $apply_tax->name,
                             'status_id' => config('constants.export_not_ready')
                         ]
@@ -1682,9 +1664,7 @@ class SubsistenceController extends Controller
             $integration = new Integration();
             $integration->sendFromSubistence($form);
 
-        }
-
-        //   FOR EXPENDITURE OFFICE FUNDS
+        } //   FOR EXPENDITURE OFFICE FUNDS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
             && $current_status == config('constants.uploaded')
         ) {
@@ -1714,14 +1694,10 @@ class SubsistenceController extends Controller
             $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
                 ->where('trip_id', $form->trip_id)
                 ->first();
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
 
-        }
-
-
-
-        //FOR CLAIMANT - ACKNOWLEDGEMENT
+        } //FOR CLAIMANT - ACKNOWLEDGEMENT
         elseif (Auth::user()->staff_no == $form->claimant_staff_no
             && $current_status == config('constants.subsistence_status.funds_disbursement')
         ) {
@@ -1740,11 +1716,11 @@ class SubsistenceController extends Controller
             }
 
 
-            $request->reason =  $request->reason . ". Account number used : ".$request->account_number ;
+            $request->reason = $request->reason . ". Account number used : " . $request->account_number;
 
             /** upload attached files */
             //upload the receipt files
-           $files = $request->file('confirmation');
+            $files = $request->file('confirmation');
             if ($request->hasFile('confirmation')) {
                 foreach ($files as $file) {
                     $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
@@ -1783,28 +1759,26 @@ class SubsistenceController extends Controller
                 }
             }
 
-            if($request->account_number != null){
+            if ($request->account_number != null) {
                 //update
                 $form->config_status_id = $new_status;
-                $form->account_number = $request->account_number ;
+                $form->account_number = $request->account_number;
                 $form->profile = config('constants.user_profiles.EZESCO_007');
                 $form->save();
 
                 //cancel status
-               $insert_reasons = true;
+                $insert_reasons = true;
 
                 //change invitation status
                 $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
                     ->where('trip_id', $form->trip_id)
                     ->first();
-                $list_inv->status_id = $new_status ;
+                $list_inv->status_id = $new_status;
                 $list_inv->save();
 
             }
 
-        }
-
-        //DESTINATION APPROVAL
+        } //DESTINATION APPROVAL
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')
             &&
@@ -1826,7 +1800,7 @@ class SubsistenceController extends Controller
                 $insert_reasons = false;
             }
 
-          //  $new_status = config('constants.subsistence_status.await_audit');
+            //  $new_status = config('constants.subsistence_status.await_audit');
             //update
             $form->config_status_id = $new_status;
             $form->profile = Auth::user()->profile_id;
@@ -1836,13 +1810,11 @@ class SubsistenceController extends Controller
             $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
                 ->where('trip_id', $form->trip_id)
                 ->first();
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
 
 
-        }
-
-        //FOR POST AUDIT OFFICE
+        } //FOR POST AUDIT OFFICE
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.subsistence_status.await_audit')
         ) {
@@ -1864,7 +1836,7 @@ class SubsistenceController extends Controller
                 $insert_reasons = false;
             }
 
-           //  dd($new_status);
+            //  dd($new_status);
 
             //update
             $form->config_status_id = $new_status;
@@ -1875,11 +1847,11 @@ class SubsistenceController extends Controller
             $form->save();
 
             // update the accounts to be now ready for upload to fms
-            $ready_for_export = config('constants.not_exported') ;
+            $ready_for_export = config('constants.not_exported');
             $form->load('accounts');
-            $accounts = $form->accounts ;
-            foreach ($accounts as $account){
-                $account->status_id  = $ready_for_export;
+            $accounts = $form->accounts;
+            foreach ($accounts as $account) {
+                $account->status_id = $ready_for_export;
                 $account->save();
             }
 
@@ -1888,21 +1860,18 @@ class SubsistenceController extends Controller
             $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
                 ->where('trip_id', $form->trip_id)
                 ->first();
-            $list_inv->status_id = $new_status ;
+            $list_inv->status_id = $new_status;
             $list_inv->save();
-        }
-
-
-        //EXPENDITURE WORK ON QUERY
+        } //EXPENDITURE WORK ON QUERY
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
             && $current_status == config('constants.subsistence_status.queried')
         ) {
             if ($request->change > 0) {
-                if($request->account_item == "" ||$request->credited_account == "" ||$request->credited_amount == "" ||$request->debited_account == ""  ){
+                if ($request->account_item == "" || $request->credited_account == "" || $request->credited_amount == "" || $request->debited_account == "") {
                     return Redirect::route('subsistence.home')->with('error', 'Subsistence ' . $form->code . ' did not successfully complete because some of the Accounts Values were empty');
                 }
             }
-           // dd($request->all() );
+            // dd($request->all() );
             //cancel status
             $insert_reasons = true;
             if ($request->approval == config('constants.approval.cancelled')) {
@@ -1924,8 +1893,6 @@ class SubsistenceController extends Controller
             $form->save();
 
 
-
-
             //create records for the accounts associated with this Subsistence transaction
             //If there was change
             if ($request->change > 0) {
@@ -1933,10 +1900,10 @@ class SubsistenceController extends Controller
                 $des = $des . " " . $request->account_item . ",";
                 $des = "Subsistence Claim Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', ' . $des . ' Amount: ' . $request->credited_amount . '.';
 
-                $apply_tax  = TaxModel::find($request->tax );
-                $vat_rate  = $apply_tax->tax ;
+                $apply_tax = TaxModel::find($request->tax);
+                $vat_rate = $apply_tax->tax;
 
-                if($apply_tax->tax  < 1 ){
+                if ($apply_tax->tax < 1) {
 
                     //[1] CREDITED ACCOUNT
                     //[1A] - money
@@ -1956,7 +1923,7 @@ class SubsistenceController extends Controller
                             'spare' => '0000',
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -1984,7 +1951,7 @@ class SubsistenceController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.operating'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $des,
                             'status_id' => config('constants.export_not_ready')
                         ]
@@ -2008,7 +1975,7 @@ class SubsistenceController extends Controller
                             'spare' => '0000',
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -2036,16 +2003,16 @@ class SubsistenceController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $des,
                             'status_id' => config('constants.export_not_ready')
                         ]
                     );
-                }else{
+                } else {
                     //calculation
-                    $total_percent  = 100 + $apply_tax->tax ;
-                    $tax_amount = ($request->credited_amount  * $apply_tax->tax  ) / $total_percent ;
-                    $without_tax = ($request->credited_amount)  - $tax_amount ;
+                    $total_percent = 100 + $apply_tax->tax;
+                    $tax_amount = ($request->credited_amount * $apply_tax->tax) / $total_percent;
+                    $without_tax = ($request->credited_amount) - $tax_amount;
 
 
                     //[1] CREDITED ACCOUNT
@@ -2067,7 +2034,7 @@ class SubsistenceController extends Controller
 //                            'vat_rate' => $vat_rate,
                             'vat_rate' => 0,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -2096,7 +2063,7 @@ class SubsistenceController extends Controller
                             'vat_rate' => 0,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.operating'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $des,
                             'status_id' => config('constants.export_not_ready')
                         ]
@@ -2120,7 +2087,7 @@ class SubsistenceController extends Controller
                             'spare' => '0000',
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.subsistence_status.export_not_ready')
                         ],
                         [
@@ -2148,7 +2115,7 @@ class SubsistenceController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $des,
                             'status_id' => config('constants.export_not_ready')
                         ]
@@ -2173,7 +2140,7 @@ class SubsistenceController extends Controller
                             'vat_rate' => 0,
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.tax'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.export_not_ready')
                         ],
                         [
@@ -2202,7 +2169,7 @@ class SubsistenceController extends Controller
 //                           'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.tax'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->operating->org_id ,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $apply_tax->name,
                             'status_id' => config('constants.export_not_ready')
                         ]
@@ -2254,11 +2221,7 @@ class SubsistenceController extends Controller
             }
 
 
-        }
-
-
-
-        //FOR NO-ONE
+        } //FOR NO-ONE
         else {
             //return with an error
             return Redirect::route('subsistence.home')->with('message', 'Subsistence ' . $form->code . ' for has been ' . $request->approval . ' successfully');
@@ -2845,16 +2808,16 @@ class SubsistenceController extends Controller
             //update form
             $eform_subsistence_update = DB::table('eform_subsistence')
                 ->where('id', $id)
-                ->update(['config_status_id' => $status->id ]);
+                ->update(['config_status_id' => $status->id]);
             //update accounts
             $eform_accounts_update = DB::table('eform_subsistence_account')
                 ->where('id', $id)
-                ->update(['eform_subsistence_id' => $eform_subsistence->id ]);
+                ->update(['eform_subsistence_id' => $eform_subsistence->id]);
 
             $user = Auth::user();
             // log the activity
             ActivityLogsController::store($request, "Subsistence Status manual change", "status update of subsistence " . $eform_subsistence->code, $user->name . " updated status of subsistence voucher from " . $eform_subsistence->status->name . " to " . $status->name, $eform_subsistence->id);
-            return Redirect::route('subsistence.home')->with('message', 'Subsistence ('.$eform_subsistence->code.') Has been set to a new Status '.$status->name.' from '.$eform_subsistence->status->name);
+            return Redirect::route('subsistence.home')->with('message', 'Subsistence (' . $eform_subsistence->code . ') Has been set to a new Status ' . $status->name . ' from ' . $eform_subsistence->status->name);
         } catch (Exception $exception) {
             return Redirect::back()->with('error', 'Sorry an error happened');
         }

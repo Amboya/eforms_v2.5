@@ -61,6 +61,7 @@ class HomeController extends Controller
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_acknowledgement'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.destination_approval'))
             ->orWhere('config_status_id',  '=', config('constants.exported'))
+            ->orWhere('config_status_id',  '=', config('constants.uploaded'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.pre_audited'))
             ;
 
