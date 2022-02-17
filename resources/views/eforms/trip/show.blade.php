@@ -226,7 +226,7 @@
                                                         @else
                                                             <a href="{{ route('logout') }}"
                                                                title="Open subsistence form"
-                                                               class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+
                                                                onclick="event.preventDefault();
                                                                    document.getElementById('show-form1'+{{$item->id}}).submit();">
                                                     <span
@@ -327,7 +327,7 @@
                                             </button>
                                         @else
                                             <button disabled name="approval"
-                                                    class="btn btn-outline-secondary mr-2 p-2  "
+                                                    class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
                                                     title="You cannot subscribe to this trip. Trips are overlapping or you have an open subsistance form"
                                                     value='Subscribe'>Raise Subsistence
                                             </button>
@@ -335,13 +335,13 @@
 
                                     </form>
                                 @else
-                                    <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                    <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
                                             title="You cannot subscribe to this trip"
                                             value='Subscribe'>Raise Subsistence
                                     </button>
                                 @endif
                             @else
-                                <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
                                         title="You cannot subscribe to this trip"
                                         value='Subscribe'>Raise Subsistence
                                 </button>
@@ -349,7 +349,7 @@
 
                             {{--  HOD APPROVER--}}
                             @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')    )
-                                <button name="invite" class="btn btn-outline-primary  p-2 justify-content-start "
+                                <button name="invite" class="btn btn-outline-primary  p-2 justify-content-start " style="margin-top: 10px"
                                         title="Invite members to be part of this trip"
                                         data-toggle="modal"
                                         data-target="#modal-invite-trip-members"
@@ -358,7 +358,7 @@
 
                             @endif
                         @else
-                            <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                            <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
                                     title="This trip has ended you can not raise subsistence for it"
                                     value='Subscribe'>Raise Subsistence
                             </button>

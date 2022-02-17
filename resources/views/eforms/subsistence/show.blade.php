@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet"
           href="{{ asset('dashboard/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+
+
 @endpush
 
 
@@ -133,7 +135,13 @@
                         </div>
                         <div class="col-4 mb-1">
                             <div class="row">
-                                <div class="col-6"><label>Cost Center:</label></div>
+                                <div class="col-6"><label>Cost Center:</label>
+                                    @if( $user->type_id ==  config('constants.user_types.developer')  )
+                                        <a href="{{route('subsistence.workflow.show',['id'=> $form->user_unit->id ?? "code", 'code' => $form->id ?? "code" ] )}}">
+                                            Workflow
+                                        </a>
+                                    @endif
+                                </div>
                                 <div class="col-6">
                                     <input value="{{$form->cost_center }}" type="cost_center"
                                            readonly name="date" readonly class="form-control">
@@ -523,6 +531,7 @@
                          &&  $form->config_status_id == config('constants.subsistence_status.new_application')
                          &&  $user->id  == $form->created_by)
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -562,6 +571,7 @@
 
                       )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-12 text-center">
@@ -584,6 +594,7 @@
                          &&  $form->user_unit->hod_unit == $user->profile_unit_code
                       )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -622,6 +633,7 @@
                          &&  $departmental_hod ==  true )
 
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-12 text-center">
@@ -646,6 +658,7 @@
                              &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                          )
                             <div class="">
+                                <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                                 <hr>
                                 <div class="row">
                                     <div class="col-10">
@@ -686,6 +699,7 @@
                              &&  $form->user_unit->dm_unit == $user->profile_unit_code
                             )
                             <div class="">
+                                <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                                 <hr>
                                 <div class="row">
                                     <div class="col-10">
@@ -726,6 +740,7 @@
                              &&  $form->user_unit->ca_unit == $user->profile_unit_code
                             )
                             <div class="">
+                                <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                                 <hr>
                                 <div class="row">
                                     <div class="col-10">
@@ -767,6 +782,7 @@
                          &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                      )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -807,6 +823,7 @@
                          &&  $departmental_hod ==  true )
 
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-12 text-center">
@@ -830,6 +847,7 @@
                          &&  $form->user_unit->dm_unit == $user->profile_unit_code
                         )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -871,6 +889,7 @@
                          &&  $departmental_hod ==  true )
 
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-12 text-center">
@@ -892,6 +911,7 @@
                          &&  $form->user_unit->ca_unit == $user->profile_unit_code
                         )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -931,6 +951,7 @@
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -964,7 +985,7 @@
                         </div>
                     @endif
 
-                    {{-- FUNDS DISBURSEMNET APPROVAL--}}
+                    {{-- UPLOADING TO FMS--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
                          &&  $form->config_status_id == config('constants.subsistence_status.pre_audited')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
@@ -1119,11 +1140,48 @@
                         </div>
                     @endif
 
+                    {{-- FUNDS DISBURSEMNET APPROVAL--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                         &&  $form->config_status_id == config('constants.uploaded')
+                         &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
+                       )
+                        <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <hr>
+                            <div class="row">
+                                <textarea hidden class="form-control" rows="2" name="reason"
+                                          required> Funds Disbursement Confirmation</textarea>
+
+                                <div class="col-sm-12 col-lg-12 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                data-title="Only Click This Button to confirm that you have actually paid out the money to the claimant"
+                                                value='Approved'>FUNDS DISBURSED
+                                        </button>
+                                        <button style="display: none" id="btnSubmit_reject" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-danger mr-2 p-2  "
+                                                value='Rejected'>FUNDS NOT DISBURSED
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+
                     {{-- FUNDS ACKNOWELEDGMENT APPROVAL--}}
                     @if( $form->config_status_id == config('constants.subsistence_status.funds_disbursement')
                          &&  $form->claimant_staff_no == $user->staff_no
                           )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <textarea hidden class="form-control" rows="2" name="reason"
@@ -1179,6 +1237,7 @@
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-9">
@@ -1219,6 +1278,8 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                         )
                         <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <hr>
                             <div class="row">
                                 <div class="col-lg-10 p-2 mt-3 ">
                                     <div class="row">

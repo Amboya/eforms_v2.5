@@ -105,7 +105,8 @@ class SubsistenceController extends Controller
         if ($value == "all") {
             $list = SubsistenceModel::orderBy('code')->paginate(50);
             $category = "All";
-        } else if ($value == "pending") {
+        }
+        else if ($value == "pending") {
             $list = SubsistenceModel::
             where('config_status_id', '=', config('constants.subsistence_status.hod_approved'))
                 ->orWhere('config_status_id',  '=', config('constants.subsistence_status.station_mgr_approved'))
@@ -120,6 +121,7 @@ class SubsistenceController extends Controller
                 ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_acknowledgement'))
                 ->orWhere('config_status_id',  '=', config('constants.subsistence_status.destination_approval'))
                 ->orWhere('config_status_id',  '=', config('constants.subsistence_status.pre_audited'))
+                ->orWhere('config_status_id',  '=', config('constants.exported'))
                 ->orderBy('code')->paginate(50);
 
 
@@ -129,13 +131,12 @@ class SubsistenceController extends Controller
                 ->orderBy('code')->paginate(50);
             $category = "New Application";
         } else if ($value == config('constants.subsistence_status.closed')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.audited'))
-                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.audit_approved'))
+            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
-            //  dd(11);
         } else if ($value == config('constants.subsistence_status.rejected')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.rejected'))
+                ->orWhere('config_status_id',  '=', config('constants.export_failed'))
                 ->orderBy('code')->paginate(50);
             $category = "Rejected";
         } else if ($value == config('constants.subsistence_status.cancelled')) {
@@ -146,14 +147,18 @@ class SubsistenceController extends Controller
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.void'))
                 ->orderBy('code')->paginate(50);
             $category = "Void";
-        } else if ($value == config('constants.subsistence_status.audited')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.audited'))
+        } else if ($value == config('constants.subsistence_status.audit_approved')) {
+            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.audit_approved'))
                 ->orderBy('code')->paginate(50);
             $category = "Audited";
         } else if ($value == config('constants.subsistence_status.queried')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.queried'))
                 ->orderBy('code')->paginate(50);
             $category = "Queried";
+        }else if ($value == config('constants.exported')) {
+            $list = SubsistenceModel::where('config_status_id', config('constants.exported'))
+                ->orderBy('code')->paginate(50);
+            $category = "Payment Processing in FMS";
         } else if ($value == "needs_me") {
             $list = HomeController::needsMeList();
             $category = "Needs My Attention";
@@ -171,7 +176,8 @@ class SubsistenceController extends Controller
         $pending = HomeController::pendingForMe();
 
         //list of statuses
-        $statuses = StatusModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+      //  $statuses = StatusModel::where('eform_id', config('constants.eforms_id.subsistence'))->get();
+        $statuses = StatusModel::all();
 
         //return view
         return view('eforms.subsistence.list')->with(compact(
@@ -210,6 +216,7 @@ class SubsistenceController extends Controller
 
         } else if ($value == config('constants.subsistence_status.closed')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
+                ->orWhere('config_status_id',  '=', config('constants.subsistence_status.audit_approved'))
                 ->orderBy('code')->paginate(50);
             $category = "Closed";
 
@@ -749,6 +756,8 @@ class SubsistenceController extends Controller
         } // VISIBLE TO EXPENDITURES
         elseif ( ($next_status == config('constants.subsistence_status.pre_audited'))
             || ($next_status == config('constants.subsistence_status.queried'))
+            || ($next_status == config('constants.exported'))
+            || ($next_status == config('constants.uploaded'))
            )  {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
@@ -1319,40 +1328,40 @@ class SubsistenceController extends Controller
         }
 
         //FOR STATION MANAGER -SNR
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_015')
-            && $current_status == config('constants.subsistence_status.hr_approved')
-        ) {
-            $insert_reasons = true;
-            //cancel status
-            if ($request->approval == config('constants.approval.cancelled')) {
-                $new_status = config('constants.subsistence_status.cancelled');
-            } //reject status
-            elseif ($request->approval == config('constants.approval.reject')) {
-                $new_status = config('constants.subsistence_status.rejected');
-            }//approve status
-            elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.chief_accountant');
-            } else {
-                $new_status = config('constants.subsistence_status.hr_approved');
-                $insert_reasons = false;
-            }
-            //update
-            $form->config_status_id = $new_status;
-            $form->station_manager = $user->name;
-            $form->station_manager_staff_no = $user->staff_no;
-            $form->station_manager_date = $request->sig_date;
-            $form->profile = Auth::user()->profile_id;
-            $form->save();
-            //change invitation status
-            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
-                ->where('trip_id', $form->trip_id)
-                ->first();
+//        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_015')
+//            && $current_status == config('constants.subsistence_status.hr_approved')
+//        ) {
+//            $insert_reasons = true;
+//            //cancel status
+//            if ($request->approval == config('constants.approval.cancelled')) {
+//                $new_status = config('constants.subsistence_status.cancelled');
+//            } //reject status
+//            elseif ($request->approval == config('constants.approval.reject')) {
+//                $new_status = config('constants.subsistence_status.rejected');
+//            }//approve status
+//            elseif ($request->approval == config('constants.approval.approve')) {
+//                $new_status = config('constants.subsistence_status.chief_accountant');
+//            } else {
+//                $new_status = config('constants.subsistence_status.hr_approved');
+//                $insert_reasons = false;
+//            }
+//            //update
+//            $form->config_status_id = $new_status;
+//            $form->station_manager = $user->name;
+//            $form->station_manager_staff_no = $user->staff_no;
+//            $form->station_manager_date = $request->sig_date;
+//            $form->profile = Auth::user()->profile_id;
+//            $form->save();
+//            //change invitation status
+//            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+//                ->where('trip_id', $form->trip_id)
+//                ->first();
+//
+//            $list_inv->status_id = $new_status ;
+//            $list_inv->save();
+//        }
 
-            $list_inv->status_id = $new_status ;
-            $list_inv->save();
-        }
-
-        //   FOR EXPENDITURE OFFICE FUNDS
+        //   FOR EXPENDITURE UPLOADING TO FMS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
             && $current_status == config('constants.subsistence_status.pre_audited')
         ) {
@@ -1365,9 +1374,9 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.subsistence_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.funds_disbursement');
+                $new_status = config('constants.subsistence_status.exported');
             } else {
-                $new_status = config('constants.subsistence_status.chief_accountant');
+                $new_status = config('constants.subsistence_status.pre_audited');
                 $insert_reasons = false;
             }
 
@@ -1674,6 +1683,43 @@ class SubsistenceController extends Controller
             $integration->sendFromSubistence($form);
 
         }
+
+        //   FOR EXPENDITURE OFFICE FUNDS
+        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
+            && $current_status == config('constants.uploaded')
+        ) {
+
+            //cancel status
+            $insert_reasons = true;
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.subsistence_status.cancelled');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.subsistence_status.rejected');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.subsistence_status.funds_disbursement');
+            } else {
+                $new_status = config('constants.subsistence_status.uploaded');
+                $insert_reasons = false;
+            }
+
+            //update
+            $form->allocation_code = $request->allocation_code;
+            $form->config_status_id = $new_status;
+            $form->profile = Auth::user()->profile_id;
+            $form->save();
+
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
+
+        }
+
+
 
         //FOR CLAIMANT - ACKNOWLEDGEMENT
         elseif (Auth::user()->staff_no == $form->claimant_staff_no

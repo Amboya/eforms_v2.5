@@ -45,7 +45,7 @@ class HomeController extends Controller
 
         //count new forms
         $new_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.new_application'))
-            ->count();
+            ;
         //count pending forms
         $pending_forms = SubsistenceModel::
         where('config_status_id', '=', config('constants.subsistence_status.hod_approved'))
@@ -60,23 +60,33 @@ class HomeController extends Controller
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_disbursement'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_acknowledgement'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.destination_approval'))
+            ->orWhere('config_status_id',  '=', config('constants.exported'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.pre_audited'))
             ;
 
 
         //count closed forms
-        $closed_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed')
-        ) ->orWhere('config_status_id',  '=', config('constants.subsistence_status.audit_approved'))
-            ->count();
+        $closed_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.closed'))
+            ;
         //count rejected forms
         $rejected_forms = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.rejected'))
-            ->count();
+            ->orWhere('config_status_id',  '=', config('constants.export_failed'))
+           ;
+        //audited
+        $audit_approved = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.audit_approved'))
+            ;
+        //payment processing
+        $payment_processing = SubsistenceModel::where('config_status_id', config('constants.exported'))
+            ;
+
 
         //add to totals
         $totals['new_forms'] = $new_forms;
         $totals['pending_forms'] = $pending_forms;
         $totals['closed_forms'] = $closed_forms;
         $totals['rejected_forms'] = $rejected_forms;
+        $totals['audit_approved'] = $audit_approved;
+        $totals['exported'] = $payment_processing;
 
 
         //list all that needs me
@@ -178,6 +188,7 @@ class HomeController extends Controller
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.pre_audited'))
                 ->orWhere('config_status_id', config('constants.subsistence_status.queried'))
+                ->orWhere('config_status_id', config('constants.uploaded'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
 

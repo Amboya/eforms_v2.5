@@ -55,7 +55,7 @@
             <!-- Info boxes -->
             <div class="row">
                 <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-sm-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
                            href="{{route( 'subsistence.list', config('constants.subsistence_status.new_application') ) }}">
@@ -63,14 +63,15 @@
                         </a>
                         <div class="info-box-content">
                             <span class="info-box-text"> New Forms</span>
-                            <span class="info-box-number">{{ $totals['new_forms'] }}</span>
+                            <span class="info-box-number"> ZMW {{ $totals['new_forms']->get()->sum('net_amount_paid') }}</span>
+                            <span class="info-box-number">{{ $totals['new_forms']->count() }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-sm-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
                            href="{{route( 'subsistence.list', 'pending')}}">
@@ -78,10 +79,8 @@
                         </a>
                         <div class="info-box-content">
                             <span class="info-box-text"> Open Forms</span>
-                            <span class="info-box-number">{{ $totals['pending_forms']->count()  }}</span>
-
-                            {{--                            <span class="info-box-number"> Count : {{ $totals['pending_forms']->count() }} | Amount:   </span>--}}
-                        </div>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['pending_forms']->get()->sum('net_amount_paid'),2) }}</span>
+                            <span class="info-box-number">{{ $totals['pending_forms']->count() }}</span>                        </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
@@ -89,7 +88,23 @@
                 <!-- fix for small devices only -->
                 <div class="clearfix hidden-md-up"></div>
 
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-sm-12 col-sm-6 col-md-2">
+                    <div class="info-box mb-3">
+                        <a class="info-box-icon bg-gray elevation-1"
+                           href="{{route( 'subsistence.list', config('constants.exported'))}}">
+                            <span><i class="fa fa-file"></i></span>
+                        </a>
+                        <div class="info-box-content">
+                            <span class="info-box-text"> Payment Processing</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['exported']->get()->sum('net_amount_paid'), 2) }}</span>
+                            <span class="info-box-number">{{ $totals['exported']->count() }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+
+                <div class="col-sm-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
                            href="{{route( 'subsistence.list', config('constants.subsistence_status.closed'))}}">
@@ -97,13 +112,30 @@
                         </a>
                         <div class="info-box-content">
                             <span class="info-box-text"> Closed Forms</span>
-                            <span class="info-box-number">{{ $totals['closed_forms'] }}</span>
+                            <span class="info-box-number"> ZMW {{ number_format(  $totals['closed_forms']->get()->sum('net_amount_paid'), 2) }}</span>
+                            <span class="info-box-number">{{ $totals['closed_forms']->count() }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
+
+                <div class="col-sm-12 col-sm-6 col-md-2">
+                    <div class="info-box mb-3">
+                        <a class="info-box-icon bg-gray elevation-1"
+                           href="{{route( 'subsistence.list', config('constants.subsistence_status.audit_approved'))}}">
+                            <span><i class="fa fa-file"></i></span>
+                        </a>
+                        <div class="info-box-content">
+                            <span class="info-box-text"> Audited Forms</span>
+                            <span class="info-box-number"> ZMW {{number_format( $totals['audit_approved']->get()->sum('net_amount_paid') , 2)}}</span>
+                            <span class="info-box-number">{{ $totals['audit_approved']->count() }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-sm-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
                            href="{{route( 'subsistence.list', config('constants.subsistence_status.rejected'))}}">
@@ -111,7 +143,8 @@
                         </a>
                         <div class="info-box-content">
                             <span class="info-box-text"> Rejected Forms</span>
-                            <span class="info-box-number">{{ $totals['rejected_forms'] }}</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['rejected_forms']->get()->sum('net_amount_paid'), 2) }}</span>
+                            <span class="info-box-number">{{ $totals['rejected_forms']->count() }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
