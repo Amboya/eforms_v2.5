@@ -138,6 +138,7 @@ class StatusController extends Controller
         $model->description = $request->description;
         $model->status = $request->status;
         $model->status_next = $request->next;
+
         $model->eform_id = $request->eform_id;
         $model->status_failed = $request->fail;
         $model->save();
