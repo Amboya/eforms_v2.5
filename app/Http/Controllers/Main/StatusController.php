@@ -138,12 +138,13 @@ class StatusController extends Controller
         $model->description = $request->description;
         $model->status = $request->status;
         $model->status_next = $request->next;
+        $model->eform_id = $request->eform_id;
         $model->status_failed = $request->fail;
         $model->save();
 
         //log the activity
         ActivityLogsController::store($request, "Updating of System Status", "update", " system status updated", $model->id);
-        return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Created successfully');
+        return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Updated successfully');
 
     }
 
