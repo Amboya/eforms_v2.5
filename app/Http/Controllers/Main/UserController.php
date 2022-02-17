@@ -7,7 +7,7 @@ use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DirectoratesModel;
 use App\Models\Main\DivisionsModel;
 use App\Models\Main\EFormModel;
-use App\Models\main\FunctionalUnitModel;
+use App\Models\Main\FunctionalUnitModel;
 use App\Models\Main\GradesModel;
 use App\Models\Main\LocationModel;
 use App\Models\Main\PaypointModel;

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\EForms\Virement\VirementModel;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Http\Controllers\EForms\Virement\HomeController;
-use App\Models\main\TotalsModel;
+use App\Models\Main\TotalsModel;
 use Illuminate\Support\Facades\Auth;
 
 class VirementController extends Controller

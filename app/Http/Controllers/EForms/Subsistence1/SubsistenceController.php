@@ -16,7 +16,7 @@ use App\Models\Main\ProfileModel;
 use App\Models\Main\ProfilePermissionsModel;
 use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
-use App\Models\main\TotalsModel;
+use App\Models\Main\TotalsModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

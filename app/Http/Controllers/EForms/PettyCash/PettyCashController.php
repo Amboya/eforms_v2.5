@@ -14,7 +14,7 @@ use App\Models\Main\AttachedFileModel;
 use App\Models\Main\EformApprovalsModel;
 use App\Models\Main\ProfileAssigmentModel;
 use App\Models\Main\ProfileDelegatedModel;
-use App\Models\main\ProfileModel;
+use App\Models\Main\ProfileModel;
 use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
 use App\Models\Main\TaxModel;

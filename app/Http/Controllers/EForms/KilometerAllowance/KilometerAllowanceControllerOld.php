@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\EForms\KilometerAllowance\KilometerAllowanceModel;
 use App\Http\Controllers\EForms\KilometerAllowance\HomeController;
-use App\Models\main\TotalsModel;
+use App\Models\Main\TotalsModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
@@ -16,12 +16,12 @@ use App\Models\Main\AttachedFileModel;
 use App\Http\Controllers\Main\ActivityLogsController;
 use App\Models\Main\EFormModel;
 use App\Models\Main\ProfileAssigmentModel;
-use App\Models\main\ProfileModel;
-use App\Models\main\ProjectsModel;
-use App\Models\main\AccountsChartModel;
-use App\Models\main\ProfilePermissionsModel;
-use App\Models\main\EformApprovalsModel;
-use App\Models\main\StatusModel;
+use App\Models\Main\ProfileModel;
+use App\Models\Main\ProjectsModel;
+use App\Models\Main\AccountsChartModel;
+use App\Models\Main\ProfilePermissionsModel;
+use App\Models\Main\EformApprovalsModel;
+use App\Models\Main\StatusModel;
 use App\Models\User;
 
 class KilometerAllowanceController extends Controller
