@@ -52,7 +52,7 @@ class HomeController extends Controller
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.station_mgr_approved'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.hr_approved'))
             ->orWhere('config_status_id',  '=', config('constants.trip_status.hr_approved'))
-            ->orWhere('config_status_id', config('constants.trip_status.trip_authorised'))
+            ->orWhere('config_status_id',  '=', config('constants.trip_status.trip_authorised'))
             ->orWhere('config_status_id',  '=', config('constants.trip_status.hr_approved_trip'))
             ->orWhere('config_status_id',  '=', config('constants.trip_status.hod_approved_trip'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.chief_accountant'))
@@ -60,6 +60,7 @@ class HomeController extends Controller
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_disbursement'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.funds_acknowledgement'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.destination_approval'))
+            ->orWhere('config_status_id',  '=', config('constants.subsistence_status.dr_approved'))
             ->orWhere('config_status_id',  '=', config('constants.exported'))
             ->orWhere('config_status_id',  '=', config('constants.uploaded'))
             ->orWhere('config_status_id',  '=', config('constants.subsistence_status.pre_audited'))
@@ -154,23 +155,27 @@ class HomeController extends Controller
 
         } //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hod_approved'))
-                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
+            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.station_mgr_approved'))
+                ->orWhere('config_status_id', '=', config('constants.subsistence_status.dr_approved'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
 
-
-
+        }
+        //DIRECTOR
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_003')) {
+            $list = SubsistenceModel::where('config_status_id', config('constants.trip_status.accepted'))
+                ->orWhereIn('id', $list_inv)
+                ->orderBy('code')->paginate(50);
 
         }
 
         //for the SNR MANAGER
-//        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
-//            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hr_approved'))
-//                ->orWhere('config_status_id', '=', config('constants.trip_status.hr_approved_trip'))
-//                ->orWhereIn('id', $list_inv)
-//                ->orderBy('code')->paginate(50);
-//        }
+        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_015')) {
+            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.hod_approved'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
+                ->orWhereIn('id', $list_inv)
+                ->orderBy('code')->paginate(50);
+        }
         //for the CHIEF ACCOUNTANT
 //        elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
 //            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.station_mgr_approved'))

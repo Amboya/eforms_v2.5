@@ -488,6 +488,7 @@
                             @endif
                             {{--  CHIEF ACC--}}
                             @if( ( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')  )
+                               ||  ( $user->profile_id ==  config('constants.user_profiles.EZESCO_003')  )
                                ||  ( $user->profile_id ==  config('constants.user_profiles.EZESCO_011')  )
                                ||  ( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')  ) )
                                 <div class="" id="div_cac">
@@ -861,7 +862,7 @@
                         "<TD>" + value.staff_no + "</TD>" +
                         "<TD>" + value.action + "</TD>" +
                         "<TD>" + value.from_status.name + "</TD>" +
-                        "<TD>" + value.to_status.name + "</TD>" +
+                        // "<TD>" + value.to_status.name + "</TD>" +
                         "<TD>" + value.reason + "</TD>" +
                         "<TD>" + value.created_at + "</TD>" +
                         "</TR> ";
@@ -968,6 +969,7 @@
 
             //STATUS
             var accepted = {!!  json_encode(config('constants.trip_status.accepted')) !!};
+            var dr_approved = {!!  json_encode(config('constants.subsistence_status.dr_approved')) !!};
             var hod_approved = {!!  json_encode(config('constants.subsistence_status.hod_approved')) !!};
             var hod_approved_trip = {!!  json_encode(config('constants.trip_status.hod_approved_trip')) !!};
             var trip_authorised = {!!  json_encode(config('constants.trip_status.trip_authorised')) !!};
@@ -986,33 +988,71 @@
 
             //HOD
             if ((recipient.config_status_id == accepted)) {
-                $('#div_hod').html(hod_profile);
-                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
+
+
+
+                if( recipient.grade == "M3" || recipient.grade == "M2" || recipient.grade == "M1" ){
+                    next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_003')) !!};
+                    $('#div_cac').html(hod_profile_sub);
+                }else{
+                    next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
+                    $('#div_hod').html(hod_profile);
+                }
+
+
+
                 user_unit = recipient.user.user_unit_code;
 
             }
 
             //HR 1
-            else if ((recipient.config_status_id == hod_approved_trip)) {
-                html_div = hod_profile;
-                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
-                user_unit = recipient.user.user_unit_code;
-            }
-
-            //HR 2
-            else if ((recipient.config_status_id == hod_approved)) {
+            else if (
+                (recipient.config_status_id == station_mgr_approved)
+            ||  (recipient.config_status_id == dr_approved) ) {
+                // html_div = hod_profile;
                 html_div = hod_profile_sub;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
+
+
+                if( recipient.grade == "M3" || recipient.grade == "M2" || recipient.grade == "M1" ){
+                    user_unit = recipient.user.user_unit_code;
+                }else{
+                    //check if you belong to same dpts
+                    if(recipient.trip_hod_unit == recipient.user.user_unit_code){
+                        user_unit = recipient.user.user_unit_code;
+                    }else{
+                        user_unit = recipient.trip_hod_unit;
+                    }
+                }
+
+
+              //  user_unit = recipient.user.user_unit_code;
             }
 
+
             //SNR MANAGER  TRIP
-            else if ((recipient.config_status_id == hr_approved_trip)) {
+            else if ((recipient.config_status_id == hod_approved_trip)) {
                 // $('#div_snr').html(hod_profile);
                 html_div = hod_profile;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
                 user_unit = recipient.user.user_unit_code;
             }
 
+            //SNR MANAGER  TRIP
+            else if ((recipient.config_status_id == hod_approved)) {
+                html_div = hod_profile_sub;
+
+              //  html_div = hod_profile;
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
+              //  user_unit = recipient.user.user_unit_code;
+
+                //check if you belong to same dpts
+                if(recipient.trip_hod_unit == recipient.user.user_unit_code){
+                    user_unit = recipient.user.user_unit_code;
+                }else{
+                    user_unit = recipient.trip_hod_unit;
+                }
+            }
 
 
             {{--//SNR MANAGER--}}
@@ -1181,15 +1221,15 @@
                         $('#div_dest').html(html_div);
                     }
 
-                    var myDiv = document.getElementById("div_hr");
+                    var myDiv = document.getElementById("div_snr");
                     var dest1 = {!!  json_encode(config('constants.subsistence_status.hod_approved')) !!};
                     var dest2 = {!!  json_encode(config('constants.trip_status.hod_approved_trip')) !!};
                     if ((stage == dest1) && (mine_to_work == true)) {
                         myDiv.innerHTML = "";//remove all child elements inside of myDiv
-                        $('#div_hr').html(html_div);
+                        $('#div_snr').html(html_div);
                     } else if ((stage == dest2) && (mine_to_work == true)) {
                         myDiv.innerHTML = "";//remove all child elements inside of myDiv
-                        $('#div_hr').html(html_div);
+                        $('#div_snr').html(html_div);
                     } else if ((stage == dest1) && (mine_to_work == false)) {
                         myDiv.innerHTML = "";//remove all child elements inside of myDiv
                     } else if ((stage == dest2) && (mine_to_work == false)) {
@@ -1199,18 +1239,18 @@
                     }
 
 
-                    var mydiv_snr = document.getElementById("div_snr");
+                    var mydiv_snr = document.getElementById("div_hr");
 
-                    var hr_approved_trip = {!!  json_encode(config('constants.trip_status.hr_approved_trip')) !!};
-                    var hr_approved = {!!  json_encode(config('constants.subsistence_status.hr_approved')) !!};
+                    var hr_approved_trip = {!!  json_encode(config('constants.trip_status.station_mgr_approved')) !!};
+                    var hr_approved = {!!  json_encode(config('constants.subsistence_status.station_mgr_approved')) !!};
 
 
                     if ((stage == hr_approved_trip) && (mine_to_work == true)) {
                         mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
-                        $('#div_snr').html(html_div);
+                        $('#div_hr').html(html_div);
                     } else if ((stage == hr_approved) && (mine_to_work == true)) {
                         mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
-                        $('#div_snr').html(html_div);
+                        $('#div_hr').html(html_div);
                     } else if ((stage == hr_approved_trip) && (mine_to_work == false)) {
                         mydiv_snr.innerHTML = "";//remove all child elements inside of myDiv
                     } else if ((stage == hr_approved) && (mine_to_work == false)) {

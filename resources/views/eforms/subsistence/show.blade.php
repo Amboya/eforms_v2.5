@@ -651,8 +651,8 @@
 
 
                     @if($departmental)
-                        {{-- DEPARTMENTAL HR APPROVAL--}}
-                        @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
+                        {{-- DEPARTMENTAL SNR MANAGER APPROVAL--}}
+                        @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
                              &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')
                              &&  $form->user_unit->hrm_code == $user->profile_job_code
                              &&  $form->user_unit->hrm_unit == $user->profile_unit_code
@@ -694,7 +694,7 @@
 
                         {{-- SNR MANAGER--}}
                         @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
-                             &&  $form->config_status_id == config('constants.trip_status.hr_approved_trip')
+                             &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')
                              &&  $form->user_unit->dm_code == $user->profile_job_code
                              &&  $form->user_unit->dm_unit == $user->profile_unit_code
                             )
@@ -775,9 +775,10 @@
                         @endif
                     @endif
 
+
                     {{-- HR APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
-                         &&  $form->config_status_id == config('constants.subsistence_status.hod_approved')
+                         &&  $form->config_status_id == config('constants.subsistence_status.station_mgr_approved')
                          &&  $form->user_unit->hrm_code == $user->profile_job_code
                          &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                      )
@@ -816,9 +817,48 @@
                         </div>
                     @endif
 
+                    {{-- HR APPROVAL--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
+                         &&  $form->config_status_id == config('constants.subsistence_status.dr_approved')
+                     )
+                        <div class="">
+                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <hr>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>APPROVE
+                                        </button>
+                                        <button id="btnSubmit_reject" type="submit" name="approval"
+                                                class="btn btn-outline-danger ml-2 p-2  "
+                                                value='Rejected'>REJECT
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
 
                     {{--  HR APPROVAL 2--}}
-                    @if( $user->profile_id ==   config('constants.user_profiles.EZESCO_009')
+                    @if( $user->profile_id ==   config('constants.user_profiles.EZESCO_015')
                          &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')
                          &&  $departmental_hod ==  true )
 
@@ -842,7 +882,7 @@
 
                     {{-- SNR MANAGER--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
-                         &&  $form->config_status_id == config('constants.subsistence_status.hr_approved')
+                         &&  $form->config_status_id == config('constants.subsistence_status.hod_approved')
                          &&  $form->user_unit->dm_code == $user->profile_job_code
                          &&  $form->user_unit->dm_unit == $user->profile_unit_code
                         )
@@ -883,26 +923,67 @@
 
 
 
-                    {{--  SNR MANAGER 2--}}
-                    @if( $user->profile_id ==   config('constants.user_profiles.EZESCO_015')
-                         &&  $form->config_status_id == config('constants.trip_status.hr_approved_trip')
-                         &&  $departmental_hod ==  true )
-
+                    {{-- DIRECTOR--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_003')
+                         &&  $form->config_status_id == config('constants.trip_status.accepted')
+                        )
                         <div class="">
                             <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
                             <hr>
                             <div class="row">
-                                <div class="col-12 text-center">
-                                    <a href="{{ route('logout') }}" class="btn btn-outline-warning"
-                                       onclick="event.preventDefault();
-                                           document.getElementById('show-form'+{{$trip->id}}).submit();">
-                                        OPEN TRIP {{ $trip->code }} TO ACT
-                                    </a>
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>APPROVE
+                                        </button>
+                                        <button id="btnSubmit_reject" type="submit" name="approval"
+                                                class="btn btn-outline-danger ml-2 p-2  "
+                                                value='Rejected'>REJECT
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
                     @endif
+
+
+
+                    {{--  SNR MANAGER 2--}}
+{{--                    @if( $user->profile_id ==   config('constants.user_profiles.EZESCO_015')--}}
+{{--                         &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')--}}
+{{--                         &&  $departmental_hod ==  true )--}}
+
+{{--                        <div class="">--}}
+{{--                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>--}}
+{{--                            <hr>--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-12 text-center">--}}
+{{--                                    <a href="{{ route('logout') }}" class="btn btn-outline-warning"--}}
+{{--                                       onclick="event.preventDefault();--}}
+{{--                                           document.getElementById('show-form'+{{$trip->id}}).submit();">--}}
+{{--                                        OPEN TRIP {{ $trip->code }} TO ACT--}}
+{{--                                    </a>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+
+{{--                        </div>--}}
+{{--                    @endif--}}
 
                     {{-- CHIEF ACCOUNTANT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')

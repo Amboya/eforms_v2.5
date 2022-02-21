@@ -200,7 +200,7 @@
                                                         <select name="new_status_name" class="form-control">
                                                             <option value="">--Choose--</option>
                                                             @foreach($statuses as $status)
-                                                                <option value="{{$status->id}}">{{$status->name}}</option>
+                                                                <option value="{{$status->id ?? 0 }}">{{$status->eform->name ?? ""}}:{{$status->name ?? ""}}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>

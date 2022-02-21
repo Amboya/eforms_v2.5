@@ -106,21 +106,9 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer clearfix">
-                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )
-                    @if($pending < 1)
-                        {{--                                    <a class="btn btn-sm bg-gradient-green float-left "--}}
-                        {{--                                       title="Create"--}}
-                        {{--                                       data-toggle="modal"--}}
-                        {{--                                       data-target="#modal-trip">--}}
-                        {{--                                         New Trip--}}
-                        {{--                                    </a>--}}
-
-                        <a href="{{route('trip.create')}}"
-                           class="btn btn-sm bg-gradient-green float-left">New Trip</a>
-                    @else
-                        <a href="#" class="btn btn-sm btn-default float-left">New Trip Claim</a>
-                        <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
-                    @endif
+                @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_004')     )
+                    <a href="{{route('trip.create')}}"
+                       class="btn btn-sm bg-gradient-green float-left">New Trip</a>
                 @endif
             </div>
         </div>

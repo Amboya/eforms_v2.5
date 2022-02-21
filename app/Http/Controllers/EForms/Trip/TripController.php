@@ -548,19 +548,53 @@ class TripController extends Controller
         //[1B] check pending forms for me before i apply again
         $pending = SubsistenceModel::where('absc_absent_to', '>=', $form->date_from)
             ->where('absc_absent_from', '<=', $form->date_from)
-            ->where('claimant_staff_no', $user->staff_no)
-            ->where('config_status_id', config('constants.subsistence_status.reject'))
-            ->orWhere('config_status_id', config('constants.subsistence_status.destination_approval'))
+            ->whereRaw("claimant_staff_no = '".$user->staff_no."'
+           AND ( config_status_id = ".config('constants.subsistence_status.hod_approved')."
+                OR config_status_id = ".config('constants.subsistence_status.station_mgr_approved')."
+                OR config_status_id = ".config('constants.subsistence_status.hr_approved')."
+                OR config_status_id = ".config('constants.subsistence_status.chief_accountant')."
+                OR config_status_id = ".config('constants.subsistence_status.funds_disbursement')."
+                OR config_status_id = ".config('constants.subsistence_status.funds_acknowledgement')."
+                OR config_status_id = ".config('constants.subsistence_status.destination_approval')."
+                OR config_status_id = ".config('constants.trip_status.hr_approved')."
+                OR config_status_id = ".config('constants.trip_status.trip_authorised')."
+                OR config_status_id = ".config('constants.trip_status.hr_approved_trip')."
+                OR config_status_id = ".config('constants.trip_status.hod_approved_trip')."
+                OR config_status_id = ".config('constants.exported')."
+                OR config_status_id = ".config('constants.uploaded')."
+                OR config_status_id = ".config('constants.subsistence_status.pre_audited')."
+                OR config_status_id = ".config('constants.subsistence_status.dr_approved')."
+                ) ")
+
+            // config('constants.subsistence_status.dr_approved')
+//            ->where('config_status_id', '=', config('constants.subsistence_status.hod_approved'))
+//            ->orWhere('config_status_id', '=', config('constants.subsistence_status.station_mgr_approved'))
+//            ->orWhere('config_status_id', '=', config('constants.subsistence_status.station_mgr_approved'))
+//            ->orWhere('config_status_id', '=', config('constants.subsistence_status.hr_approved'))
+//            ->orWhere('config_status_id', '=', config('constants.trip_status.hr_approved'))
+//            ->orWhere('config_status_id', '=', config('constants.trip_status.trip_authorised'))
+//            ->orWhere('config_status_id', '=', config('constants.trip_status.hr_approved_trip'))
+//            ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
+//            ->orWhere('config_status_id', '=', config('constants.subsistence_status.chief_accountant'))
+//            ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_disbursement'))
+//            ->orWhere('config_status_id', '=', config('constants.subsistence_status.funds_acknowledgement'))
+//            ->orWhere('config_status_id', '=', config('constants.subsistence_status.destination_approval'))
+//            ->orWhere('config_status_id', '=', config('constants.exported'))
+//            ->orWhere('config_status_id', '=', config('constants.uploaded'))
+//            ->orWhere('config_status_id', '=', config('constants.subsistence_status.pre_audited'))
+
             ->count();
+
+      //  dd($pending);
+
         //[1B] check pending forms for me before i apply again
         $pendingb = SubsistenceModel::where('trip_id', $form->id)
             ->where('claimant_staff_no', $user->staff_no)
             ->count();
 
-        //   dd($pending);
-
         $pending = $pending + $pendingb;
 
+      //  dd($pending);
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -738,8 +772,6 @@ class TripController extends Controller
             $user->profile_id == config('constants.user_profiles.EZESCO_004')
             && $current_status == config('constants.trip_status.accepted')
         ) {
-
-
             $insert_reasons = true;
             //cancel status
             if ($request->approval == config('constants.approval.cancelled')) {
@@ -798,7 +830,7 @@ class TripController extends Controller
         } //FOR AUTHORIZER   // remove snr manager stage
         elseif (
             $user->profile_id == config('constants.user_profiles.EZESCO_015')
-            && $current_status == config('constants.trip_status.hr_approved_trip')
+            && $current_status == config('constants.trip_status.hod_approved_trip')
         ) {
             $insert_reasons = true;
             //cancel status
@@ -814,7 +846,7 @@ class TripController extends Controller
                 $new_status = config('constants.trip_status.trip_authorised');
                 $profile = config('constants.owner');
             } else {
-                $new_status = config('constants.trip_status.hr_approved_trip');
+                $new_status = config('constants.trip_status.hod_approved_trip');
                 $insert_reasons = false;
             }
             //update
@@ -980,7 +1012,7 @@ class TripController extends Controller
             $subject = 'Trip Form Needs Your Attention';
             $title = 'Trip to ' . $form->trip->name;
             $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', that needs your attention.
-            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form_state->name . ' stage </em>';
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form_state->name  ?? $form->status->name . ' stage </em>';
         } //check if this next profile is for a claimant and if the Trip is closed
         else if ($new_status == config('constants.trip_status.closed')) {
             $names = $names . '<br>' . $claimant_details->name;
@@ -988,7 +1020,7 @@ class TripController extends Controller
             $subject = 'Trip Form Closed Successfully';
             $title = 'Trip to ' . $form->trip->name;
             $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', has been closed successfully.
-            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form_state->name . ' stage </em>';
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form_state->name ?? $form->status->name  . ' stage </em>';
 
         } // other wise get the users
         else {
@@ -996,7 +1028,7 @@ class TripController extends Controller
             $subject = 'Trip Form Needs Your Attention';
             $title = 'Trip to ' . $form->trip->name;
             $message = 'This is to notify you that there is a Trip Form (' . $form->trip->code . ') raised by ' . $claimant_details->name . ', has been closed successfully.
-            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form_state->name . ' stage </em>';
+            <br>Please login to e-ZESCO by clicking on the button below to take action on the voucher.<br>The form is currently at <em>' . $form_state->name ?? $form->status->name . ' stage </em>';
         }
 
         /** send email to supervisor */
@@ -1194,7 +1226,7 @@ class TripController extends Controller
             );
         }
 
-        $form->invited = $invited + $form->invited ;
+        $form->invited = $invited + $form->invited;
 
         $form->save();
         //prepare details
