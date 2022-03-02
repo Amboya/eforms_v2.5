@@ -24,6 +24,8 @@ class Integration extends Controller
      */
     public function index()
     {
+
+        self::checkProcessed() ;
         $ready = config('constants.uploaded') ;
         //GET THE PETTY CASH MODEL if you are an admin
         $accounts = DB::select("SELECT * FROM eform_petty_cash_account where status_id = '{$ready}' ORDER BY  petty_cash_code  ");
@@ -66,6 +68,8 @@ class Integration extends Controller
             return back()->with('error', 'No invoices were selected');
         }
 
+        $user = auth()->user();
+
         //get the requested accounts
         $codes_array = array_unique($request->forms);
         $type = config('constants.account_type.expense');
@@ -101,7 +105,8 @@ class Integration extends Controller
                         'invoice_date' => $account->form->created_at,
                         'invoice_description' => $account->description,
                         'invoice_type' =>  config('constants.transaction_type.invoice_type'),
-                        'supplier_num' => $account->form->claimant_staff_no,
+//                       'supplier_num' => $account->form->claimant_staff_no,
+                        'supplier_num' =>  $user->staff_no,
                         'invoice_amount' => $account->form->total_payment,
                         'invoice_currency_code' =>config('constants.currency'),
                         'exchange_rate'  =>config('constants.exchange_rate'),
@@ -343,6 +348,52 @@ class Integration extends Controller
 
         return Redirect::back()->with('message', 'Submitted Successfully');
     }
+
+
+
+
+    public function checkProcessed(){
+
+        //check for all processed invoices
+        $list = ZescoItsInvInterfaceHeader::where('transaction_type', config('constants.transaction_type.petty_cash'))->get();
+        //mark the ones that have been rejected
+        $rejected = $list->where('process_yn', config('constants.unprocessed') )->whereNotNull('error_msg');
+
+        foreach ($rejected as $reject){
+            //mark form as as updated
+
+            $vaas = $reject->invoice_id ;
+            $affected_form = DB::table('eform_petty_cash')
+                ->where('code', $reject->invoice_id)
+                ->update(['config_status_id'  => config('constants.export_failed') ]);
+
+            //mark accounts as as updated
+            $affected_accounts = DB::table('eform_petty_cash_account')
+                ->where('petty_cash_code', $reject->invoice_id)
+                ->update(['status_id'  => config('constants.export_failed') ]);
+
+        }
+
+        //mark the ones that have been uploaded
+        $uploaded = $list->where('process_yn', config('constants.processed') )->whereNull('error_msg');
+
+      //  dd($uploaded);
+        foreach ($uploaded as $upload){
+            //mark form as as updated
+            $affected_form7 = DB::table('eform_petty_cash')
+                ->where('code', $upload->invoice_id)
+                ->update(['config_status_id'  => config('constants.exported') ]);
+            //mark accounts as as updated
+            $affected_accounts7 = DB::table('eform_petty_cash_account')
+                ->where('petty_cash_code', $upload->invoice_id)
+                ->update(['status_id'  => config('constants.exported') ] );
+
+        }
+
+    }
+
+
+
 
 
 }

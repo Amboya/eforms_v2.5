@@ -111,12 +111,15 @@ class PettyCashModel extends Model
 
             } else {
                 if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
+
                     //if you are just a requester, then only see your forms
                     static::addGlobalScope('staff_number', function (Builder $builder) use ($user) {
                         $builder->where('claimant_staff_no', $user->staff_no);
                     });
                 } else {
+
                     $fdsf = HomeController::getMyProfile(config('constants.eforms_id.petty_cash'));
+
                     $mine = $fdsf->pluck('user_unit_code')->toArray();
                     static::addGlobalScope('approve', function (Builder $builder) use ($user, $mine) {
                         $builder->where('claimant_staff_no', $user->staff_no)
@@ -147,6 +150,8 @@ class PettyCashModel extends Model
             }
         }
     }
+
+
 
     public function getTotalAttribute()
     {

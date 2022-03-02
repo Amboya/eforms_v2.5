@@ -25,13 +25,27 @@
     <!-- Select2 -->
     <script src="{{ asset('dashboard/plugins/select2/js/select2.full.min.js')}}"></script>
 
+{{--    <style>--}}
+{{--        html {--}}
+{{--            background: url({{ asset('dashboard/dist/img/slide1.jpg')}}) no-repeat center center fixed;--}}
+{{--            -webkit-background-size: cover;--}}
+{{--            -moz-background-size: cover;--}}
+{{--            -o-background-size: cover;--}}
+{{--            background-size: cover;--}}
+{{--        }--}}
+{{--    </style>--}}
+
     <style>
         html {
-            background: url({{ asset('dashboard/dist/img/slide1.jpg')}}) no-repeat center center fixed;
+            background: url({{ asset('dashboard/dist/img/Zesco_Panorama_1_50.jpg')}}) no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
+            background: #48c062;  /* fallback for old browsers */
+            background: linear-gradient(rgba(135, 197, 226, 0.36), rgba(72, 192, 98, 0.16)), url({{ asset('dashboard/dist/img/Zesco_Panorama_1_50.jpg')}});  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(rgba(135, 197, 226, 0.36), rgba(72, 192, 98, 0.16)), url({{ asset('dashboard/dist/img/Zesco_Panorama_1_50.jpg')}}); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
             background-size: cover;
+
         }
     </style>
 

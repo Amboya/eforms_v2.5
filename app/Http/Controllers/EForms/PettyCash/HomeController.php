@@ -28,28 +28,45 @@ class HomeController extends Controller
 
     public function index()
     {
-
-
         //list all that needs me
-        $get_profile = self::getMyProfile();
+      //  $get_profile =  \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.petty_cash'));
+
+
 
         //count new forms
-        $new_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
-            ->count();
-        //count pending forms
-        $pending_forms = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
-            ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
-            ->count();
+        $new_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application')) ;
+
+        //count pending
+        $pending_forms = PettyCashModel::where('config_status_id',  config('constants.petty_cash_status.hod_approved'))
+            ->orWhere('config_status_id',  config('constants.petty_cash_status.hr_approved'))
+            ->orWhere('config_status_id',  config('constants.petty_cash_status.chief_accountant'))
+        ;
         //count closed forms
         $closed_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
-            ->count();
+           ;
+        //count paid forms
+        $paid_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.funds_disbursement'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.receipt_approved'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved')) ;
+        //count auditing forms
+        $auditing_forms = PettyCashModel::where('config_status_id', config('constants.exported'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.queried'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.await_audit'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.audit_approved'))
+        ->orWhere('config_status_id', config('constants.uploaded'));
         //count rejected forms
         $rejected_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
-            ->count();
+            ->orWhere('config_status_id', config('constants.petty_cash_status.cancelled'))
+        ->orWhere('config_status_id', config('constants.export_failed'));
 
         //add to totals
         $totals['new_forms'] = $new_forms;
         $totals['pending_forms'] = $pending_forms;
+        $totals['paid_forms'] = $paid_forms;
+        $totals['auditing_forms'] = $auditing_forms;
         $totals['closed_forms'] = $closed_forms;
         $totals['rejected_forms'] = $rejected_forms;
 
@@ -62,6 +79,7 @@ class HomeController extends Controller
         $pending = self::pendingForMe();
 
         $list_for_auditors_action = 0;
+
         //for the EXPENDITURE OFFICE
         if (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')) {
             /** check if auditor created last months files */
@@ -89,50 +107,50 @@ class HomeController extends Controller
         return view('eforms.petty-cash.dashboard')->with($params);
     }
 
-    public static function getMyProfile(){
-
-//        if (auth()->check()) {
-//            //get the profile associated with petty cash, for this user
-//            $user = Auth::user();
+//    public static function getMyProfile(){
 //
-//            //[1]  GET YOUR PROFILE
-//            $profile_assignement = ProfileAssigmentModel::
-//            where('eform_id', config('constants.eforms_id.petty_cash'))
-//                ->where('user_id', $user->id)->first();
-//            $profile_assignement->load('profiles');
+////        if (auth()->check()) {
+////            //get the profile associated with petty cash, for this user
+////            $user = Auth::user();
+////
+////            //[1]  GET YOUR PROFILE
+////            $profile_assignement = ProfileAssigmentModel::
+////            where('eform_id', config('constants.eforms_id.petty_cash'))
+////                ->where('user_id', $user->id)->first();
+////            $profile_assignement->load('profiles');
+////
+////            //  use my profile - if i dont have one - give me the default
+////            $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
+////            $user->profile_id = $default_profile;
+////            $user->profile_unit_code = $user->user_unit_code;
+////            $user->profile_job_code = $user->job_code;
+////            $user->code_column = $profile_assignement->profiles->code_column ?? 'user_unit_id';
+////            $user->unit_column = $profile_assignement->profiles->unit_column  ?? 'id';
+////
+////            if($profile_assignement->profiles->id == config('constants.user_profiles.EZESCO_002')){
+////                $user->profile_job_code = $user->id;
+////            }
+////            $user->save();
+////
+////            //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
+////            $profile_delegated = ProfileDelegatedModel::
+////            where('eform_id', config('constants.eforms_id.budget_system'))
+////                ->where('delegated_to', $user->id)
+////                ->where('config_status_id', config('constants.active_state'));
+////            if ($profile_delegated->exists()) {
+////                //
+////                $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
+////                $user->profile_id = $default_profile;
+////                $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
+////                $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
+////                $user->code_column = $profile_delegated->first()->profile->code_column ?? 'user_unit_id';
+////                $user->unit_column = $profile_delegated->first()->profile->unit_column  ?? 'id';
+////
+////                $user->save();
+////            }
+////        }
 //
-//            //  use my profile - if i dont have one - give me the default
-//            $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
-//            $user->profile_id = $default_profile;
-//            $user->profile_unit_code = $user->user_unit_code;
-//            $user->profile_job_code = $user->job_code;
-//            $user->code_column = $profile_assignement->profiles->code_column ?? 'user_unit_id';
-//            $user->unit_column = $profile_assignement->profiles->unit_column  ?? 'id';
-//
-//            if($profile_assignement->profiles->id == config('constants.user_profiles.EZESCO_002')){
-//                $user->profile_job_code = $user->id;
-//            }
-//            $user->save();
-//
-//            //[2] THEN CHECK IF YOU HAVE A DELEGATED PROFILE - USE IT IF YOU HAVE -ELSE CONTINUE WITH YOURS
-//            $profile_delegated = ProfileDelegatedModel::
-//            where('eform_id', config('constants.eforms_id.budget_system'))
-//                ->where('delegated_to', $user->id)
-//                ->where('config_status_id', config('constants.active_state'));
-//            if ($profile_delegated->exists()) {
-//                //
-//                $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
-//                $user->profile_id = $default_profile;
-//                $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
-//                $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
-//                $user->code_column = $profile_delegated->first()->profile->code_column ?? 'user_unit_id';
-//                $user->unit_column = $profile_delegated->first()->profile->unit_column  ?? 'id';
-//
-//                $user->save();
-//            }
-//        }
-
-    }
+//    }
 
     public static function needsMeCount()
     {
@@ -140,43 +158,43 @@ class HomeController extends Controller
         //for the SYSTEM ADMIN
         if ($user->profile_id == config('constants.user_profiles.EZESCO_001')) {
             $list = PettyCashModel::whereDate('updated_at', \Carbon::today())->count();
-            $user->profile_unit_code = $user->user_unit_code;
-            $user->profile_job_code = $user->user_unit_id;
-            $user->unit_column = config('constants.workflow_columns.claimant_unit');
-            $user->code_column = config('constants.workflow_columns.claimant_code');
+//            $user->profile_unit_code = $user->user_unit_code;
+//            $user->profile_job_code = $user->user_unit_id;
+//            $user->unit_column = config('constants.workflow_columns.claimant_unit');
+//            $user->code_column = config('constants.workflow_columns.claimant_code');
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
             $list = PettyCashModel::where('config_status_id', '=', config('constants.petty_cash_status.new_application'))
                 ->orWhere('config_status_id', '=', config('constants.petty_cash_status.funds_disbursement'))
                 ->count();
-            $user->profile_unit_code = $user->user_unit_code;
-            $user->profile_job_code = $user->user_unit_id;
-            $user->unit_column = config('constants.workflow_columns.claimant_unit');
-            $user->code_column = config('constants.workflow_columns.claimant_code');
+//            $user->profile_unit_code = $user->user_unit_code;
+//            $user->profile_job_code = $user->user_unit_id;
+//            $user->unit_column = config('constants.workflow_columns.claimant_unit');
+//            $user->code_column = config('constants.workflow_columns.claimant_code');
 
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
                 // ->where('code_superior', Auth::user()->position->code )
                 ->count();
-            $user->unit_column = config('constants.workflow_columns.hod_unit');
-            $user->code_column = config('constants.workflow_columns.hod_code');
+//            $user->unit_column = config('constants.workflow_columns.hod_unit');
+//            $user->code_column = config('constants.workflow_columns.hod_code');
 
         } //for the HR
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hod_approved'))
                 ->count();
-            $user->unit_column = config('constants.workflow_columns.hrm_unit');
-            $user->code_column = config('constants.workflow_columns.hrm_code');
+//            $user->unit_column = config('constants.workflow_columns.hrm_unit');
+//            $user->code_column = config('constants.workflow_columns.hrm_code');
 
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hr_approved'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.receipt_approved'))
                 ->count();
-            $user->unit_column = config('constants.workflow_columns.ca_unit');
-            $user->code_column = config('constants.workflow_columns.ca_code');
+//            $user->unit_column = config('constants.workflow_columns.ca_unit');
+//            $user->code_column = config('constants.workflow_columns.ca_code');
 
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
@@ -184,15 +202,15 @@ class HomeController extends Controller
                 ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.queried'))
                 ->count();
-            $user->unit_column = config('constants.workflow_columns.expenditure_unit');
-            $user->code_column = config('constants.workflow_columns.expenditure_code');
+//            $user->unit_column = config('constants.workflow_columns.expenditure_unit');
+//            $user->code_column = config('constants.workflow_columns.expenditure_code');
 
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
                 ->count();
-            $user->unit_column = config('constants.workflow_columns.security_unit');
-            $user->code_column = config('constants.workflow_columns.security_code');
+//            $user->unit_column = config('constants.workflow_columns.security_unit');
+//            $user->code_column = config('constants.workflow_columns.security_code');
             //
         } //for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
@@ -200,14 +218,14 @@ class HomeController extends Controller
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
                 ->count();
-            $user->unit_column = config('constants.workflow_columns.audit_unit');
-            $user->code_column = config('constants.workflow_columns.audit_code');
+//            $user->unit_column = config('constants.workflow_columns.audit_unit');
+//            $user->code_column = config('constants.workflow_columns.audit_code');
         } else {
             $list = PettyCashModel::where('config_status_id', 0)->count();
-            $user->profile_unit_code = $user->user_unit_code;
-            $user->profile_job_code = $user->user_unit_id;
-            $user->unit_column = config('constants.workflow_columns.claimant_unit');
-            $user->code_column = config('constants.workflow_columns.claimant_code');
+//            $user->profile_unit_code = $user->user_unit_code;
+//            $user->profile_job_code = $user->user_unit_id;
+//            $user->unit_column = config('constants.workflow_columns.claimant_unit');
+//            $user->code_column = config('constants.workflow_columns.claimant_code');
         }
 
         $user->save();
@@ -294,6 +312,7 @@ class HomeController extends Controller
 //                ->where('config_status_id', '=', config('constants.petty_cash_status.receipt_approved'))
                 ->count();
         }
+
 
 
         return $pending;

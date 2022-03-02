@@ -109,8 +109,8 @@ class HomeController extends Controller
             where('eform_id', $eform_id)
                 ->where('user_id', $user->id)->first();
 
-
             if ($profile_assignement != null) {
+
                 //here we have a profile
                 $profile_assignement->load('profiles');
 
@@ -137,16 +137,22 @@ class HomeController extends Controller
             where('eform_id', $eform_id)
                 ->where('delegated_to', $user->id)
                 ->where('config_status_id', config('constants.active_state'));
+
             if ($profile_delegated->exists()) {
+
+              //  dd($profile_delegated->first());
                 //
                 $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
+
+                $user->profile_id = $default_profile;
                 $user->profile_id_delegated = $default_profile;
-                $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ?? $user->user_unit_code;
-                $user->profile_job_code = $profile_delegated->first()->delegated_job_code ?? $user->job_code;
-                $user->code_column = $profile_delegated->first()->profile->code_column ?? 'id';
-                $user->unit_column = $profile_delegated->first()->profile->unit_column ?? 'user_unit_code';
+                $user->profile_unit_code = $profile_delegated->first()->delegated_user_unit ;
+                $user->profile_job_code = $profile_delegated->first()->delegated_job_code ;
+                $user->code_column = $profile_delegated->first()->delegated_code_column ;
+                $user->unit_column = $profile_delegated->first()->delegated_unit_column ;
 
             }
+
             $user->save();
 
             //for security, auditor and expenditure
@@ -154,18 +160,18 @@ class HomeController extends Controller
                 || $user->profile_id == config('constants.user_profiles.EZESCO_013')
                 || $user->profile_id == config('constants.user_profiles.EZESCO_011')) {
                 $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
-//                    ->where('user_unit_cc_code', '!=', '0')
-                    ->orderBy('user_unit_description')
-                    ->get();
-            } else {
-
-
-                $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
-                    ->where($user->code_column, $user->profile_job_code)
-//                  ->where('user_unit_cc_code', '!=', '0')
                     ->orderBy('user_unit_description')
                     ->get();
             }
+            else {
+
+                $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
+                    ->where($user->code_column, $user->profile_job_code)
+                    ->orderBy('user_unit_description')
+                    ->get();
+
+            }
+
             return $my_user_units;
 
         }
@@ -400,7 +406,14 @@ class HomeController extends Controller
         $user_unit_code->load($profile->unit_column . '_user', $profile->unit_column . '_delegate_user');
         $users = $user_unit_code[$profile->unit_column . '_user'];
         $delegated = $user_unit_code[$profile->unit_column . '_delegate_user'];
-        $users->merge($delegated);
+        $users = $users->merge($delegated);
+
+//        $user_unit_code->load( $profile->unit_column . '_delegate_user');
+//        $delegated = $user_unit_code[$profile->unit_column . '_delegate_user'];
+
+//        dd($users);
+       // $users->merge($delegated);
+
 
         return $users;
     }

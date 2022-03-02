@@ -12,8 +12,6 @@ use App\Models\EForms\PettyCash\PettyCashModel;
 use App\Models\Main\AccountsChartModel;
 use App\Models\Main\AttachedFileModel;
 use App\Models\Main\EformApprovalsModel;
-use App\Models\Main\ProfileAssigmentModel;
-use App\Models\Main\ProfileDelegatedModel;
 use App\Models\Main\ProfileModel;
 use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
@@ -142,17 +140,14 @@ class PettyCashController extends Controller
                 // not cleared
                 $list = PettyCashModel::
                 where('config_status_id', config('constants.petty_cash_status.hod_approved'))
-                    ->orwhere('config_status_id', config('constants.petty_cash_status.hr_approved'))
-                    ->orwhere('config_status_id', config('constants.petty_cash_status.chief_accountant'))
-                    ->orwhere('config_status_id', config('constants.petty_cash_status.funds_disbursement'))
-                    ->orwhere('config_status_id', config('constants.petty_cash_status.new_application'))
-                    ->orwhere('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
-                    ->where('config_status_id', '!=', config('constants.petty_cash_status.security_approved'))
+                    ->orWhere('config_status_id', config('constants.petty_cash_status.hr_approved'))
+                    ->orWhere('config_status_id', config('constants.petty_cash_status.chief_accountant'))
                     ->orderBy('code')->get();
             } else {
                 //cleared
-                $list = PettyCashModel::where('config_status_id', '>', config('constants.petty_cash_status.new_application'))
-                    ->where('config_status_id', '<', config('constants.petty_cash_status.closed'))
+                $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hod_approved'))
+                    ->orWhere('config_status_id', config('constants.petty_cash_status.hr_approved'))
+                    ->orWhere('config_status_id', config('constants.petty_cash_status.chief_accountant'))
                     ->orderBy('code')->get();
             }
             $category = "Opened";
@@ -162,6 +157,7 @@ class PettyCashController extends Controller
             $category = "New Application";
         } else if ($value == config('constants.petty_cash_status.closed')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
                 ->orderBy('code')->get();
             $category = "Closed";
         } else if ($value == config('constants.petty_cash_status.rejected')) {
@@ -200,6 +196,29 @@ class PettyCashController extends Controller
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audit_box'))
                 ->orderBy('code')->get();
             $category = "Pending Audits Office Action";
+        } else if ($value == 'rejected') {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.cancelled'))
+                ->orWhere('config_status_id', config('constants.export_failed'))
+                ->orderBy('code')->get();
+            $category = "Rejected";
+        } else if ($value == 'paid') {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.funds_disbursement'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.receipt_approved'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
+                ->orderBy('code')->get();
+            $category = "Paid";
+        } else if ($value == 'auditing') {
+            $list = PettyCashModel::where('config_status_id', config('constants.exported'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.queried'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.await_audit'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.audit_approved'))
+                ->orWhere('config_status_id', config('constants.uploaded'))
+                ->orderBy('code')->get();
+            $category = "Auditing";
         } else if ($value == "needs_me") {
             $list = $totals_needs_me = HomeController::needsMeList();
             $category = "Needs My Attention";
@@ -589,10 +608,12 @@ class PettyCashController extends Controller
         $users_array = [];
         $not_claimant = true;
 
+
         //CLAIMANT TO HOD
         if ($current_status == config('constants.petty_cash_status.new_application')) {
             $superior_user_unit = $user_unit->hod_unit;
             $superior_user_code = $user_unit->hod_code;
+
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
 
         } //HOD TO HR
@@ -648,7 +669,7 @@ class PettyCashController extends Controller
         elseif ($current_status == config('constants.petty_cash_status.audited')) {
             $superior_user_unit = $user_unit->audit_unit;
             $superior_user_code = $user_unit->audit_unit;
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_002'));
         } // CHIEF-ACCOUNTANT PENDING REIMBURSEMENT
         elseif ($current_status == config('constants.petty_cash_status.reimbursement_box')) {
             $superior_user_code = $user_unit->ca_code;
@@ -668,51 +689,7 @@ class PettyCashController extends Controller
 
         if ($not_claimant) {
             //SELECT USERS
-            //[A]check for any users who have this assigned profile
-            $assigned_users = ProfileAssigmentModel::
-            where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('profile', $profile->code)
-                ->get();
-            //loop through assigned users
-            foreach ($assigned_users as $item) {
-                if ($profile->id == config('constants.user_profiles.EZESCO_014') ||
-                    $profile->id == config('constants.user_profiles.EZESCO_011') ||
-                    $profile->id == config('constants.user_profiles.EZESCO_013')) {
-                    //expenditure, audit and security
-                    $my_superiors = User::where('user_unit_code', $superior_user_unit)
-                        ->where('id', $item->user_id)
-                        ->get();
-                    foreach ($my_superiors as $item) {
-                        $users_array[] = $item;
-                    }
-                } else {
-                    //hod, hr, ca
-                    $my_superiors = User::where('user_unit_code', $superior_user_unit)
-                        ->where('job_code', $superior_user_code)
-                        ->where('id', $item->user_id)
-                        ->get();
-                    foreach ($my_superiors as $item) {
-                        $users_array[] = $item;
-                    }
-                }
-
-            }
-            //[B]check if one the users with the profile have this delegated profile
-            $delegated_users = ProfileDelegatedModel::
-            where('eform_id', config('constants.eforms_id.petty_cash'))
-                ->where('delegated_profile', $profile->id)
-                ->where('delegated_job_code', $superior_user_code)
-                ->where('delegated_user_unit', $superior_user_unit)
-                ->where('config_status_id', config('constants.active_state'))
-                ->get();
-
-//            dd( $profile->code  );
-            //loop through delegated users
-            foreach ($delegated_users as $item) {
-                $user = User::find($item->delegated_to);
-                $users_array[] = $user;
-            }
-
+            $users_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
         } else {
             $users_array[] = $claimant;
         }
@@ -720,6 +697,145 @@ class PettyCashController extends Controller
         //[3] return the list of users
         return $users_array;
     }
+
+
+//    public function findMyNextPerson($current_status, $user_unit, $claimant)
+//    {
+//        $users_array = [];
+//        $not_claimant = true;
+//
+//        //CLAIMANT TO HOD
+//        if ($current_status == config('constants.petty_cash_status.new_application')) {
+//            $superior_user_unit = $user_unit->hod_unit;
+//            $superior_user_code = $user_unit->hod_code;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
+//
+//        } //HOD TO HR
+//        elseif ($current_status == config('constants.petty_cash_status.hod_approved')) {
+//            $superior_user_code = $user_unit->hrm_code;
+//            $superior_user_unit = $user_unit->hrm_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+//
+//        } //HR TO CA
+//        elseif ($current_status == config('constants.petty_cash_status.hr_approved')) {
+//            $superior_user_code = $user_unit->ca_code;
+//            $superior_user_unit = $user_unit->ca_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
+//
+//        } //CA-TO-EXPENDITURE
+//        elseif ($current_status == config('constants.petty_cash_status.chief_accountant')) {
+//            $superior_user_unit = $user_unit->expenditure_unit;
+//            $superior_user_code = $user_unit->expenditure_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
+//
+//        } //EXPENDITURE TO CLAIMANT
+//        elseif ($current_status == config('constants.petty_cash_status.funds_disbursement')) {
+//            $not_claimant = false;
+//
+//        } //CLAIMANT TO SECURITY
+//        elseif ($current_status == config('constants.petty_cash_status.funds_acknowledgement')) {
+//            $superior_user_unit = $user_unit->security_unit;
+//            $superior_user_code = $user_unit->security_code;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_013'));
+//
+//        } //SECURITY TO EXPENDITURE
+//        elseif ($current_status == config('constants.petty_cash_status.security_approved')) {
+//            $superior_user_unit = $user_unit->expenditure_unit;
+//            $superior_user_code = $user_unit->expenditure_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
+//
+//        } //EXPENDITURE RECEIPT ATTACHED
+//        elseif ($current_status == config('constants.petty_cash_status.receipt_approved')) {
+//            $superior_user_code = $user_unit->ca_code;
+//            $superior_user_unit = $user_unit->ca_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
+//        } //EXPENDITURE TO AUDIT
+//        elseif ($current_status == config('constants.petty_cash_status.audit_box')) {
+//            $superior_user_unit = $user_unit->audit_unit;
+//            $superior_user_code = $user_unit->audit_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
+//        } //AUDIT TO EXPENDITURE
+//        elseif ($current_status == config('constants.petty_cash_status.queried')) {
+//            $superior_user_unit = $user_unit->expenditure_unit;
+//            $superior_user_code = $user_unit->expenditure_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
+//        } // AUDIT PENDING CHIEF-ACCOUNTANT
+//        elseif ($current_status == config('constants.petty_cash_status.audited')) {
+//            $superior_user_unit = $user_unit->audit_unit;
+//            $superior_user_code = $user_unit->audit_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_002'));
+//        } // CHIEF-ACCOUNTANT PENDING REIMBURSEMENT
+//        elseif ($current_status == config('constants.petty_cash_status.reimbursement_box')) {
+//            $superior_user_code = $user_unit->ca_code;
+//            $superior_user_unit = $user_unit->ca_unit;
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
+//        } // CLOSED
+//        elseif ($current_status == config('constants.petty_cash_status.closed')) {
+//            $superior_user_unit = "0";
+//            $superior_user_code = "0";
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_002'));
+//        } else {
+//            //no one
+//            $superior_user_unit = "0";
+//            $superior_user_code = "0";
+//            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_002'));
+//        }
+//
+//        if ($not_claimant) {
+//            //SELECT USERS
+//            //[A]check for any users who have this assigned profile
+//            $assigned_users = ProfileAssigmentModel::
+//            where('eform_id', config('constants.eforms_id.petty_cash'))
+//                ->where('profile', $profile->code)
+//                ->get();
+//            //loop through assigned users
+//            foreach ($assigned_users as $item) {
+//                if ($profile->id == config('constants.user_profiles.EZESCO_014') ||
+//                    $profile->id == config('constants.user_profiles.EZESCO_011') ||
+//                    $profile->id == config('constants.user_profiles.EZESCO_013')) {
+//                    //expenditure, audit and security
+//                    $my_superiors = User::where('user_unit_code', $superior_user_unit)
+//                        ->where('id', $item->user_id)
+//                        ->get();
+//                    foreach ($my_superiors as $item) {
+//                        $users_array[] = $item;
+//                    }
+//                } else {
+//                    //hod, hr, ca
+//                    $my_superiors = User::where('user_unit_code', $superior_user_unit)
+//                        ->where('job_code', $superior_user_code)
+//                        ->where('id', $item->user_id)
+//                        ->get();
+//                    foreach ($my_superiors as $item) {
+//                        $users_array[] = $item;
+//                    }
+//                }
+//
+//            }
+//            //[B]check if one the users with the profile have this delegated profile
+//            $delegated_users = ProfileDelegatedModel::
+//            where('eform_id', config('constants.eforms_id.petty_cash'))
+//                ->where('delegated_profile', $profile->id)
+//                ->where('delegated_job_code', $superior_user_code)
+//                ->where('delegated_user_unit', $superior_user_unit)
+//                ->where('config_status_id', config('constants.active_state'))
+//                ->get();
+//
+////            dd( $profile->code  );
+//            //loop through delegated users
+//            foreach ($delegated_users as $item) {
+//                $user = User::find($item->delegated_to);
+//                $users_array[] = $user;
+//            }
+//
+//        } else {
+//            $users_array[] = $claimant;
+//        }
+//
+//        //[3] return the list of users
+//        return $users_array;
+//    }
+
 
     /**
      * Generate Voucher Code
@@ -760,14 +876,11 @@ class PettyCashController extends Controller
      */
     public function show($id)
     {
-        //GET THE PETTY CASH MODEL if you are an admin
-        //  if (auth()->user()->type_id == config('constants.user_types.developer')) {
+        //GET THE PETTY CASH MODEL
+        //  - If you are an admin
         $list = DB::select("SELECT * FROM eform_petty_cash where id = {$id} ");
         $form = PettyCashModel::hydrate($list)->first();
-//        } else {
-//            //find the petty cash with that id
-//            $form = PettyCashModel::find($id);
-//        }
+
         $receipts = AttachedFileModel::where('form_id', $form->code)
             ->where('form_type', config('constants.eforms_id.petty_cash'))
             ->where('file_type', config('constants.file_type.receipt'))
@@ -1443,16 +1556,17 @@ class PettyCashController extends Controller
 
             //check if there is need to create an account
             if ($request->change > 0) {
+
                 $des = "";
                 $des = $des . " " . $request->account_item . ",";
                 $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . number_format($request->credited_amount, 2, '.', '') . '.';
 
                 //find tax
-                $apply_tax = TaxModel::find($request->tax);
+                $apply_tax = TaxModel::where('id',$request->tax)->first();
+
                 $vat_rate = $apply_tax->tax;
 
                 if ($apply_tax->tax < 1) {
-
                     //[1] CREDITED ACCOUNT
                     //[1A] - money
                     $formAccountModel = PettyCashAccountModel::updateOrCreate(
@@ -1576,7 +1690,10 @@ class PettyCashController extends Controller
                         ]
                     );
 
-                } else {
+                }
+
+                else {
+
                     //calculation
                     $total_percent = 100 + $apply_tax->tax;
                     $tax_amount = ($request->credited_amount * $apply_tax->tax) / $total_percent;
@@ -1767,6 +1884,7 @@ class PettyCashController extends Controller
                         ]
                     );
                 }
+
 
             }
 //

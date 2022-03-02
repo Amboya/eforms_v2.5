@@ -40,7 +40,7 @@ class HomeController extends Controller
     public function index()
     {
         //list all that needs me
-        $get_profile = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+      //  $get_profile = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
 
 
         //count new forms

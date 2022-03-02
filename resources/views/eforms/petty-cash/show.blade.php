@@ -241,8 +241,10 @@
             <!-- /.card -->
 
             {{-- FINANCIAL POSTINGS  --}}
-            @if(  ($form->config_status_id >= config('constants.petty_cash_status.closed') )
-               )
+{{--            @if(--}}
+{{--    ($form->config_status_id >= config('constants.petty_cash_status.closed'))||--}}
+{{--    ($form->config_status_id >= config('constants.petty_cash_status.receipt_approved'))--}}
+{{--               )--}}
                 <div class="card">
                     <div class="card-header">
                         <h4 class="text-center">Financial Accounts Postings</h4>
@@ -261,7 +263,7 @@
                                         </thead>
 
                                         <tbody>
-                                        @foreach($form_accounts as $item)
+                                        @foreach($form_accounts->where('account_type', 'EXPENSE') as $item)
                                             <TR>
                                                 <TD><input list="accounts_list" type="text"
                                                            value="{{$item->account}}"
@@ -287,7 +289,7 @@
                         <span class="font-weight-normal">Change was: ZMW {{$form->change ?? 0}}</span>
                     </div>
                 </div>
-            @endif
+{{--            @endif--}}
             {{-- NEXT PERSONS TO ACT --}}
             @if(  $form->config_status_id != config('constants.petty_cash_status.closed')   )
                 <div class="card">
@@ -1021,12 +1023,12 @@
                                     <div id="divSubmit_show">
                                         <button id="btnSubmit_approve" type="submit" name="approval"
                                                 class="btn btn-outline-success p-2   "
-                                                value='Approved'>AUDITED
+                                                value='Approved'>CA AUDITED
                                         </button>
                                         <button id="btnSubmit_reject" type="submit"
                                                 name="approval"
                                                 class="btn btn-outline-danger p-2   "
-                                                value='Queried'>QUERIED
+                                                value='Queried'>CA QUERIED
                                         </button>
                                     </div>
                                     <div id="divSubmit_hide">

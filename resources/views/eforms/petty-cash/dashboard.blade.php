@@ -57,7 +57,7 @@
             <!-- Info boxes -->
             <div class="row">
                 <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
                            href="{{route( 'petty.cash.list', config('constants.petty_cash_status.new_application') ) }}">
@@ -65,22 +65,24 @@
                         </a>
                         <div class="info-box-content">
                             <span class="info-box-text"> New Forms</span>
-                            <span class="info-box-number">{{ $totals['new_forms'] }}</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['new_forms']->get()->sum('total'),2) }}</span>
+                            <span class="info-box-number">{{ $totals['new_forms']->count() }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
                            href="{{route( 'petty.cash.list', 'pending')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
-                            <span class="info-box-text"> Open Forms</span>
-                            <span class="info-box-number">{{ $totals['pending_forms'] }}</span>
+                            <span class="info-box-text"> Pending</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['pending_forms']->get()->sum('total'),2) }}</span>
+                            <span class="info-box-number">{{ $totals['pending_forms']->count() }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -89,29 +91,61 @@
                 <!-- fix for small devices only -->
                 <div class="clearfix hidden-md-up"></div>
 
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-2">
+                    <div class="info-box mb-3">
+                        <a class="info-box-icon bg-gray elevation-1"
+                           href="{{route( 'petty.cash.list', 'paid')}}">
+                            <span><i class="fa fa-file"></i></span>
+                        </a>
+                        <div class="info-box-content">
+                            <span class="info-box-text"> Paid</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['paid_forms']->get()->sum('total'),2) }}</span>
+                            <span class="info-box-number">{{ $totals['paid_forms']->count() }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
+                    <div class="info-box mb-3">
+                        <a class="info-box-icon bg-gray elevation-1"
+                           href="{{route( 'petty.cash.list', 'auditing')}}">
+                            <span><i class="fa fa-file"></i></span>
+                        </a>
+                        <div class="info-box-content">
+                            <span class="info-box-text"> Auditing</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['auditing_forms']->get()->sum('total'),2) }}</span>
+                            <span class="info-box-number">{{ $totals['auditing_forms']->count() }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
                            href="{{route( 'petty.cash.list', config('constants.petty_cash_status.closed'))}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
-                            <span class="info-box-text"> Closed Forms</span>
-                            <span class="info-box-number">{{ $totals['closed_forms'] }}</span>
+                            <span class="info-box-text"> Closed</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['closed_forms']->get()->sum('total'),2) }}</span>
+                            <span class="info-box-number">{{ $totals['closed_forms']->count() }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty.cash.list', config('constants.petty_cash_status.rejected'))}}">
+                           href="{{route( 'petty.cash.list', 'rejected')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
-                            <span class="info-box-text"> Rejected Forms</span>
-                            <span class="info-box-number">{{ $totals['rejected_forms'] }}</span>
+                            <span class="info-box-text"> Rejected</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['rejected_forms']->get()->sum('total'),2) }}</span>
+                            <span class="info-box-number">{{ $totals['rejected_forms']->count() }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -142,14 +176,14 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body p-2">
-                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')   )
-                                @if($auditor < 1)
-                                @else
-                                    <p class="text-danger  mb-10">
-                                           Please note that the transactions for the current period cannot be closed because the transactions for the previous period
-                                            have not been cleared by Audit. ({{$auditor}} transactions pending).</p>
-                                @endif
-                            @endif
+{{--                            @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_014')   )--}}
+{{--                                @if($auditor < 1)--}}
+{{--                                @else--}}
+{{--                                    <p class="text-danger  mb-10">--}}
+{{--                                           Please note that the transactions for the current period cannot be closed because the transactions for the previous period--}}
+{{--                                            have not been cleared by Audit. ({{$auditor}} transactions pending).</p>--}}
+{{--                                @endif--}}
+{{--                            @endif--}}
                             <div class="table-responsive mt-10 ">
                                 <table id="example1" class="table ">
                                     <thead>
@@ -207,12 +241,12 @@
                             <div class="row ">
                                 <div class=" col-lg-12 col-sm-12">
                                 @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002')  ||   Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_0013')   )
-                                    @if($pending < 1)
+                                    @if($pending == 0 )
                                         <a href="{{route('petty.cash.create')}}"
                                            class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
                                     @else
-                                        <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
-                                        <span class="text-warning m-3"> You can not raise a new petty cash because you already have an open petty cash.</span>
+                                        <a  href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
+                                        <span class="text-info m-3"> You can not raise a new petty cash because you already have an open petty cash.</span>
                                     @endif
                                 @endif
                             </div>

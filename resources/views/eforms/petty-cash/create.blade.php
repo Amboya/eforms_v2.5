@@ -245,7 +245,7 @@
 
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
+                <div class="card-footer mb-4">
                     <div class="row">
                         <div id="submit_not_possible" class="col-lg-12 col-sm-12 text-center">
                             <div class="alert alert-danger ">

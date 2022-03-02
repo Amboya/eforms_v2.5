@@ -255,10 +255,10 @@
                                                         Unit:</b>
                                                     @if(  Auth::user()->type_id ==  config('constants.user_types.developer')|| Auth::user()->type_id ==  config('constants.user_types.mgt')  )
 
-                                                    <a href="{{ route('logout') }}" class="text-dark"
-                                                       onclick="event.preventDefault();
+                                                        <a href="{{ route('logout') }}" class="text-dark"
+                                                           onclick="event.preventDefault();
                                                            document.getElementById('search-form12').submit();">
-                                                        {{$user->user_unit->user_unit_description  ?? ""}} </a>
+                                                            {{$user->user_unit->user_unit_description  ?? ""}} </a>
                                                 <form id="search-form12"
                                                       action="{{ route('main.user.unit.search.profile', $user->user_unit->id ) }}"
                                                       method="post" class="d-none">
@@ -331,7 +331,6 @@
                                                                     <th>Code</th>
                                                                     <th>Name</th>
                                                                     <th>Description</th>
-                                                                    <th></th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody id="profiles">
@@ -350,15 +349,6 @@
                                                                         <td> {{$item->profiles->code}}  </td>
                                                                         <td>  {{$item->profiles->name}} </td>
                                                                         <td>  {{$item->form->name}} </td>
-                                                                        <td>
-                                                                            <a class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px"
-                                                                                    title="Edit"
-                                                                                    data-toggle="modal"
-                                                                                    data-sent_data="{{$item}}"
-                                                                                    data-target="#modal-profile-delegate">
-                                                                              Delegate
-                                                                            </a>
-                                                                        </td>
                                                                     <tr>
                                                                 @endforeach
                                                                 </tbody>
@@ -428,6 +418,20 @@
                                                         @endif
                                                     </div>
                                                 </form>
+                                            </div>
+
+                                            <div class="col-lg-12 col-sm-12">
+                                                <hr>
+                                                <label>Delegate Profiles</label>
+                                                <div>
+                                                    <a class="btn btn-sm bg-gradient-gray float-left "
+                                                       style="margin: 1px"
+                                                       title="Edit"
+                                                       data-toggle="modal"
+                                                       data-target="#modal-profile-delegate">
+                                                        Delegate
+                                                    </a>
+                                                </div>
                                             </div>
 
                                         </div>
@@ -687,7 +691,8 @@
                                                 </button>
 
                                             </div>
-                                            <div class="col-6">  <div id="loader_c_2" style="display: none;">
+                                            <div class="col-6">
+                                                <div id="loader_c_2" style="display: none;">
                                                     <img src=" {{ asset('dashboard/dist/gif/Eclipse_loading.gif')}} "
                                                          width="100px"
                                                          height="100px">
@@ -695,18 +700,18 @@
 
                                             </div>
                                             @if(  Auth::user()->type_id ==  config('constants.user_types.developer')|| Auth::user()->type_id ==  config('constants.user_types.mgt')  )
-                                            <div class="col-2">
-                                                <label>Sync Workflow for : </label>
-                                                <a href="{{ route('logout') }}" class="text-dark"
-                                                   onclick="event.preventDefault();
+                                                <div class="col-2">
+                                                    <label>Sync Workflow for : </label>
+                                                    <a href="{{ route('logout') }}" class="text-dark"
+                                                       onclick="event.preventDefault();
                                                            document.getElementById('search-form123').submit();">
-                                                    {{$user->user_unit->user_unit_description  ?? ""}} </a>
-                                                <form id="search-form123"
-                                                      action="{{ route('main.user.unit.search.profile', $user->user_unit->id ) }}"
-                                                      method="post" class="d-none">
-                                                    @csrf
-                                                </form>
-                                            </div>
+                                                        {{$user->user_unit->user_unit_description  ?? ""}} </a>
+                                                    <form id="search-form123"
+                                                          action="{{ route('main.user.unit.search.profile', $user->user_unit->id ) }}"
+                                                          method="post" class="d-none">
+                                                        @csrf
+                                                    </form>
+                                                </div>
                                             @endif
                                             <div class="col-12">
                                                 <div id="table_body_div">
@@ -753,7 +758,8 @@
                                                     <div id="expenditure_div">
                                                     </div>
 
-                                                    <br> <label class="text-green">Management Accountants Approval</label>
+                                                    <br> <label class="text-green">Management Accountants
+                                                        Approval</label>
                                                     <hr>
                                                     <div id="ma_div">
                                                     </div>
@@ -803,40 +809,40 @@
                                 <!-- /.tab-pane -->
 
                                 <div class="tab-pane" id="pass_reset">
-                                    <div >
-                                            <!-- form start -->
-                                            <form method="POST" action="{{ route('main.user.reset.password', $user) }}">
-                                                @csrf
-                                                <div class="p-4">
+                                    <div>
+                                        <!-- form start -->
+                                        <form method="POST" action="{{ route('main.user.reset.password', $user) }}">
+                                            @csrf
+                                            <div class="p-4">
 
-                                                    <div class="form-group row">
-                                                        <label for="password"
-                                                               class="col-md-4 col-form-label text-md-right">{{ __('OTP') }}</label>
-                                                        <div class="col-md-6">
-                                                            <input id="password" type="otp"
-                                                                   class="form-control @error('otp') is-invalid @enderror" name="otp"
-                                                                   value="{{ old('otp') }}" required autocomplete="otp" autofocus>
-                                                            @error('otp')
-                                                            <span class="invalid-feedback" role="alert">
+                                                <div class="form-group row">
+                                                    <label for="password"
+                                                           class="col-md-4 col-form-label text-md-right">{{ __('OTP') }}</label>
+                                                    <div class="col-md-6">
+                                                        <input id="password" type="otp"
+                                                               class="form-control @error('otp') is-invalid @enderror"
+                                                               name="otp"
+                                                               value="{{ old('otp') }}" required autocomplete="otp"
+                                                               autofocus>
+                                                        @error('otp')
+                                                        <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group row mb-0">
-                                                        <div class="col-md-8 offset-md-4">
-                                                            <button type="submit" class="btn btn-primary">
-                                                                {{ __('Change Password') }}
-                                                            </button>
-                                                        </div>
+                                                        @enderror
                                                     </div>
                                                 </div>
-                                            </form>
+
+                                                <div class="form-group row mb-0">
+                                                    <div class="col-md-8 offset-md-4">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            {{ __('Change Password') }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-
-
                             </div>
                             <!-- /.tab-content -->
                         </div><!-- /.card-body -->
@@ -880,8 +886,6 @@
                                     <small id="fileHelp" class="form-text text-muted"><b>Click Image to change it</b>.
                                         Size of image should not be more than 2MB.</small>
                                 </label>
-
-
                             </div>
                         </div>
                     </div>
@@ -938,41 +942,25 @@
     <script>
         $('#modal-profile-delegate').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
-            var recipient = button.data('sent_data'); // Extract info from data-* attributes
+            // var recipient = button.data('sent_data'); // Extract info from data-* attributes
 
             var user = {!! json_encode($user) !!};
-            var html_name = " <h4 class='modal-title text-center'> Delegate "+user.name+"'s Profile</h4>" ;
+            var html_name = " <h4 class='modal-title text-center'> Delegate " + user.name + "'s Profile</h4>";
             $('#delegate_name').html(html_name);
 
             var html_values = "" +
                 "   <div class='row'> " +
                 "<div class='col-6'> " +
                 "<div class='form-group'> " +
-                "<label> Profile Owner ["+user.name +"]</label> " +
+                "<label> Profile Owner [" + user.name + "]</label> " +
                 "<input  class='form-control select2' id='owner_id' name='owner_id' required style='width: 100%;'" +
-                "value='"+user.staff_no +"' readonly> " +
+                "value='" + user.staff_no + "' readonly> " +
                 "</div> " +
                 "</div> " +
                 "<div class='col-6'> " +
                 "<div class='form-group'> " +
                 "<label>Enter Delegated User's Staff Number</label> " +
                 "<input  class='form-control select2' id='user_id' name='user_id' required style='width: 100%;'> " +
-                "</div> " +
-                "</div> " +
-                "<div class='col-6'> " +
-                "<div class='form-group'> " +
-                "<label>Select Profile</label> " +
-                "<select class='form-control select2' id='profile_select' name='profile' required style='width: 100%;'> " +
-                "<option  value='"+recipient.profiles.id +"' selected>"+recipient.profiles.name +"</option> </select> " +
-                "</div> " +
-                "</div> " +
-                "<div class='col-6 ''> " +
-                "<div class='form-group'> " +
-                "<label>Select E-Form</label> " +
-                "<select class='form-control select2' id='eform_select' name='eform_id' required" +
-                "style='width: 100%;'> " +
-                "<option  value='"+recipient.form.id +"' selected>"+recipient.form.name +"</option> </select> " +
-                "</select> " +
                 "</div> " +
                 "</div> " +
                 "<div class='col-6 ''> " +
@@ -1002,10 +990,7 @@
                     selected_value += $(this).val();
                     selected_index += $(this).index();
                 });
-
                 var profile = {!! json_encode($profiles->toArray()) !!};
-                // console.log(division[1].directorate.user_unit);
-                // console.log(selected_value);
                 responce = " <option selected disabled=\"true\"  value=\"\"> Select Profile</option>";
                 $.each(profile, function (index, value) {
                     if (value.eform_id == selected_value) {
@@ -1064,7 +1049,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1078,7 +1063,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1092,7 +1077,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1105,7 +1090,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1119,7 +1104,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1134,7 +1119,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1149,7 +1134,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1164,7 +1149,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1179,7 +1164,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1194,7 +1179,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1209,7 +1194,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1224,7 +1209,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1237,7 +1222,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1250,7 +1235,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1262,7 +1247,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1275,7 +1260,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";
@@ -1288,7 +1273,7 @@
                         responce_dr +=
                             "<div class='col-sm-4'>" +
                             "<span class='text-orange'> Name :</span> <span> " + value.name + "</span> <br>" +
-                            "<span class='text-orange'> Email :</span> <span> " +value.staff_no+" | " + value.email + "</span> <br>" +
+                            "<span class='text-orange'> Email :</span> <span> " + value.staff_no + " | " + value.email + "</span> <br>" +
                             "<span class='text-orange'>  Job Code :</span> <span>" + value.job_code + " </span> <br>" +
                             "<span class='text-orange'> User-Unit :</span> <span>" + value.user_unit_code + " </span> <br><br>" +
                             "</div>";

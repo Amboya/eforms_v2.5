@@ -453,43 +453,49 @@ class ProfileController extends Controller
 
         //get logged in user
         $owner = User::where('staff_no',$request->owner_id)->first();
+        $owner->load('user_profile');
+        $owner_profiles = $owner->user_profile ;
 
+        foreach ($owner_profiles as $owner_profile){
 
-        //get eform
-        $eform = EFormModel::find($request->eform_id);
+            //get eform
+            $eform = EFormModel::find($owner_profile->eform_id);
 
-        $profile = ProfileModel::find($request->profile);
+            $profile = ProfileModel::find($owner_profile->profile_id);
 
-        //create model
-        $model = ProfileDelegatedModel::firstOrCreate(
-            [
-                'eform_id' => $eform->id,
-                'eform_code' => $eform->name,
+            //create model
+            $model = ProfileDelegatedModel::firstOrCreate(
+                [
+                    'eform_id' => $eform->id,
+                    'eform_code' => $eform->name,
 
-                'delegated_to' => $delegated_user->first()->id,
-                'delegated_profile' => $profile->id,
-                'delegated_user_unit' => $owner->user_unit_code,
-                'delegated_job_code' => $owner->job_code,
-                'delegated_unit_column' => $owner->unit_column,
-                'delegated_code_column' => $owner->code_column,
-                'delegation_end' => $request->delegation_end_date,
-                'config_status_id' => config('constants.active_state'),
-                'created_by' => $user_login->id
-            ],
-            [
-                'eform_id' => $eform->id,
-                'eform_code' => $eform->name,
-                'delegated_to' => $delegated_user->first()->id,
-                'delegated_profile' => $profile->id,
-                'delegated_user_unit' => $owner->user_unit_code,
-                'delegated_job_code' => $owner->job_code,
-                'delegated_unit_column' => $owner->unit_column,
-                'delegated_code_column' => $owner->code_column,
-                'delegation_end' => $request->delegation_end_date,
-                'config_status_id' => config('constants.active_state'),
-                'owner'=> $owner->id ,
-                'created_by' => $user_login->id
-            ]);
+                    'delegated_to' => $delegated_user->first()->id,
+                    'delegated_profile' => $profile->id,
+                    'delegated_user_unit' => $owner->user_unit_code,
+                    'delegated_job_code' => $owner->job_code,
+                    'delegated_unit_column' => $owner->unit_column,
+                    'delegated_code_column' => $owner->code_column,
+                    'delegation_end' => $request->delegation_end_date,
+                    'config_status_id' => config('constants.active_state'),
+                    'created_by' => $user_login->id
+                ],
+                [
+                    'eform_id' => $eform->id,
+                    'eform_code' => $eform->name,
+                    'delegated_to' => $delegated_user->first()->id,
+                    'delegated_profile' => $profile->id,
+                    'delegated_user_unit' => $owner->user_unit_code,
+                    'delegated_job_code' => $owner->job_code,
+                    'delegated_unit_column' => $owner->unit_column,
+                    'delegated_code_column' => $owner->code_column,
+                    'delegation_end' => $request->delegation_end_date,
+                    'config_status_id' => config('constants.active_state'),
+                    'owner'=> $owner->id ,
+                    'created_by' => $user_login->id
+                ]);
+
+        }
+
 
         //log the activity
         ActivityLogsController::store($request, "Creating of Profile Delegation", "update", " system profile delegation created", json_encode($model->id));

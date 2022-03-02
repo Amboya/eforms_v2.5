@@ -175,12 +175,12 @@
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
                     @if( Auth::user()->profile_id ==  config('constants.user_profiles.EZESCO_002'))
-                        @if($pending < 1)
+                        @if($pending == 0)
                             <a href="{{route('petty.cash.create')}}"
                                class="btn btn-sm bg-gradient-green float-left">New Petty Cash</a>
                         @else
                             <a href="#" class="btn btn-sm btn-default float-left">New Petty Cash</a>
-                            <span class="text-danger m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
+                            <span class="text-info m-3"> Sorry, You can not raise a new petty cash because you already have an open petty cash.</span>
                         @endif
                     @endif
 
