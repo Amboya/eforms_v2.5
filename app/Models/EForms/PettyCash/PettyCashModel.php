@@ -107,6 +107,9 @@ class PettyCashModel extends Model
         if (auth()->check()) {
             $user = Auth::user();
 
+            $fdsf = HomeController::getMyProfile(config('constants.eforms_id.petty_cash'));
+            $mine = $fdsf->pluck('user_unit_code')->toArray();
+
             if ($user->type_id == config('constants.user_types.developer_9999')) {
 
             } else {
@@ -118,9 +121,6 @@ class PettyCashModel extends Model
                     });
                 } else {
 
-                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.petty_cash'));
-
-                    $mine = $fdsf->pluck('user_unit_code')->toArray();
                     static::addGlobalScope('approve', function (Builder $builder) use ($user, $mine) {
                         $builder->where('claimant_staff_no', $user->staff_no)
                             ->orWhereIn('user_unit_code', $mine);

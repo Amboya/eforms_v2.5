@@ -601,7 +601,6 @@
                                                     </div>
                                                 </form>
                                             </div>
-
                                             <div class="col-6">
                                                 <form role="form-assign_units" method="post"
                                                       action="{{route('main.user.unit.assign')}}">

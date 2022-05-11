@@ -114,6 +114,7 @@ class HomeController extends Controller
                 //here we have a profile
                 $profile_assignement->load('profiles');
 
+
                 $default_profile = $profile_assignement->profiles->id ?? config('constants.user_profiles.EZESCO_002');
                 $user->profile_id = $default_profile;
                 $user->profile_unit_code = $user->user_unit_code;
@@ -346,6 +347,8 @@ class HomeController extends Controller
 
         $user = auth()->user();
 
+     //   dd($user);
+
         //[1]  get sub profile
         $profile_assignement = ProfileAssigmentModel::
         where('eform_id', 41)
@@ -354,8 +357,9 @@ class HomeController extends Controller
 
         if ($profile_assignement == null) {
             $profile_assignement2 = ProfileAssigmentModel::
-            where('eform_id', 2)
-                ->where('user_id', $user->id)->first();
+
+                where('user_id', $user->id)->first();
+
 
             if($profile_assignement2 != null){
                 //create subsitence profile
@@ -407,6 +411,18 @@ class HomeController extends Controller
         $users = $user_unit_code[$profile->unit_column . '_user'];
         $delegated = $user_unit_code[$profile->unit_column . '_delegate_user'];
         $users = $users->merge($delegated);
+
+       // dd($user_unit_code);
+
+
+        //check for the profile
+        $users = $users->where('code_column' , $profile->code_column )
+            ->where('unit_column', $profile->unit_column );
+
+
+
+//        "code_column" => "hrm_code"
+//    "unit_column" => "hrm_unit"//
 
 //        $user_unit_code->load( $profile->unit_column . '_delegate_user');
 //        $delegated = $user_unit_code[$profile->unit_column . '_delegate_user'];

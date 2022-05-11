@@ -111,12 +111,12 @@ class ConfigWorkFlow extends Model
         return $this->hasMany(User::class, ['job_code' ], ['hod_code' ])->where('con_st_code', 'ACT');
     }
 
+
     //HOD
     public function hod_unit_user()
     {
         return $this->hasMany(User::class, ['job_code', 'user_unit_code'], ['hod_code', 'hod_unit'])->where('con_st_code', 'ACT');
     }
-
     public function hod_unit_delegate_user()
     {
         return $this->hasMany(User::class, ['profile_job_code', 'profile_unit_code'], ['hod_code', 'hod_unit'])->where('con_st_code', 'ACT');
@@ -136,12 +136,12 @@ class ConfigWorkFlow extends Model
     //        'divisional manager
     public function dm_unit_user()
     {
-        return $this->hasMany(User::class, ['job_code', 'user_unit_code'], ['dm_code', 'dm_unit'])->where('con_st_code', 'ACT');
+        return $this->hasMany(User::class, ['job_code', 'user_unit_code'], ['dm_code', 'dm_unit']) ;
     }
 
     public function dm_unit_delegate_user()
     {
-        return $this->hasMany(User::class, ['profile_job_code', 'profile_unit_code'], ['dm_code', 'dm_unit'])->where('con_st_code', 'ACT');
+        return $this->hasMany(User::class, ['profile_job_code', 'profile_unit_code'], ['dm_code', 'dm_unit']);
     }
 
     //    area manager

@@ -125,6 +125,9 @@ class SubsistenceModel extends Model
         if (auth()->check()) {
             $user = Auth::user();
 
+            $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+            $mine = $fdsf->pluck('user_unit_code')->toArray();
+
             if ($user->type_id == config('constants.user_types.developer')) {
 //
             } else {
@@ -135,8 +138,6 @@ class SubsistenceModel extends Model
                     });
                 }
                 else {
-                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-                    $mine = $fdsf->pluck('user_unit_code')->toArray();
 
                     if ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
 

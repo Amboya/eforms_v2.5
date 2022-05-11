@@ -14,7 +14,7 @@ return [
 
     'active' => "0",
     'not_active' => "1",
-    'version' => "2.1.0",
+    'version' => "2.5.0",
     'password_not_changed' => 0 ,
     'password_changed' => 1 ,
     'all' => "All",

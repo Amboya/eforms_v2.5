@@ -184,6 +184,12 @@ class ProfileController extends Controller
         $unit_column = $profile_modal->unit_column ;
         //make the update on config workflow
         if($code_column != "" && $unit_column != "" ) {
+
+            dd(3);
+            //
+            $new_user_details->code_column = $code_column;
+            $new_user_details->unit_column = $unit_column;
+
             //update the workflow
             $units = $request->units ;
             $work_flow = ConfigWorkFlow::whereIn('id', $units )
@@ -203,6 +209,8 @@ class ProfileController extends Controller
                     'profile' => $request->profile,
                     'created_by' => $user->id
                 ]);
+            $new_user_details->save();
+
             //log the activity
             ActivityLogsController::store($request, "Creating of Profile Assignment", "create profile assignment", " system profile assignment created", json_encode($model->id));
             //return
@@ -218,13 +226,17 @@ class ProfileController extends Controller
 
     public function assignmentStoreSingle(Request $request)
     {
+
         //get request user and profile
         $user = auth()->user();
         $profile_modal = ProfileModel::where('code', $request->profile)->first();
         //the users to swap
         $new_user_details = User::find( $request->user_id);
+        //test
+        $new_user_details->code_column = $profile_modal->code_column;
+        $new_user_details->unit_column = $profile_modal->unit_column;
 
-            //save the assignment
+        //save the assignment
             $model = ProfileAssigmentModel::updateOrCreate(
                 [
                     'user_id' => $request->user_id,
@@ -236,6 +248,8 @@ class ProfileController extends Controller
                     'profile' => $request->profile,
                     'created_by' => $user->id
                 ]);
+        $new_user_details->save();
+
             //log the activity
             ActivityLogsController::store($request, "Creating of Profile Assignment", "create profile assignment", " system profile assignment created", json_encode($model->id));
             //return
