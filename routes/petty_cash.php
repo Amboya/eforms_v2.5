@@ -98,3 +98,7 @@ Route::group([
     Route::get('business/units/{status}', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'businessUnits'])->name('petty.cash.invoices.business.units');
     Route::post('business/units', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'businessUnitsSearch'])->name('petty.cash.invoices.business.units.search');
 });
+
+
+Route::get('filtered/reports', \App\Http\Livewire\Eforms\PettyCash\Reports\FilteredReports::class)->name('petty.cash.filtered.reports');
+

@@ -31,6 +31,7 @@ class ReportsController extends Controller
         // Store a piece of data in the session...
         session(['eform_id' => config('constants.eforms_id.petty_cash')]);
         session(['eform_code' => config('constants.eforms_name.petty_cash')]);
+
     }
 
 
@@ -466,6 +467,8 @@ class ReportsController extends Controller
 
             $status_name = config('constants.money_given');
         } /* ****************************************
+
+
          * GET QUERIED
          * ***************************************/
         elseif ($status_id == config('constants.money_queried')) {

@@ -37,13 +37,12 @@ class UserUnitController extends Controller
     public static function sync()
     {
 
-        //get positions from phris
+        //get user units form isd prod organisational units
         $user_units_from_spms = UserUnitSpmsSyncModel::select('*')
             ->where('status', config('constants.user_unit_active'))
             ->get();
 
         foreach ($user_units_from_spms as $key => $item) {
-
             $model = ConfigWorkFlow::updateOrCreate(
                 [
 //                    'user_unit_description' => $item->description,
@@ -59,9 +58,6 @@ class UserUnitController extends Controller
                     'user_unit_status' => $item->status ?? '0',
                     'user_unit_superior' => $item->code_unit_superior ?? '0',
                 ]);
-
-            // dd($model);
-
         }
         //return back
         return Redirect::back()->with('message', 'User Units have been Synced successfully');

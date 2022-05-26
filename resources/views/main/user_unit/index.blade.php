@@ -68,7 +68,7 @@
                     </div>
 
                     <a  class="btn btn-tool" href="{{route('main.user.unit.sync')}}"
-                        title="Sync Grades">
+                        title="Sync User Units">
                         <i class="fas fa-sync"></i></a>
                 </div>
             </div>

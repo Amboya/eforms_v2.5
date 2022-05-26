@@ -5,6 +5,7 @@ namespace App\Models\EForms\PettyCash;
 use App\Http\Controllers\Main\HomeController;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DirectoratesModel;
+use App\Models\Main\DivisionsModel;
 use App\Models\Main\ProjectsModel;
 use App\Models\Main\StatusModel;
 use App\Models\User;
@@ -238,6 +239,11 @@ class PettyCashModel extends Model
     public function directorate()
     {
         return $this->belongsTo(DirectoratesModel::class, 'directorate_id', 'id');
+    }
+
+    public function division()
+    {
+        return $this->belongsTo(DivisionsModel::class, 'division_id', 'id');
     }
 
     public function status()

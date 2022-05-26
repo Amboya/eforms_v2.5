@@ -26,7 +26,7 @@
                 <li class="nav-item">
                     <a href="{{route('petty.cash.list', 'needs_me')}}" class="nav-link ">
                         <i class="nav-icon fas fa-laptop"></i>
-                        <p> My Attention</p><span class="badge badge-success right ml-2">{{$totals_needs_me}}</span>
+                        <p> My Attention</p><span class="badge badge-success right ml-2">{{$totals_needs_me ?? ""}}</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -253,6 +253,14 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
+                                <a href="{{route('petty.cash.filtered.reports')}}"
+                                   class="nav-link ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Filtered Reports
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{route('petty.cash.invoices.units',0)}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
@@ -293,6 +301,7 @@
                                 </a>
                             </li>
                         </ul>
+
                     </li>
                 @endif
 
