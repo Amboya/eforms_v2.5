@@ -38,8 +38,8 @@ return [
     'uploaded' => 323 ,
     'export_not_ready' => "141",
     'not_exported' => "41",
-    'audited' => 29,
     'exported' => "42",
+    'audited' => 29,
     'export_failed' => "43",
 
     'file_type' => [
@@ -62,10 +62,10 @@ return [
         'expense' => "EXPENSE",
         'operating' => "OPERATING",
     ],
-
     'grade_category' => [
         'senior_mgt' => 4 ,
     ],
+
 
 
     'team_email_list' =>  [
@@ -308,6 +308,7 @@ return [
         'pre_audited' => "303",
         'destination_approval' => '304',
         'dr_approved' => 333
+
 
     ],
 
