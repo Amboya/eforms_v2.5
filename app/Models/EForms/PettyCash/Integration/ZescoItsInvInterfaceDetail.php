@@ -9,10 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 class ZescoItsInvInterfaceDetail extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
-    //table name
-        protected $table = 'fms_invoice_interface_detail';
-//    protected $table = 'zesco_its_inv_interface_detail';
+    //test
+    //production
+    protected $connection = 'oracle_isd_prod';
+    protected $table = 'fms_invoice_interface_detail';
+
+
     //fields fillable
     protected $fillable = [
         'invoice_id',

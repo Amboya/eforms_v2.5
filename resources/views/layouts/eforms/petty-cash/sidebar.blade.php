@@ -196,7 +196,7 @@
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-file-download"></i>
                             <p>
-                                Integration
+                                FMS Integration
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
@@ -242,6 +242,7 @@
                 <li class="nav-header">SUMMARIES</li>
                 @if (Auth::user()->type_id == config('constants.user_types.developer') ||
                                Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007') ||
+                               Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011') ||
                                Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
                     <li class="nav-item">
                         <a href="#" class="nav-link">
@@ -252,14 +253,14 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{route('petty.cash.filtered.reports')}}"
-                                   class="nav-link ">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p> Filtered Reports
-                                    </p>
-                                </a>
-                            </li>
+{{--                            <li class="nav-item">--}}
+{{--                                <a href="{{route('petty.cash.filtered.reports')}}"--}}
+{{--                                   class="nav-link ">--}}
+{{--                                    <i class="far fa-circle nav-icon"></i>--}}
+{{--                                    <p> Filtered Reports--}}
+{{--                                    </p>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
                             <li class="nav-item">
                                 <a href="{{route('petty.cash.invoices.units',0)}}"
                                    class="nav-link ">
@@ -276,63 +277,65 @@
                                     </p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{route('petty.cash.invoices.divisions',0)}}"
-                                   class="nav-link ">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p> Divisions
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('petty.cash.invoices.duplicates',0)}}"
-                                   class="nav-link ">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p> Duplicates
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('petty.cash.invoices.business.units',0)}}"
-                                   class="nav-link ">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p> Business Units
-                                    </p>
-                                </a>
-                            </li>
+{{--                            <li class="nav-item">--}}
+{{--                                <a href="{{route('petty.cash.invoices.divisions',0)}}"--}}
+{{--                                   class="nav-link ">--}}
+{{--                                    <i class="far fa-circle nav-icon"></i>--}}
+{{--                                    <p> Divisions--}}
+{{--                                    </p>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="nav-item">--}}
+{{--                                <a href="{{route('petty.cash.invoices.duplicates',0)}}"--}}
+{{--                                   class="nav-link ">--}}
+{{--                                    <i class="far fa-circle nav-icon"></i>--}}
+{{--                                    <p> Duplicates--}}
+{{--                                    </p>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="nav-item">--}}
+{{--                                <a href="{{route('petty.cash.invoices.business.units',0)}}"--}}
+{{--                                   class="nav-link ">--}}
+{{--                                    <i class="far fa-circle nav-icon"></i>--}}
+{{--                                    <p> Business Units--}}
+{{--                                    </p>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
                         </ul>
 
                     </li>
                 @endif
 
 
-                <li class="nav-header">MANAGEMENT</li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-file-download"></i>
-                        <p>
-                            Petty Cash Float
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route( 'petty.cash.float.index') }}" class="nav-link ">
-                                <i class="nav-icon far fa-circle"></i>
-                                <p> Float Allocation
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route( 'petty.cash.float.index')  }}" class="nav-link ">
-                                <i class="nav-icon far fa-circle"></i>
-                                <p> Float Reimbursement
-                                </p>
-                            </a>
-                        </li>
-                    </ul>
+                <!-- PENDING FLOAT MANAGEMENT SYSTEM -->
 
-                <li class="nav-header">CONFIGURATIONS</li>
+{{--                <li class="nav-header">MANAGEMENT</li>--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a href="#" class="nav-link">--}}
+{{--                        <i class="nav-icon fas fa-file-download"></i>--}}
+{{--                        <p>--}}
+{{--                            Petty Cash Float--}}
+{{--                            <i class="fas fa-angle-left right"></i>--}}
+{{--                        </p>--}}
+{{--                    </a>--}}
+{{--                    <ul class="nav nav-treeview">--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="{{ route( 'petty.cash.float.index') }}" class="nav-link ">--}}
+{{--                                <i class="nav-icon far fa-circle"></i>--}}
+{{--                                <p> Float Allocation--}}
+{{--                                </p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="{{ route( 'petty.cash.float.index')  }}" class="nav-link ">--}}
+{{--                                <i class="nav-icon far fa-circle"></i>--}}
+{{--                                <p> Float Reimbursement--}}
+{{--                                </p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                    </ul>--}}
+
+{{--                <li class="nav-header">CONFIGURATIONS</li>--}}
 
                 <li class="nav-item">
                     <a href="{{route('main.profile.delegation')}}" class="nav-link ">

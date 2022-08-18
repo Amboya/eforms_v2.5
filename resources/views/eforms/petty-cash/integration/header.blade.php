@@ -89,7 +89,7 @@
                                     <td>{{$item->supplier_num}}</td>
                                     <td>{{$item->invoice_currency_code}} {{ number_format($item->invoice_amount , 2)}}</td>
                                     <td><span
-                                            class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? "none"}}</span>
+                                            class="badge badge-{{$item->status->html ?? "default"}}">{{$item->status->name ?? $item->process_yn }}</span>
                                     </td>
                                     <td>{{ $item->creation_date }}</td>
                                     <td><a href="{{ route('petty.cash.finance.details', $item->invoice_id) }}" class="btn btn-sm bg-orange" >

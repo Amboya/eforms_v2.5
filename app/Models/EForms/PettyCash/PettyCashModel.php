@@ -261,5 +261,10 @@ class PettyCashModel extends Model
         return $this->hasMany(PettyCashItemModel::class, 'eform_petty_cash_id', 'id');
     }
 
+    public function accounts()
+    {
+        return $this->hasMany(PettyCashAccountModel::class, 'eform_petty_cash_id', 'id');
+    }
+
 
 }

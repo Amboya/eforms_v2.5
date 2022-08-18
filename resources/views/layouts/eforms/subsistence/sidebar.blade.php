@@ -121,53 +121,53 @@
                 @if (Auth::user()->type_id == config('constants.user_types.developer') ||
                 Auth::user()->profile_id == config('constants.user_profiles.EZESCO_007') ||
                 Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014'))
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="#" class="nav-link">--}}
+{{--                            <i class="nav-icon fas fa-file-download"></i>--}}
+{{--                            <p>--}}
+{{--                                Export Transactions--}}
+{{--                                <i class="fas fa-angle-left right"></i>--}}
+{{--                            </p>--}}
+{{--                        </a>--}}
+{{--                        <ul class="nav nav-treeview">--}}
+{{--                            <li class="nav-item">--}}
+{{--                                --}}{{--                        <a href="{{route('subsistence.report', config('constants.all'))}}" class="nav-link ">--}}
+{{--                                --}}{{--                            <i class="nav-icon fas fa-file"></i>--}}
+{{--                                --}}{{--                            <p> All Reports--}}
+{{--                                --}}{{--                            </p>--}}
+{{--                                --}}{{--                        </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="nav-item">--}}
+{{--                                <a href="{{route('subsistence.report', config('constants.subsistence_status.exported'))}}"--}}
+{{--                                   class="nav-link ">--}}
+{{--                                    <i class="far fa-circle nav-icon"></i>--}}
+{{--                                    <p> Exported--}}
+{{--                                    </p>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="nav-item">--}}
+{{--                                <a href="{{route('subsistence.report', config('constants.subsistence_status.not_exported'))}}"--}}
+{{--                                   class="nav-link ">--}}
+{{--                                    <i class="far fa-circle nav-icon"></i>--}}
+{{--                                    <p> Not Exported--}}
+{{--                                    </p>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="nav-item">--}}
+{{--                                <a href="{{route('subsistence.report', config('constants.subsistence_status.export_failed'))}}"--}}
+{{--                                   class="nav-link ">--}}
+{{--                                    <i class="far fa-circle nav-icon"></i>--}}
+{{--                                    <p> Export Failed--}}
+{{--                                    </p>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                        </ul>--}}
+{{--                    </li>--}}
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-file-download"></i>
                             <p>
-                                Export Transactions
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                {{--                        <a href="{{route('subsistence.report', config('constants.all'))}}" class="nav-link ">--}}
-                                {{--                            <i class="nav-icon fas fa-file"></i>--}}
-                                {{--                            <p> All Reports--}}
-                                {{--                            </p>--}}
-                                {{--                        </a>--}}
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('subsistence.report', config('constants.subsistence_status.exported'))}}"
-                                   class="nav-link ">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p> Exported
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('subsistence.report', config('constants.subsistence_status.not_exported'))}}"
-                                   class="nav-link ">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p> Not Exported
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('subsistence.report', config('constants.subsistence_status.export_failed'))}}"
-                                   class="nav-link ">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p> Export Failed
-                                    </p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-file-download"></i>
-                            <p>
-                                Integration
+                                FMS Integration
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>

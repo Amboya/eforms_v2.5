@@ -2,6 +2,7 @@
 
 namespace App\Models\EForms\PettyCash;
 
+use App\Models\Main\AccountsChartModel;
 use App\Models\Main\StatusModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -69,41 +70,50 @@ class PettyCashAccountModel extends Model
         'status',
     ];
 
-    protected static function booted()
-    {
-        //check if authenticated user
-        if (auth()->check()) {
-            //get the profile for this user
-            $user = Auth::user();
-            //if you are just a requester, then only see your forms
-            if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
-                static::addGlobalScope('staff_number', function (Builder $builder) {
-                    $builder->where('claimant_staff_no', Auth::user()->staff_no);
-                });
-            } else {
-                //see forms for the
-                if ($user->profile_id == config('constants.user_profiles.EZESCO_007')
-                    || $user->profile_id == config('constants.user_profiles.EZESCO_009')
-                    || $user->profile_id == config('constants.user_profiles.EZESCO_004')) {
-                    static::addGlobalScope('ca', function (Builder $builder) {
-                        $builder->Where(Auth::user()->code_column, Auth::user()->profile_job_code);
-                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
-                    });
-                } //see forms for the
-                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')
-                    || $user->profile_id == config('constants.user_profiles.EZESCO_013')
-                    || $user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-                    static::addGlobalScope('security', function (Builder $builder) {
-                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
-                    });
-                }
-            }
-        }
-    }
+//    protected static function booted()
+//    {
+//        //check if authenticated user
+//        if (auth()->check()) {
+//            //get the profile for this user
+//            $user = Auth::user();
+//            //if you are just a requester, then only see your forms
+//            if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
+//                static::addGlobalScope('staff_number', function (Builder $builder) {
+//                    $builder->where('claimant_staff_no', Auth::user()->staff_no);
+//                });
+//            } else {
+//                //see forms for the
+//                if ($user->profile_id == config('constants.user_profiles.EZESCO_007')
+//                    || $user->profile_id == config('constants.user_profiles.EZESCO_009')
+//                    || $user->profile_id == config('constants.user_profiles.EZESCO_004')) {
+//                    static::addGlobalScope('ca', function (Builder $builder) {
+//                        $builder->Where(Auth::user()->code_column, Auth::user()->profile_job_code);
+//                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
+//                    });
+//                } //see forms for the
+//                elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')
+//                    || $user->profile_id == config('constants.user_profiles.EZESCO_013')
+//                    || $user->profile_id == config('constants.user_profiles.EZESCO_011')) {
+//                    static::addGlobalScope('security', function (Builder $builder) {
+//                        $builder->where(Auth::user()->unit_column, Auth::user()->profile_unit_code);
+//                    });
+//                }
+//            }
+//        }
+//    }
 
     public function status()
     {
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
+    }
+
+    public function creditted_account()
+    {
+        return $this->belongsTo(AccountsChartModel::class, 'creditted_account_id', 'code');
+    }
+    public function debitted_account()
+    {
+        return $this->belongsTo(AccountsChartModel::class, 'debitted_account', 'code');
     }
 
     public function form()

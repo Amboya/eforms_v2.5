@@ -4,6 +4,7 @@ namespace App\Http\Controllers\EForms\Subsistence;
 
 use App\Http\Controllers\Controller;
 
+use App\Models\EForms\Subsistence\Integration\ZescoItsInvInterfaceDetail;
 use App\Models\EForms\Subsistence\Integration\ZescoItsInvInterfaceHeader;
 use App\Models\EForms\Subsistence\SubsistenceAccountModel;
 use App\Models\EForms\Subsistence\SubsistenceModel;
@@ -50,8 +51,6 @@ class Integration extends Controller
         $list = SubsistenceAccountModel::hydrate($accounts);
         $list->load("form.user_unit");
 
-       // dd($list);
-
         $category = 'Subsistence Details Ready to be Uploaded';
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -64,7 +63,6 @@ class Integration extends Controller
     public function send(Request $request)
     {
         //get the requested accounts
-
         if($request->forms == null ){
             return back()->with('error', 'No subsistence invoices were selected');
         }
@@ -82,20 +80,15 @@ class Integration extends Controller
 
         //loop through the accounts
         foreach ($list as $account) {
-
             $org = $account->org_id;
-
-            //   dd($account->form);
-
             //check for header
-            $header = DB::select("SELECT count(invoice_num) as total FROM fms_invoice_interface_header
-                  WHERE invoice_num = '{$account->form->code}' AND org_id = {$org}   ");
-            $header_list = ZescoItsInvInterfaceHeader::hydrate($header)->first();
-
+            $header_list = ZescoItsInvInterfaceHeader::where('invoice_num', $account->form->code)
+                ->where('org_id', $org)
+                ->first();
             //
-            if($header_list->total  == 0){
+            if(  ($header_list->invoice_num ?? 0 ) == 0) {
                 // [1] insert into header
-                DB::table('fms_invoice_interface_header')->insert(
+                ZescoItsInvInterfaceHeader::insert(
                 //insert column
                     [
                         'invoice_id' => $account->form->code ,
@@ -110,7 +103,8 @@ class Integration extends Controller
                         'exchange_rate'  =>config('constants.exchange_rate'),
                         'gl_date' => $account->created_at,
                         'org_id' => $account->org_id,
-                        'creation_date' => $account->form->claim_date,
+                        'creation_date' =>  date('Y-m-d h:i:s') ,
+//                        'creation_date' => $account->form->claim_date,
                         'process_yn' => config('constants.unprocessed'),
 
                     ]
@@ -122,27 +116,25 @@ class Integration extends Controller
                     ->update(['config_status_id'  => config('constants.exported') ]);
             }
 
-
             //check for detail
-            $detail = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
-                  WHERE invoice_id = '{$account->form->code}' AND org_id = {$org}
-                    AND item_description = '{$account->description}' AND  gl_account = '{$account->account}' ");
-            $detail_list = ZescoItsInvInterfaceHeader::hydrate($detail)->first();
+            $detail_list = ZescoItsInvInterfaceDetail::where('invoice_id', $account->form->code)
+                ->where('org_id', $org)
+                ->where('gl_account', $account->account)
+                ->first();
 
-
-            if($detail_list->total  == 0) {
+            if(  ($detail_list->invoice_num ?? 0 ) == 0) {
 
                 ++$rec ;
                 //count line number
-                $detail_count = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
-                  WHERE invoice_id = '{$account->form->code}'  ");
+                $detail_count = ZescoItsInvInterfaceDetail::where('invoice_id'  , $account->form->code );
 
                 // [2] insert into detail
-                DB::table('fms_invoice_interface_detail')->insert(
+                ZescoItsInvInterfaceDetail::insert(
                 //insert column
                     [
                         'invoice_id' => $account->form->code,
-                        'line_number' => $detail_count[0]->total + 1,
+//                        'line_number' => $detail_count[0]->total + 1,
+                        'line_number' => $detail_count->count() + 1,
                         'amount' => $account->creditted_amount ?? ( "".$account->debitted_amount),
                         'item_description' => $account->description,
                         'org_id' => $account->org_id,
@@ -152,7 +144,8 @@ class Integration extends Controller
                         'gl_account' => $account->account,
                         'vat_rate' => $account->vat_rate ?? 0,
                         'line_type' => $account->line_type,
-                        'creation_date' => $account->created_at
+                        'creation_date' =>  date('Y-m-d h:i:s') ,
+//                        'creation_date' => $account->created_at
                     ]
                 );
 
@@ -164,6 +157,105 @@ class Integration extends Controller
 
         }
 
+//        //loop through the accounts
+//        foreach ($list as $account) {
+//
+//            $org = $account->org_id;
+//
+//            //   dd($account->form);
+//
+//            //check for header
+////            $header = DB::select("SELECT count(invoice_num) as total FROM fms_invoice_interface_header
+////                  WHERE invoice_num = '{$account->form->code}' AND org_id = {$org}   ");
+////            $header_list = ZescoItsInvInterfaceHeader::hydrate($header)->first();
+//
+//
+//
+//            $header_list = ZescoItsInvInterfaceHeader::where('invoice_num', $account->form->code)
+//                ->where('org_id', $org)
+//                ->first();
+//
+//
+//
+//
+//            //
+//            if($header_list->total  == 0){
+//                // [1] insert into header
+////                DB::table('fms_invoice_interface_header')->insert(
+//                ZescoItsInvInterfaceHeader::insert(
+//                //insert column
+//                    [
+//                        'invoice_id' => $account->form->code ,
+//                        'transaction_type' => config('constants.transaction_type.subsistence'),
+//                        'invoice_num' => $account->form->code,
+//                        'invoice_date' => $account->form->created_at,
+//                        'invoice_description' => $account->description,
+//                        'invoice_type' =>  config('constants.transaction_type.invoice_type'),
+//                        'supplier_num' => $account->form->claimant_staff_no,
+//                        'invoice_amount' => $account->form->net_amount_paid,
+//                        'invoice_currency_code' =>config('constants.currency'),
+//                        'exchange_rate'  =>config('constants.exchange_rate'),
+//                        'gl_date' => $account->created_at,
+//                        'org_id' => $account->org_id,
+//                        'creation_date' =>  date('Y-m-d h:i:s') ,
+//                        'process_yn' => config('constants.unprocessed'),
+//
+//                    ]
+//                );
+//
+//                //mark as as updated
+//                $affected_form = DB::table('eform_subsistence')
+//                    ->where('id', $account->form->id)
+//                    ->update(['config_status_id'  => config('constants.exported') ]);
+//            }
+//
+//
+//            //check for detail
+////            $detail = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
+////                  WHERE invoice_id = '{$account->form->code}' AND org_id = {$org}
+////                    AND item_description = '{$account->description}' AND  gl_account = '{$account->account}' ");
+////            $detail_list = ZescoItsInvInterfaceHeader::hydrate($detail)->first();
+//
+//            $detail_list = ZescoItsInvInterfaceDetail::where('invoice_id', $account->form->code)
+//                ->where('org_id', $org)
+//                ->where('gl_account', $account->account)
+//                ->first();
+//
+//            if($detail_list->total  == 0) {
+//
+//                ++$rec ;
+//                //count line number
+//                $detail_count = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
+//                  WHERE invoice_id = '{$account->form->code}'  ");
+//
+//                // [2] insert into detail
+////                DB::table('fms_invoice_interface_detail')->insert(
+//                ZescoItsInvInterfaceDetail::insert(
+//                //insert column
+//                    [
+//                        'invoice_id' => $account->form->code,
+//                        'line_number' => $detail_count[0]->total + 1,
+//                        'amount' => $account->creditted_amount ?? ( "".$account->debitted_amount),
+//                        'item_description' => $account->description,
+//                        'org_id' => $account->org_id,
+//                        'company_code' => $account->company,
+//                        'business_unit' => $account->business_unit_code,
+//                        'cost_centre' => $account->cost_center,
+//                        'gl_account' => $account->account,
+//                        'vat_rate' => $account->vat_rate ?? 0,
+//                        'line_type' => $account->line_type,
+//                        'creation_date' =>  date('Y-m-d h:i:s')
+//                    ]
+//                );
+//
+//                //mark as as updated
+//                $affected_account = DB::table('eform_subsistence_account')
+//                    ->where('id', $account->id)
+//                    ->update(['status_id'  =>  config('constants.exported')  ]);
+//            }
+//
+//        }
+
         return Redirect::back()->with('message', $rec. ' Uploaded successfully');
     }
 
@@ -171,7 +263,6 @@ class Integration extends Controller
     public  function sendFromSubistence(SubsistenceModel $subsistenceModel)
     {
         //get the requested accounts
-
         $type = config('constants.account_type.expense');
         $code = $subsistenceModel->code ;
         $accounts = DB::select("SELECT * FROM eform_subsistence_account WHERE subsistence_code = '{$code}' AND  account_type = '{$type}'    ");
@@ -188,14 +279,14 @@ class Integration extends Controller
             $org = $account->org_id;
 
             //check for header
-            $header = DB::select("SELECT count(invoice_num) as total FROM fms_invoice_interface_header
-                  WHERE invoice_num = '{$account->form->code}' AND org_id = {$org}   ");
-            $header_list = ZescoItsInvInterfaceHeader::hydrate($header)->first();
+            $header_list = ZescoItsInvInterfaceHeader::where('invoice_num', $account->form->code)
+                ->where('org_id', $org)
+                ->first();
 
             //
-            if($header_list->total  == 0){
+            if(  ($header_list->invoice_id ?? 0 ) == 0) {
                 // [1] insert into header
-                DB::table('fms_invoice_interface_header')->insert(
+                ZescoItsInvInterfaceHeader::insert(
                 //insert column
                     [
                         'invoice_id' => $account->form->code ,
@@ -210,7 +301,8 @@ class Integration extends Controller
                         'exchange_rate'  =>config('constants.exchange_rate'),
                         'gl_date' => $account->created_at,
                         'org_id' => $account->org_id,
-                        'creation_date' => $account->form->claim_date,
+                        'creation_date' =>  date('Y-m-d h:i:s') ,
+//                        'creation_date' => $account->form->claim_date,
                         'process_yn' => config('constants.unprocessed'),
 
                     ]
@@ -224,25 +316,25 @@ class Integration extends Controller
 
 
             //check for detail
-            $detail = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
-                  WHERE invoice_id = '{$account->form->code}' AND org_id = {$org}
-                    AND item_description = '{$account->description}' AND  gl_account = '{$account->account}' ");
-            $detail_list = ZescoItsInvInterfaceHeader::hydrate($detail)->first();
+            $detail_list = ZescoItsInvInterfaceDetail::where('invoice_id', $account->form->code)
+                ->where('org_id', $org)
+                ->where('gl_account', $account->account)
+                ->first();
 
 
-            if($detail_list->total  == 0) {
+            if(  ($detail_list->invoice_id ?? 0 ) == 0) {
 
                 ++$rec ;
                 //count line number
-                $detail_count = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
-                  WHERE invoice_id = '{$account->form->code}'  ");
+                $detail_count = ZescoItsInvInterfaceDetail::where('invoice_id'  , $account->form->code );
 
                 // [2] insert into detail
-                DB::table('fms_invoice_interface_detail')->insert(
+                ZescoItsInvInterfaceDetail::insert(
                 //insert column
                     [
                         'invoice_id' => $account->form->code,
-                        'line_number' => $detail_count[0]->total + 1,
+//                        'line_number' => $detail_count[0]->total + 1,
+                        'line_number' => $detail_count->count() + 1,
                         'amount' => $account->creditted_amount ?? ( "".$account->debitted_amount),
                         'item_description' => $account->description,
                         'org_id' => $account->org_id,
@@ -252,7 +344,8 @@ class Integration extends Controller
                         'gl_account' => $account->account,
                         'vat_rate' => $account->vat_rate ?? 0,
                         'line_type' => $account->line_type,
-                        'creation_date' => $account->created_at
+                        'creation_date' =>  date('Y-m-d h:i:s') ,
+//                        'creation_date' => $account->created_at
                     ]
                 );
 

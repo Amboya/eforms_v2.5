@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 class ZescoItsInvInterfaceHeader extends Model
 {
     use HasFactory;
-
-    //table name
+    use HasFactory;
+    public $timestamps = false;
+    //test
+    //production
+    protected $connection = 'oracle_isd_prod';
     protected $table = 'fms_invoice_interface_header';
-   // protected $table = 'zesco_its_inv_interface_header';
 
     //fields fillable
     protected $fillable = [

@@ -202,6 +202,7 @@ class HomeController extends Controller
                 ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.queried'))
                 ->count();
+
 //            $user->unit_column = config('constants.workflow_columns.expenditure_unit');
 //            $user->code_column = config('constants.workflow_columns.expenditure_code');
 
@@ -273,6 +274,7 @@ class HomeController extends Controller
             if ($list_for_auditors_action > 1) {
                 // not cleared
                 $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.chief_accountant'))
+                    ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
                     ->orWhere('config_status_id', config('constants.petty_cash_status.queried'))
                     ->orderBy('code')->paginate(50);
             } else {
@@ -281,6 +283,8 @@ class HomeController extends Controller
                     ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
                     ->orWhere('config_status_id', config('constants.petty_cash_status.queried'))
                     ->orderBy('code')->paginate(50);
+
+
             }
         } //for the SECURITY
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_013')) {

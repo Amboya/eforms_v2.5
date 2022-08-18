@@ -106,19 +106,20 @@
                             </thead>
                             <tbody>
 
-                            @foreach( $list as $item )
+                            @foreach( $forms as $form )
+                                @foreach( $form->accounts->where('account_type', config('constants.account_type.expense')) as $item )
 
                                 <tr>
                                     <td>
                                         <div class="icheck-warning d-inline">
-                                            <input type="checkbox" value="'{{$item->form->code ?? 0}}'" id="forms[]"
+                                            <input type="checkbox" value="{{$item->petty_cash_code ?? 0}}" id="forms[]"
                                                    name="forms[]">
                                         </div>
                                     </td>
                                     <td>
                                         <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault();
-                                               document.getElementById('show-form'+{{$item->eform_petty_cash_id ?? 0 }}).submit();"> {{$item->form->code ?? 0 }}</a>
+                                               document.getElementById('show-form'+{{$item->eform_petty_cash_id ?? 0 }}).submit();"> {{$item->petty_cash_code ?? 0 }}</a>
                                         <form id="show-form{{$item->invoice_id}}"
                                               action="{{ route('petty.cash.show', $item->eform_petty_cash_id ?? 0) }}"
                                               method="POST" class="d-none">
@@ -133,8 +134,8 @@
 
                                     <td>{{$item->vat_rate ?? 0}} </td>
 
-                                    <td>{{$item->form->user_unit->user_unit_cc_code}} : {{$item->form->user_unit->user_unit_bc_code}}</td>
-                                    <td>{{$item->form->user_unit->org_id}}</td>
+                                    <td>{{$form->user_unit->user_unit_cc_code ?? "" }} : {{$form->user_unit->user_unit_bc_code ?? ""}}</td>
+                                    <td>{{$form->user_unit->org_id ?? ""}}</td>
                                     <td>{{$item->company}}</td>
                                     <td>{{$item->intra_company}}</td>
                                     <td>{{$item->project}}</td>
@@ -158,6 +159,7 @@
                                     </td>
 
                                 </tr>
+                                @endforeach
                             @endforeach
                             </tbody>
 

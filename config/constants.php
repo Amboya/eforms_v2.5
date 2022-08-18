@@ -14,7 +14,7 @@ return [
 
     'active' => "0",
     'not_active' => "1",
-    'version' => "2.5.0",
+    'version' => "3.0.0",
     'password_not_changed' => 0 ,
     'password_changed' => 1 ,
     'all' => "All",
@@ -38,6 +38,7 @@ return [
     'uploaded' => 323 ,
     'export_not_ready' => "141",
     'not_exported' => "41",
+    'audited' => 29,
     'exported' => "42",
     'export_failed' => "43",
 

@@ -231,9 +231,9 @@
                     </div>
 
 
-                    <p><b>Note:</b> The system reference number is mandatory and is from
-                        any of the systems at ZESCO such as a work request number from PEMS, Task
-                        number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.
+                    <p><b>Note:</b> The system reference number can be gotten from
+                        any of the systems at ZESCO such as a work request number in PEMS, Task
+                        number in HQMS, Meeting Number in HQMS, Incident number from IMS etc.
                         giving rise to the expenditure</p>
 
                 </div>
@@ -263,7 +263,7 @@
                                         </thead>
 
                                         <tbody>
-                                        @foreach($form_accounts->where('account_type', 'EXPENSE') as $item)
+                                        @foreach($form_accounts as $item)
                                             <TR>
                                                 <TD><input list="accounts_list" type="text"
                                                            value="{{$item->account}}"
@@ -407,7 +407,7 @@
             <div class="card ">
                 <div class="card-header">
                     <h4 class="card-title text-bold text-orange">Approvals</h4>  <span
-                        class="badge badge-secondary right ml-2">{{$approvals->count()}}</span>
+                        class="badge badge-secondary right ml-2">{{ $approvals->count() }}</span>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
@@ -871,7 +871,7 @@
                                         <div class="col-lg-8 col-sm-12">
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="number" step="any" onchange="showChange()" class="form-control"
+                                                    <input min="0" max="{{$form->total_payment}}" type="number" step="any" onchange="showChange()" class="form-control"
                                                            name="change" id="change" required>
                                                 </div>
                                             </div>
@@ -908,7 +908,7 @@
                                                             @endforeach
                                                         </select>
                                                     </TD>
-                                                    <TD><input type="number" name="credited_amount"
+                                                    <TD><input type="number" min="0" max="{{$form->total_payment}}" name="credited_amount"
                                                                id="credited_amount1" class="form-control amount"
                                                                placeholder=" Credited Amount [ZMK]" readonly>
                                                     </TD>
@@ -924,7 +924,7 @@
                                                             @endforeach
                                                         </select>
                                                     </TD>
-                                                    <TD><input type="number" name="debited_amount"
+                                                    <TD><input type="number" name="debited_amount"  min="0" max="{{$form->total_payment}}"
                                                                class="form-control amount" id="debited_amount1"
                                                                placeholder="Amount [ZMK]" readonly>
                                                     </TD>
@@ -970,7 +970,7 @@
                                         {{--                                                value='Approved'>CLOSE PETTY.CASH.-}}
                                         {{--                                        </button>--}}
 
-                                        <div id="divSubmit_show mt-2">
+                                        <div id="divSubmit_show" class="mt-2">
                                             <button id="btnSubmit_approve" type="submit" name="approval"
                                                     class="btn btn-outline-success mr-2 p-2  "
                                                     value='Approved'>CLOSE PETTY-CASH
@@ -1218,6 +1218,53 @@
             </div>
 
         </form>
+
+
+
+            {{--  FORM PPROVALS--}}
+            <div class="card ">
+                <form id="send_to_fms_form" method="post" action="{{route('petty.cash.finance.send.single', $form )}}">
+                    @csrf
+
+                    {{--  CHIEF ACCOUNTANT AUDITING--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
+                       &&  $form->config_status_id == config('constants.petty_cash_status.audited')
+                       &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
+                      )
+                        <!-- /.card-body -->
+                            <div class="card-body">
+                        <div class="">
+                            <div class="row">
+                                <div class="col-lg-2 col-sm-12 text-left ">
+                                    <div id="divSubmit_show2">
+                                        <button id="btnSubmit_approve2" type="submit" name="approval"
+                                                class="btn btn-outline-success p-2   "
+                                                value='Approved'>RAISE INVOICE IN FMS
+                                        </button>
+                                        <button id="btnSubmit_reject2" style="display:none" type="submit"
+                                                name="approval"
+                                                class="btn btn-outline-danger p-2   "
+                                                value='Queried'>RAISE INVOICE IN FMS
+                                        </button>
+                                    </div>
+
+                                    <div id="divSubmit_hide2">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-lg-10 col-sm-12 text-left ">
+                                    <span>Clicking this button will create an invoice in oracle financials which will make it ready for payment</span>
+                                </div>
+                            </div>
+                        </div>
+                            </div>
+                    @endif
+                </form>
+            </div>
 
     </section>
     <!-- /.content -->
@@ -1560,6 +1607,22 @@
                     //do something here
                     $("#divSubmit_show").hide();
                     $("#divSubmit_hide").show();
+                    //continue submitting
+                    e.currentTarget.submit();
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#divSubmit_hide2").hide();
+            //disable the submit button
+            $("#btnSubmit_approve2").on('click', function () {
+                $("#send_to_fms_form").submit(function (e) {
+                    //  e.preventDefault()
+                    //do something here
+                    $("#divSubmit_show2").hide();
+                    $("#divSubmit_hide2").show();
                     //continue submitting
                     e.currentTarget.submit();
                 });

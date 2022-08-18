@@ -10,9 +10,11 @@ class ZescoItsInvInterfaceDetail extends Model
 {
     use HasFactory;
 
-    //table name
+    public $timestamps = false;
+    //test
+    //production
+    protected $connection = 'oracle_isd_prod';
     protected $table = 'fms_invoice_interface_detail';
-  //  protected $table = 'zesco_its_inv_interface_detail';
 
     //fields fillable
     protected $fillable = [

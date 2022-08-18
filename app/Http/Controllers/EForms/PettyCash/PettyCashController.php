@@ -667,9 +667,9 @@ class PettyCashController extends Controller
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
         } // AUDIT PENDING CHIEF-ACCOUNTANT
         elseif ($current_status == config('constants.petty_cash_status.audited')) {
-            $superior_user_unit = $user_unit->audit_unit;
-            $superior_user_code = $user_unit->audit_unit;
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_002'));
+            $superior_user_unit = $user_unit->expenditure_unit;
+            $superior_user_code = $user_unit->expenditure_unit;
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
         } // CHIEF-ACCOUNTANT PENDING REIMBURSEMENT
         elseif ($current_status == config('constants.petty_cash_status.reimbursement_box')) {
             $superior_user_code = $user_unit->ca_code;
@@ -889,7 +889,10 @@ class PettyCashController extends Controller
             ->where('form_type', config('constants.eforms_id.petty_cash'))
             ->where('file_type', config('constants.file_type.quotation'))
             ->get();
-        $form_accounts = PettyCashAccountModel::where('eform_petty_cash_id', $id)->get();
+
+        $form->load('accounts');
+        $form_accounts = $form->accounts ;
+
         $projects = ProjectsModel::all();
         $accounts = AccountsChartModel::all();
         $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.petty_cash'))
@@ -1153,7 +1156,7 @@ class PettyCashController extends Controller
                 for ($i = 0; $i < sizeof($request->credited_amount); $i++) {
                     $des = "";
                     $des = $des . " " . $request->account_items[$i] . ",";
-                    $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . number_format($request->credited_amount[$i], 2, '.', '') . '.';
+                    $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . number_format($request->credited_amount[$i], 4, '.', '') . '.';
 
                     //find tax
                     $apply_tax = TaxModel::find($request->tax[$i]);
@@ -1166,7 +1169,7 @@ class PettyCashController extends Controller
                         $formAccountModel = PettyCashAccountModel::updateOrCreate(
                             [
                                 'creditted_account_id' => $request->credited_account[$i],
-                                'creditted_amount' => number_format($request->credited_amount[$i], 2, '.', ''),
+                                'creditted_amount' => number_format($request->credited_amount[$i], 4, '.', ''),
                                 'account' => $request->credited_account[$i],
                                 'debitted_account_id' => $request->debited_account[$i],
                                 //'debitted_amount' => number_format($request->debited_amount[$i],2 , '.),',
@@ -1181,7 +1184,7 @@ class PettyCashController extends Controller
                             ],
                             [
                                 'creditted_account_id' => $request->credited_account[$i],
-                                'creditted_amount' => number_format($request->credited_amount[$i], 2, '.', ''),
+                                'creditted_amount' => number_format($request->credited_amount[$i], 4, '.', ''),
                                 'account' => $request->credited_account[$i],
                                 'debitted_account_id' => $request->debited_account[$i],
                                 //'debitted_amount' => number_format($request->debited_amount[$i],2 , '.),',
@@ -1230,7 +1233,7 @@ class PettyCashController extends Controller
                                 'creditted_account_id' => $request->credited_account[$i],
                                 //'creditted_amount' => number_format($request->credited_amount[$i],2 , '.),',
                                 'debitted_account_id' => $request->debited_account[$i],
-                                'debitted_amount' => number_format($request->debited_amount[$i], 2, '.', ''),
+                                'debitted_amount' => number_format($request->debited_amount[$i], 4, '.', ''),
                                 'account' => $request->debited_account[$i],
                                 'eform_petty_cash_id' => $form->id,
                                 'created_by' => $user->id,
@@ -1245,7 +1248,7 @@ class PettyCashController extends Controller
                                 'creditted_account_id' => $request->credited_account[$i],
                                 //'creditted_amount' => number_format($request->credited_amount[$i],2 , '.),',
                                 'debitted_account_id' => $request->debited_account[$i],
-                                'debitted_amount' => number_format($request->debited_amount[$i], 2, '.', ''),
+                                'debitted_amount' => number_format($request->debited_amount[$i], 4, '.', ''),
                                 'account' => $request->debited_account[$i],
 
                                 'eform_petty_cash_id' => $form->id,
@@ -1284,7 +1287,7 @@ class PettyCashController extends Controller
                             ]
                         );
                     } else {
-                        //calculation
+                        /** CALCULATION*/
                         $total_percent = 100 + $apply_tax->tax;
                         $tax_amount = ($request->credited_amount[$i] * $apply_tax->tax) / $total_percent;
                         $without_tax = ($request->credited_amount[$i]) - $tax_amount;
@@ -1295,7 +1298,7 @@ class PettyCashController extends Controller
                         $formAccountModel = PettyCashAccountModel::updateOrCreate(
                             [
                                 'creditted_account_id' => $request->credited_account[$i],
-                                'creditted_amount' => number_format($request->credited_amount[$i], 2, '.', ''),
+                                'creditted_amount' => number_format($request->credited_amount[$i], 4, '.', ''),
                                 'account' => $request->credited_account[$i],
                                 'debitted_account_id' => $request->debited_account[$i],
                                 //'debitted_amount' => number_format($request->debited_amount[$i],2 , '.),',
@@ -1310,7 +1313,7 @@ class PettyCashController extends Controller
                             ],
                             [
                                 'creditted_account_id' => $request->credited_account[$i],
-                                'creditted_amount' => number_format($request->credited_amount[$i], 2, '.', ''),
+                                'creditted_amount' => number_format($request->credited_amount[$i], 4, '.', ''),
                                 'account' => $request->credited_account[$i],
                                 'debitted_account_id' => $request->debited_account[$i],
                                 //'debitted_amount' => number_format($request->debited_amount[$i],2 , '.),',
@@ -1360,7 +1363,7 @@ class PettyCashController extends Controller
                                 'creditted_account_id' => $request->credited_account[$i],
                                 //'creditted_amount' => number_format($request->credited_amount[$i],2 , '.),',
                                 'debitted_account_id' => $request->debited_account[$i],
-                                'debitted_amount' => number_format($without_tax, 2, '.', ''),
+                                'debitted_amount' => number_format($without_tax, 4, '.', ''),
                                 'account' => $request->debited_account[$i],
                                 'eform_petty_cash_id' => $form->id,
                                 'created_by' => $user->id,
@@ -1375,7 +1378,7 @@ class PettyCashController extends Controller
                                 'creditted_account_id' => $request->credited_account[$i],
                                 //'creditted_amount' => number_format($request->credited_amount[$i],2 , '.),',
                                 'debitted_account_id' => $request->debited_account[$i],
-                                'debitted_amount' => number_format($without_tax, 2, '.', ''),
+                                'debitted_amount' => number_format($without_tax, 4, '.', ''),
                                 'account' => $request->debited_account[$i],
 
                                 'eform_petty_cash_id' => $form->id,
@@ -1421,7 +1424,7 @@ class PettyCashController extends Controller
                                 'creditted_account_id' => $request->credited_account[$i],
 //                                'creditted_amount' => number_format($tax_amount,2 , '.',''),
                                 'debitted_account_id' => $apply_tax->account_code,
-                                'debitted_amount' => number_format($tax_amount, 2, '.', ''),
+                                'debitted_amount' => number_format($tax_amount, 4, '.', ''),
                                 'account' => $apply_tax->account_code,
 
                                 'eform_petty_cash_id' => $form->id,
@@ -1442,7 +1445,7 @@ class PettyCashController extends Controller
                                 'creditted_account_id' => $request->credited_account[$i],
 //                                'creditted_amount' => number_format($tax_amount,2 , '.',''),
                                 'debitted_account_id' => $apply_tax->account_code,
-                                'debitted_amount' => number_format($tax_amount, 2, '.', ''),
+                                'debitted_amount' => number_format($tax_amount, 4, '.', ''),
                                 'account' => $apply_tax->account_code,
 
                                 'eform_petty_cash_id' => $form->id,
@@ -1540,7 +1543,8 @@ class PettyCashController extends Controller
                 $new_status = config('constants.petty_cash_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.petty_cash_status.receipt_approved');
+//                $new_status = config('constants.petty_cash_status.receipt_approved');
+                $new_status = config('constants.petty_cash_status.await_audit');
             } else {
                 $new_status = config('constants.petty_cash_status.security_approved');
                 $insert_reasons = false;
@@ -1559,7 +1563,7 @@ class PettyCashController extends Controller
 
                 $des = "";
                 $des = $des . " " . $request->account_item . ",";
-                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . number_format($request->credited_amount, 2, '.', '') . '.';
+                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . number_format($request->credited_amount, 4, '.', '') . '.';
 
                 //find tax
                 $apply_tax = TaxModel::where('id',$request->tax)->first();
@@ -1572,7 +1576,7 @@ class PettyCashController extends Controller
                     $formAccountModel = PettyCashAccountModel::updateOrCreate(
                         [
                             'creditted_account_id' => $request->credited_account,
-                            'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
+                            'creditted_amount' => number_format($request->credited_amount, 4, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
                             //'debitted_amount' => number_format($request->debited_amount,2 , '.),',
@@ -1587,7 +1591,7 @@ class PettyCashController extends Controller
                         ],
                         [
                             'creditted_account_id' => $request->credited_account,
-                            'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
+                            'creditted_amount' => number_format($request->credited_amount, 4, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
                             //'debitted_amount' => number_format($request->debited_amount,2 , '.),',
@@ -1636,7 +1640,7 @@ class PettyCashController extends Controller
                             'creditted_account_id' => $request->credited_account,
                             //'creditted_amount' => number_format($request->credited_amount,2 , '.),',
                             'debitted_account_id' => $request->debited_account,
-                            'debitted_amount' => number_format($request->debited_amount, 2, '.', ''),
+                            'debitted_amount' => number_format($request->debited_amount, 4, '.', ''),
                             'account' => $request->debited_account,
                             'eform_petty_cash_id' => $form->id,
                             'created_by' => $user->id,
@@ -1651,7 +1655,7 @@ class PettyCashController extends Controller
                             'creditted_account_id' => $request->credited_account,
                             //'creditted_amount' => number_format($request->credited_amount,2 , '.),',
                             'debitted_account_id' => $request->debited_account,
-                            'debitted_amount' => number_format($request->debited_amount, 2, '.', ''),
+                            'debitted_amount' => number_format($request->debited_amount, 4, '.', ''),
                             'account' => $request->debited_account,
 
                             'eform_petty_cash_id' => $form->id,
@@ -1705,7 +1709,7 @@ class PettyCashController extends Controller
                     $formAccountModel = PettyCashAccountModel::updateOrCreate(
                         [
                             'creditted_account_id' => $request->credited_account,
-                            'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
+                            'creditted_amount' => number_format($request->credited_amount, 4, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
                             //'debitted_amount' => number_format($request->debited_amount,2 , '.),',
@@ -1720,7 +1724,7 @@ class PettyCashController extends Controller
                         ],
                         [
                             'creditted_account_id' => $request->credited_account,
-                            'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
+                            'creditted_amount' => number_format($request->credited_amount, 4, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
                             //'debitted_amount' => number_format($request->debited_amount,2 , '.),',
@@ -1770,7 +1774,7 @@ class PettyCashController extends Controller
                             'creditted_account_id' => $request->credited_account,
                             //'creditted_amount' => number_format($request->credited_amount,2 , '.),',
                             'debitted_account_id' => $request->debited_account,
-                            'debitted_amount' => number_format($without_tax, 2, '.', ''),
+                            'debitted_amount' => number_format($without_tax, 4, '.', ''),
                             'account' => $request->debited_account,
                             'eform_petty_cash_id' => $form->id,
                             'created_by' => $user->id,
@@ -1785,7 +1789,7 @@ class PettyCashController extends Controller
                             'creditted_account_id' => $request->credited_account,
                             //'creditted_amount' => number_format($request->credited_amount,2 , '.),',
                             'debitted_account_id' => $request->debited_account,
-                            'debitted_amount' => number_format($without_tax, 2, '.', ''),
+                            'debitted_amount' => number_format($without_tax, 4, '.', ''),
                             'account' => $request->debited_account,
 
                             'eform_petty_cash_id' => $form->id,
@@ -1830,9 +1834,9 @@ class PettyCashController extends Controller
                     $formAccountModel = PettyCashAccountModel::updateOrCreate(
                         [
                             'creditted_account_id' => $request->credited_account,
-//                            'creditted_amount' => number_format($tax_amount, 2, '.', ''),
+//                            'creditted_amount' => number_format($tax_amount, 4 '.', ''),
                             'debitted_account_id' => $apply_tax->account_code,
-                            'debitted_amount' => number_format($tax_amount, 2, '.', ''),
+                            'debitted_amount' => number_format($tax_amount, 4, '.', ''),
 
                             'account' => $apply_tax->account_code,
 
@@ -1852,9 +1856,9 @@ class PettyCashController extends Controller
                         ],
                         [
                             'creditted_account_id' => $request->credited_account,
-//                            'creditted_amount' => number_format($tax_amount, 2, '.', ''),
+//                            'creditted_amount' => number_format($tax_amount, 4 '.', ''),
                             'debitted_account_id' => $apply_tax->account_code,
-                            'debitted_amount' => number_format($tax_amount, 2, '.', ''),
+                            'debitted_amount' => number_format($tax_amount, 4, '.', ''),
 
                             'account' => $apply_tax->account_code,
 
@@ -1939,7 +1943,8 @@ class PettyCashController extends Controller
                 }
             }
 
-        } //FOR FOR CHIEF ACCOUNTANT AUDIT
+        }
+        //FOR FOR CHIEF ACCOUNTANT AUDIT
         elseif (auth()->user()->profile_id == config('constants.user_profiles.EZESCO_007')
             && $current_status == config('constants.petty_cash_status.receipt_approved')
         ) {
@@ -1964,7 +1969,8 @@ class PettyCashController extends Controller
             $form->accountant_date = $request->sig_date;
             $form->profile = auth()->user()->profile_id;
             $form->save();
-        } //FOR AUDITING OFFICE
+        }
+        //FOR AUDITING OFFICE
         elseif (auth()->user()->profile_id == config('constants.user_profiles.EZESCO_011')
             && $current_status == config('constants.petty_cash_status.audit_box')
         ) {
@@ -2036,7 +2042,7 @@ class PettyCashController extends Controller
             if ($request->change > 0) {
                 $des = "";
                 $des = $des . " " . $request->account_item . ",";
-                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . number_format($request->credited_amount, 2, '.', '') . '.';
+                $des = "Petty-Cash Serial: " . $form->code . ", Claimant: " . $form->claimant_name . ', Items : ' . $des . ' Amount: ' . number_format($request->credited_amount, 4, '.', '') . '.';
 
 
                 //find tax
@@ -2050,7 +2056,7 @@ class PettyCashController extends Controller
                     $formAccountModel = PettyCashAccountModel::updateOrCreate(
                         [
                             'creditted_account_id' => $request->credited_account,
-                            'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
+                            'creditted_amount' => number_format($request->credited_amount, 4, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
                             //'debitted_amount' => number_format($request->debited_amount,2 , '.),',
@@ -2065,7 +2071,7 @@ class PettyCashController extends Controller
                         ],
                         [
                             'creditted_account_id' => $request->credited_account,
-                            'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
+                            'creditted_amount' => number_format($request->credited_amount, 4, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
                             //'debitted_amount' => number_format($request->debited_amount,2 , '.),',
@@ -2114,7 +2120,7 @@ class PettyCashController extends Controller
                             'creditted_account_id' => $request->credited_account,
                             //'creditted_amount' => number_format($request->credited_amount,2 , '.),',
                             'debitted_account_id' => $request->debited_account,
-                            'debitted_amount' => number_format($request->debited_amount, 2, '.', ''),
+                            'debitted_amount' => number_format($request->debited_amount, 4, '.', ''),
                             'account' => $request->debited_account,
                             'eform_petty_cash_id' => $form->id,
                             'created_by' => $user->id,
@@ -2129,7 +2135,7 @@ class PettyCashController extends Controller
                             'creditted_account_id' => $request->credited_account,
                             //'creditted_amount' => number_format($request->credited_amount,2 , '.),',
                             'debitted_account_id' => $request->debited_account,
-                            'debitted_amount' => number_format($request->debited_amount, 2, '.', ''),
+                            'debitted_amount' => number_format($request->debited_amount, 4, '.', ''),
                             'account' => $request->debited_account,
 
                             'eform_petty_cash_id' => $form->id,
@@ -2180,7 +2186,7 @@ class PettyCashController extends Controller
                     $formAccountModel = PettyCashAccountModel::updateOrCreate(
                         [
                             'creditted_account_id' => $request->credited_account,
-                            'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
+                            'creditted_amount' => number_format($request->credited_amount, 4, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
                             'eform_petty_cash_id' => $form->id,
@@ -2194,7 +2200,7 @@ class PettyCashController extends Controller
                         ],
                         [
                             'creditted_account_id' => $request->credited_account,
-                            'creditted_amount' => number_format($request->credited_amount, 2, '.', ''),
+                            'creditted_amount' => number_format($request->credited_amount, 4, '.', ''),
                             'account' => $request->credited_account,
                             'debitted_account_id' => $request->debited_account,
                             'eform_petty_cash_id' => $form->id,
@@ -2242,7 +2248,7 @@ class PettyCashController extends Controller
                             'creditted_account_id' => $request->credited_account,
                             //'creditted_amount' => number_format($request->credited_amount,2 , '.),',
                             'debitted_account_id' => $request->debited_account,
-                            'debitted_amount' => number_format($without_tax, 2, '.', ''),
+                            'debitted_amount' => number_format($without_tax, 4, '.', ''),
                             'account' => $request->debited_account,
                             'eform_petty_cash_id' => $form->id,
                             'created_by' => $user->id,
@@ -2257,7 +2263,7 @@ class PettyCashController extends Controller
                             'creditted_account_id' => $request->credited_account,
                             //'creditted_amount' => number_format($request->credited_amount,2 , '.),',
                             'debitted_account_id' => $request->debited_account,
-                            'debitted_amount' => number_format($without_tax, 2, '.', ''),
+                            'debitted_amount' => number_format($without_tax, 4, '.', ''),
                             'account' => $request->debited_account,
 
                             'eform_petty_cash_id' => $form->id,
@@ -2302,9 +2308,9 @@ class PettyCashController extends Controller
                     $formAccountModel = PettyCashAccountModel::updateOrCreate(
                         [
                             'creditted_account_id' => $request->credited_account,
-//                            'creditted_amount' => number_format($tax_amount, 2, '.', ''),
+//                            'creditted_amount' => number_format($tax_amount, 4 '.', ''),
                             'debitted_account_id' => $apply_tax->account_code,
-                            'debitted_amount' => number_format($tax_amount, 2, '.', ''),
+                            'debitted_amount' => number_format($tax_amount, 4, '.', ''),
                             'account' => $apply_tax->account_code,
 
                             'eform_petty_cash_id' => $form->id,
@@ -2323,9 +2329,9 @@ class PettyCashController extends Controller
                         ],
                         [
                             'creditted_account_id' => $request->credited_account,
-//                            'creditted_amount' => number_format($tax_amount, 2, '.', ''),
+//                            'creditted_amount' => number_format($tax_amount, 4 '.', ''),
                             'debitted_account_id' => $apply_tax->account_code,
-                            'debitted_amount' => number_format($tax_amount, 2, '.', ''),
+                            'debitted_amount' => number_format($tax_amount, 4, '.', ''),
 
                             'account' => $apply_tax->account_code,
 

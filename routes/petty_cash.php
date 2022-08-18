@@ -76,6 +76,7 @@ Route::group([
     Route::get('ready', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'ready'])->name('petty.cash.finance.ready');
     Route::get('index', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'index'])->name('petty.cash.finance.index');
     Route::post('send', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'send'])->name('petty.cash.finance.send');
+    Route::post('send-single/{form}', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'sendSingle'])->name('petty.cash.finance.send.single');
     Route::get('header', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'header'])->name('petty.cash.finance.header');
     Route::get('details/{item}', [App\Http\Controllers\EForms\PettyCash\Integration::class, 'details'])->name('petty.cash.finance.details');
 //            Route::get('sync/user/units', [App\Http\Controllers\EForms\PettyCash\ReportsController::class, 'syncUserUnits'])->name('petty.cash.reports.sync.units');
