@@ -7,6 +7,7 @@ use App\Http\Requests\OperatingUnitsRequest;
 use App\Models\Main\OperatingUnits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class OperatingUnitsController extends Controller
@@ -79,8 +80,13 @@ class OperatingUnitsController extends Controller
                 'created_by'=> $user->id,
             ]);
 
+                   //mark as as updated
+                        $affected_workflow = DB::table('config_system_work_flow' )
+                            ->where('user_unit_bc_code', $request->bu_code )
+                            ->update( ['org_id' => $request->org_id ] );
+
         //log the activity
-        ActivityLogsController::store($request,"Creating of Location","update", " location created", json_encode( $model));
+      //  ActivityLogsController::store($request,"Creating of Location","update", " location created", json_encode( $model));
         return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Created successfully');
 
 

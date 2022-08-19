@@ -1099,7 +1099,7 @@
                                     <div class="col-lg-8 col-sm-12">
                                         <div class="input-group">
                                             <div class="custom-file">
-                                                <input type="number" step="any" onchange="showChange()" class="form-control"
+                                                <input min="0" type="number" step="any" onchange="showChange()" class="form-control"
                                                        name="change" id="change" required>
                                             </div>
                                         </div>
