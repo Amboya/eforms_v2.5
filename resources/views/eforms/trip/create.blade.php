@@ -168,9 +168,9 @@
                 <h1>Trip Details:</h1>
                 <br>
                 <!-- One "tab" for each step in the form: -->
-                <div class="tab">Trip Name:
+                <div class="tab">
                     <p>
-                        <label class="mt-3 text-green">Trip Name:</label>
+                        <label class="mt-3 text-green">Name of the Trip:</label>
                         <input type="text" name="name"
                                placeholder="Enter Trip Name" required
                                oninput="this.className = ''">
@@ -178,7 +178,7 @@
                     <p>
                         <label class="mt-3 text-green">Trip Description:</label>
                         <input type="text" name="description"
-                               placeholder="Enter Trip Description" required
+                               placeholder="Enter Describe the " required
                                oninput="this.className = ''">
                     </p>
                 </div>

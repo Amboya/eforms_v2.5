@@ -14,7 +14,7 @@ return [
 
     'active' => "0",
     'not_active' => "1",
-    'version' => "3.0.0",
+    'version' => "2.1.0",
     'password_not_changed' => 0 ,
     'password_changed' => 1 ,
     'all' => "All",
@@ -35,11 +35,11 @@ return [
     'company' => "01",
     'currency' => "ZMW",
     'exchange_rate' => "1",
-    'uploaded' => 323 ,
+
+    'uploaded' => 252 , //323 ,
     'export_not_ready' => "141",
     'not_exported' => "41",
     'exported' => "42",
-    'audited' => 29,
     'export_failed' => "43",
 
     'file_type' => [
@@ -49,19 +49,23 @@ return [
         'general' => 0,
         'subsistence' => 2,
     ],
+
     'transaction_type' => [
         'subsistence' => "SUBSISTENCE",
         'petty_cash' => "PETTYCASH",
         'invoice_type' => "STANDARD",
     ],
+
     'line_type' => [
         'goods' => "GOODS",
         'tax' => "TAX",
     ],
+
     'account_type' => [
         'expense' => "EXPENSE",
         'operating' => "OPERATING",
     ],
+
     'grade_category' => [
         'senior_mgt' => 4 ,
     ],
@@ -70,7 +74,6 @@ return [
 
     'team_email_list' =>  [
         ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'],
-        ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapula Sikazwe'],
         ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'],
         ['email' => 'pmudenda@zesco.co.zm', 'name' => 'Peter Mudenda'],
         ['email' => 'csinkamba@zesco.co.zm', 'name' => 'Chimwemwe Sinkamba'],
@@ -81,6 +84,7 @@ return [
         ['email' => 'kChimya@zesco.co.zm', 'name' => 'Kalunga Chimya'],
         ['email' => 'VSingogo@zesco.co.zm', 'name' => 'Vunga Singogo']
     ] ,
+
 
     'eforms_id' => [
         'main_dashboard' => "0",
@@ -235,11 +239,11 @@ return [
         'funds_acknowledgement' => "26",
         'security_approved' => "27",
         'receipt_approved' => "28",
-        'closed' => "235",
+        'closed' => 251, //"235",
         'audited' => "29",
-        'reimbursement_box' => "234",
-        'await_audit' => "233",
-        'audit_box' => "233",
+        'reimbursement_box' => 252 ,// "234",
+        'await_audit' => 252, //"233",
+        'audit_box' => 252 ,//"233",
         'audit_rejected' => "1111111111111111111111",
         'rejected' => "30",
         'export_not_ready' => "141",
@@ -299,28 +303,29 @@ return [
         'not_exported' => "41",
         'exported' => "42",
         'export_failed' => "43",
+
         'void' => "101",
         'cancelled' => "161",
         'queried' => "201",
-        'audited' => "126",
-        'await_audit' => "233",
-        'audit_box' => "233",
+        'audited' => 251, //"126",
+        'await_audit' => 252, //"233",
+        'audit_box' => 252, //"233",
         'pre_audited' => "303",
         'destination_approval' => '304',
         'dr_approved' => 333
-
 
     ],
 
     'trip_status' => [
         'pending' => "294",
         'accepted' => "293",
-        'new_trip' => "283",
-        'hod_approved_trip' => "284",
-        'hr_approved_trip' => "285",
-        'trip_authorised' => "286",
-        'trip_rejected' => "287",
-        'trip_closed' => 313 ,
+
+        'new_trip' => 241,//"283",
+        'hod_approved_trip' => 241,//"284",
+        'hr_approved_trip' => 243,//"285",
+        'trip_authorised' => 244,//"286",
+        'trip_rejected' => 245,//"287",
+        'trip_closed' => 248,//313 ,
         'new_application' => "21",
         'hod_approved' => "22",
         'hr_approved' => "23",
