@@ -91,6 +91,16 @@ class ConfidentialUsersController extends Controller
         $grade = GradesModel::find($request->grade);
         $user_unit = ConfigWorkFlow::find($request->user_unit_new);
 
+
+
+
+        //update my old record if any
+        $old_user = User::where( 'email', $request->email )
+            ->where( 'staff_no','!=',$request->staff_no )
+            ->update(
+                ['email' => "old.". $request->email ]
+            );
+
         $model =    User::create([
             'name' => $request->name,
             'nrc' => $request->staff_no ,
