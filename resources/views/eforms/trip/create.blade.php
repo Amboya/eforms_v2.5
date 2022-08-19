@@ -165,7 +165,7 @@
             <form id="create_form" name="create_form" action="{{route('trip.store')}}" enctype="multipart/form-data"
                   method="post">
                 @csrf
-                <h1>New Trip:</h1>
+                <h1>Trip Details:</h1>
                 <br>
                 <!-- One "tab" for each step in the form: -->
                 <div class="tab">Trip Name:
