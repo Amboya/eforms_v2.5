@@ -79,11 +79,11 @@ class TripController extends Controller
                 ->get();
             $category = "Rejected";
         } else if ($value == "needs_me") {
-            $list = $totals_needs_me = HomeController::needsMeList();
+            $list =  HomeController::needsMeList();
             $category = "Needs My Attention";
         } else if ($value == "admin") {
-
-
+            $list = Trip::all();
+            $category = "All";
         }
 
         //count all
