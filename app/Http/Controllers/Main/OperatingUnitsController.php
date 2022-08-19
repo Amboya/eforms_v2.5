@@ -80,10 +80,15 @@ class OperatingUnitsController extends Controller
                 'created_by'=> $user->id,
             ]);
 
-                   //mark as as updated
-                        $affected_workflow = DB::table('config_system_work_flow' )
-                            ->where('user_unit_bc_code', $request->bu_code )
-                            ->update( ['org_id' => $request->org_id ] );
+        //mark as as updated
+        $affected_workflow = DB::table('config_system_work_flow' )
+            ->where('user_unit_bc_code', $request->bu_code )
+            ->update( ['org_id' => $request->org_id ] );
+
+        //mark as as updated
+        $affected_accounts = DB::table('eform_petty_cash_account' )
+            ->where('business_unit_code', $request->bu_code )
+            ->update( ['org_id' => $request->org_id ] );
 
         //log the activity
       //  ActivityLogsController::store($request,"Creating of Location","update", " location created", json_encode( $model));
