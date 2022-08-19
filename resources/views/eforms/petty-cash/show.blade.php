@@ -311,8 +311,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <span class="font-weight-bold">Next Action:</span><span> {{$form->status->other}}</span>
-                        @if ($form->status->id == config('constants.petty_cash_status.security_approved'))
+                        <span class="font-weight-bold">Next Action:</span><span> {{$form->status->other ?? "" }}</span>
+                        @if ($form->status->id ?? 0 == config('constants.petty_cash_status.security_approved'))
                             <span class="font-weight-bold text-red"> Note:</span><span class="text-red"> Export Data to Excel and Import in Oracle Financial's using ADI</span>
                         @endif
                     </div>

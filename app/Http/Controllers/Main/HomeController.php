@@ -168,6 +168,8 @@ class HomeController extends Controller
 
             $user->save();
 
+           // dd( $user );
+
 
             //for security, auditor and expenditure
             if ($user->profile_id == config('constants.user_profiles.EZESCO_014')

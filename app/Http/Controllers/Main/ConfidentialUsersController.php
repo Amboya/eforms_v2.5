@@ -41,13 +41,13 @@ class ConfidentialUsersController extends Controller
     public function index(Request $request)
     {
         //get all the Tax
-        $list = User::where('type_id', 2 )->get();
-        $grades = GradesModel::with('category')->get();
-        $positions = PositionModel::all();
-        $directorates = DirectoratesModel::get() ;
+        $list = User::where('type_id', 2 )->orderby('grade_id')->get();
+        $grades = GradesModel::with('category')->orderby('name')->get();
+        $positions = PositionModel::orderby('name')->get();
+        $directorates = DirectoratesModel::orderby('name')->get();
         $user_types = UserTypeModel::all();
         $user_unit_new = ConfigWorkFlow:: select('id', 'user_unit_description', 'user_unit_code', 'user_unit_bc_code', 'user_unit_cc_code')
-            ->orderBy('user_unit_code')
+            ->orderBy('user_unit_bc_code')
             ->get();
         //return with the data
         return view('main.confidential_users.index')->with(compact('directorates','list', 'user_types', 'user_unit_new', 'positions', 'grades'));

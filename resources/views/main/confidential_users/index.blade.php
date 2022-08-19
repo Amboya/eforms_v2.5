@@ -238,8 +238,8 @@
                                         value=""> Please Select User Unit </option>
                                     @foreach($user_unit_new as $item)
                                         <option
-                                            value="{{$item->id}}">{{$item->user_unit_description}}
-                                            : {{$item->user_unit_code}}</option>
+                                            value="{{$item->id}}">{{$item->user_unit_bc_code}} / {{$item->user_unit_cc_code}}
+                                            : {{$item->user_unit_description}}</option>
                                     @endforeach
                                 </select>
 

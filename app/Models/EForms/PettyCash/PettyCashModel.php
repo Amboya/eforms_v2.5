@@ -99,7 +99,6 @@ class PettyCashModel extends Model
         'user',
         'status',
         'project',
-        'item',
     ];
 
     protected static function booted()
