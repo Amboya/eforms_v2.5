@@ -96,11 +96,11 @@ class TripController extends Controller
 
         //data to send to the view
         $params = [
-            'totals_needs_me' => $totals_needs_me,
-            'list' => $list,
-            'totals' => $totals,
-            'pending' => $pending,
-            'category' => $category,
+            'totals_needs_me' => $totals_needs_me ?? [],
+            'list' => $list ?? [],
+            'totals' => $totals ?? [],
+            'pending' => $pending ?? 0,
+            'category' => $category ?? "0",
         ];
 
         //return view
