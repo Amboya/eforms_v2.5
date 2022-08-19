@@ -26,6 +26,7 @@ class ConfigWorkFlow extends Model
         'user_unit_bc_code',
         'user_unit_cc_code',
         'user_unit_status',
+        'directorate_id',
 
         'org_id',
 

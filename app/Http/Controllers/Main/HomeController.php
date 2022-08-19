@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class HomeController extends Controller
@@ -100,6 +101,9 @@ class HomeController extends Controller
     public static function getMyProfile($eform_id)
     {
 
+        $code_column = 'id' ;
+        $unit_column = 'user_unit_code' ;
+
         if (auth()->check()) {
             //get the profile associated with
             $user = auth()->user();
@@ -121,6 +125,9 @@ class HomeController extends Controller
                 $user->profile_job_code = $user->job_code;
                 $user->code_column = $profile_assignement->profiles->code_column ?? 'id';
                 $user->unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
+                $code_column = $profile_assignement->profiles->code_column ?? 'id';
+                $unit_column = $profile_assignement->profiles->unit_column ?? 'user_unit_code';
+               // $user->save();
 
             } else {
                 //here the default is claimant
@@ -141,7 +148,7 @@ class HomeController extends Controller
 
             if ($profile_delegated->exists()) {
 
-              //  dd($profile_delegated->first());
+//                dd($profile_delegated->first()->profile->code_column );
                 //
                 $default_profile = $profile_delegated->first()->delegated_profile ?? config('constants.user_profiles.EZESCO_002');
 
@@ -151,16 +158,22 @@ class HomeController extends Controller
                 $user->profile_job_code = $profile_delegated->first()->delegated_job_code ;
                 $user->code_column = $profile_delegated->first()->delegated_code_column ;
                 $user->unit_column = $profile_delegated->first()->delegated_unit_column ;
+                $code_column = $profile_delegated->first()->delegated_code_column ?? $profile_delegated->first()->profile->code_column ;
+                $unit_column = $profile_delegated->first()->delegated_unit_column ?? $profile_delegated->first()->profile->unit_column ;
 
             }
 
+            $user->code_column = $code_column ;
+            $user->unit_column = $unit_column ;
+
             $user->save();
+
 
             //for security, auditor and expenditure
             if ($user->profile_id == config('constants.user_profiles.EZESCO_014')
                 || $user->profile_id == config('constants.user_profiles.EZESCO_013')
                 || $user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-                $my_user_units = ConfigWorkFlow::where($user->unit_column, $user->profile_unit_code)
+                $my_user_units = ConfigWorkFlow::where($user->unit_column , $user->profile_unit_code)
                     ->orderBy('user_unit_description')
                     ->get();
             }

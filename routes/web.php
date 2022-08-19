@@ -55,6 +55,7 @@ Route::group([
         //user
         Route::group([
             'prefix' => 'user'], function () {
+
             Route::get('list/all', [App\Http\Controllers\Main\UserController::class, 'list']);
             Route::get('list', [App\Http\Controllers\Main\UserController::class, 'index'])->name('main.user');
             Route::get('show/{id}', [App\Http\Controllers\Main\UserController::class, 'show'])->name('main.user.show');
@@ -68,6 +69,8 @@ Route::group([
             Route::post('reset/{user}', [App\Http\Controllers\Main\UserController::class, 'resetPassword'])->name('main.user.reset.password');
             Route::post('change_unit', [App\Http\Controllers\Main\UserController::class, 'changeUnit'])->name('main.user.change.unit');
         });
+
+
         //user type
         Route::group([
             'prefix' => 'user/type'], function () {
@@ -279,6 +282,17 @@ Route::group([
             Route::post('update', [App\Http\Controllers\Main\TaxController::class, 'update'])->name('main.tax.update');
             Route::post('destroy/{id}', [App\Http\Controllers\Main\TaxController::class, 'destroy'])->name('main.tax.destroy');
             Route::get('sync', [App\Http\Controllers\Main\TaxController::class, 'sync'])->name('main.tax.sync');
+        });
+
+
+        //CONFIDENTIAL USERS
+        Route::group([
+            'prefix' => 'confidential-users'], function () {
+            Route::get('list', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'index'])->name('main.confidential.users');
+            Route::post('store', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'store'])->name('main.confidential.users.store');
+            Route::post('update', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'update'])->name('main.confidential.users.update');
+            Route::post('destroy/{id}', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'destroy'])->name('main.confidential.users.destroy');
+            Route::get('sync', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'sync'])->name('main.confidential.users.sync');
         });
 
         //operating units

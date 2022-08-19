@@ -108,6 +108,15 @@
                                         </p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{route('main.confidential.users')}}" class="nav-link ">
+                                        <i class="nav-icon far fa-circle"></i>
+                                        <p> Confidential Users
+                                        </p>
+                                    </a>
+                                </li>
+
+
                             </ul>
                         </li>
 
