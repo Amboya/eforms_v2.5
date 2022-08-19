@@ -96,7 +96,7 @@ class ConfidentialUsersController extends Controller
 
         //update my old record if any
         $old_user = User::where( 'email', $request->email )
-            ->where( 'staff_no','!=',$request->staff_no )
+            ->where( 'staff_no','!=',$request->con_per_no )
             ->update(
                 ['email' => "old.". $request->email ]
             );
