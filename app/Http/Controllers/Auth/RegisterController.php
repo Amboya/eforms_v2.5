@@ -92,6 +92,14 @@ class RegisterController extends Controller
 
     protected function create(array $data , $phris_view)
     {
+
+        //update my old record if any
+        $old_user = User::where( 'email', $phirs_user_details->staff_email )
+            ->where( 'staff_no','!=',$phirs_user_details->staff_no )
+            ->update(
+                ['email' => "old.". $phirs_user_details->staff_email ]
+            );
+
         //[4] CREATE THE USER
         return User::UpdateOrCreate(
             [
