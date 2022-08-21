@@ -27,18 +27,15 @@ class Integration extends Controller
 
         self::checkProcessed() ;
         $ready = config('constants.uploaded') ;
-        //GET THE PETTY CASH MODEL if you are an admin
-        $accounts = DB::select("SELECT * FROM eform_petty_cash_account where status_id = '{$ready}' ORDER BY  petty_cash_code  ");
-        $list = PettyCashAccountModel::hydrate($accounts);
-        $list->load("form.user_unit");
-
-
-
+        $forms = PettyCashModel::with('accounts', 'user_unit')->where('config_status_id', $ready)->get();
         $category = 'Petty Cash Details Ready to be Uploaded';
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
         //return view
-        return view('eforms.petty-cash.integration.ready')->with(compact('category', 'list', 'totals_needs_me'));
+        return view('eforms.petty-cash.integration.ready')->with(compact('category', 'forms', 'totals_needs_me'));
+
+        //return view
+     //   return view('eforms.petty-cash.integration.ready')->with(compact('category', 'list', 'totals_needs_me'));
  }
 
 

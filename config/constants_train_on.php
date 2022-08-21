@@ -300,6 +300,7 @@ return [
         'exported' => "42",
         'export_failed' => "43",
         'void' => "101",
+
         'cancelled' => "161",
         'queried' => "201",
         'audited' => "126",
@@ -359,8 +360,6 @@ return [
         'checker_approved' => "225",
         'hod_approved' => "224",
         'requester_approved' => "183",
-
-
 
         'closed' => "185",
         'rejected' => "186",

@@ -94,10 +94,10 @@ class RegisterController extends Controller
     {
 
         //update my old record if any
-        $old_user = User::where( 'email', $phirs_user_details->staff_email )
-            ->where( 'staff_no','!=',$phirs_user_details->staff_no )
+        $old_user = User::where( 'email', $phris_view->staff_email )
+            ->where( 'staff_no','!=',$phris_view->staff_no )
             ->update(
-                ['email' => "old.". $phirs_user_details->staff_email ]
+                ['email' => "old.". $phris_view->staff_email ]
             );
 
         //[4] CREATE THE USER

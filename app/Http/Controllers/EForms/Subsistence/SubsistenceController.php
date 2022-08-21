@@ -715,6 +715,7 @@ class SubsistenceController extends Controller
 //            else {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
+
 //            }
         }  //HOD HAS APPROVED FORM SNR MANAGER IS NEXT
         elseif ($next_status == config('constants.subsistence_status.hod_approved')) {
@@ -879,6 +880,7 @@ class SubsistenceController extends Controller
         $user = User::find($form->created_by);
 
         $user_array = []; //T3218
+
         if ($form->config_status_id == config('constants.subsistence_status.destination_approval')) {
             $dest_approvals = DestinationsApprovals::where('subsistence_id', $form->id)
                 ->whereNull('created_by')
