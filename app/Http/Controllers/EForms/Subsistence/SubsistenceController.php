@@ -744,7 +744,7 @@ class SubsistenceController extends Controller
 
         } //HOD  HAS APPROVED FORM SNR MANAGER IS NEXT
         elseif ($next_status == config('constants.subsistence_status.hod_approved')) {
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));  //SNR MGER
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         }
@@ -757,7 +757,7 @@ class SubsistenceController extends Controller
 //                $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 //            } else {
 
-                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007'));
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_007')); //CA
                 $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 //            }
 
@@ -766,7 +766,7 @@ class SubsistenceController extends Controller
             || ($next_status == config('constants.subsistence_status.audit_box'))
             || ($next_status == config('constants.subsistence_status.await_audit'))
         ) {
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011')); //AUDITOR
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } // VISIBLE TO EXPENDITURES
@@ -775,9 +775,8 @@ class SubsistenceController extends Controller
             || ($next_status == config('constants.exported'))
             || ($next_status == config('constants.uploaded'))
         ) {
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_014')); //EXPENDITURES
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
-
 
         } // FUNDS HAVE BEEN DISBURSED - CLIENT NEEDS TO CONFIRM
         elseif ($next_status == config('constants.subsistence_status.funds_disbursement')) {
@@ -785,25 +784,25 @@ class SubsistenceController extends Controller
 
         } //DESTINATION APPROVAL
         elseif ($next_status == config('constants.subsistence_status.destination_approval')) {
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004')); //HOD
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } //HR APPROVAL
         elseif ($next_status == config('constants.subsistence_status.station_mgr_approved')
             || $next_status == config('constants.subsistence_status.dr_approved') ) {
 
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009')); //HR
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } //CLOSE------------
         elseif ($next_status == config('constants.subsistence_status.closed')) {
 
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_011')); //AUDITORS
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } else {
             //no one
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_002'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_002')); //REQUESTER
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
         }
 
@@ -1432,9 +1431,9 @@ class SubsistenceController extends Controller
 
             $list_inv->status_id = $new_status;
             $list_inv->save();
-        } //FOR PRE AUDIT
-        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011')
-            && $current_status == config('constants.subsistence_status.chief_accountant')
+        } //FOR PRE AUDIT   - REMOVE PRE AUDITS
+        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_011-REMOVED')
+            && $current_status == config('constants.subsistence_status.chief_accountant-REMOVED')
         ) {
             $insert_reasons = true;
             //cancel status
@@ -1499,7 +1498,8 @@ class SubsistenceController extends Controller
 
         //   FOR EXPENDITURE UPLOADING TO FMS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
-            && $current_status == config('constants.subsistence_status.pre_audited')
+//        && $current_status == config('constants.subsistence_status.pre_audited-AFTER_PRE_AUDITS')
+        && $current_status == config('constants.subsistence_status.pre_audited-chief_accountant')
         ) {
             //cancel status
             $insert_reasons = true;

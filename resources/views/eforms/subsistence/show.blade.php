@@ -152,7 +152,7 @@
                             <div class="row">
                                 <div class="col-6"><label>Section:</label></div>
                                 <div class="col-6">
-                                    <input value="{{$form->section }}" type="text" name="department"
+                                    <input value="{{$form->section ?? "-" }}" type="text" name="department"
                                            readonly class="form-control">
                                 </div>
                             </div>
@@ -161,7 +161,7 @@
                             <div class="row">
                                 <div class="col-6"><label>Station:</label></div>
                                 <div class="col-6">
-                                    <input value="{{$form->station }} " type="text" name="station" readonly
+                                    <input value="{{$form->station ?? "HQ"}} " type="text" name="station" readonly
                                            class="form-control">
                                 </div>
                             </div>
@@ -1067,8 +1067,9 @@
                     @endif
 
                     {{-- UPLOADING TO FMS--}}
+{{--                    &&  $form->config_status_id == config('constants.subsistence_status.pre_audited-REMOVED')--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_014')
-                         &&  $form->config_status_id == config('constants.subsistence_status.pre_audited')
+                         &&  $form->config_status_id == config('constants.subsistence_status.chief_accountant')
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">

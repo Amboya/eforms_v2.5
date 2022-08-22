@@ -250,7 +250,7 @@
                                                         data-toggle="modal"
                                                         data-sent_data="{{$item}}"
                                                         data-target="#modal-approve-member">
-                                                        <i class="fa fa-check"></i> Approve
+                                                        <i class="fa fa-file"></i> Track
                                                     </button>
                                                 </div>
 
@@ -262,7 +262,7 @@
                                                                class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
                                                                onclick="event.preventDefault();
                                                                    document.getElementById('show-form1'+{{$item->id}}).submit();">
-                                                                <i class="fa fa-file"></i> Open
+                                                                <i class="fa fa-file"></i> Sub Form
                                                             </a>
                                                         </div>
                                                     @else
@@ -815,7 +815,7 @@
             var html_div = "";
 
             //01 - SET HEADER
-            var header = "<h4 class='modal-title text-center'>COMMENTS FOR " + recipient.claimant_name + "'S TRIP FORM</h4>   <span class='btn btn-sm bg-" + recipient.status.html + "'> " + recipient.status.name + "  </span>" +
+            var header = "<h4 class='modal-title text-center'>COMMENTS FOR " + recipient.claimant_name + "'S TRIP FORM</h4> status : <span class='badge badge-" + recipient.status.html + "'> " + recipient.status.name + "  </span>" +
                 "<input hidden value='" + recipient.id + "' id='membership' name='membership'>"
             $('#details_0').html(header);
 

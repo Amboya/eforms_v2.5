@@ -3041,8 +3041,8 @@ class PettyCashController extends Controller
                 ->update(['config_status_id' => $new_status_id]);
             $user = auth()->user();
             // log the activity
-            ActivityLogsController::store($request, "Petty-Cash Status manual change", "status update of petty cash " . $eform_petty_cash->code, $user->name . " updated status of petty cash voucher from " . $eform_petty_cash->status->name . " to " . $status->name, $eform_petty_cash->id);
-            return Redirect::route('petty.cash.home')->with('message', 'PettyCash (' . $eform_petty_cash->code . ') Has been set to a new Status ' . $status->name . ' from ' . $eform_petty_cash->status->name);
+            ActivityLogsController::store($request, "Petty-Cash Status manual change", "status update of petty cash " . $eform_petty_cash->code, $user->name . " updated status of petty cash voucher from " . $eform_petty_cash->status->name ?? "" . " to " . $status->name ?? "", $eform_petty_cash->id);
+            return Redirect::route('petty.cash.home')->with('message', 'PettyCash (' . $eform_petty_cash->code ?? "" . ') Has been set to a new Status ' . $status->name ?? "". ' from ' . $eform_petty_cash->status->name);
         } catch (Exception $exception) {
             return Redirect::back()->with('error', 'Sorry an error happened');
         }

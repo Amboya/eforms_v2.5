@@ -160,7 +160,7 @@
                             <div class="row">
                                 <div class="col-6"><label>System Reference No.:</label></div>
                                 <div class="col-6">
-                                    <input value="" type="text" name="ref_no" required
+                                    <input value="{{$trip->code}}" type="text" name="ref_no" readonly
                                            class="form-control">
                                 </div>
                             </div>

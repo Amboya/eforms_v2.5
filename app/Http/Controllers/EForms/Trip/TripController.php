@@ -1253,4 +1253,57 @@ class TripController extends Controller
     }
 
 
+    public function search(Request $request)
+    {
+        $search = strtoupper($request->search);
+        if (Auth::user()->type_id == config('constants.user_types.developer')) {
+            $list = DB::select("SELECT * FROM eform_trip
+              where code LIKE '%{$search}%'
+              or name LIKE '%{$search}%'
+              or destination LIKE '%{$search}%'
+              or hod_code LIKE '%{$search}%'
+              or initiator_staff_no LIKE '%{$search}%'
+              or config_status_id LIKE '%{$search}%'
+            ");
+            $list = Trip::hydrate($list);
+        } else {
+
+            //find the Subsistence with that id
+            $list = Trip::
+            where('code', 'LIKE', "%{$search}%")
+                ->orWhere('name', 'LIKE', "%{$search}%")
+                ->orWhere('destination', 'LIKE', "%{$search}%")
+                ->orWhere('hod_code', 'LIKE', "%{$search}%")
+                ->orWhere('initiator_staff_no', 'LIKE', "%{$search}%")
+                ->orWhere('config_status_id', 'LIKE', "%{$search}%")
+                ->paginate(50);
+        }
+
+        //count all
+        $totals = TotalsModel::where('eform_id', config('constants.eforms_id.trip'))->get();
+        //count all that needs me
+        $totals_needs_me = HomeController::needsMeCount();
+        //pending forms for me before i apply again
+        $pending = HomeController::pendingForMe();
+        $category = "Search Results";
+
+        //list of statuses
+        $statuses = StatusModel::where('eform_id', config('constants.eforms_id.trip'))->get();
+
+
+        //data to send to the view
+        $params = [
+            'totals_needs_me' => $totals_needs_me,
+            'list' => $list,
+            'totals' => $totals,
+            'pending' => $pending,
+            'category' => $category,
+            'statuses' => $statuses,
+        ];
+
+        //return view
+        return view('eforms.trip.list')->with($params);
+    }
+
+
 }

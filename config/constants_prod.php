@@ -5,7 +5,7 @@ return [
     'name' => env('APP_NAME', 'EZESCO'),
     'rep_subsistence_account_id' => "81",
     'non_rep_subsistence_account_id' => "82",
-    'sub_max_days' => 7 ,
+    'sub_max_days' => 14 ,
     'petty_cash_account_id' => "21",
     'user_unit_active' => "00",
     'user_unit_not_active' => "01",
@@ -17,7 +17,7 @@ return [
     'version' => "3.0.0",
     'password_not_changed' => 0 ,
     'password_changed' => 1 ,
-    'all' => "All",
+    'all' => "all",
     'owner' => "Owner",
     'money_given' => "Money Given",
     'money_pending' => "Money Pending",
@@ -35,11 +35,11 @@ return [
     'company' => "01",
     'currency' => "ZMW",
     'exchange_rate' => "1",
-    'uploaded' => 323 ,
+    'uploaded' => 252, //323 ,
     'export_not_ready' => "141",
     'not_exported' => "41",
-    'exported' => "42",
     'audited' => 29,
+    'exported' => "42",
     'export_failed' => "43",
 
     'file_type' => [
@@ -62,15 +62,14 @@ return [
         'expense' => "EXPENSE",
         'operating' => "OPERATING",
     ],
+
     'grade_category' => [
         'senior_mgt' => 4 ,
     ],
 
-
-
     'team_email_list' =>  [
         ['email' => 'bchisulo@zesco.co.zm', 'name' => 'Bwalya Chisulo'],
-        ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapula Sikazwe'],
+//        ['email' => 'csikazwe@zesco.co.zm', 'name' => 'Chapula Sikazwe'],
         ['email' => 'nshubart@zesco.co.zm', 'name' => 'Shubart Nyimbili'],
         ['email' => 'pmudenda@zesco.co.zm', 'name' => 'Peter Mudenda'],
         ['email' => 'csinkamba@zesco.co.zm', 'name' => 'Chimwemwe Sinkamba'],
@@ -145,8 +144,8 @@ return [
 
     'user_profiles' => [
         'initiator' =>  1,
-        'EZESCO_002' => 1,
         'EZESCO_001' => 2,
+        'EZESCO_002' => 1,
         'EZESCO_003' => 3,
         'EZESCO_004' => 4,
         'EZESCO_005' => 5,
@@ -163,9 +162,7 @@ return [
         'EZESCO_016' => 42,
         'EZESCO_017' => 43,
         'EZESCO_018' => 62,
-
     ],
-
     'config_totals' => [
         'directorate' => "directorate",
         'user_unit' => "user_unit",
@@ -235,11 +232,11 @@ return [
         'funds_acknowledgement' => "26",
         'security_approved' => "27",
         'receipt_approved' => "28",
-        'closed' => "235",
+        'closed' => "28",
         'audited' => "29",
-        'reimbursement_box' => "234",
-        'await_audit' => "233",
-        'audit_box' => "233",
+        'reimbursement_box' => 250 , //"234",
+        'await_audit' => 264,// "233",
+        'audit_box' => 264, //"233",
         'audit_rejected' => "1111111111111111111111",
         'rejected' => "30",
         'export_not_ready' => "141",
@@ -251,8 +248,6 @@ return [
         'queried' => "201",
         'processed' => 'Y',
         'unprocessed' => 'N',
-
-
     ],
     'kilometer_allowance_status' => [
         'new_application' => "61",
@@ -300,27 +295,26 @@ return [
         'exported' => "42",
         'export_failed' => "43",
         'void' => "101",
+
         'cancelled' => "161",
         'queried' => "201",
         'audited' => "126",
-        'await_audit' => "233",
-        'audit_box' => "233",
-        'pre_audited' => "303",
-        'destination_approval' => '304',
-        'dr_approved' => 333
-
-
+        'await_audit' => 264, // "233",//new
+        'audit_box' => 264, //"233",//new
+        'pre_audited' => 261, //"303",//new
+        'destination_approval' => 263, // '304',//new
+        'dr_approved' => 262, // 333    //new
     ],
 
     'trip_status' => [
-        'pending' => "294",
-        'accepted' => "293",
-        'new_trip' => "283",
-        'hod_approved_trip' => "284",
-        'hr_approved_trip' => "285",
-        'trip_authorised' => "286",
-        'trip_rejected' => "287",
-        'trip_closed' => 313 ,
+        'pending' => 247, //"294",  //new
+        'accepted' => 246, //"293",  //new
+        'new_trip' => 241, //"283",  //new
+        'hod_approved_trip' => 242, //"284",  //new
+        'hr_approved_trip' => 243, //"285",  //new
+        'trip_authorised' => 244, //"286",  //new
+        'trip_rejected' => 245 , //"287",  //new
+        'trip_closed' => 248 , //test = 313 ,  //new
         'new_application' => "21",
         'hod_approved' => "22",
         'hr_approved' => "23",
@@ -352,7 +346,6 @@ return [
         'export_failed' => "43",
         'void' => "101",
         'cancelled' => "161",
-
     ],
 
     'purchase_order_status' => [
@@ -360,8 +353,6 @@ return [
         'checker_approved' => "225",
         'hod_approved' => "224",
         'requester_approved' => "183",
-
-
 
         'closed' => "185",
         'rejected' => "186",

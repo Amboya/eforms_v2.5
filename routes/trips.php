@@ -17,6 +17,6 @@ Route::get('reportExport', [App\Http\Controllers\EForms\Trip\TripController::cla
 Route::get('records/{value}', [App\Http\Controllers\EForms\Trip\TripController::class, 'records'])->name('trip.record');
 Route::post('void/{id}', [App\Http\Controllers\EForms\Trip\TripController::class, 'void'])->name('trip.void');
 Route::get('charts', [App\Http\Controllers\EForms\Trip\TripController::class, 'charts'])->name('trip.charts');
-
+Route::post('search', [App\Http\Controllers\EForms\Trip\TripController::class, 'search'])->name('trip.search');
 
 
