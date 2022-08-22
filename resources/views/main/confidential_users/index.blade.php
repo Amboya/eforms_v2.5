@@ -101,6 +101,7 @@
                                 <td>{{$item->email ?? ""}} </td>
                                 <td>{{$item->phone ?? ""}} </td>
                                 <td> {{$item->con_st_code ?? " "}} </td>
+
                                 {{--                                <td>{{$item->user_type->name ?? ""}} </td>--}}
                                 {{--                                <td>{{$item->created_at ?? ""}}</td>--}}
                                 <td>{{$item->created_at->diffForHumans()}}</td>
@@ -108,6 +109,13 @@
                                     <a href="{{route('main.user.show',$item->id)}}" class="btn btn-sm bg-gradient-gray float-left " style="margin: 1px">
                                         <i class="fa fa-eye"></i>
                                     </a>
+                                    <button class="btn btn-sm bg-gradient-gray float-left" style="margin: 1px"
+                                            title="Edit"
+                                            data-toggle="modal"
+                                            data-sent_data="{{ $item }}"
+                                            data-target="#modal-edit">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
                                     @if( Auth::user()->type_id == config('constants.user_types.developer'))
                                         <button class="btn btn-sm bg-gradient-gray float-left" style="margin: 1px"
                                                 title="Delete"
@@ -340,25 +348,125 @@
                 <form role="form" method="post" action="{{route('main.confidential.users.update')}}">
                     @csrf
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">Confidential Users Name</label>
-                                    <input type="text" class="form-control" id="name2" name="name"
-                                           placeholder="Enter tax name" required>
-                                    <input hidden type="text" class="form-control" id="tax_id2" name="tax_id"
-                                           required>
-                                </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-2 col-form-label">Full Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_name" name="name" required
+                                       placeholder="Name" value="">
+                                <input type="text" class="form-control" id="edit_id" name="id" hidden required >
                             </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="tax">Confidential Users Code</label>
-                                    <input type="text" class="form-control" id="tax2" name="tax"
-                                           placeholder="Enter tax tax">
-                                </div>
-                            </div>
-
                         </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-2 col-form-label">Man Number</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_staff_no"  name="staff_no" required
+                                       placeholder="Staff Number" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="edit_email"  name="email" required
+                                       placeholder="Email" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName2" class="col-sm-2 col-form-label">Phone</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_phone"  name="phone" required
+                                       placeholder="Phone" value="0">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName2" class="col-sm-2 col-form-label">Extension</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control"  id="edit_extension" name="extension" required
+                                       placeholder="Extension" value="0">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputExperience"
+                                   class="col-sm-2 col-form-label">User Type</label>
+                            <div class="col-sm-10">
+                                <select class="form-control"  id="edit_user_type_id"  name="user_type_id" required>
+                                    @if( Auth::user()->type_id ==  config('constants.user_types.developer')  )
+                                        @foreach($user_types as $item)
+                                            <option value="{{$item->id}}">{{$item->name}}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName2" class="col-sm-2 col-form-label text-orange ">Position </label>
+                            <div class="col-sm-10">
+                                <select  class="form-control "  id="edit_position"  required name="position">
+                                    <option
+                                        value=""> Please Select Position </option>
+                                    @foreach($positions as $item)
+                                        <option
+                                            value="{{$item->id}}">{{$item->name}}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputName2" class="col-sm-2 col-form-label text-orange ">Grades </label>
+                            <div class="col-sm-10">
+                                <select id="edit_grade" class="form-control " required name="grade">
+                                    <option
+                                        value=""> Please Select Grades </option>
+                                    @foreach($grades as $item)
+                                        <option
+                                            value="{{$item->id}}">{{$item->name}}
+                                            : {{$item->category->name ?? "" }}</option>
+                                    @endforeach
+                                </select>
+
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputName2" class="col-sm-2 col-form-label text-orange ">User
+                                Unit</label>
+                            <div class="col-sm-10">
+                                <select id="edit_user_unit_new" class="form-control " required name="user_unit_new">
+                                    <option
+                                        value=""> Please Select User Unit </option>
+                                    @foreach($user_unit_new as $item)
+                                        <option
+                                            value="{{$item->id}}">{{$item->user_unit_bc_code}} / {{$item->user_unit_cc_code}}
+                                            : {{$item->user_unit_description}}</option>
+                                    @endforeach
+                                </select>
+
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputName2" class="col-sm-2 col-form-label text-orange ">Directorate</label>
+                            <div class="col-sm-10">
+                                <select id="edit_directorate" class="form-control " required name="directorate">
+                                    <option
+                                        value=""> Please Select Directorate </option>
+                                    @foreach($directorates as $item)
+                                        <option
+                                            value="{{$item->id}}">{{$item->name}}</option>
+                                    @endforeach
+                                </select>
+
+
+                            </div>
+                        </div>
+
+                        <div> <span>Default password is zescoOne</span></div>
+
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -443,9 +551,19 @@
         $('#modal-edit').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var recipient = button.data('sent_data'); // Extract info from data-* attributes
-            $('#name2').val(recipient.name);
-            $('#tax_id2').val(recipient.id);
-            $('#tax2').val(recipient.tax);
+
+
+            $('#edit_id').val(recipient.id);
+            $('#edit_name').val(recipient.name);
+            $('#edit_email').val(recipient.email);
+            $('#edit_phone').val(recipient.phone);
+            $('#edit_extension').val(recipient.extension);
+            $('#edit_grade').val(recipient.grade_id);
+            $('#edit_position').val(recipient.positions_id);
+            $('#edit_user_type_id').val(recipient.type_id);
+            $('#edit_directorate').val(recipient.user_directorate_id);
+            $('#edit_user_unit_new').val(recipient.functional_unit_id);
+            $('#edit_staff_no').val(recipient.staff_no);
         });
 
         $('#modal-view').on('show.bs.modal', function (event) {

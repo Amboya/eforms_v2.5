@@ -11,7 +11,7 @@
             </div>
 
             <div class="card" >
-                <div class="card-header">{{ __('Login to E-Forms') }}</div>
+                <div class="card-header">{{ __('Login to E-Forms') }} </div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">

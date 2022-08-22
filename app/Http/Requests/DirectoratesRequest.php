@@ -26,7 +26,6 @@ class DirectoratesRequest extends FormRequest
         return [
             'name' => 'required',
             'code' => 'required',
-            'user_unit_id' => 'required',
         ];
     }
 }

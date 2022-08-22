@@ -21,6 +21,7 @@ class DirectoratesModel extends Model
         'name',
         'code',
         'user_unit_id',
+        'status_id',
         'created_by',
         'created_at',
         'updated_at',

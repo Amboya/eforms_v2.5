@@ -186,17 +186,29 @@ class ConfidentialUsersController extends Controller
      */
     public function update(Request $request)
     {
-        $model = TaxModel::find($request->directorate_id);
+        $position = PositionModel::find($request->position);
+        $grade = GradesModel::find($request->grade);
+        $user_unit = ConfigWorkFlow::find($request->user_unit_new);
+
+        $model = User::find($request->id);
         $model->name = $request->name ;
-        $model->tax = $request->tax ;
-        $model->business_unit = $request->business_unit ;
-        $model->cost_center = $request->cost_center ;
-        $model->account_code = $request->account_code ;
+        $model->staff_no = $request->staff_no ;
+        $model->email = $request->email ;
+        $model->phone = $request->phone ;
+        $model->extension = $request->extension ;
+        $model->type_id = $request->user_type_id ;
+        $model->positions_id = $position->id ;
+        $model->job_code = $position->code ;
+        $model->grade_id = $grade->id ;
+        $model->user_directorate_id = $request->directorate ;
+        $model->functional_unit_id =$user_unit->id;
+        $model->user_unit_id =$user_unit->id;
+        $model->user_unit_code = $user_unit->user_unit_code ;
         $model->save();
 
         //log the activity
-        ActivityLogsController::store($request,"Updating of Tax","update", " tax updated", json_encode( $model));
-        return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Created successfully');
+        ActivityLogsController::store($request,"Updating of Confidential User","update", " tax updated", json_encode( $model));
+        return Redirect::back()->with('message', 'Details for ' . $model->name . ' have been Updated successfully');
 
     }
 

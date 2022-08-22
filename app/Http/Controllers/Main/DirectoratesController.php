@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DirectoratesRequest;
 use App\Models\Main\ConfigWorkFlow;
 use App\Models\Main\DirectoratesModel;
+use App\Models\Main\Sync\OrganogramSync;
 use App\Models\Main\UserUnitModel;
 use App\Models\PhrisUserDetailsModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class DirectoratesController extends Controller
@@ -124,7 +126,6 @@ class DirectoratesController extends Controller
         $model = DirectoratesModel::find($request->directorate_id);
         $model->name = $request->name ;
         $model->code = $request->code ;
-        $model->user_unit_id = $request->user_unit_id ;
         $model->save();
 
         //log the activity
@@ -191,5 +192,44 @@ class DirectoratesController extends Controller
     }
 
 
+    public static function syncOrganoGram(){
+
+        $organogramList = OrganogramSync::select('level_1')->groupBy('level_1')->get();
+
+        if(sizeof($organogramList) > 0){
+            //update everything first
+            $affected_form = DB::table('config_directorate')
+                ->update(['status_id'  => 0 ]);
+        }
+
+
+        foreach ($organogramList as $organogram){
+            // Delimit by multiple spaces, hyphen, underscore, comma
+            $words = preg_split("/[\s,_-]+/", $organogram->level_1 ?? "None");
+            $acronym = "";
+            foreach ($words as $w) {
+                try {
+                    $acronym .= $w[0];
+                } catch (\Exception $exception) {
+                    $acronym = $w;
+                }
+            }
+            //create the grade
+            $model = DirectoratesModel::UpdateOrCreate(
+                [
+                    'name' => $organogram->level_1,
+                ],
+                [
+                    'name' => $organogram->level_1,
+                    'code' => $acronym ,
+                    'status_id' => 1 ,
+                    'created_by' =>   auth()->user()->id ,
+                ]
+            );
+
+        }
+        //return back
+        return Redirect::back()->with('message', 'Directorates have been Synced successfully');
+    }
 
 }

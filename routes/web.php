@@ -174,6 +174,7 @@ Route::group([
             Route::post('update', [App\Http\Controllers\Main\DirectoratesController::class, 'update'])->name('main.directorate.update');
             Route::post('destroy/{id}', [App\Http\Controllers\Main\DirectoratesController::class, 'destroy'])->name('main.directorate.destroy');
             Route::get('sync', [App\Http\Controllers\Main\DirectoratesController::class, 'sync'])->name('main.directorate.sync');
+            Route::get('sync', [App\Http\Controllers\Main\DirectoratesController::class, 'syncOrganoGram'])->name('main.directorate.syncOrganoGram');
         });
         //region
         Route::group([
@@ -288,6 +289,7 @@ Route::group([
         //CONFIDENTIAL USERS
         Route::group([
             'prefix' => 'confidential-users'], function () {
+            Route::get('edit', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'edit'])->name('main.confidential.users.edit');
             Route::get('list', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'index'])->name('main.confidential.users');
             Route::post('store', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'store'])->name('main.confidential.users.store');
             Route::post('update', [App\Http\Controllers\Main\ConfidentialUsersController::class, 'update'])->name('main.confidential.users.update');

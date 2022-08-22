@@ -51,17 +51,17 @@
     <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <button class="btn btn-sm bg-gradient-orange float-left" data-toggle="modal"
-                        data-target="#modal-create">
-                    New Directorate
-                </button>
+{{--                <button class="btn btn-sm bg-gradient-orange float-left" data-toggle="modal"--}}
+{{--                        data-target="#modal-create">--}}
+{{--                    New Directorate--}}
+{{--                </button>--}}
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
                         <i class="fas fa-minus"></i></button>
-                    <a class="btn btn-tool" href="{{route('main.directorate.sync')}}"
-                       title="Sync Positions">
+                    <a class="btn btn-tool" href="{{route('main.directorate.syncOrganoGram')}}"
+                       title="Sync Directorates with the FMS Organogram View">
                         <i class="fas fa-sync"></i></a>
                 </div>
             </div>
@@ -73,8 +73,8 @@
                         <tr>
                             <th>id</th>
                             <th>Name</th>
-{{--                            <th>Code</th>--}}
-{{--                            <th>User Unit</th>--}}
+                            <th>Code</th>
+                            <th>State</th>
 {{--                            <th>Created At</th>--}}
 {{--                            <th>Period</th>--}}
                             <th>Action</th>
@@ -85,7 +85,14 @@
                             <tr>
                                 <td>{{++$key}}</td>
                                 <td>{{$item->name}} </td>
-{{--                                <td>{{$item->code}} </td>--}}
+                                <td>{{$item->code}} </td>
+                                <td>
+                                    @if($item->status_id == 1)
+                                        NEW
+                                    @else
+                                        OLD
+                                    @endif
+                                </td>
 {{--                                <td>{{$item->user_unit->name ?? ""}} </td>--}}
 {{--                                <td>{{$item->created_at}}</td>--}}
 {{--                                <td>{{$item->created_at->diffForHumans()}}</td>--}}
@@ -142,29 +149,18 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Directorate Name</label>
                                     <input type="text" class="form-control" id="name" name="name"
                                            placeholder="Enter directorate name" required>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label for="code">Directorate Code</label>
                                     <input type="text" class="form-control" id="code" name="code"
                                            placeholder="Enter directorate code">
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="description">Directorate User Unit </label>
-                                    <select  class="form-control"  name="user_unit_id">
-                                            <option selected > Select User Unit</option>
-                                        @foreach($user_units as $item)
-                                            <option value="{{$item->id}}">{{$item->name}}</option>
-                                        @endforeach
-                                    </select>
                                 </div>
                             </div>
 
@@ -246,7 +242,7 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Directorate Name</label>
                                     <input type="text" class="form-control" id="name2" name="name"
@@ -255,22 +251,11 @@
                                          required>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label for="code">Directorate Code</label>
                                     <input type="text" class="form-control" id="code2" name="code"
                                            placeholder="Enter directorate code">
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="description">Directorate User Unit </label>
-                                    <select  class="form-control"  id="user_unit_id2"  name="user_unit_id">
-                                        <option selected > Select User Unit</option>
-                                        @foreach($user_units as $item)
-                                            <option value="{{$item->id}}">{{$item->name}}</option>
-                                        @endforeach
-                                    </select>
                                 </div>
                             </div>
 
