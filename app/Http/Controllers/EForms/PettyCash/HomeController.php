@@ -216,8 +216,8 @@ class HomeController extends Controller
         } //for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
 
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
-                ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audit_box'))
+//                ->orWhere('config_status_id', config('constants.petty_cash_status.closed'))
                 ->count();
 //            $user->unit_column = config('constants.workflow_columns.audit_unit');
 //            $user->code_column = config('constants.workflow_columns.audit_code');
@@ -292,8 +292,8 @@ class HomeController extends Controller
                 ->orderBy('code')->paginate(50);
         }//for the AUDIT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
-                ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audit_box'))
+//                ->orWhere('config_status_id', config('constants.petty_cash_status.closed'))
                 ->orderBy('code')->paginate(50);
         } else {
             $list = PettyCashModel::where('config_status_id', 0)

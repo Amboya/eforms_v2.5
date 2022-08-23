@@ -210,15 +210,44 @@ class PettyCashController extends Controller
                 ->orderBy('code')->get();
             $category = "Paid";
         } else if ($value == 'auditing') {
-            $list = PettyCashModel::where('config_status_id', config('constants.exported'))
-                ->orWhere('config_status_id', config('constants.petty_cash_status.queried'))
+            $list = PettyCashModel::where('config_status_id', config('constants.queried'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.await_audit'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
-                ->orWhere('config_status_id', config('constants.petty_cash_status.audit_approved'))
-                ->orWhere('config_status_id', config('constants.uploaded'))
+//                ->orWhere('config_status_id', config('constants.petty_cash_status.exported'))
+//                ->orWhere('config_status_id', config('constants.uploaded'))
                 ->orderBy('code')->get();
             $category = "Auditing";
+        } else if ($value == 'uploaded') {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.uploaded'))
+                ->orderBy('code')->get();
+            $category = "Uploaded";
+        } else if ($value == 'exported') {
+
+
+            // HERE CLEAR OUT WHOEVER IS EXPORTED BASED ON YOUR STATUS
+//            $exported  =  config('constants.petty_cash_status.exported') ;
+////            $code = 'C1931';
+//            $tasks = DB::select("SELECT * FROM eform_petty_cash_account
+//                        WHERE status_id = {$exported}
+//                        ORDER BY eform_petty_cash_id ASC ");
+//            $tasks = PettyCashAccountModel::hydrate($tasks);
+//
+//            dd($tasks);
+////
+//            foreach($tasks as $key => $account){
+//                $affected_form7 = DB::table('eform_petty_cash')
+//                    ->where('id', $account->eform_petty_cash_id)
+//                    ->update(['config_status_id'  => $exported  ]);
+////              if($key ==  2500){
+////                  dd(3434323233);
+////              }
+//            }
+//
+
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.exported'))
+                ->orderBy('code')->get();
+            $category = "Exported";
         } else if ($value == "needs_me") {
             $list = $totals_needs_me = HomeController::needsMeList();
             $category = "Needs My Attention";

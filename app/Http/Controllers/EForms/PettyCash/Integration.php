@@ -42,7 +42,9 @@ class Integration extends Controller
     public function ready()
     {
         $ready = config('constants.audited');
-        $forms = PettyCashModel::with('accounts', 'user_unit')->where('config_status_id', $ready)->get();
+        $forms = PettyCashModel::with('accounts', 'user_unit')
+            ->where('config_status_id', $ready)
+            ->get();
         $category = 'Petty Cash Details Ready to be Uploaded';
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
@@ -653,7 +655,7 @@ class Integration extends Controller
                 ->update(['config_status_id'  => config('constants.exported') ]);
             //mark accounts as as updated
             $affected_accounts7 = DB::table('eform_petty_cash_account')
-                ->where('petty_cash_code', $upload->invoice_id)
+               ->where('petty_cash_code', $upload->invoice_id)
                 ->update(['status_id'  => config('constants.exported') ] );
 
         }

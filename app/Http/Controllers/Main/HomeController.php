@@ -467,10 +467,12 @@ class HomeController extends Controller
     public function changeFile(Request $request)
     {
 
+
         /** upload quotation files */
         // upload the receipt files
         if ($request->hasFile('change_file')) {
             $file = $request->file('change_file');
+
             $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
             // Get just filename
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
@@ -484,9 +486,9 @@ class HomeController extends Controller
             $path = $file->storeAs($request->path, $fileNameToStore);
 
             //update
-            $model = AttachedFileModel::find($request->id);
+            $model = AttachedFileModel::find($request->change_file_id);
             //unlink the old one
-            $old_name = $model->name;
+//            $old_name = $model->name;
 
 //          $fast = $request->path.''.$old_name;
 //          unlink(storage_path($fasdf));

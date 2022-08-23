@@ -108,6 +108,30 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{route( 'petty.cash.list', 'audit_approved' ) }}"
+                               class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p> audit_approved
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route( 'petty.cash.list', 'exported' ) }}"
+                               class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p> Exported
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route( 'petty.cash.list', 'uploaded' ) }}"
+                               class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p> Uploaded
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.queried') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>

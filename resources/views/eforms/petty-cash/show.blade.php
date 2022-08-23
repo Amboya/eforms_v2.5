@@ -341,15 +341,15 @@
                                 <span >Size:{{number_format( $item->file_size, 2) }}MB  Name: {{$item->name}} </span>
                                 <span> | </span>
                                 <a href="{{asset('storage/petty_cash_quotation/'.$item->name)}}" target="_blank">View</a>
-                                @if( ($user->type_id == config('constants.user_types.developer')  || (
-                                    $user->profile_id ==  config('constants.user_profiles.EZESCO_002')
-                                  &&  $user->id  == $form->created_by )
-                                )
-                                  )
+{{--                                @if( ($user->type_id == config('constants.user_types.developer')  || (--}}
+{{--                                    $user->profile_id ==  config('constants.user_profiles.EZESCO_002')--}}
+{{--                                  &&  $user->id  == $form->created_by )--}}
+{{--                                )--}}
+{{--                                  )--}}
                                     <span> | </span>
                                     <a href="#" data-toggle="modal" data-sent_data="{{$item}}"
                                        data-target="#modal-change">Edit</a>
-                                @endif
+{{--                                @endif--}}
                             </div>
                         @endforeach
                     </div>
