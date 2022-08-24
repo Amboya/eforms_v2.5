@@ -361,6 +361,11 @@
             {{--  RECEIPT FILES - ONLY WHEN FORM HAS BEEN CLOSED--}}
             @if(  $form->config_status_id == config('constants.petty_cash_status.closed')
             ||  $form->config_status_id == config('constants.petty_cash_status.audited')
+            ||  $form->config_status_id == config('constants.petty_cash_status.await_audit')
+            ||  $form->config_status_id == config('constants.petty_cash_status.uploaded')
+            ||  $form->config_status_id == config('constants.petty_cash_status.receipt_approved')
+            ||  $form->config_status_id == config('constants.petty_cash_status.exported')
+            ||  $form->config_status_id == config('constants.petty_cash_status.export_failed')
             ||  $form->config_status_id == config('constants.petty_cash_status.queried')    )
                 <div class="card">
                     <div class="card-header">

@@ -41,10 +41,12 @@ class Integration extends Controller
 
     public function ready()
     {
-        $ready = config('constants.audited');
+
+        $ready = config('constants.petty_cash_status.audited');
         $forms = PettyCashModel::with('accounts', 'user_unit')
             ->where('config_status_id', $ready)
             ->get();
+
         $category = 'Petty Cash Details Ready to be Uploaded';
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();

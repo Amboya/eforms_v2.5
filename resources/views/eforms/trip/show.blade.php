@@ -345,6 +345,12 @@
                                         title="You cannot subscribe to this trip"
                                         value='Subscribe'>Raise Subsistence
                                 </button>
+                                <a href="{{route('trip.edit', $form)}}" name="edit_trip" class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
+                                        title="Edit the trips"
+                                       >Edit Trip Form
+                                </a>
+
+
                             @endif
 
                             {{--  HOD APPROVER--}}

@@ -56,9 +56,9 @@
                     New Operating Units</button>
 
                 <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
+                    <a href="{{route('main.operating.units.sync')}}" class="btn btn-outline-secondary"
                             title="Collapse">
-                        <i class="fas fa-minus"></i></button>
+                        <i class="fas fa-sync"></i></a>
                 </div>
             </div>
             <!-- /.card-header -->

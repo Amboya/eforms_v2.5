@@ -304,6 +304,7 @@ Route::group([
             Route::post('store', [App\Http\Controllers\Main\OperatingUnitsController::class, 'store'])->name('main.operating.units.store');
             Route::post('update', [App\Http\Controllers\Main\OperatingUnitsController::class, 'update'])->name('main.operating.units.update');
             Route::post('destroy/{id}', [App\Http\Controllers\Main\OperatingUnitsController::class, 'destroy'])->name('main.operating.units.destroy');
+            Route::get('sync', [App\Http\Controllers\Main\OperatingUnitsController::class, 'sync'])->name('main.operating.units.sync');
         });
 
         //totals

@@ -709,9 +709,11 @@ class TripController extends Controller
      * @param int $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(Trip $trip)
     {
-        //
+
+        dd($trip);
+        return view('eforms.trip.edit')->with(compact('trip' ));
     }
 
     /**
@@ -1304,6 +1306,8 @@ class TripController extends Controller
         //return view
         return view('eforms.trip.list')->with($params);
     }
+
+
 
 
 }

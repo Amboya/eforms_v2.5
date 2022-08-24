@@ -158,4 +158,31 @@ class OperatingUnitsController extends Controller
     }
 
 
+
+    public function sync(){
+
+
+        $operatingUnits = OperatingUnits::get();
+
+
+        foreach ($operatingUnits as $operatingUnit){
+
+        //mark as as updated
+        $affected_workflow = DB::table('config_system_work_flow' )
+            ->where('user_unit_bc_code', $operatingUnit->bu_code )
+            ->update( ['org_id' => $operatingUnit->org_id ] );
+
+        //mark as as updated
+        $affected_accounts = DB::table('eform_petty_cash_account' )
+            ->where('business_unit_code', $operatingUnit->bu_code )
+            ->update( ['org_id' => $operatingUnit->org_id ] );
+
+        }
+
+
+        return Redirect::back()->with('message', 'Details for ' . ' have been Updated successfully');
+
+    }
+
+
 }
