@@ -42,21 +42,19 @@ class HomeController extends Controller
             ->orWhere('config_status_id',  config('constants.petty_cash_status.chief_accountant'))
         ;
         //count closed forms
-        $closed_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
-           ;
+        $closed_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.exported'))
+            ->orWhere('config_status_id', config('constants.uploaded')) ;
         //count paid forms
         $paid_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.funds_disbursement'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.receipt_approved'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved')) ;
         //count auditing forms
-        $auditing_forms = PettyCashModel::where('config_status_id', config('constants.exported'))
-            ->orWhere('config_status_id', config('constants.petty_cash_status.queried'))
+        $auditing_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.queried'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.await_audit'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
-            ->orWhere('config_status_id', config('constants.petty_cash_status.audit_approved'))
-        ->orWhere('config_status_id', config('constants.uploaded'));
+            ->orWhere('config_status_id', config('constants.petty_cash_status.audit_approved')) ;
         //count rejected forms
         $rejected_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.cancelled'))
@@ -191,7 +189,7 @@ class HomeController extends Controller
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hr_approved'))
-                ->orWhere('config_status_id', config('constants.petty_cash_status.receipt_approved'))
+//                ->orWhere('config_status_id', config('constants.petty_cash_status.receipt_approved'))
                 ->count();
 //            $user->unit_column = config('constants.workflow_columns.ca_unit');
 //            $user->code_column = config('constants.workflow_columns.ca_code');
@@ -258,7 +256,7 @@ class HomeController extends Controller
         } //for the CHIEF ACCOUNTANT
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_007')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.hr_approved'))
-                      ->orWhere('config_status_id', config('constants.petty_cash_status.receipt_approved'))
+//                      ->orWhere('config_status_id', config('constants.petty_cash_status.receipt_approved'))
                 ->orderBy('code')->paginate(50);
         } //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {

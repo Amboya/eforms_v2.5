@@ -156,8 +156,8 @@ class PettyCashController extends Controller
                 ->orderBy('code')->get();
             $category = "New Application";
         } else if ($value == config('constants.petty_cash_status.closed')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
-//                ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.uploaded'))
+                ->orWhere('config_status_id', config('constants.petty_cash_status.exported'))
                 ->orderBy('code')->get();
             $category = "Closed";
         } else if ($value == config('constants.petty_cash_status.rejected')) {
