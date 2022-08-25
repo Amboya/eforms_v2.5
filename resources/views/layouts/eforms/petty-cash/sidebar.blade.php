@@ -92,7 +92,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.receipt_approved') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.closed') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Have Receipts

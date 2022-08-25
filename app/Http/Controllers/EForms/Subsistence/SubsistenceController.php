@@ -762,7 +762,8 @@ class SubsistenceController extends Controller
 //            }
 
         } // CHIEF ACCOUNTANT TO AUDIT
-        elseif (($next_status == config('constants.subsistence_status.chief_accountant'))
+        elseif (
+            ($next_status == config('constants.subsistence_status.chief_accountant_OLD'))
             || ($next_status == config('constants.subsistence_status.audit_box'))
             || ($next_status == config('constants.subsistence_status.await_audit'))
         ) {
@@ -770,7 +771,9 @@ class SubsistenceController extends Controller
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
 
         } // VISIBLE TO EXPENDITURES
-        elseif (($next_status == config('constants.subsistence_status.pre_audited'))
+        elseif (
+            ($next_status == config('constants.subsistence_status.chief_accountant'))
+//            ($next_status == config('constants.subsistence_status.pre_audited'))
             || ($next_status == config('constants.subsistence_status.queried'))
             || ($next_status == config('constants.exported'))
             || ($next_status == config('constants.uploaded'))

@@ -176,8 +176,8 @@ class PettyCashController extends Controller
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audited'))
                 ->orderBy('code')->get();
             $category = "Audited";
-        } else if ($value == config('constants.petty_cash_status.receipt_approved')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.receipt_approved'))
+        } else if ($value == config('constants.petty_cash_status.closed')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
                 ->orderBy('code')->get();
             $category = "Receipt Approved";
         } else if ($value == config('constants.petty_cash_status.queried')) {
