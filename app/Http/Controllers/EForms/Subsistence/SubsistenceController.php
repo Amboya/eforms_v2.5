@@ -1502,7 +1502,7 @@ class SubsistenceController extends Controller
         //   FOR EXPENDITURE UPLOADING TO FMS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
 //        && $current_status == config('constants.subsistence_status.pre_audited-AFTER_PRE_AUDITS')
-        && $current_status == config('constants.subsistence_status.pre_audited-chief_accountant')
+        && $current_status == config('constants.subsistence_status.chief_accountant')
         ) {
             //cancel status
             $insert_reasons = true;

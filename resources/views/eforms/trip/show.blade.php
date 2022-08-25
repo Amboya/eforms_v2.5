@@ -454,7 +454,7 @@
                             <div id="details_0">
 
                             </div>
-                        </div>
+                       </div>
                         <div class="modal-body">
                             <div id="details_1">
 
@@ -1081,10 +1081,10 @@
             }
 
 
-            //AUDIT
+            //AUDIT (REMOVED) NOW EXPENDITURE
             else if ((recipient.config_status_id == chief_accountant)) {
                 $('#div_cac').html(chif_acc_profile);
-                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_011')) !!};
+                next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_014')) !!};
             }
 
             //EXPENDITURE

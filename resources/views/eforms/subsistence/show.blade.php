@@ -384,7 +384,9 @@
                                     <span class="font-weight-bold">Name:</span><span>{{$item->name}}</span><br>
                                     <span class="font-weight-bold">Phone:</span><span>{{$item->phone}}</span><br>
                                     <span class="font-weight-bold">Email:</span><span>{{$item->email}}</span><br>
-                                    <span class="font-weight-bold">Test:</span><span>{{$item->staff_no}}</span><br>
+                                    @if( Auth::user()->type_id ==  config('constants.user_types.developer')  )
+                                    <span class="font-weight-bold">Staff#:</span><span>{{$item->staff_no}}</span><br>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
