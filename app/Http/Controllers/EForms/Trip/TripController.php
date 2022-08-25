@@ -852,7 +852,6 @@ class TripController extends Controller
                 $insert_reasons = false;
             }
             //update
-
             $subsistence->config_status_id = $new_status;
             $subsistence->save();
 
@@ -861,7 +860,6 @@ class TripController extends Controller
             $user->profile_id == config('constants.user_profiles.EZESCO_004')
             && $current_status == config('constants.subsistence_status.destination_approval')
         ) {
-            //find which unit am approving on this subsistence destination approvals
             //my user units
             $my_units = \App\Http\Controllers\Main\HomeController::getUserResponsibleUnits($user)->pluck('user_unit_code')->toArray();
 

@@ -590,7 +590,7 @@
 
 
                     {{--  HOD APPROVAL--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
                          &&  $form->config_status_id == config('constants.trip_status.trip_authorised')
                          &&  $form->user_unit->hod_code == $user->profile_job_code
                          &&  $form->user_unit->hod_unit == $user->profile_unit_code

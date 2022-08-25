@@ -157,6 +157,7 @@ class HomeController extends Controller
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_009')) {
             $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.station_mgr_approved'))
                 ->orWhere('config_status_id', '=', config('constants.subsistence_status.dr_approved'))
+                ->orWhere('config_status_id', '=', config('constants.trip_status.trip_authorised'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
 

@@ -692,7 +692,7 @@ class SubsistenceController extends Controller
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
         } //FOR HOD
         elseif ($next_status == config('constants.trip_status.trip_authorised')) {
-            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
+            $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
         } // HOD APPROVAL AGAIN
         elseif ($next_status == config('constants.trip_status.new_trip')) {
@@ -1299,7 +1299,7 @@ class SubsistenceController extends Controller
             $list_inv->save();
         } //FOR HOD
         elseif (
-            Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')
+            Auth::user()->profile_id == config('constants.user_profiles.EZESCO_009')
             && $current_status == config('constants.trip_status.trip_authorised')
         ) {
             //cancel status
@@ -1311,7 +1311,7 @@ class SubsistenceController extends Controller
                 $new_status = config('constants.subsistence_status.rejected');
             }//approve status
             elseif ($request->approval == config('constants.approval.approve')) {
-                $new_status = config('constants.subsistence_status.hod_approved');
+                $new_status = config('constants.subsistence_status.hr_approved');
             } else {
                 $new_status = config('constants.subsistence_status.new_application');
                 $insert_reasons = false;
