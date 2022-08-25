@@ -1039,6 +1039,7 @@ class PettyCashController extends Controller
     {
         //GET THE PETTY CASH MODEL
         $form = PettyCashModel::find($request->id);
+        $form->load('user_unit.operating');
         $current_status = $form->status->id;
         $user = auth()->user();
 
@@ -1245,7 +1246,7 @@ class PettyCashController extends Controller
                                 'vat_rate' => $vat_rate,
                                 'line_type' => config('constants.line_type.goods'),
                                 'account_type' => config('constants.account_type.operating'),
-                                'org_id' => $form->user_unit->org_id,
+                                'org_id' => $form->user_unit->operating->org_id,
                                 'company' => '01',
                                 'intra_company' => '01',
                                 'project' => $form->project->code ?? "",
@@ -1306,7 +1307,7 @@ class PettyCashController extends Controller
                                 'vat_rate' => $vat_rate,
                                 'line_type' => config('constants.line_type.goods'),
                                 'account_type' => config('constants.account_type.expense'),
-                                'org_id' => $form->user_unit->org_id,
+                                'org_id' => $form->user_unit->operating->org_id,
                                 'company' => '01',
                                 'intra_company' => '01',
                                 'project' => $form->project->code ?? "",
@@ -1375,7 +1376,7 @@ class PettyCashController extends Controller
 //                            'vat_rate' => $vat_rate,
                                 'line_type' => config('constants.line_type.goods'),
                                 'account_type' => config('constants.account_type.operating'),
-                                'org_id' => $form->user_unit->org_id,
+                                'org_id' => $form->user_unit->operating->org_id,
                                 'company' => '01',
                                 'intra_company' => '01',
                                 'project' => $form->project->code ?? "",
@@ -1436,7 +1437,7 @@ class PettyCashController extends Controller
                                 'vat_rate' => $vat_rate,
                                 'line_type' => config('constants.line_type.goods'),
                                 'account_type' => config('constants.account_type.expense'),
-                                'org_id' => $form->user_unit->org_id,
+                                'org_id' => $form->user_unit->operating->org_id,
                                 'company' => '01',
                                 'intra_company' => '01',
                                 'project' => $form->project->code ?? "",
@@ -1468,7 +1469,7 @@ class PettyCashController extends Controller
                                 'vat_rate' => 0,
 //                            'vat_rate' => $vat_rate,
                                 'line_type' => config('constants.line_type.tax'),
-                                'org_id' => $form->user_unit->org_id,
+                                'org_id' => $form->user_unit->operating->org_id,
                                 'status_id' => config('constants.petty_cash_status.export_not_ready')
                             ],
                             [
@@ -1498,7 +1499,7 @@ class PettyCashController extends Controller
 //                            'vat_rate' => $vat_rate,
                                 'line_type' => config('constants.line_type.tax'),
                                 'account_type' => config('constants.account_type.expense'),
-                                'org_id' => $form->user_unit->org_id,
+                                'org_id' => $form->user_unit->operating->org_id,
                                 'description' => $apply_tax->name . " on " . $des,
                                 'status_id' => config('constants.petty_cash_status.export_not_ready')
                             ]
@@ -1651,7 +1652,7 @@ class PettyCashController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.operating'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'created_by' => $user->id,
                             'company' => '01',
                             'intra_company' => '01',
@@ -1712,7 +1713,7 @@ class PettyCashController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'created_by' => $user->id,
                             'company' => '01',
                             'intra_company' => '01',
@@ -1785,7 +1786,7 @@ class PettyCashController extends Controller
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.operating'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'created_by' => $user->id,
                             'company' => '01',
                             'intra_company' => '01',
@@ -1846,7 +1847,7 @@ class PettyCashController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'created_by' => $user->id,
                             'company' => '01',
                             'intra_company' => '01',
@@ -1881,7 +1882,7 @@ class PettyCashController extends Controller
                             'vat_rate' => 0,
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.tax'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.petty_cash_status.export_not_ready')
                         ],
                         [
@@ -1912,7 +1913,7 @@ class PettyCashController extends Controller
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.tax'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $apply_tax->name . " on " . $des,
                             'status_id' => config('constants.petty_cash_status.export_not_ready')
                         ]
@@ -2134,7 +2135,7 @@ class PettyCashController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.operating'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'created_by' => $user->id,
                             'company' => '01',
                             'intra_company' => '01',
@@ -2195,7 +2196,7 @@ class PettyCashController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'created_by' => $user->id,
                             'company' => '01',
                             'intra_company' => '01',
@@ -2262,7 +2263,7 @@ class PettyCashController extends Controller
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.operating'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'created_by' => $user->id,
                             'company' => '01',
                             'intra_company' => '01',
@@ -2323,7 +2324,7 @@ class PettyCashController extends Controller
                             'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.goods'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'created_by' => $user->id,
                             'company' => '01',
                             'intra_company' => '01',
@@ -2357,7 +2358,7 @@ class PettyCashController extends Controller
                             'vat_rate' => 0,
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.tax'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'status_id' => config('constants.petty_cash_status.export_not_ready')
                         ],
                         [
@@ -2388,7 +2389,7 @@ class PettyCashController extends Controller
 //                            'vat_rate' => $vat_rate,
                             'line_type' => config('constants.line_type.tax'),
                             'account_type' => config('constants.account_type.expense'),
-                            'org_id' => $form->user_unit->org_id,
+                            'org_id' => $form->user_unit->operating->org_id,
                             'description' => $apply_tax->name . " on " . $des,
                             'status_id' => config('constants.petty_cash_status.export_not_ready')
                         ]
