@@ -192,7 +192,7 @@
                                 <a href="{{route('subsistence.finance.header')}}"
                                    class="nav-link ">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p> Invoice Header
+                                    <p> FMS Interface Table
                                     </p>
                                 </a>
                             </li>

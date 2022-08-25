@@ -192,7 +192,7 @@ class HomeController extends Controller
         }
         //for the EXPENDITURE OFFICE
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_014')) {
-            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.pre_audited'))
+            $list = SubsistenceModel::where('config_status_id', config('constants.subsistence_status.chief_accountant'))
                 ->orWhere('config_status_id', config('constants.subsistence_status.queried'))
                 ->orWhere('config_status_id', config('constants.uploaded'))
                 ->orWhereIn('id', $list_inv)
@@ -207,8 +207,7 @@ class HomeController extends Controller
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_011')) {
             //Borrowed authority is very dangerous - snr mgr frank
             $list = SubsistenceModel::
-            where('config_status_id', config('constants.subsistence_status.chief_accountant'))
-            ->orWhere('config_status_id', config('constants.subsistence_status.await_audit'))
+            where('config_status_id', config('constants.subsistence_status.await_audit'))
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
         } else {
