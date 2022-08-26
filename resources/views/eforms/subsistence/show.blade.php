@@ -533,7 +533,7 @@
                          &&  $form->config_status_id == config('constants.subsistence_status.new_application')
                          &&  $user->id  == $form->created_by)
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -573,7 +573,7 @@
 
                       )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-12 text-center">
@@ -596,7 +596,7 @@
                          &&  $form->user_unit->hod_unit == $user->profile_unit_code
                       )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -635,11 +635,11 @@
                          &&  $departmental_hod ==  true )
 
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-12 text-center">
-                                    <a href="{{ route('logout') }}" class="btn btn-outline-warning"
+                                    <a href="{{ route('logout') }}" class="btn btn-warning"
                                        onclick="event.preventDefault();
                                            document.getElementById('show-form'+{{$trip->id}}).submit();">
 
@@ -660,7 +660,7 @@
                              &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                          )
                             <div class="">
-                                <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                                <h5 class=" text-bold text-orange " >Desired Action</h5>
                                 <hr>
                                 <div class="row">
                                     <div class="col-10">
@@ -701,7 +701,7 @@
                              &&  $form->user_unit->dm_unit == $user->profile_unit_code
                             )
                             <div class="">
-                                <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                                <h5 class=" text-bold text-orange " >Desired Action</h5>
                                 <hr>
                                 <div class="row">
                                     <div class="col-10">
@@ -742,7 +742,7 @@
                              &&  $form->user_unit->ca_unit == $user->profile_unit_code
                             )
                             <div class="">
-                                <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                                <h5 class=" text-bold text-orange " >Desired Action</h5>
                                 <hr>
                                 <div class="row">
                                     <div class="col-10">
@@ -785,7 +785,7 @@
                          &&  $form->user_unit->hrm_unit == $user->profile_unit_code
                      )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -824,7 +824,7 @@
                          &&  $form->config_status_id == config('constants.subsistence_status.dr_approved')
                      )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -865,11 +865,12 @@
                          &&  $departmental_hod ==  true )
 
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Trip Form Approval</h5>
+                            <span class="text-sm"> This subsistence form was raised against a different department (Cost Center : {{$form->cost_center }}). </span>
                             <hr>
                             <div class="row">
                                 <div class="col-12 text-center">
-                                    <a href="{{ route('logout') }}" class="btn btn-outline-warning"
+                                    <a href="{{ route('logout') }}" class="btn btn-warning" title="You will find the approval button when you click on TRACK, on the particular trip record."
                                        onclick="event.preventDefault();
                                            document.getElementById('show-form'+{{$trip->id}}).submit();">
                                         OPEN TRIP {{ $trip->code }} TO ACT
@@ -889,7 +890,7 @@
                          &&  $form->user_unit->dm_unit == $user->profile_unit_code
                         )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -930,7 +931,7 @@
                          &&  $form->config_status_id == config('constants.trip_status.accepted')
                         )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -972,7 +973,7 @@
 {{--                         &&  $departmental_hod ==  true )--}}
 
 {{--                        <div class="">--}}
-{{--                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>--}}
+{{--                            <h5 class=" text-bold text-orange " >Desired Action</h5>--}}
 {{--                            <hr>--}}
 {{--                            <div class="row">--}}
 {{--                                <div class="col-12 text-center">--}}
@@ -994,7 +995,7 @@
                          &&  $form->user_unit->ca_unit == $user->profile_unit_code
                         )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -1034,7 +1035,7 @@
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -1230,7 +1231,7 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <textarea hidden class="form-control" rows="2" name="reason"
@@ -1265,7 +1266,7 @@
                          &&  $form->claimant_staff_no == $user->staff_no
                           )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <textarea hidden class="form-control" rows="2" name="reason"
@@ -1321,7 +1322,7 @@
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-9">
@@ -1362,7 +1363,7 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                         )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Approval Confirmations</h5>
+                            <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-lg-10 p-2 mt-3 ">

@@ -128,7 +128,7 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->search;
+        $search = strtoupper($request->search);
         $list = User::select('id','user_unit_id','con_st_code','positions_id','staff_no','user_unit_code','job_code','email','name','created_at','phone')
            ->where('email', 'LIKE', "%{$search}%")
                ->orWhere('name', 'LIKE', "%{$search}%")

@@ -80,6 +80,7 @@ class Integration extends Controller
 
         //loop through the accounts
         foreach ($list as $account) {
+
             $org = $account->org_id;
             //check for header
             $header_list = ZescoItsInvInterfaceHeader::where('invoice_num', $account->form->code)
@@ -110,10 +111,7 @@ class Integration extends Controller
                     ]
                 );
 
-                //mark as as updated
-                $affected_form = DB::table('eform_subsistence')
-                    ->where('id', $account->form->id)
-                    ->update(['config_status_id'  => config('constants.exported') ]);
+
             }
 
             //check for detail
@@ -154,6 +152,13 @@ class Integration extends Controller
                     ->where('id', $account->id)
                     ->update(['status_id'  =>  config('constants.exported')  ]);
             }
+
+
+            //update the subsistence
+            //mark as as updated
+            $affected_form = DB::table('eform_subsistence')
+                ->where('id', $account->form->id)
+                ->update(['config_status_id'  => config('constants.exported') ]);
 
         }
 
@@ -308,12 +313,7 @@ class Integration extends Controller
                     ]
                 );
 
-                //mark as as updated
-                $affected_form = DB::table('eform_subsistence')
-                    ->where('id', $account->form->id)
-                    ->update(['config_status_id'  => config('constants.exported') ]);
             }
-
 
             //check for detail
             $detail_list = ZescoItsInvInterfaceDetail::where('invoice_id', $account->form->code)
@@ -354,6 +354,12 @@ class Integration extends Controller
                     ->where('id', $account->id)
                     ->update(['status_id'  =>  config('constants.exported')  ]);
             }
+
+
+            //mark as as updated
+            $affected_form = DB::table('eform_subsistence')
+                ->where('id', $account->form->id)
+                ->update(['config_status_id'  => config('constants.exported') ]);
 
         }
 
