@@ -113,6 +113,7 @@ class PettyCashController extends Controller
      */
     public function index(Request $request, $value)
     {
+
         $list_for_auditors_action = 0;
         if (auth()->user()->profile_id == config('constants.user_profiles.EZESCO_014')) {
             /** check if auditor created last months files */
@@ -155,9 +156,9 @@ class PettyCashController extends Controller
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.new_application'))
                 ->orderBy('code')->get();
             $category = "New Application";
-        } else if ($value == config('constants.petty_cash_status.closed')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.uploaded'))
-                ->orWhere('config_status_id', config('constants.petty_cash_status.exported'))
+        } else if ($value == config('constants.uploaded')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.uploaded'))
+//                ->orWhere('config_status_id', config('constants.petty_cash_status.exported'))
                 ->orderBy('code')->get();
             $category = "Closed";
         } else if ($value == config('constants.petty_cash_status.rejected')) {
@@ -176,10 +177,15 @@ class PettyCashController extends Controller
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audited'))
                 ->orderBy('code')->get();
             $category = "Audited";
-        } else if ($value == config('constants.petty_cash_status.closed')) {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.closed'))
+        }else if ($value == config('constants.petty_cash_status.receipt_approved')) {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.receipt_approved'))
                 ->orderBy('code')->get();
-            $category = "Receipt Approved";
+            $category = "Has receipts";
+        } else if ($value == 'closed') {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audited'))
+                ->OrWhere('config_status_id', config('constants.petty_cash_status.audit_approved'))
+                ->orderBy('code')->get();
+            $category = "Closed";
         } else if ($value == config('constants.petty_cash_status.queried')) {
             $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.queried'))
                 ->orderBy('code')->get();
@@ -209,17 +215,22 @@ class PettyCashController extends Controller
                 ->orWhere('config_status_id', config('constants.petty_cash_status.security_approved'))
                 ->orderBy('code')->get();
             $category = "Paid";
+        } else if ($value == 'exported') {
+            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.exported'))
+                ->orWhere('config_status_id', config('constants.uploaded'))
+                ->orderBy('code')->get();
+            $category = "Exported";
         } else if ($value == 'auditing') {
             $list = PettyCashModel::where('config_status_id', config('constants.queried'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.await_audit'))
                 ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
-                ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
+//                ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
 //                ->orWhere('config_status_id', config('constants.petty_cash_status.exported'))
 //                ->orWhere('config_status_id', config('constants.uploaded'))
                 ->orderBy('code')->get();
             $category = "Auditing";
         } else if ($value == 'uploaded') {
-            $list = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.uploaded'))
+            $list = PettyCashModel::where('config_status_id', config('constants.uploaded'))
                 ->orderBy('code')->get();
             $category = "Uploaded";
         } else if ($value == 'exported') {

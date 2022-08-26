@@ -124,7 +124,7 @@
                 <div class="col-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty.cash.list', config('constants.petty_cash_status.closed'))}}">
+                           href="{{route( 'petty.cash.list', 'closed')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
@@ -139,13 +139,13 @@
                 <div class="col-12 col-sm-6 col-md-2">
                     <div class="info-box mb-3">
                         <a class="info-box-icon bg-gray elevation-1"
-                           href="{{route( 'petty.cash.list', 'rejected')}}">
+                           href="{{route( 'petty.cash.list', 'exported')}}">
                             <span><i class="fa fa-file"></i></span>
                         </a>
                         <div class="info-box-content">
-                            <span class="info-box-text"> Rejected</span>
-                            <span class="info-box-number"> ZMW {{ number_format( $totals['rejected_forms']->get()->sum('total'),2) }}</span>
-                            <span class="info-box-number">{{ $totals['rejected_forms']->count() }}</span>
+                            <span class="info-box-text"> Exported</span>
+                            <span class="info-box-number"> ZMW {{ number_format( $totals['uploaded_forms']->get()->sum('total'),2) }}</span>
+                            <span class="info-box-number">{{ $totals['uploaded_forms']->count() }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>

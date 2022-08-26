@@ -41,9 +41,12 @@ class HomeController extends Controller
             ->orWhere('config_status_id',  config('constants.petty_cash_status.hr_approved'))
             ->orWhere('config_status_id',  config('constants.petty_cash_status.chief_accountant'))
         ;
-        //count closed forms
-        $closed_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.exported'))
+        //count Uploaded forms
+        $uploaded_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.exported'))
             ->orWhere('config_status_id', config('constants.uploaded')) ;
+        //count closed forms
+        $closed_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.audited'))
+            ->orWhere('config_status_id', config('constants.petty_cash_status.audit_approved')) ;
         //count paid forms
         $paid_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.funds_disbursement'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.funds_acknowledgement'))
@@ -53,8 +56,9 @@ class HomeController extends Controller
         $auditing_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.queried'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.await_audit'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.audit_box'))
-            ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
-            ->orWhere('config_status_id', config('constants.petty_cash_status.audit_approved')) ;
+//            ->orWhere('config_status_id', config('constants.petty_cash_status.audited'))
+//            ->orWhere('config_status_id', config('constants.petty_cash_status.audit_approved'))
+        ;
         //count rejected forms
         $rejected_forms = PettyCashModel::where('config_status_id', config('constants.petty_cash_status.rejected'))
             ->orWhere('config_status_id', config('constants.petty_cash_status.cancelled'))
@@ -67,6 +71,8 @@ class HomeController extends Controller
         $totals['auditing_forms'] = $auditing_forms;
         $totals['closed_forms'] = $closed_forms;
         $totals['rejected_forms'] = $rejected_forms;
+        $totals['uploaded_forms'] = $uploaded_forms;
+
 
 
         //count all that needs me

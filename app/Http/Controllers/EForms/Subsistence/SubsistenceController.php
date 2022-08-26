@@ -721,8 +721,11 @@ class SubsistenceController extends Controller
         elseif ($next_status == config('constants.subsistence_status.hod_approved')) {
             // - SAME
 //            if ($departmental) {
+
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_015'));
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
+
+          //  dd($user_unit->user_unit_code );
 //            }
 //            // - DIFF
 //            else {
@@ -796,6 +799,8 @@ class SubsistenceController extends Controller
 
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009')); //HR
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
+
+          //  dd($user_unit->user_unit_code);
 
         } //CLOSE------------
         elseif ($next_status == config('constants.subsistence_status.closed')) {
@@ -897,7 +902,15 @@ class SubsistenceController extends Controller
             }
 
         } else {
+
+//            dd($form->user_unit_code );
+
+//            if (($form->user_unit_code) == ($user->user_unit_code)) {
             $user_array = self::findMyNextPerson($form->config_status_id, $form->user_unit, $user);
+//            }else{
+////                dd(  $trip->user_unit );
+//                $user_array = self::findMyNextPerson($form->config_status_id, $trip->user_unit, $user);
+//            }
         }
 
         //check if this belongs to the same department

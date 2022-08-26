@@ -60,7 +60,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.closed') ) }}"
+                            <a href="{{route( 'petty.cash.list', 'closed') }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Closed
@@ -92,7 +92,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.closed') ) }}"
+                            <a href="{{route( 'petty.cash.list', config('constants.petty_cash_status.receipt_approved') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Have Receipts
@@ -108,10 +108,10 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route( 'petty.cash.list', 'audit_approved' ) }}"
+                            <a href="{{route( 'petty.cash.list',  config('constants.petty_cash_status.audited') ) }}"
                                class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p> audit_approved
+                                <p> Audit Approved
                                 </p>
                             </a>
                         </li>
