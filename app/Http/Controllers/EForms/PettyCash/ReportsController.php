@@ -103,7 +103,9 @@ class ReportsController extends Controller
             $status_id_6 = config('constants.petty_cash_status.audited');
             $status_id_7 = config('constants.petty_cash_status.reimbursement_box');
             $status_id_8 = config('constants.petty_cash_status.await_audit');
-            $status_id_9 = config('constants.petty_cash_status.audit_box');
+            $status_id_9 = config('constants.petty_cash_status.exported');
+            $status_id_10 = config('constants.uploaded');
+            $status_id_11 = config('constants.petty_cash_status.audit_box');
             $form = DB::select("SELECT
         count(id) as total, sum(total_payment) as amount ,sum(change) as change ,
         user_unit_code, business_unit_code ,cost_center, directorate_id
@@ -117,6 +119,8 @@ class ReportsController extends Controller
         or config_status_id = {$status_id_7}
         or config_status_id = {$status_id_8}
         or config_status_id = {$status_id_9}
+        or config_status_id = {$status_id_10}
+        or config_status_id = {$status_id_11}
         group by  user_unit_code, business_unit_code ,cost_center, directorate_id
         ");
             $status_name = config('constants.money_given');
