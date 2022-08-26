@@ -243,19 +243,18 @@
                                         </td>
                                         <td>
                                             <div class="row">
-                                                <div class="col-sm-12 mt-0">
-                                                    <button
-                                                        class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
-                                                        title="Trip Approvals List"
-                                                        data-toggle="modal"
-                                                        data-sent_data="{{$item}}"
-                                                        data-target="#modal-approve-member">
-                                                        <i class="fa fa-file"></i> Track
-                                                    </button>
-                                                </div>
-
                                                 @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_002')  )
                                                     @if($user->staff_no ==  $item->claimant_staff_no)
+                                                        <div class="col-sm-12 mt-0">
+                                                            <button
+                                                                class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+                                                                title="Trip Approvals List"
+                                                                data-toggle="modal"
+                                                                data-sent_data="{{$item}}"
+                                                                data-target="#modal-approve-member">
+                                                                <i class="fa fa-file"></i> Track
+                                                            </button>
+                                                        </div>
                                                         <div class="col-sm-12 mt-2">
                                                             <a href="{{ route('logout') }}"
                                                                title="Open subsistence form"
@@ -266,6 +265,16 @@
                                                             </a>
                                                         </div>
                                                     @else
+                                                        <div class="col-sm-12 mt-0">
+                                                            <button
+                                                                class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+                                                                title="Trip Approvals List"
+                                                                data-toggle="modal" disabled
+                                                                data-sent_data="{{$item}}"
+                                                                data-target="#modal-approve-member">
+                                                                <i class="fa fa-file"></i> Track
+                                                            </button>
+                                                        </div>
                                                         <div class="col-sm-12 mt-2">
                                                             <button disabled title="No Access to this subsistence form"
                                                                     class="btn btn-sm bg-{{$item->status->html ?? "default"}}">
@@ -274,6 +283,16 @@
                                                         </div>
                                                     @endif
                                                 @else
+                                                    <div class="col-sm-12 mt-0">
+                                                        <button
+                                                            class="btn btn-sm bg-{{$item->status->html ?? "default"}}"
+                                                            title="Trip Approvals List"
+                                                            data-toggle="modal"
+                                                            data-sent_data="{{$item}}"
+                                                            data-target="#modal-approve-member">
+                                                            <i class="fa fa-file"></i> Track
+                                                        </button>
+                                                    </div>
                                                     <div class="col-sm-12 mt-2">
                                                         <a href="{{ route('logout') }}" title="Open subsistence form"
                                                            class="btn btn-sm bg-{{$item->status->html ?? "default"}}"

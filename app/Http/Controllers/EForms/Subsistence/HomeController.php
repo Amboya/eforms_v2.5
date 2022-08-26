@@ -131,7 +131,7 @@ class HomeController extends Controller
             $list = SubsistenceModel::whereDate('updated_at', Carbon::today())
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
-            dd(1);
+
 
         } //for the REQUESTER
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
@@ -142,6 +142,7 @@ class HomeController extends Controller
                 ->orWhereIn('id', $list_inv)
                 ->orderBy('code')->paginate(50);
 //               dd(2) ;  //hod_approved_trip
+            
         } //for the HOD
         elseif ($user->profile_id == config('constants.user_profiles.EZESCO_004')) {
 
@@ -240,6 +241,8 @@ class HomeController extends Controller
 //                ->orWhere('config_status_id', '=', config('constants.trip_status.hod_approved_trip'))
                 ->orWhereIn('id', $list_inv)
                 ->count();
+
+          // dd($pending);
         }
 
         return $pending;
