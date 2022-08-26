@@ -96,7 +96,7 @@ class Integration extends Controller
                         'transaction_type' => config('constants.transaction_type.subsistence'),
                         'invoice_num' => $account->form->code,
                         'invoice_date' => $account->form->created_at,
-                        'invoice_description' => $account->description,
+                        'invoice_description' => substr($account->description, 0,230),
                         'invoice_type' =>  config('constants.transaction_type.invoice_type'),
                         'supplier_num' => $account->form->claimant_staff_no,
                         'invoice_amount' => $account->form->net_amount_paid,
@@ -134,7 +134,7 @@ class Integration extends Controller
 //                        'line_number' => $detail_count[0]->total + 1,
                         'line_number' => $detail_count->count() + 1,
                         'amount' => $account->creditted_amount ?? ( "".$account->debitted_amount),
-                        'item_description' => $account->description,
+                        'item_description' => substr($account->description, 0,230),
                         'org_id' => $account->org_id,
                         'company_code' => $account->company,
                         'business_unit' => $account->business_unit_code,
@@ -194,7 +194,7 @@ class Integration extends Controller
 //                        'transaction_type' => config('constants.transaction_type.subsistence'),
 //                        'invoice_num' => $account->form->code,
 //                        'invoice_date' => $account->form->created_at,
-//                        'invoice_description' => $account->description,
+//                        'invoice_description' => substr$account->description, 0,230),
 //                        'invoice_type' =>  config('constants.transaction_type.invoice_type'),
 //                        'supplier_num' => $account->form->claimant_staff_no,
 //                        'invoice_amount' => $account->form->net_amount_paid,
@@ -218,7 +218,7 @@ class Integration extends Controller
 //            //check for detail
 ////            $detail = DB::select("SELECT count(invoice_id) as total FROM fms_invoice_interface_detail
 ////                  WHERE invoice_id = '{$account->form->code}' AND org_id = {$org}
-////                    AND item_description = '{$account->description}' AND  gl_account = '{$account->account}' ");
+////                    AND item_description = '{substr$account->description, 0,230)}' AND  gl_account = '{$account->account}' ");
 ////            $detail_list = ZescoItsInvInterfaceHeader::hydrate($detail)->first();
 //
 //            $detail_list = ZescoItsInvInterfaceDetail::where('invoice_id', $account->form->code)
@@ -241,7 +241,7 @@ class Integration extends Controller
 //                        'invoice_id' => $account->form->code,
 //                        'line_number' => $detail_count[0]->total + 1,
 //                        'amount' => $account->creditted_amount ?? ( "".$account->debitted_amount),
-//                        'item_description' => $account->description,
+//                        'item_description' => substr$account->description, 0,230),
 //                        'org_id' => $account->org_id,
 //                        'company_code' => $account->company,
 //                        'business_unit' => $account->business_unit_code,
@@ -298,7 +298,7 @@ class Integration extends Controller
                         'transaction_type' => config('constants.transaction_type.subsistence'),
                         'invoice_num' => $account->form->code,
                         'invoice_date' => $account->form->created_at,
-                        'invoice_description' => $account->description,
+                        'invoice_description' => substr($account->description, 0,230),
                         'invoice_type' =>  config('constants.transaction_type.invoice_type'),
                         'supplier_num' => $account->form->claimant_staff_no,
                         'invoice_amount' => $account->form->net_amount_paid,
@@ -336,7 +336,7 @@ class Integration extends Controller
 //                        'line_number' => $detail_count[0]->total + 1,
                         'line_number' => $detail_count->count() + 1,
                         'amount' => $account->creditted_amount ?? ( "".$account->debitted_amount),
-                        'item_description' => $account->description,
+                        'item_description' => substr($account->description, 0,230),
                         'org_id' => $account->org_id,
                         'company_code' => $account->company,
                         'business_unit' => $account->business_unit_code,
