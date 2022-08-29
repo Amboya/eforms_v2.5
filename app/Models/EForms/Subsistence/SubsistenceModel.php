@@ -128,7 +128,7 @@ class SubsistenceModel extends Model
             $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
             $mine = $fdsf->pluck('user_unit_code')->toArray();
 
-            if ($user->type_id == config('constants.user_types.developer2')) {
+            if ($user->type_id == config('constants.user_types.developer1')) {
 //
             } else
             {

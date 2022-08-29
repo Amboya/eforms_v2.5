@@ -70,7 +70,7 @@ class TripController extends Controller
             $list = Trip::where('config_status_id', config('constants.trip_status.new_trip'))
                 ->get();
             $category = "New Application";
-        } else if ($value == config('constants.trip_status.closed')) {
+        } else if ($value == config('constants.trip_status.trip_closed')) {
             $list = Trip::where('config_status_id', config('constants.trip_status.trip_closed'))
                 ->get();
             $category = "Closed";

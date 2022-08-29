@@ -57,8 +57,10 @@ class HomeController extends Controller
             ->where('config_status_id', '<', config('constants.trip_status.closed'))
             ->count();
         //count closed forms
-        $closed_forms = Trip::where('config_status_id', config('constants.trip_status.closed'))
+        $closed_forms = Trip::where('config_status_id', config('constants.trip_status.trip_closed'))
             ->count();
+
+
         //count rejected forms
         $rejected_forms = Trip::where('config_status_id', config('constants.trip_status.rejected'))
             ->count();
@@ -92,8 +94,6 @@ class HomeController extends Controller
         $list = self::needsMeList();
         return $list->count() ;
     }
-
-
 
     public static function needsMeList()
     {
@@ -187,6 +187,15 @@ class HomeController extends Controller
         }
 
         return $pending;
+    }
+
+
+    public static function getMyInvitedTrips($man_no)
+    {
+        $list_inv = Invitation::where('man_no', $man_no )
+            ->orderBy('trip_code')->get();
+
+        return $list_inv;
     }
 
 

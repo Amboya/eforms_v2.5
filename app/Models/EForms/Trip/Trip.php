@@ -78,9 +78,9 @@ class Trip extends Model
             if ($user->profile_id == config('constants.user_profiles.EZESCO_002')) {
                 //if you are just a requester, then only see your forms
                 static::addGlobalScope('staff_number', function (Builder $builder) {
-//                    $fdsf = HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-//                    $mine = $fdsf->pluck('user_unit_code')->toArray();
-//                    $builder->where('claimant_staff_no', Auth::user()->staff_no);
+                    $fdsf = \App\Http\Controllers\EForms\Trip\HomeController::getMyInvitedTrips( auth()->user()->staff_no );
+                    $mine = $fdsf->pluck('trip_code')->toArray();
+                    $builder->WhereIn('code', $mine);
                 });
             } else {
 

@@ -883,8 +883,8 @@ class SubsistenceController extends Controller
     public function show($id)
     {
         $form = SubsistenceModel::where('id', $id)->Orwhere('code', $id)->first();
-
         $form->load('claimant.user_unit');
+
 
         if ($form->id == null) {
             return back()->with('error', 'No subsistence invoices ' . $id . ' could not be found, or you do not have permissions to view it. ');
