@@ -13,7 +13,7 @@ class ZescoItsInvInterfaceDetail extends Model
     public $timestamps = false;
     //test
     //production
-    protected $connection = 'oracle_isd_prod';
+//    protected $connection = 'oracle_isd_prod';
     protected $table = 'fms_invoice_interface_detail';
 
     //fields fillable

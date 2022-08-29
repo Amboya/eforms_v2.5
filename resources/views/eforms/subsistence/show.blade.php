@@ -306,12 +306,12 @@
 
                     </div>
 
-                    <p><b>Note:</b> The system reference number is <span
-                            class="text-primary font-weight-bold">mandatory</span>
-                        and is from
-                        any of the systems at ZESCO such as a work request number from PEMS, Task
-                        number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.
-                        giving rise to the expenditure</p>
+{{--                    <p><b>Note:</b> The system reference number is <span--}}
+{{--                            class="text-primary font-weight-bold">mandatory</span>--}}
+{{--                        and is from--}}
+{{--                        any of the systems at ZESCO such as a work request number from PEMS, Task--}}
+{{--                        number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.--}}
+{{--                        giving rise to the expenditure</p>--}}
 
                 </div>
             </div>
@@ -450,6 +450,39 @@
                 </div>
             </div>
 
+
+            {{--  AUTHORIZATION FILES FILES--}}
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title text-bold text-orange">Authorization Files</h4>
+                    @if( ($user->type_id == config('constants.user_types.developer')  || ($user->id  == $form->created_by ) )   )
+                        <a class="float-right" href="#" data-toggle="modal"
+                           data-target="#modal-add-quotation">Add File</a>
+                    @endif
+                </div>
+                <div class="card-body" style="width:100%;  ">
+                    <div class="row">
+                        @foreach($authorizations as $item)
+                            <div class="col-lg-6 col-sm-12 mb-3">
+                                <iframe id="{{$item->id}}" src="{{asset('storage/authorization_file/'.$item->name)}}"
+                                        style="width:100%; height: 1000px " title="{{$item->name}}"></iframe>
+                                <span>Size:{{number_format( $item->file_size, 2) }}MB  Name: {{$item->name}} </span>
+                                <span> | </span>
+                                <a href="{{asset('storage/authorization_file/'.$item->name)}}" target="_blank">View</a>
+                                @if( ($user->type_id == config('constants.user_types.developer')  || ( $user->id  == $form->created_by )    )  )
+                                    <span> | </span>
+                                    <a href="#" data-toggle="modal"
+                                       data-target="#modal-change">Edit</a>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="card-footer">
+                </div>
+            </div>
+
+
             {{--  FORM PPROVALS--}}
             <div class="card ">
                 <div class="card-header">
@@ -492,41 +525,6 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    {{--  CLAIMANT REQUEST FOR REFUND--}}
-{{--                    @if(  \Illuminate\Support\Facades\Auth::user()->id == $form->created_by )--}}
-{{--                        <div class="">--}}
-{{--                            <hr>--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-10">--}}
-{{--                                    <div class="row">--}}
-{{--                                        <div class="col-1">--}}
-{{--                                            <label class="form-control-label">Reason</label>--}}
-{{--                                        </div>--}}
-{{--                                        <div class="col-11">--}}
-{{--                                            <textarea class="form-control" rows="2" name="reason" required></textarea>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-2 text-center ">--}}
-{{--                                    <div id="divSubmit_show">--}}
-{{--                                        <button id="btnSubmit_approve" type="submit" name="approval"--}}
-{{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
-{{--                                                value='Cancelled'>CANCEL SUBSISTENCE--}}
-{{--                                        </button>--}}
-{{--                                        <button hidden id="btnSubmit_reject" type="submit" name="approval"--}}
-{{--                                                class="btn btn-outline-danger ml-2 p-2  "--}}
-{{--                                                value='Rejected'>REJECT--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
-{{--                                    <div id="divSubmit_hide">--}}
-{{--                                        <button disabled class="btn btn-outline-success mr-2 p-2  "--}}
-{{--                                                value='Approved'>Processing. Please wait...--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    @endif--}}
 
                     {{--  CLAIMANT EDIT--}}
                     @if(  auth()->user()->id == $form->created_by
@@ -567,38 +565,53 @@
                         </div>
                     @endif
 
-                    {{--  DESTINANTION HOD APPROVAL--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
-                         &&  $form->config_status_id == config('constants.subsistence_status.destination_approval')
-
-                      )
-                        <div class="">
-                            <h5 class=" text-bold text-orange " >Desired Action</h5>
-                            <hr>
-                            <div class="row">
-                                <div class="col-12 text-center">
-                                    <a href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                           document.getElementById('show-form'+{{$trip->id}}).submit();">
-                                        <span class="btn btn-outline-success text-center  text-orange "> Click to Open the Trip Form </span>
-                                    </a>
+                        {{-- MY HOD APPROVAL--}}
+                        @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
+                             &&  $form->config_status_id == config('constants.subsistence_status.new_application')
+                             &&  $form->claimant->user_unit->hod_code == $user->profile_job_code
+                             &&  $form->claimant->user_unit->hod_unit == $user->profile_unit_code
+                            )
+                            <div class="">
+                                <h5 class=" text-bold text-orange " >Desired Action</h5>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="row">
+                                            <div class="col-1">
+                                                <label class="form-control-label">Reason</label>
+                                            </div>
+                                            <div class="col-11">
+                                                <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 text-center ">
+                                        <div id="divSubmit_show">
+                                            <button id="btnSubmit_approve" type="submit" name="approval"
+                                                    class="btn btn-outline-success mr-2 p-2  "
+                                                    value='Approved'>APPROVE
+                                            </button>
+                                            <button id="btnSubmit_reject" type="submit" name="approval"
+                                                    class="btn btn-outline-danger ml-2 p-2  "
+                                                    value='Rejected'>REJECT
+                                            </button>
+                                        </div>
+                                        <div id="divSubmit_hide">
+                                            <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                    value='Approved'>Processing. Please wait...
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                     @endif
 
-
-
-                    {{--  HOD APPROVAL--}}
-{{--                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')--}}
-{{--                         &&  $form->config_status_id == config('constants.trip_status.trip_authorised')--}}
-{{--                         &&  $form->user_unit->hod_code == $user->profile_job_code--}}
-{{--                         &&  $form->user_unit->hod_unit == $user->profile_unit_code--}}
-{{--                      )--}}
-
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
-                       &&  $form->config_status_id == config('constants.trip_status.trip_authorised')
-                    )
+                    {{--MY SNR MANAGER--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
+                         &&  $form->config_status_id == config('constants.subsistence_status.hod_approved')
+                         &&  $form->claimant->user_unit->dm_code == $user->profile_job_code
+                         &&  $form->claimant->user_unit->dm_unit == $user->profile_unit_code
+                        )
                         <div class="">
                             <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
@@ -634,29 +647,51 @@
                         </div>
                     @endif
 
-                    {{--  HOD APPROVAL 2--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')
-                         &&  $departmental_hod ==  true )
-
+                    {{-- MY HR APPROVAL--}}
+                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
+                         &&  $form->config_status_id == config('constants.subsistence_status.station_mgr_approved')
+                         &&  $form->user_unit->hrm_code == $user->profile_job_code
+                         &&  $form->user_unit->hrm_unit == $user->profile_unit_code
+                     )
                         <div class="">
                             <h5 class=" text-bold text-orange " >Desired Action</h5>
                             <hr>
                             <div class="row">
-                                <div class="col-12 text-center">
-                                    <a href="{{ route('logout') }}" class="btn btn-warning"
-                                       onclick="event.preventDefault();
-                                           document.getElementById('show-form'+{{$trip->id}}).submit();">
-
-                                        OPEN TRIP {{ $trip->code }} TO ACT
-                                    </a>
+                                <div class="col-10">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <label class="form-control-label">Reason</label>
+                                        </div>
+                                        <div class="col-11">
+                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center ">
+                                    <div id="divSubmit_show">
+                                        <button id="btnSubmit_approve" type="submit" name="approval"
+                                                class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>APPROVE
+                                        </button>
+                                        <button id="btnSubmit_reject" type="submit" name="approval"
+                                                class="btn btn-outline-danger ml-2 p-2  "
+                                                value='Rejected'>REJECT
+                                        </button>
+                                    </div>
+                                    <div id="divSubmit_hide">
+                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
+                                                value='Approved'>Processing. Please wait...
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
                     @endif
 
-
+                <!--   -------------------------------------------------------- -->
                     @if($departmental)
+
+
                         {{-- DEPARTMENTAL SNR MANAGER APPROVAL--}}
                         @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
                              &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')
@@ -779,49 +814,11 @@
                                 </div>
                             </div>
                         @endif
-                    @endif
 
 
-                    {{-- HR APPROVAL--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
-                         &&  $form->config_status_id == config('constants.subsistence_status.station_mgr_approved')
-                         &&  $form->user_unit->hrm_code == $user->profile_job_code
-                         &&  $form->user_unit->hrm_unit == $user->profile_unit_code
-                     )
-                        <div class="">
-                            <h5 class=" text-bold text-orange " >Desired Action</h5>
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>APPROVE
-                                        </button>
-                                        <button id="btnSubmit_reject" type="submit" name="approval"
-                                                class="btn btn-outline-danger ml-2 p-2  "
-                                                value='Rejected'>REJECT
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     @endif
+                <!--   -------------------------------------------------------- -->
+
 
                     {{-- HR APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_009')
@@ -862,7 +859,6 @@
                         </div>
                     @endif
 
-
                     {{--  HR APPROVAL 2--}}
                     @if( $user->profile_id ==   config('constants.user_profiles.EZESCO_015')
                          &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')
@@ -885,48 +881,6 @@
                         </div>
                     @endif
 
-
-
-                    {{-- SNR MANAGER--}}
-                    @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_015')
-                         &&  $form->config_status_id == config('constants.subsistence_status.hod_approved')
-                         &&  $form->user_unit->dm_code == $user->profile_job_code
-                         &&  $form->user_unit->dm_unit == $user->profile_unit_code
-                        )
-                        <div class="">
-                            <h5 class=" text-bold text-orange " >Desired Action</h5>
-                            <hr>
-                            <div class="row">
-                                <div class="col-10">
-                                    <div class="row">
-                                        <div class="col-1">
-                                            <label class="form-control-label">Reason</label>
-                                        </div>
-                                        <div class="col-11">
-                                            <textarea class="form-control" rows="2" name="reason" required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 text-center ">
-                                    <div id="divSubmit_show">
-                                        <button id="btnSubmit_approve" type="submit" name="approval"
-                                                class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>APPROVE
-                                        </button>
-                                        <button id="btnSubmit_reject" type="submit" name="approval"
-                                                class="btn btn-outline-danger ml-2 p-2  "
-                                                value='Rejected'>REJECT
-                                        </button>
-                                    </div>
-                                    <div id="divSubmit_hide">
-                                        <button disabled class="btn btn-outline-success mr-2 p-2  "
-                                                value='Approved'>Processing. Please wait...
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
 
 
 
@@ -971,27 +925,6 @@
 
 
 
-                    {{--  SNR MANAGER 2--}}
-{{--                    @if( $user->profile_id ==   config('constants.user_profiles.EZESCO_015')--}}
-{{--                         &&  $form->config_status_id == config('constants.trip_status.hod_approved_trip')--}}
-{{--                         &&  $departmental_hod ==  true )--}}
-
-{{--                        <div class="">--}}
-{{--                            <h5 class=" text-bold text-orange " >Desired Action</h5>--}}
-{{--                            <hr>--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-12 text-center">--}}
-{{--                                    <a href="{{ route('logout') }}" class="btn btn-outline-warning"--}}
-{{--                                       onclick="event.preventDefault();--}}
-{{--                                           document.getElementById('show-form'+{{$trip->id}}).submit();">--}}
-{{--                                        OPEN TRIP {{ $trip->code }} TO ACT--}}
-{{--                                    </a>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-
-{{--                        </div>--}}
-{{--                    @endif--}}
-
                     {{-- CHIEF ACCOUNTANT APPROVAL--}}
                     @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_007')
                          &&  $form->config_status_id == config('constants.subsistence_status.hr_approved')
@@ -999,7 +932,7 @@
                          &&  $form->user_unit->ca_unit == $user->profile_unit_code
                         )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Desired Action</h5>
+                            <h5 class=" text-bold text-green " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-10">
@@ -1081,8 +1014,8 @@
                        )
                         <div class="">
                             <div class="row">
-                                    <div class="col-1">
-                                        <label class="form-control-label">Allocation Code</label>
+                                    <div class="col-2">
+                                        <label class="form-control-label">Budget Allocation Code</label>
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group">
@@ -1235,7 +1168,7 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                        )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Desired Action</h5>
+                            <h5 class=" text-bold text-green " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <textarea hidden class="form-control" rows="2" name="reason"
@@ -1270,7 +1203,7 @@
                          &&  $form->claimant_staff_no == $user->staff_no
                           )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Desired Action</h5>
+                            <h5 class=" text-bold text-green " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <textarea hidden class="form-control" rows="2" name="reason"
@@ -1326,7 +1259,7 @@
                         &&  $form->user_unit->audit_unit == $user->profile_unit_code
                           )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Desired Action</h5>
+                            <h5 class=" text-bold text-green " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-9">
@@ -1367,7 +1300,7 @@
                          &&  $form->user_unit->expenditure_unit == $user->profile_unit_code
                         )
                         <div class="">
-                            <h5 class=" text-bold text-orange " >Desired Action</h5>
+                            <h5 class=" text-bold text-green " >Desired Action</h5>
                             <hr>
                             <div class="row">
                                 <div class="col-lg-10 p-2 mt-3 ">
@@ -1498,41 +1431,6 @@
                                 </div>
                             </div>
                         </div>
-
-{{--                        <div class="">--}}
-{{--                            <hr>--}}
-{{--                            <div class="row">--}}
-{{--                                <div class="col-10">--}}
-{{--                                    <div class="row">--}}
-{{--                                        <div class="col-1">--}}
-{{--                                            <label class="form-control-label">Reason</label>--}}
-{{--                                        </div>--}}
-{{--                                        <div class="col-11">--}}
-{{--                                            <textarea class="form-control" rows="2" name="reason" required></textarea>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-2 text-center ">--}}
-{{--                                    <div id="divSubmit_show">--}}
-{{--                                        <button id="btnSubmit_approve" type="submit" name="approval"--}}
-{{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
-{{--                                                value='Resolve'>RESOLVE QUERY--}}
-{{--                                        </button>--}}
-{{--                                        <button style="display: none" id="btnSubmit_reject" type="submit"--}}
-{{--                                                name="approval"--}}
-{{--                                                class="btn btn-outline-success mr-2 p-2  "--}}
-{{--                                                value='Rejected'>RESOLVE QUERY--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
-{{--                                    <div id="divSubmit_hide">--}}
-{{--                                        <button disabled class="btn btn-outline-success mr-2 p-2  "--}}
-{{--                                                value='Approved'>Processing. Please wait...--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
-
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
                     @endif
 
                 </div>

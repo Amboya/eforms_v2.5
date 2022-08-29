@@ -54,7 +54,7 @@
                     @endforeach
                 </ul>
             </div>
-    @endif
+        @endif
 
 
     <!-- Default box -->
@@ -81,7 +81,7 @@
                         <b class='text-orange'>Created By:</b> <span
                             class=" text-green">{{ $form->initiator_name}}  </span> <br>
                         <b class='text-orange'>HOD's Cost Center:</b> <span
-                            class=" text-green">{{ $form->user_unit->user_unit_description }} : {{ $form->user_unit->user_unit_code}}  : {{ $form->user_unit->user_unit_bc_code}}  : {{ $form->user_unit->user_unit_cc_code}}  </span>
+                            class=" text-green">{{ $form->user_unit->user_unit_description ?? "" }} : {{ $form->user_unit->user_unit_code ?? ""}}  : {{ $form->user_unit->user_unit_bc_code ?? ""}}  : {{ $form->user_unit->user_unit_cc_code ?? ""}}  </span>
                         <br>
                         <b class='text-orange'>Created At:</b> <span
                             class=" text-green">{{ $form->created_at}} : that is {{ $form->created_at->diffForHumans()}} </span>
@@ -331,7 +331,7 @@
                 <br>
                 <div class="row">
                     <div class="col-sm-3 ml-lg-3  ">
-                        @if( $form->status->id != config('constants.trip_status.trip_closed'))
+                        @if( $form->status->id ?? 0 != config('constants.trip_status.trip_closed'))
                             @if($list_inv != null)
                                 @if( $list_inv->status_id == config('constants.trip_status.pending'))
                                     <form name="db1"
@@ -346,7 +346,8 @@
                                             </button>
                                         @else
                                             <button disabled name="approval"
-                                                    class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
+                                                    class="btn btn-outline-secondary mr-2 p-2  "
+                                                    style="margin-top: 10px"
                                                     title="You cannot subscribe to this trip. Trips are overlapping or you have an open subsistance form"
                                                     value='Subscribe'>Raise Subsistence
                                             </button>
@@ -354,19 +355,22 @@
 
                                     </form>
                                 @else
-                                    <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
+                                    <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                            style="margin-top: 10px"
                                             title="You cannot subscribe to this trip"
                                             value='Subscribe'>Raise Subsistence
                                     </button>
                                 @endif
                             @else
-                                <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
+                                <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                        style="margin-top: 10px"
                                         title="You cannot subscribe to this trip"
                                         value='Subscribe'>Raise Subsistence
                                 </button>
-                                <a href="{{route('trip.edit', $form)}}" name="edit_trip" class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
-                                        title="Edit the trips"
-                                       >Edit Trip Form
+                                <a href="{{route('trip.edit', $form)}}" name="edit_trip"
+                                   class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
+                                   title="Edit the trips"
+                                >Edit Trip Form
                                 </a>
 
 
@@ -374,7 +378,8 @@
 
                             {{--  HOD APPROVER--}}
                             @if( $user->profile_id ==  config('constants.user_profiles.EZESCO_004')    )
-                                <button name="invite" class="btn btn-outline-primary  p-2 justify-content-start " style="margin-top: 10px"
+                                <button name="invite" class="btn btn-outline-primary  p-2 justify-content-start "
+                                        style="margin-top: 10px"
                                         title="Invite members to be part of this trip"
                                         data-toggle="modal"
                                         data-target="#modal-invite-trip-members"
@@ -383,7 +388,8 @@
 
                             @endif
                         @else
-                            <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  " style="margin-top: 10px"
+                            <button disabled name="approval" class="btn btn-outline-secondary mr-2 p-2  "
+                                    style="margin-top: 10px"
                                     title="This trip has ended you can not raise subsistence for it"
                                     value='Subscribe'>Raise Subsistence
                             </button>
@@ -408,7 +414,7 @@
                 <br>
                 <form name="db1" action="{{route('trip.approve')}}" method="post" enctype="multipart/form-data">
                     @csrf
-                    <p><b>Note:</b> TRIP FORM TO BE RETIRED TO EXPENDITURE OFFICE IMMEDIATELY UPON RETURN </p>
+                    {{--                    <p><b>Note:</b> TRIP FORM TO BE RETIRED TO EXPENDITURE OFFICE IMMEDIATELY UPON RETURN </p>--}}
                 </form>
 
             </div>
@@ -416,6 +422,38 @@
 
         </div>
         <!-- /.card -->
+
+
+        {{--  AUTHORIZATION FILES FILES--}}
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title text-bold text-orange">Authorization Files</h4>
+                @if( ($user->type_id == config('constants.user_types.developer')  || ($user->id  == $form->created_by ) )   )
+                    <a class="float-right" href="#" data-toggle="modal"
+                       data-target="#modal-add-quotation">Add File</a>
+                @endif
+            </div>
+            <div class="card-body" style="width:100%;  ">
+                <div class="row">
+                    @foreach($authorizations as $item)
+                        <div class="col-lg-6 col-sm-12 mb-3">
+                            <iframe id="{{$item->id}}" src="{{asset('storage/authorization_file/'.$item->name)}}"
+                                    style="width:100%; height: 1000px " title="{{$item->name}}"></iframe>
+                            <span>Size:{{number_format( $item->file_size, 2) }}MB  Name: {{$item->name}} </span>
+                            <span> | </span>
+                            <a href="{{asset('storage/authorization_file/'.$item->name)}}" target="_blank">View</a>
+                            @if( ($user->type_id == config('constants.user_types.developer')  || ( $user->id  == $form->created_by )    )  )
+                                <span> | </span>
+                                <a href="#" data-toggle="modal"
+                                   data-target="#modal-change">Edit</a>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            <div class="card-footer">
+            </div>
+        </div>
 
         <div class="modal fade" id="modal-trip-members">
             <div class="modal-dialog modal-lg ">
@@ -473,7 +511,7 @@
                             <div id="details_0">
 
                             </div>
-                       </div>
+                        </div>
                         <div class="modal-body">
                             <div id="details_1">
 
@@ -1015,15 +1053,13 @@
             if ((recipient.config_status_id == accepted)) {
 
 
-
-                if( recipient.grade == "M3" || recipient.grade == "M2" || recipient.grade == "M1" ){
+                if (recipient.grade == "M3" || recipient.grade == "M2" || recipient.grade == "M1") {
                     next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_003')) !!};
                     $('#div_cac').html(hod_profile_sub);
-                }else{
+                } else {
                     next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_004')) !!};
                     $('#div_hod').html(hod_profile);
                 }
-
 
 
                 user_unit = recipient.user.user_unit_code;
@@ -1033,25 +1069,25 @@
             //HR 1
             else if (
                 (recipient.config_status_id == station_mgr_approved)
-            ||  (recipient.config_status_id == dr_approved) ) {
+                || (recipient.config_status_id == dr_approved)) {
                 // html_div = hod_profile;
                 html_div = hod_profile_sub;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_009')) !!};
 
 
-                if( recipient.grade == "M3" || recipient.grade == "M2" || recipient.grade == "M1" ){
+                if (recipient.grade == "M3" || recipient.grade == "M2" || recipient.grade == "M1") {
                     user_unit = recipient.user.user_unit_code;
-                }else{
+                } else {
                     //check if you belong to same dpts
-                    if(recipient.trip_hod_unit == recipient.user.user_unit_code){
+                    if (recipient.trip_hod_unit == recipient.user.user_unit_code) {
                         user_unit = recipient.user.user_unit_code;
-                    }else{
+                    } else {
                         user_unit = recipient.trip_hod_unit;
                     }
                 }
 
 
-              //  user_unit = recipient.user.user_unit_code;
+                //  user_unit = recipient.user.user_unit_code;
             }
 
 
@@ -1067,30 +1103,30 @@
             else if ((recipient.config_status_id == hod_approved)) {
                 html_div = hod_profile_sub;
 
-              //  html_div = hod_profile;
+                //  html_div = hod_profile;
                 next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};
-              //  user_unit = recipient.user.user_unit_code;
+                //  user_unit = recipient.user.user_unit_code;
 
                 //check if you belong to same dpts
-                if(recipient.trip_hod_unit == recipient.user.user_unit_code){
+                if (recipient.trip_hod_unit == recipient.user.user_unit_code) {
                     user_unit = recipient.user.user_unit_code;
-                }else{
+                } else {
                     user_unit = recipient.trip_hod_unit;
                 }
             }
 
 
             {{--//SNR MANAGER--}}
-            {{--else if ((recipient.config_status_id == hr_approved)) {--}}
-            {{--    html_div = snr_profile_sub;--}}
-            {{--    next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};--}}
-            {{--}--}}
-            {{--    --}}
-            {{--//CHIEF ACCOUNTANT--}}
-            {{--else if ((recipient.config_status_id == station_mgr_approved)) {--}}
-            {{--    $('#div_cac').html(chif_acc_profile);--}}
-            {{--    next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_007')) !!};--}}
-            {{--}--}}
+                {{--else if ((recipient.config_status_id == hr_approved)) {--}}
+                {{--    html_div = snr_profile_sub;--}}
+                {{--    next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_015')) !!};--}}
+                {{--}--}}
+                {{--    --}}
+                {{--//CHIEF ACCOUNTANT--}}
+                {{--else if ((recipient.config_status_id == station_mgr_approved)) {--}}
+                {{--    $('#div_cac').html(chif_acc_profile);--}}
+                {{--    next_profile = '/' + {!!  json_encode(config('constants.user_profiles.EZESCO_007')) !!};--}}
+                {{--}--}}
 
 
             //CHIEF ACCOUNTANT

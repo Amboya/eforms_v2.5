@@ -270,8 +270,18 @@ class TripController extends Controller
     {
 
         //check if members were invited
+        if ($request->authorization_file == null) {
+            return Redirect::back()->with('error', 'Please uploaded authorization document');
+        }
+
+        //check if members were invited
         if ($request->destination_units == null) {
             return Redirect::back()->with('error', 'Please select the destination user-unit or user-units');
+        }
+
+        //check if members were invited
+        if ($request->budget_holder_unit == null) {
+            return Redirect::back()->with('error', 'Please select the budget holders user-unit where the list of subsistence approvers will be gotten');
         }
 
         //get team email addresses
@@ -281,6 +291,8 @@ class TripController extends Controller
         if ($request->users == null) {
             return Redirect::back()->with('error', 'Please Invite some members to subscribe to the trip');
         }
+
+
 
         $invited = sizeof($request->users);
 
@@ -300,6 +312,7 @@ class TripController extends Controller
                 'date_to' => $request->date_to,
                 'hod_code' => $user->profile_job_code,
                 'hod_unit' => $user->profile_unit_code,
+                'budget_holder_unit' => $request->budget_holder_unit ?? $user->profile_unit_code,
 
                 'code' => $code,
                 'name' => $request->name,
@@ -315,6 +328,49 @@ class TripController extends Controller
                 'created_by' => $user->id,
 
             ]);
+
+
+
+
+        // upload the authorization_file files
+        $files = $request->file('authorization_file');
+        if ($request->hasFile('authorization_file')) {
+            foreach ($files as $file) {
+                $filenameWithExt = preg_replace("/[^a-zA-Z]+/", "_", $file->getClientOriginalName());
+                // Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                //get size
+                $size = $file->getSize() * 0.000001;
+                // Get just ext
+                $extension = $file->getClientOriginalExtension();
+                // Filename to store
+                $fileNameToStore = trim(preg_replace('/\s+/', ' ', $filename . '_' . time() . '.' . $extension));
+                // Upload File
+                $path = $file->storeAs('public/trip_authorizations', $fileNameToStore);
+
+                //upload the receipt
+                $file = AttachedFileModel::updateOrCreate(
+                    [
+                        'name' => $fileNameToStore,
+                        'location' => $path,
+                        'extension' => $extension,
+                        'file_size' => $size,
+                        'form_id' => $formModel->code,
+                        'form_type' => config('constants.eforms_id.trip'),
+                        'file_type' => config('constants.file_type.subsistence')
+                    ],
+                    [
+                        'name' => $fileNameToStore,
+                        'location' => $path,
+                        'extension' => $extension,
+                        'file_size' => $size,
+                        'form_id' => $formModel->code,
+                        'form_type' => config('constants.eforms_id.trip'),
+                        'file_type' => config('constants.file_type.subsistence')
+                    ]
+                );
+            }
+        }
 
 
         /** send email to the invited */
@@ -531,11 +587,17 @@ class TripController extends Controller
         }
         $form->load('members', 'members.user', 'members.destinations', 'user_unit');
 
+        $authorizations  = AttachedFileModel::where('form_id', $form->code)
+            ->where('form_type', config('constants.eforms_id.trip'))
+            ->get();
+
+
 
         $approvals = EformApprovalsModel::where('eform_id', $form->id)->where('config_eform_id', config('constants.eforms_id.trip'))->get();
 
         //get the list of users who are supposed to work on the form
         $user_array = self::findMyNextPerson($form, auth()->user()->user_unit, auth()->user());
+
 
         //all invitations
         $all_inv = Invitation::where('trip_code', $form->code)->get();
@@ -594,13 +656,14 @@ class TripController extends Controller
 
         $pending = $pending + $pendingb;
 
-      //  dd($pending);
+
 
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
 
+
         //return view
-        return view('eforms.trip.show')->with(compact('pending', 'list_inv', 'user', 'user_array', 'totals_needs_me', 'form', 'all_inv', 'approvals'));
+        return view('eforms.trip.show')->with(compact('authorizations','pending', 'list_inv', 'user', 'user_array', 'totals_needs_me', 'form', 'all_inv', 'approvals'));
 
     }
 

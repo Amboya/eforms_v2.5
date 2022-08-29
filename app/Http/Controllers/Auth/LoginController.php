@@ -192,24 +192,28 @@ class LoginController extends Controller
     {
         //then get the user details in phris
         $phirs_user = PhrisUserDetailsModel::where('con_per_no', $request->staff_no)->first();
-        //update user
-        $user->name = $phirs_user->name ?? "";
-        $user->email = $phirs_user->staff_email ?? $user->email;
-        $user->phone = $phirs_user->mobile_no ?? $user->phone;
-        $user->nrc = $phirs_user->nrc ?? $user->nrc;
-        $user->contract_type = $phirs_user->contract_type ?? $user->contract_type;
-        $user->con_st_code = $phirs_user->con_st_code ?? $user->con_st_code;
-        $user->con_wef_date = $phirs_user->con_wef_date ?? $user->con_wef_date;
-        $user->con_wet_date = $phirs_user->con_wet_date ?? $user->con_wet_date;
-        $user->job_code = $phirs_user->job_code ?? $user->job_code;
-        $user->station = $phirs_user->station ?? $user->station;
-        $user->affiliated_union = $phirs_user->affiliated_union ?? $user->affiliated_union;
+
+        if( ($phirs_user->name ?? 0) != 0){
+            //update user
+            $user->name = $phirs_user->name ?? "";
+            $user->email = $phirs_user->staff_email ?? $user->email;
+            $user->phone = $phirs_user->mobile_no ?? $user->phone;
+            $user->nrc = $phirs_user->nrc ?? $user->nrc;
+            $user->contract_type = $phirs_user->contract_type ?? $user->contract_type;
+            $user->con_st_code = $phirs_user->con_st_code ?? $user->con_st_code;
+            $user->con_wef_date = $phirs_user->con_wef_date ?? $user->con_wef_date;
+            $user->con_wet_date = $phirs_user->con_wet_date ?? $user->con_wet_date;
+            $user->job_code = $phirs_user->job_code ?? $user->job_code;
+            $user->station = $phirs_user->station ?? $user->station;
+            $user->affiliated_union = $phirs_user->affiliated_union ?? $user->affiliated_union;
+        }
+
 
         //check if the job code changed
-        if ($user->job_code != $phirs_user->job_code ?? "") {
+        if ( ($user->job_code ?? "") != ($phirs_user->job_code ?? "") ) {
             //trigger a check of user unit
-            $user_unit = ConfigWorkFlow::where('user_unit_cc_code', $phirs_user->cc_code)
-                ->where('user_unit_bc_code', $phirs_user->bu_code)->first();
+            $user_unit = ConfigWorkFlow::where('user_unit_cc_code', $phirs_user->cc_code ?? 0)
+                ->where('user_unit_bc_code', $phirs_user->bu_code ?? 0)->first();
             //trigger an update on work-flow
             if ($user_unit != null) {
                 //update workflow

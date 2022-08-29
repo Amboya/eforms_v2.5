@@ -21,3 +21,8 @@ Route::get('charts', [App\Http\Controllers\EForms\Trip\TripController::class, 'c
 Route::post('search', [App\Http\Controllers\EForms\Trip\TripController::class, 'search'])->name('trip.search');
 
 
+
+Route::get('filtered/reports', \App\Http\Livewire\Eforms\Trip\TripsCreate::class)->name('trips.create');
+
+
+

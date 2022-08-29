@@ -118,12 +118,12 @@
                                 <div class="col-6"><label>Cost Center:</label></div>
                                 <div class="col-6">
                                     <select name="cost_center" required class="form-control is-warning">
-                                        <option value="">--choose--</option>
-                                        <option class="text-orange" value="{{auth()->user()->user_unit->id}} "  > {{auth()->user()->user_unit->user_unit_code}}  -  {{auth()->user()->user_unit->user_unit_cc_code}}  -   {{auth()->user()->user_unit->user_unit_description}} </option>
-                                        <option class="text-green" value="{{ $trip->user_unit->id}} "  > {{$trip->user_unit->user_unit_code}}  -  {{$trip->user_unit->user_unit_cc_code}}  -   {{$trip->user_unit->user_unit_description}} </option>
-                                    @foreach($cost_centers as $cc)
-                                            <option value=" {{$cc->id}} "  > {{$cc->user_unit_cc_code}}  -  {{$cc->user_unit_code}}  -   {{$cc->user_unit_description}} </option>
-                                        @endforeach
+{{--                                        <option value="">--choose--</option>--}}
+{{--                                        <option class="text-orange" value="{{auth()->user()->user_unit->id}} "  > {{auth()->user()->user_unit->user_unit_code}}  -  {{auth()->user()->user_unit->user_unit_cc_code}}  -   {{auth()->user()->user_unit->user_unit_description}} </option>--}}
+                                        <option class="text-green" value="{{ $trip->user_unit->id ?? 0}} "  > {{$trip->user_unit->user_unit_code ?? 0}}  -  {{$trip->user_unit->user_unit_cc_code ?? 0}}  -   {{$trip->user_unit->user_unit_description ?? 0}} </option>
+{{--                                    @foreach($cost_centers as $cc)--}}
+{{--                                            <option value=" {{$cc->id}} "  > {{$cc->user_unit_cc_code}}  -  {{$cc->user_unit_code}}  -   {{$cc->user_unit_description}} </option>--}}
+{{--                                        @endforeach--}}
 
                                     </select>
                                 </div>
@@ -221,6 +221,7 @@
                             <tr>
                                 <td><strong class="text-green">Total of Attached Claim (If Any) ZMW:</strong></td>
                                 <td>
+                                    <label>Amount you are claiming as your transport claim</label>
                                     <input required id="trex_total_attached_claim" name="trex_total_attached_claim"
                                            class="form-control" type="number">
                                 </td>
@@ -262,15 +263,15 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
-                                    <div class="row">
-                                        <div class="col-3"><label>Allocation Code:</label></div>
-                                        <div class="col-9">
-                                            <input value=" " type="text" id="allocation_code" name="allocation_code"
-                                                   class="form-control text-orange text-bold">
-                                        </div>
-                                    </div>
-                                </td>
+{{--                                <td>--}}
+{{--                                    <div class="row">--}}
+{{--                                        <div class="col-3"><label>Allocation Code:</label></div>--}}
+{{--                                        <div class="col-9">--}}
+{{--                                            <input value=" " type="text" id="allocation_code" name="allocation_code"--}}
+{{--                                                   class="form-control text-orange text-bold">--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </td>--}}
                             </tr>
                         </table>
 
@@ -278,9 +279,9 @@
 
                     <div class="row mb-1 mt-4">
                         <div class="col-lg-12 mb-4">
-                            <div class="row">
+                            <div class="row" id="attach_div" style="display:none">
                                 <div class="col-2 ">
-                                    <label class="form-control-label">Attach Files (optional)</label>
+                                    <label class="form-control-label">Attach Transport Claim Files (optional)</label>
                                 </div>
                                 <div class="col-4">
                                     <div class="input-group">
@@ -293,10 +294,10 @@
                     </div>
                     <hr>
 
-                    <p><b>Note:</b> The system reference number is optional and is from
-                        any of the systems at ZESCO such as a work request number from PEMS, Task
-                        number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.
-                        giving rise to the expenditure</p>
+{{--                    <p><b>Note:</b> The system reference number is optional and is from--}}
+{{--                        any of the systems at ZESCO such as a work request number from PEMS, Task--}}
+{{--                        number from HQMS, Meeting Number from HQMS, Incident number from IMS etc.--}}
+{{--                        giving rise to the expenditure</p>--}}
 
                 </div>
                 <!-- /.card-body -->
@@ -409,13 +410,22 @@
                 var total = parseFloat(absc_amount) + parseFloat(attached_claim);
                 total =  total.round(2);
                 $('#trex_total_amount_claim').val(total);
+
+                if(attached_claim > 0 ){
+                    $('#attach_div').show();
+                }else{
+                    $('#attach_div').hide();
+                }
+
                 // }
-            // });
-            //
+           //  });
+            // //
             // //calculate final amount after deductions
-            // $("#trex_deduct_advance").change(function () {
+           // $("#trex_deduct_advance").change(function () {
+                //  var trex_deduct_advance = $(this).val();
                 var attached_claim = $('#trex_total_amount_claim').val();
-                var trex_deduct_advance = $(this).val();
+                var trex_deduct_advance = $('#trex_deduct_advance').val();
+
                 // if (diff > 0) {
                 var total = parseFloat(attached_claim) - parseFloat(trex_deduct_advance);
                 total =  total.round(2);

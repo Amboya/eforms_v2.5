@@ -47,7 +47,7 @@ class TripMembers extends Model
         'directorate_id',
         'config_status_id',
         'profile',
-        'code_superior',
+        'claimant_user_unit_code',
 
         'grade',
         'ext_no',

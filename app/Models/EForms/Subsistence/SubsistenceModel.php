@@ -47,7 +47,7 @@ class SubsistenceModel extends Model
         'directorate_id',
         'config_status_id',
         'profile',
-        'code_superior',
+        'claimant_user_unit_code',
 
         'grade',
         'ext_no',
@@ -210,6 +210,11 @@ class SubsistenceModel extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function claimant()
+    {
+        return $this->belongsTo(User::class, 'claimant_staff_no', 'staff_no');
     }
 
     public function status()

@@ -39,6 +39,7 @@ class Trip extends Model
         'date_to',
         'hod_code',
         'hod_unit',
+        'budget_holder_unit',
 
         'code',
         'name',
@@ -112,7 +113,7 @@ class Trip extends Model
 
     public function user_unit()
     {
-        return $this->belongsTo(ConfigWorkFlow::class, 'hod_unit', 'user_unit_code');
+        return $this->belongsTo(ConfigWorkFlow::class, 'budget_holder_unit', 'user_unit_code');
     }
 
     public function members()

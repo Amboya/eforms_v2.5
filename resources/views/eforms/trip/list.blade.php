@@ -85,7 +85,7 @@
                                 <td>{{$item->date_to}}</td>
                                 <td>Invited: {{$item->invited}}, Subscribed:{{sizeof($item->members) ?? "bra"}} </td>
                                 <td><span
-                                        class="badge badge-{{$item->status->html}}">{{$item->status->name}}</span>
+                                        class="badge badge-{{$item->status->html ?? "" }}">{{$item->status->name ?? ""}}</span>
                                 </td>
                                 <td>{{$item->created_at->diffForHumans()}}</td>
                                 <td>

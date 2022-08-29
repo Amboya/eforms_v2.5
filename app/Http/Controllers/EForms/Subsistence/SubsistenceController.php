@@ -61,7 +61,7 @@ class SubsistenceController extends Controller
         $projects = ProjectsModel::all();
         //count all that needs me
         $totals_needs_me = HomeController::needsMeCount();
-        $cost_centers = ConfigWorkFlow::orderBy('user_unit_description', 'ASC')->get();
+        $cost_centers = ConfigWorkFlow::where('user_unit_code', $trip->budget_Holder_unit)->orderBy('user_unit_description', 'ASC')->get();
         $trip->load('user_unit');
 
         $previous_subsistence = SubsistenceModel::where('claimant_staff_no', $user->staff_no)->latest('created_at')->first();
@@ -305,7 +305,7 @@ class SubsistenceController extends Controller
     {
         //[1] get the logged in user
         $user = Auth::user();   //superior_code
-        $cost_center = ConfigWorkFlow::find($request->cost_center);
+
         $error = false;
         $trip->load('user');
 
@@ -392,23 +392,34 @@ class SubsistenceController extends Controller
         //check if the next if cost center of the TRIP and SUBSISTENCE IS THE SAME
 
         $user = Auth::user();   //superior_code
-        $cost_center = ConfigWorkFlow::find($request->cost_center);
+        $cost_center = ConfigWorkFlow::where('user_unit_code',$trip->budget_holder_unit)->first();
         $user->load('grade');
+
+
 
         //CHECK TO SEE IF YOU ARE SNR MANAGEMENT
         if($user->grade->category_id == config('constants.grade_category.senior_mgt')){
-            $status = config('constants.trip_status.accepted');
+//            $status = config('constants.trip_status.accepted');
+            $status = config('constants.subsistence_status.hod_approved');
         }else{
-            if ($user->user_unit->user_unit_code == $cost_center->user_unit_code) {
-                $status = config('constants.subsistence_status.hod_approved');
+            //CHECK TO SEE IF YOU ARE IN THE SAME DEPARTMENT
+            if ( ($user->user_unit->hod_unit == $trip->hod_unit )
+                || ($user->user_unit->user_unit_code == $trip->hod_unit)
+                || ($user->user_unit->user_unit_code == $cost_center->user_unit_code)) {
+                if ( $user->user_unit->hod_unit == $trip->hod_unit ){
+                    $status = config('constants.subsistence_status.hod_approved');
+                }else{
+                    $status = config('constants.subsistence_status.new_application');
+                }
                 $departmental = true;
             } else {
-                $status = config('constants.trip_status.accepted');
+//                $status = config('constants.trip_status.accepted');
+                $status = config('constants.subsistence_status.new_application');
             }
         }
 
 
-
+//dd($departmental);
 
         //raise the voucher
         $formModel = SubsistenceModel::firstOrCreate(
@@ -458,11 +469,11 @@ class SubsistenceController extends Controller
                 'trex_total_attached_claim' => $request->trex_total_attached_claim,
                 'trex_deduct_advance_amount' => $request->trex_deduct_advance,
 
-                'allocation_code' => $request->allocation_code,
+                'allocation_code' => $request->allocation_code ?? 0 ,
 
                 'created_by' => $user->id,
                 'profile' => Auth::user()->profile_id,
-                'code_superior' => $user->user_unit->user_unit_superior,
+                'claimant_user_unit_code' => $user->user_unit->user_unit_code,
                 //cost center
                 'cost_center' => $cost_center->user_unit_cc_code,
                 'business_unit_code' => $cost_center->user_unit_bc_code,
@@ -690,6 +701,15 @@ class SubsistenceController extends Controller
             }
 
             $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($claimant->user_unit_code, $profile);
+        }
+        if ($next_status == config('constants.subsistence_status.new_application')) {
+            $claimant->load('grade');
+
+                $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_004'));
+
+              //  dd( $user_unit->user_unit_code);
+
+            $user_array = \App\Http\Controllers\Main\HomeController::getMySuperior($user_unit->user_unit_code, $profile);
         } //FOR HOD
         elseif ($next_status == config('constants.trip_status.trip_authorised')) {
             $profile = ProfileModel::find(config('constants.user_profiles.EZESCO_009'));
@@ -864,6 +884,7 @@ class SubsistenceController extends Controller
     {
         $form = SubsistenceModel::where('id', $id)->Orwhere('code', $id)->first();
 
+        $form->load('claimant.user_unit');
 
         if ($form->id == null) {
             return back()->with('error', 'No subsistence invoices ' . $id . ' could not be found, or you do not have permissions to view it. ');
@@ -871,9 +892,11 @@ class SubsistenceController extends Controller
 
         $trip = Trip::findOrFail($form->trip_id);
         //
-        $receipts = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.subsistence'))
+
+        $authorizations  = AttachedFileModel::where('form_id', $trip->code)
+            ->where('form_type', config('constants.eforms_id.trip'))
             ->get();
+
         $attached_files = AttachedFileModel::where('form_id', $form->code)
             ->where('form_type', config('constants.eforms_id.subsistence'))
             ->get();
@@ -903,10 +926,20 @@ class SubsistenceController extends Controller
 
         } else {
 
+            //departmental approvals
+            if (($form->config_status_id == config('constants.subsistence_status.station_mgr_approved'))
+            || ($form->config_status_id == config('constants.subsistence_status.new_application'))
+                ||($form->config_status_id == config('constants.subsistence_status.hod_approved'))
+            ) {
+                $user_array = self::findMyNextPerson($form->config_status_id, $user->user_unit, $user);
+            }else{
+                $user_array = self::findMyNextPerson($form->config_status_id, $form->user_unit, $user);
+            }
+
 //            dd($form->user_unit_code );
 
 //            if (($form->user_unit_code) == ($user->user_unit_code)) {
-            $user_array = self::findMyNextPerson($form->config_status_id, $form->user_unit, $user);
+           // $user_array = self::findMyNextPerson($form->config_status_id, $form->user_unit, $user);
 //            }else{
 ////                dd(  $trip->user_unit );
 //                $user_array = self::findMyNextPerson($form->config_status_id, $trip->user_unit, $user);
@@ -916,22 +949,34 @@ class SubsistenceController extends Controller
         //check if this belongs to the same department
         $departmental = false;
         $departmental_hod = false;
-        if (($form->user_unit_code) == ($user->user_unit_code)) {
+
+        //CHECK TO SEE IF YOU ARE IN THE SAME DEPARTMENT
+        if ( ($user->user_unit->hod_unit == $trip->hod_unit )
+            || ($user->user_unit->user_unit_code == $trip->hod_unit)
+            || ($user->user_unit->user_unit_code == $trip->budget_holder_unit)) {
             $departmental = true;
         } else {
-            if (($form->config_status_id == config('constants.trip_status.accepted'))
-                || ($form->config_status_id == config('constants.trip_status.hod_approved_trip')
-                    || ($form->config_status_id == config('constants.trip_status.hr_approved_trip')))
-            ) {
-
-                $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
-                $mine = $fdsf->pluck('user_unit_code')->toArray();
-                if (in_array($user->user_unit_code, $mine)) {
-                    $departmental_hod = true;
-
-                }
+            if ( $user->user_unit->hod_unit == $trip->hod_unit ){
+                $departmental_hod = true;
             }
         }
+
+//        if (($form->user_unit_code) == ($user->user_unit_code)) {
+//            $departmental = true;
+//        } else {
+//            if (($form->config_status_id == config('constants.trip_status.accepted'))
+//                || ($form->config_status_id == config('constants.trip_status.hod_approved_trip')
+//                    || ($form->config_status_id == config('constants.trip_status.hr_approved_trip')))
+//            ) {
+//
+//                $fdsf = \App\Http\Controllers\Main\HomeController::getMyProfile(config('constants.eforms_id.subsistence'));
+//                $mine = $fdsf->pluck('user_unit_code')->toArray();
+//                if (in_array($user->user_unit_code, $mine)) {
+//                    $departmental_hod = true;
+//
+//                }
+//            }
+//        }
 
 
         //count all that needs me
@@ -941,8 +986,8 @@ class SubsistenceController extends Controller
 
         //data to send to the view
         $params = [
-            'receipts' => $receipts,
             'attached_files' => $attached_files,
+            'authorizations' => $authorizations,
             'form_accounts' => $form_accounts,
             'totals_needs_me' => $totals_needs_me,
             'form' => $form,
@@ -972,9 +1017,11 @@ class SubsistenceController extends Controller
             return back()->with('error', 'No subsistence invoices ' . $id . ' could not be found, or you do not have permissions to view it. ');
         }
 
-        $receipts = AttachedFileModel::where('form_id', $form->code)
-            ->where('form_type', config('constants.eforms_id.subsistence'))
+
+        $authorizations  = AttachedFileModel::where('form_id', $form->code)
+            ->where('form_type', config('constants.eforms_id.trip'))
             ->get();
+
         $quotations = AttachedFileModel::where('form_id', $form->code)
             ->where('form_type', config('constants.eforms_id.subsistence'))
             ->get();
@@ -992,7 +1039,7 @@ class SubsistenceController extends Controller
 
         //data to send to the view
         $params = [
-            'receipts' => $receipts,
+            'authorizations' => $authorizations,
             'quotations' => $quotations,
             'form_accounts' => $form_accounts,
             'totals_needs_me' => $totals_needs_me,
@@ -1310,7 +1357,44 @@ class SubsistenceController extends Controller
 
             $list_inv->status_id = $new_status;
             $list_inv->save();
-        } //FOR HOD
+        }
+
+        // FOR HOD
+        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_004')
+            && $current_status == config('constants.subsistence_status.new_application')
+        ) {
+            $insert_reasons = true;
+            //cancel status
+            if ($request->approval == config('constants.approval.cancelled')) {
+                $new_status = config('constants.subsistence_status.cancelled');
+            } //reject status
+            elseif ($request->approval == config('constants.approval.reject')) {
+                $new_status = config('constants.subsistence_status.rejected');
+            }//approve status
+            elseif ($request->approval == config('constants.approval.approve')) {
+                $new_status = config('constants.subsistence_status.hod_approved');
+            } else {
+                $new_status = config('constants.subsistence_status.new_application');
+                $insert_reasons = false;
+            }
+            //update
+
+            $form->config_status_id = $new_status;
+            $form->authorised_by = $user->name;
+            $form->authorised_staff_no = $user->staff_no;
+            $form->authorised_date = $request->sig_date;
+            $form->profile = Auth::user()->profile_id;
+            $form->save();
+            //change invitation status
+            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
+                ->where('trip_id', $form->trip_id)
+                ->first();
+
+            $list_inv->status_id = $new_status ;
+            $list_inv->save();
+        }
+
+        //FOR HOD
         elseif (
             Auth::user()->profile_id == config('constants.user_profiles.EZESCO_009')
             && $current_status == config('constants.trip_status.trip_authorised')
@@ -1478,39 +1562,6 @@ class SubsistenceController extends Controller
             $list_inv->save();
         }
 
-        //FOR STATION MANAGER -SNR
-//        elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_015')
-//            && $current_status == config('constants.subsistence_status.hr_approved')
-//        ) {
-//            $insert_reasons = true;
-//            //cancel status
-//            if ($request->approval == config('constants.approval.cancelled')) {
-//                $new_status = config('constants.subsistence_status.cancelled');
-//            } //reject status
-//            elseif ($request->approval == config('constants.approval.reject')) {
-//                $new_status = config('constants.subsistence_status.rejected');
-//            }//approve status
-//            elseif ($request->approval == config('constants.approval.approve')) {
-//                $new_status = config('constants.subsistence_status.chief_accountant');
-//            } else {
-//                $new_status = config('constants.subsistence_status.hr_approved');
-//                $insert_reasons = false;
-//            }
-//            //update
-//            $form->config_status_id = $new_status;
-//            $form->station_manager = $user->name;
-//            $form->station_manager_staff_no = $user->staff_no;
-//            $form->station_manager_date = $request->sig_date;
-//            $form->profile = Auth::user()->profile_id;
-//            $form->save();
-//            //change invitation status
-//            $list_inv = Invitation::where('man_no', $form->claimant_staff_no)
-//                ->where('trip_id', $form->trip_id)
-//                ->first();
-//
-//            $list_inv->status_id = $new_status ;
-//            $list_inv->save();
-//        }
 
         //   FOR EXPENDITURE UPLOADING TO FMS
         elseif (Auth::user()->profile_id == config('constants.user_profiles.EZESCO_014')
